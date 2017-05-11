@@ -26,7 +26,6 @@ from PyQt4.QtGui import QAction, QIcon
 # Import the code for the DockWidget
 from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget
 
-
 # Initialize Qt resources from file resources.py
 
 
