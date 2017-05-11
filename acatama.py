@@ -27,6 +27,7 @@ from PyQt4.QtGui import QAction, QIcon
 from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget
 
 # Initialize Qt resources from file resources.py
+import resources
 
 
 class AcATaMa:
