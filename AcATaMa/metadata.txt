@@ -1,0 +1,37 @@
+# This file contains metadata for your plugin. Since 
+# version 2.0 of QGIS this is the proper way to supply 
+# information about a plugin. The old method of 
+# embedding metadata in __init__.py will 
+# is no longer supported since version 2.0.
+
+# This file should be included when you package your plugin.# Mandatory items:
+
+[general]
+name=AcATaMa
+description=AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
+about=AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
+version=0.1
+qgisMinimumVersion=2.14
+
+author=Xavier Corredor Llano, SMBYC
+email=xcorredorl@ideam.gov.co
+
+homepage=https://smbyc.bitbucket.io/qgisplugins/acatama
+tracker=https://bitbucket.org/SMBYC/qgisplugin-acatama/issues
+repository=https://bitbucket.org/SMBYC/qgisplugin-acatama
+
+# Uncomment the following line and add your changelog:
+# changelog=
+
+# Tags are comma separated with spaces allowed
+tags=accuracy assessment,thematic map
+
+
+category=Plugins
+icon=icon.png
+# experimental flag
+experimental=True
+
+# deprecated flag (applies to the whole plugin, not just a single version)
+deprecated=False
+
