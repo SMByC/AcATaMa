@@ -1,0 +1,54 @@
+
+
+body {
+    font-size: 15px;
+    font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+  color: #103D5A;
+}
+
+.navbar {
+    background-image: none;
+    border-bottom: 3px solid #1775B6;
+    box-shadow: 0 1px 10px rgba(0,0,0,0.1);
+}
+
+.navbar-default {
+    background-color: #103D5A;
+}
+
+.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:hover, .navbar-default .navbar-nav>.active>a:focus {
+    color: #fff;
+    background-color: #1775B6;
+}
+
+.navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>li>a:focus {
+    color: #fff;
+    background-color: #1775B6;
+}
+
+.navbar-brand {
+    font-size: 21px;
+}
+
+.bs-sidebar {
+    font-size: 15px;
+}
+
+a {
+    color: #1775B6;
+}
+
+pre code {
+    font-size: 14px;
+}
+
+.bs-sidebar .nav > .active > a, .bs-sidebar .nav > .active:hover > a, .bs-sidebar .nav > .active:focus > a, .bs-sidebar .nav > li > a:hover {
+    border-right: 2px solid;
+}
+
+.admonition {
+    font-size: 14px;
+}
