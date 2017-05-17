@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/plugins/AcATaMa" >
         <file>icon.png</file>
+        <file>gui/about.png</file>
+        <file>gui/acatama.png</file>
     </qresource>
 </RCC>
