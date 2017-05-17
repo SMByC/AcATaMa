@@ -25,6 +25,7 @@ from PyQt4.QtGui import QAction, QIcon
 
 # Import the code for the DockWidget
 from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget
+from AcATaMa.gui.about_dialog import AboutDialog
 
 # Initialize Qt resources from file resources.py
 import resources
@@ -60,11 +61,14 @@ class AcATaMa:
 
         print "** INITIALIZING AcATaMa"
 
+        self.menu_name_plugin = self.tr(u"&Accuracy Assessment of Thematic Maps")
         self.pluginIsActive = False
         self.dockwidget = None
 
         # Obtaining the map canvas
         self.canvas = iface.mapCanvas()
+
+        self.about_dialog = AboutDialog()
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -82,17 +86,27 @@ class AcATaMa:
         return QCoreApplication.translate('AcATaMa', message)
 
     def initGui(self):
+        ### Main dockwidget
         # Create action that will start plugin configuration
         icon_path = ':/plugins/AcATaMa/icon.png'
-        self.action = QAction(
-            QIcon(icon_path),
-            self.tr(u'&AcATaMa'), self.iface.mainWindow())
+        self.dockable_action = QAction(QIcon(icon_path), self.tr(u'&AcATaMa'), self.iface.mainWindow())
         # connect the action to the run method
-        self.action.triggered.connect(self.run)
-
+        self.dockable_action.triggered.connect(self.run)
         # Add toolbar button and menu item
-        self.iface.addToolBarIcon(self.action)
-        self.iface.addPluginToMenu(self.tr(u"&Accuracy Assessment of Thematic Maps"), self.action)
+        self.iface.addToolBarIcon(self.dockable_action)
+        self.iface.addPluginToMenu(self.menu_name_plugin, self.dockable_action)
+
+        ### About dialog
+        # Create action that will start plugin configuration
+        icon_path = ':/plugins/AcATaMa/gui/about.png'
+        self.about_action = QAction(QIcon(icon_path), self.tr(u'About'), self.iface.mainWindow())
+        # connect the action to the run method
+        self.about_action.triggered.connect(self.about)
+        # Add toolbar button and menu item
+        self.iface.addPluginToMenu(self.menu_name_plugin, self.about_action)
+
+    def about(self):
+        self.about_dialog.show()
 
     #--------------------------------------------------------------------------
 
@@ -121,8 +135,9 @@ class AcATaMa:
         self.clear_all()
 
         # Remove the plugin menu item and icon
-        self.iface.removePluginMenu(self.tr(u"&Accuracy Assessment of Thematic Maps"), self.action)
-        self.iface.removeToolBarIcon(self.action)
+        self.iface.removePluginMenu(self.menu_name_plugin, self.dockable_action)
+        self.iface.removePluginMenu(self.menu_name_plugin, self.about_action)
+        self.iface.removeToolBarIcon(self.dockable_action)
 
     #--------------------------------------------------------------------------
 
