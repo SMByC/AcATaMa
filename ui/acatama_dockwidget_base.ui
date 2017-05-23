@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>584</width>
-    <height>847</height>
+    <width>538</width>
+    <height>879</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -47,13 +47,13 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>560</width>
-             <height>768</height>
+             <width>514</width>
+             <height>800</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
-             <widget class="QGroupBox" name="groupBox">
+             <widget class="QGroupBox" name="groupBox_ThematicRaster">
               <property name="title">
                <string>Thematic raster image</string>
               </property>
@@ -75,7 +75,7 @@
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QComboBox" name="select_TRI">
+                   <widget class="QComboBox" name="selectThematicRaster">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                       <horstretch>0</horstretch>
@@ -88,7 +88,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="button_browseTRI">
+                   <widget class="QPushButton" name="browseThematicRaster">
                     <property name="text">
                      <string>Browse</string>
                     </property>
@@ -101,7 +101,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_4">
+             <widget class="QGroupBox" name="groupBox_ShapeArea">
               <property name="title">
                <string>Work only in a study area (optional)</string>
               </property>
@@ -115,8 +115,16 @@
                <item>
                 <widget class="QWidget" name="widget_7" native="true">
                  <layout class="QVBoxLayout" name="verticalLayout_12">
+                  <property name="margin">
+                   <number>0</number>
+                  </property>
                   <item>
                    <widget class="QLabel" name="label_7">
+                    <property name="font">
+                     <font>
+                      <italic>false</italic>
+                     </font>
+                    </property>
                     <property name="text">
                      <string>Define a study area from a shape file for make clip to the thematic image</string>
                     </property>
@@ -126,71 +134,72 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QWidget" name="widget_ShapeSelector" native="true">
-                    <layout class="QVBoxLayout" name="verticalLayout_31">
+                   <widget class="QLabel" name="label_23">
+                    <property name="text">
+                     <string>Select the shape for clip the thematic image:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QWidget" name="widget_22" native="true">
+                    <layout class="QHBoxLayout" name="horizontalLayout_21">
+                     <property name="margin">
+                      <number>0</number>
+                     </property>
                      <item>
-                      <widget class="QLabel" name="label_23">
-                       <property name="text">
-                        <string>Select the shape for clip the thematic image:</string>
+                      <widget class="QComboBox" name="selectShapeArea">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
                        </property>
                       </widget>
                      </item>
                      <item>
-                      <widget class="QWidget" name="widget_22" native="true">
-                       <layout class="QHBoxLayout" name="horizontalLayout_21">
-                        <property name="margin">
-                         <number>0</number>
-                        </property>
-                        <item>
-                         <widget class="QLineEdit" name="lineEdit_ShapeSelector"/>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="pushButton_ShapeSelector">
-                          <property name="text">
-                           <string>Select...</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="pushButton_LoadShapeSelector">
-                          <property name="text">
-                           <string>View</string>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
+                      <widget class="QPushButton" name="browseShapeArea">
+                       <property name="text">
+                        <string>Browse</string>
+                       </property>
                       </widget>
                      </item>
                      <item>
-                      <widget class="QWidget" name="widget_3" native="true">
-                       <layout class="QHBoxLayout" name="horizontalLayout_3">
-                        <property name="spacing">
-                         <number>0</number>
-                        </property>
-                        <property name="margin">
-                         <number>0</number>
-                        </property>
-                        <item>
-                         <spacer name="horizontalSpacer">
-                          <property name="orientation">
-                           <enum>Qt::Horizontal</enum>
-                          </property>
-                          <property name="sizeHint" stdset="0">
-                           <size>
-                            <width>40</width>
-                            <height>20</height>
-                           </size>
-                          </property>
-                         </spacer>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="pushButton">
-                          <property name="text">
-                           <string>Clipping</string>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
+                      <widget class="QPushButton" name="viewShapeArea">
+                       <property name="text">
+                        <string>View</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QWidget" name="widget_3" native="true">
+                    <layout class="QHBoxLayout" name="horizontalLayout_3">
+                     <property name="spacing">
+                      <number>0</number>
+                     </property>
+                     <property name="margin">
+                      <number>0</number>
+                     </property>
+                     <item>
+                      <spacer name="horizontalSpacer">
+                       <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>40</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="pushButton">
+                       <property name="text">
+                        <string>Clipping</string>
+                       </property>
                       </widget>
                      </item>
                     </layout>
@@ -203,7 +212,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_5">
+             <widget class="QGroupBox" name="groupBox_CategRaster">
               <property name="title">
                <string>Work only in a categorical raster (optional)</string>
               </property>
@@ -226,10 +235,7 @@
                   <item>
                    <widget class="QWidget" name="widget_4" native="true">
                     <layout class="QVBoxLayout" name="verticalLayout_9">
-                     <property name="leftMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="rightMargin">
+                     <property name="margin">
                       <number>0</number>
                      </property>
                      <item>
@@ -242,12 +248,6 @@
                        </property>
                       </widget>
                      </item>
-                    </layout>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QWidget" name="widget_ShapeSelector_2" native="true">
-                    <layout class="QVBoxLayout" name="verticalLayout_32">
                      <item>
                       <widget class="QLabel" name="label_24">
                        <property name="text">
@@ -262,19 +262,29 @@
                          <number>0</number>
                         </property>
                         <item>
-                         <widget class="QLineEdit" name="lineEdit_ShapeSelector_2"/>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="pushButton_ShapeSelector_2">
-                          <property name="text">
-                           <string>Select...</string>
+                         <widget class="QComboBox" name="selectCategRaster">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="editable">
+                           <bool>false</bool>
                           </property>
                          </widget>
                         </item>
                         <item>
-                         <widget class="QPushButton" name="pushButton_LoadShapeSelector_2">
+                         <widget class="QPushButton" name="browseCategRaster">
                           <property name="text">
-                           <string>Load...</string>
+                           <string>Browse</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="viewCategRaster">
+                          <property name="text">
+                           <string>View</string>
                           </property>
                          </widget>
                         </item>
@@ -298,7 +308,7 @@
                          </widget>
                         </item>
                         <item>
-                         <widget class="QLineEdit" name="lineEdit"/>
+                         <widget class="QLineEdit" name="pixelsValuesCategRaster"/>
                         </item>
                        </layout>
                       </widget>
@@ -358,8 +368,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>560</width>
-             <height>768</height>
+             <width>514</width>
+             <height>800</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -538,14 +548,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>groupBox_5</sender>
+   <sender>groupBox_CategRaster</sender>
    <signal>clicked(bool)</signal>
    <receiver>widget_6</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>114</x>
-     <y>391</y>
+     <x>118</x>
+     <y>430</y>
     </hint>
     <hint type="destinationlabel">
      <x>291</x>
@@ -554,9 +564,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>groupBox_4</sender>
+   <sender>groupBox_ShapeArea</sender>
    <signal>clicked(bool)</signal>
-   <receiver>widget_ShapeSelector</receiver>
+   <receiver>widget_7</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -564,8 +574,8 @@
      <y>197</y>
     </hint>
     <hint type="destinationlabel">
-     <x>88</x>
-     <y>224</y>
+     <x>291</x>
+     <y>307</y>
     </hint>
    </hints>
   </connection>
