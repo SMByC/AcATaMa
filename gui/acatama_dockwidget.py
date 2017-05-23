@@ -62,7 +62,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.browseThematicRaster.clicked.connect(self.fileDialog_browseThematicRaster)
 
     def updateLayersList(self, combo_box, layer_type="any"):
-        if not QgsMapLayerRegistry.instance():
+        if not QgsMapLayerRegistry:
             return
         save_selected = combo_box.currentText()
         combo_box.clear()
