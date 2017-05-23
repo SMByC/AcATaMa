@@ -22,7 +22,9 @@
 import os
 
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtCore import pyqtSignal, Qt
+from qgis.utils import iface
+from qgis.core import QgsMapLayerRegistry, QgsMapLayer
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -42,9 +44,31 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
+        self.canvas = iface.mapCanvas()
         self.setupUi(self)
+        self.setup_gui()
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
         event.accept()
+
+    def updateLayersList_ThematicRaster(self):
+        save_selected = self.select_TRI.currentText()
+        self.select_TRI.clear()
+
+        # list of only raster layer loaded in qgis
+        layers = [layer for layer in QgsMapLayerRegistry.instance().mapLayers().values()
+                  if layer.type() == QgsMapLayer.RasterLayer]
+        # added list to combobox
+        [self.select_TRI.addItem(layer.name()) for layer in layers]
+
+        selected_index = self.select_TRI.findText(save_selected, Qt.MatchFixedString)
+        self.select_TRI.setCurrentIndex(selected_index)
+
+    def setup_gui(self):
+        # plugin info #########
+        # load thematic raster image #########
+        self.updateLayersList_ThematicRaster()
+        # handle connect when the list of layers changed
+        self.canvas.layersChanged.connect(self.updateLayersList_ThematicRaster)
 
