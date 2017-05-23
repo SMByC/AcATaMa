@@ -52,23 +52,29 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.closingPlugin.emit()
         event.accept()
 
-    def updateLayersList_ThematicRaster(self):
-        save_selected = self.select_TRI.currentText()
-        self.select_TRI.clear()
+    def updateLayersList(self, combo_box, layer_type="any"):
+        save_selected = combo_box.currentText()
+        combo_box.clear()
 
-        # list of only raster layer loaded in qgis
-        layers = [layer for layer in QgsMapLayerRegistry.instance().mapLayers().values()
-                  if layer.type() == QgsMapLayer.RasterLayer]
+        # list of layers loaded in qgis filter by type
+        if layer_type == "raster":
+            layers = [layer for layer in QgsMapLayerRegistry.instance().mapLayers().values()
+                      if layer.type() == QgsMapLayer.RasterLayer]
+        if layer_type == "vector":
+            layers = [layer for layer in QgsMapLayerRegistry.instance().mapLayers().values()
+                      if layer.type() == QgsMapLayer.VectorLayer]
+        if layer_type == "any":
+            layers = QgsMapLayerRegistry.instance().mapLayers().values()
         # added list to combobox
-        [self.select_TRI.addItem(layer.name()) for layer in layers]
+        [combo_box.addItem(layer.name()) for layer in layers]
 
-        selected_index = self.select_TRI.findText(save_selected, Qt.MatchFixedString)
-        self.select_TRI.setCurrentIndex(selected_index)
+        selected_index = combo_box.findText(save_selected, Qt.MatchFixedString)
+        combo_box.setCurrentIndex(selected_index)
 
     def setup_gui(self):
         # plugin info #########
         # load thematic raster image #########
-        self.updateLayersList_ThematicRaster()
+        self.updateLayersList(self.select_TRI, "raster")
         # handle connect when the list of layers changed
-        self.canvas.layersChanged.connect(self.updateLayersList_ThematicRaster)
+        self.canvas.layersChanged.connect(lambda: self.updateLayersList(self.select_TRI, "raster"))
 
