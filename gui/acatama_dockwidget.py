@@ -55,11 +55,11 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
     def setup_gui(self):
         # plugin info #########
         # load thematic raster image #########
-        self.updateLayersList(self.select_TRI, "raster")
+        self.updateLayersList(self.selectThematicRaster, "raster")
         # handle connect when the list of layers changed
-        self.canvas.layersChanged.connect(lambda: self.updateLayersList(self.select_TRI, "raster"))
+        self.canvas.layersChanged.connect(lambda: self.updateLayersList(self.selectThematicRaster, "raster"))
         # call to search shape area selector file
-        self.button_browseTRI.clicked.connect(self.fileDialog_browseThematicRaster)
+        self.browseThematicRaster.clicked.connect(self.fileDialog_browseThematicRaster)
 
     def updateLayersList(self, combo_box, layer_type="any"):
         if not QgsMapLayerRegistry.instance():
@@ -98,6 +98,6 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 self.iface.messageBar().pushMessage("Error",
                                                     "{} is not a valid raster file!".format(os.path.basename(tri_path)))
             # add to layers list
-            self.updateLayersList(self.select_TRI, "raster")
-            selected_index = self.select_TRI.findText(tri_filename, Qt.MatchFixedString)
-            self.select_TRI.setCurrentIndex(selected_index)
+            self.updateLayersList(self.selectThematicRaster, "raster")
+            selected_index = self.selectThematicRaster.findText(tri_filename, Qt.MatchFixedString)
+            self.selectThematicRaster.setCurrentIndex(selected_index)
