@@ -22,7 +22,8 @@ import os
 import traceback
 from subprocess import call
 
-from PyQt4.QtGui import QApplication
+from PyQt4.QtGui import QApplication, QCursor
+from PyQt4.QtCore import Qt
 from qgis.gui import QgsMessageBar
 from qgis.core import QgsMessageLog
 from qgis.utils import iface
@@ -53,7 +54,20 @@ def error_handler():
     return decorate
 
 
-@error_handler()
+def wait_process():
+    def decorate(f):
+        def applicator(*args, **kwargs):
+            # mouse wait
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            # do
+            f(*args, **kwargs)
+            # restore mouse
+            QApplication.restoreOverrideCursor()
+            QApplication.processEvents()
+        return applicator
+    return decorate
+
+
 def do_clipping_with_shape(target_file, shape, out_path):
     filename, ext = os.path.splitext(os.path.basename(target_file))
     out_file = os.path.join(out_path, filename + "_clip" + ext)
