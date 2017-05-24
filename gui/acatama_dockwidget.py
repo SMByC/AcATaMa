@@ -24,7 +24,7 @@ import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSignal, Qt, pyqtSlot
 from qgis.utils import iface
-from qgis.core import QgsMapLayerRegistry, QgsMapLayer, QgsRasterLayer
+from qgis.core import QgsMapLayerRegistry, QgsMapLayer, QgsRasterLayer, QgsVectorLayer
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -59,7 +59,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.updateLayersList(self.selectThematicRaster, "raster")
         # handle connect when the list of layers changed
         self.canvas.layersChanged.connect(lambda: self.updateLayersList(self.selectThematicRaster, "raster"))
-        # call to search shape area selector file
+        # call to browse the thematic raster file
         self.browseThematicRaster.clicked.connect(lambda: self.fileDialog_browse(
             self.selectThematicRaster,
             dialog_title=self.tr(u"Select the thematic raster image to evaluate"),
@@ -100,11 +100,14 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         if file_path != '' and os.path.isfile(file_path):
             # Open in QGIS
             filename = os.path.splitext(os.path.basename(file_path))[0]
-            layer = QgsRasterLayer(file_path, filename)
+            if layer_type == "raster":
+                layer = QgsRasterLayer(file_path, filename)
+            if layer_type == "vector":
+                layer = QgsVectorLayer(file_path, filename, "ogr")
             if layer.isValid():
                 QgsMapLayerRegistry.instance().addMapLayer(layer)
             else:
-                self.iface.messageBar().pushMessage(self.tr("Error"), self.tr("{} is not a valid {} file!")
+                iface.messageBar().pushMessage(self.tr("Error"), self.tr("{} is not a valid {} file!")
                                                     .format(os.path.basename(file_path), layer_type))
             # add to layers list
             self.updateLayersList(combo_box, layer_type)
