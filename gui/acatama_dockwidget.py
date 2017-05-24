@@ -24,9 +24,9 @@ import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSignal, Qt, pyqtSlot
 from qgis.utils import iface
-from qgis.core import QgsMapLayerRegistry, QgsMapLayer, QgsRasterLayer, QgsVectorLayer
+from qgis.core import QgsMapLayerRegistry, QgsMapLayer
 
-from AcATaMa.core.utils import do_clipping_with_shape, get_file_path, error_handler, wait_process
+from AcATaMa.core.utils import do_clipping_with_shape, get_file_path, error_handler, wait_process, open_layer_in_qgis
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -121,17 +121,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
         file_path = str(QtGui.QFileDialog.getOpenFileName(self, dialog_title, "", dialog_types))
         if file_path != '' and os.path.isfile(file_path):
-            # Open in QGIS
-            filename = os.path.splitext(os.path.basename(file_path))[0]
-            if layer_type == "raster":
-                layer = QgsRasterLayer(file_path, filename)
-            if layer_type == "vector":
-                layer = QgsVectorLayer(file_path, filename, "ogr")
-            if layer.isValid():
-                QgsMapLayerRegistry.instance().addMapLayer(layer)
-            else:
-                iface.messageBar().pushMessage(self.tr("Error"), self.tr("{} is not a valid {} file!")
-                                                    .format(os.path.basename(file_path), layer_type))
+            filename = open_layer_in_qgis(file_path, layer_type)
             # add to layers list
             self.updateLayersList(combo_box, layer_type)
             selected_index = combo_box.findText(filename, Qt.MatchFixedString)
