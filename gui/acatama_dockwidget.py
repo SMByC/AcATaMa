@@ -54,12 +54,23 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     def setup_gui(self):
         # plugin info #########
+
         # load thematic raster image #########
         self.updateLayersList(self.selectThematicRaster, "raster")
         # handle connect when the list of layers changed
         self.canvas.layersChanged.connect(lambda: self.updateLayersList(self.selectThematicRaster, "raster"))
         # call to search shape area selector file
-        self.browseThematicRaster.clicked.connect(self.fileDialog_browseThematicRaster)
+        self.browseThematicRaster.clicked.connect(lambda: self.fileDialog_browse(
+            self.selectThematicRaster,
+            dialog_title=self.tr(u"Select the thematic raster image to evaluate"),
+            dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
+            layer_type="raster"))
+
+        # shape study area #########
+        self.widget_ShapeArea.setHidden(True)
+
+        # categorical raster #########
+        self.widget_CategRaster.setHidden(True)
 
     def updateLayersList(self, combo_box, layer_type="any"):
         if not QgsMapLayerRegistry:
@@ -84,20 +95,18 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         combo_box.setCurrentIndex(selected_index)
 
     @pyqtSlot()
-    def fileDialog_browseThematicRaster(self):
-        tri_path = \
-            str(QtGui.QFileDialog.getOpenFileName(self, self.tr(u"Select the thematic raster image to evaluate"),
-                                                  "", self.tr(u"Raster files (*.tif *.img);;All files (*.*)")))
-        if tri_path != '' and os.path.isfile(tri_path):
+    def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
+        file_path = str(QtGui.QFileDialog.getOpenFileName(self, dialog_title, "", dialog_types))
+        if file_path != '' and os.path.isfile(file_path):
             # Open in QGIS
-            tri_filename = os.path.splitext(os.path.basename(tri_path))[0]
-            tri_layer = QgsRasterLayer(tri_path, tri_filename)
-            if tri_layer.isValid():
-                QgsMapLayerRegistry.instance().addMapLayer(tri_layer)
+            filename = os.path.splitext(os.path.basename(file_path))[0]
+            layer = QgsRasterLayer(file_path, filename)
+            if layer.isValid():
+                QgsMapLayerRegistry.instance().addMapLayer(layer)
             else:
-                self.iface.messageBar().pushMessage("Error",
-                                                    "{} is not a valid raster file!".format(os.path.basename(tri_path)))
+                self.iface.messageBar().pushMessage(self.tr("Error"), self.tr("{} is not a valid {} file!")
+                                                    .format(os.path.basename(file_path), layer_type))
             # add to layers list
-            self.updateLayersList(self.selectThematicRaster, "raster")
-            selected_index = self.selectThematicRaster.findText(tri_filename, Qt.MatchFixedString)
-            self.selectThematicRaster.setCurrentIndex(selected_index)
+            self.updateLayersList(combo_box, layer_type)
+            selected_index = combo_box.findText(filename, Qt.MatchFixedString)
+            combo_box.setCurrentIndex(selected_index)

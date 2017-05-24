@@ -113,7 +113,7 @@
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_7">
                <item>
-                <widget class="QWidget" name="widget_7" native="true">
+                <widget class="QWidget" name="widget_ShapeArea" native="true">
                  <layout class="QVBoxLayout" name="verticalLayout_12">
                   <property name="margin">
                    <number>0</number>
@@ -127,6 +127,9 @@
                     </property>
                     <property name="text">
                      <string>Define a study area from a shape file for make clip to the thematic image</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignJustify|Qt::AlignVCenter</set>
                     </property>
                     <property name="wordWrap">
                      <bool>true</bool>
@@ -224,7 +227,7 @@
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_8">
                <item>
-                <widget class="QWidget" name="widget_6" native="true">
+                <widget class="QWidget" name="widget_CategRaster" native="true">
                  <layout class="QVBoxLayout" name="verticalLayout_11">
                   <property name="spacing">
                    <number>0</number>
@@ -242,6 +245,9 @@
                       <widget class="QLabel" name="label_4">
                        <property name="text">
                         <string>Define a study area from a categorical raster for make the sampling only in the selected pixels values.</string>
+                       </property>
+                       <property name="alignment">
+                        <set>Qt::AlignJustify|Qt::AlignVCenter</set>
                        </property>
                        <property name="wordWrap">
                         <bool>true</bool>
@@ -550,7 +556,7 @@
   <connection>
    <sender>groupBox_CategRaster</sender>
    <signal>clicked(bool)</signal>
-   <receiver>widget_6</receiver>
+   <receiver>widget_CategRaster</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -566,7 +572,7 @@
   <connection>
    <sender>groupBox_ShapeArea</sender>
    <signal>clicked(bool)</signal>
-   <receiver>widget_7</receiver>
+   <receiver>widget_ShapeArea</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
