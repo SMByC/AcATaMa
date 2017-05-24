@@ -25,7 +25,7 @@ from subprocess import call
 from PyQt4.QtGui import QApplication, QCursor
 from PyQt4.QtCore import Qt
 from qgis.gui import QgsMessageBar
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, QgsMapLayerRegistry, QgsRasterLayer, QgsVectorLayer
 from qgis.utils import iface
 
 
@@ -68,18 +68,6 @@ def wait_process():
     return decorate
 
 
-def do_clipping_with_shape(target_file, shape, out_path):
-    filename, ext = os.path.splitext(os.path.basename(target_file))
-    out_file = os.path.join(out_path, filename + "_clip" + ext)
-
-    return_code = call('gdalwarp --config GDALWARP_IGNORE_BAD_CUTLINE YES -cutline "{}" -dstnodata 0 "{}" "{}"'
-                       .format(shape, target_file, out_file), shell=True)
-    if return_code == 0:  # successfully
-        return out_file
-    else:
-        iface.messageBar().pushMessage("Error", "While clipping the thematic raster.", level=QgsMessageBar.WARNING)
-
-
 def getLayerByName(layer_name):
     for layer in iface.mapCanvas().layers():
         if layer.name() == layer_name:
@@ -91,3 +79,29 @@ def get_file_path(combo_box):
         return unicode(getLayerByName(combo_box.currentText()).dataProvider().dataSourceUri().split('|layerid')[0])
     except:
         iface.messageBar().pushMessage("Error", "Please select a valid file", level=QgsMessageBar.WARNING)
+
+
+def open_layer_in_qgis(file_path, layer_type):
+    # Open in QGIS
+    filename = os.path.splitext(os.path.basename(file_path))[0]
+    if layer_type == "raster":
+        layer = QgsRasterLayer(file_path, filename)
+    if layer_type == "vector":
+        layer = QgsVectorLayer(file_path, filename, "ogr")
+    if layer.isValid():
+        QgsMapLayerRegistry.instance().addMapLayer(layer)
+    else:
+        iface.messageBar().pushMessage("Error", "{} is not a valid {} file!"
+                                       .format(os.path.basename(file_path), layer_type))
+    return filename
+
+def do_clipping_with_shape(target_file, shape, out_path):
+    filename, ext = os.path.splitext(os.path.basename(target_file))
+    out_file = os.path.join(out_path, filename + "_clip" + ext)
+
+    return_code = call('gdalwarp --config GDALWARP_IGNORE_BAD_CUTLINE YES -cutline "{}" -dstnodata 0 "{}" "{}"'
+                       .format(shape, target_file, out_file), shell=True)
+    if return_code == 0:  # successfully
+        return out_file
+    else:
+        iface.messageBar().pushMessage("Error", "While clipping the thematic raster.", level=QgsMessageBar.WARNING)
