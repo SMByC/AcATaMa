@@ -53,13 +53,17 @@ def error_handler():
     return decorate
 
 
+@error_handler()
 def do_clipping_with_shape(target_file, shape, out_path):
     filename, ext = os.path.splitext(os.path.basename(target_file))
     out_file = os.path.join(out_path, filename + "_clip" + ext)
 
-    return_code = call('gdalwarp --config GDALWARP_IGNORE_BAD_CUTLINE YES -cutline ' +
-                       shape + ' -dstnodata 0 ' + target_file + ' ' + out_file, shell=True)
-    return out_file
+    return_code = call('gdalwarp --config GDALWARP_IGNORE_BAD_CUTLINE YES -cutline "{}" -dstnodata 0 "{}" "{}"'
+                       .format(shape, target_file, out_file), shell=True)
+    if return_code == 0:  # successfully
+        return out_file
+    else:
+        iface.messageBar().pushMessage("Error", "While clipping the thematic raster.", level=QgsMessageBar.WARNING)
 
 
 def getLayerByName(layer_name):
@@ -69,4 +73,7 @@ def getLayerByName(layer_name):
 
 
 def get_file_path(combo_box):
-    return unicode(getLayerByName(combo_box.currentText()).dataProvider().dataSourceUri().split('|layerid')[0])
+    try:
+        return unicode(getLayerByName(combo_box.currentText()).dataProvider().dataSourceUri().split('|layerid')[0])
+    except:
+        iface.messageBar().pushMessage("Error", "Please select a valid file", level=QgsMessageBar.WARNING)
