@@ -26,6 +26,8 @@ from PyQt4.QtCore import pyqtSignal, Qt, pyqtSlot
 from qgis.utils import iface
 from qgis.core import QgsMapLayerRegistry, QgsMapLayer, QgsRasterLayer, QgsVectorLayer
 
+from AcATaMa.core.utils import do_clipping_with_shape, get_file_path
+
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -36,7 +38,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     closingPlugin = pyqtSignal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, tmp_dir=None):
         """Constructor."""
         super(AcATaMaDockWidget, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -47,6 +49,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.canvas = iface.mapCanvas()
         self.setupUi(self)
         self.setup_gui()
+        self.tmp_dir = tmp_dir
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
@@ -77,6 +80,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             dialog_title=self.tr(u"Select the shape file"),
             dialog_types=self.tr(u"Shape files (*.shp);;All files (*.*)"),
             layer_type="vector"))
+        # do clip
+        self.buttonClipping.clicked.connect(self.clipping_thematic_raster)
 
         # categorical raster #########
         self.widget_CategRaster.setHidden(True)
@@ -131,3 +136,10 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             self.updateLayersList(combo_box, layer_type)
             selected_index = combo_box.findText(filename, Qt.MatchFixedString)
             combo_box.setCurrentIndex(selected_index)
+
+    @pyqtSlot()
+    def clipping_thematic_raster(self):
+        print get_file_path(self.selectShapeArea)
+        #clip_file = do_clipping_with_shape()
+
+
