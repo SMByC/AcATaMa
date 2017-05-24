@@ -26,7 +26,7 @@ from PyQt4.QtCore import pyqtSignal, Qt, pyqtSlot
 from qgis.utils import iface
 from qgis.core import QgsMapLayerRegistry, QgsMapLayer, QgsRasterLayer, QgsVectorLayer
 
-from AcATaMa.core.utils import do_clipping_with_shape, get_file_path
+from AcATaMa.core.utils import do_clipping_with_shape, get_file_path, error_handler
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -138,8 +138,10 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             combo_box.setCurrentIndex(selected_index)
 
     @pyqtSlot()
+    @error_handler()
     def clipping_thematic_raster(self):
-        print get_file_path(self.selectShapeArea)
-        #clip_file = do_clipping_with_shape()
-
+        clip_file = do_clipping_with_shape(
+            get_file_path(self.selectThematicRaster),
+            get_file_path(self.selectShapeArea), self.tmp_dir)
+        print clip_file
 
