@@ -166,13 +166,6 @@
                        </property>
                       </widget>
                      </item>
-                     <item>
-                      <widget class="QPushButton" name="viewShapeArea">
-                       <property name="text">
-                        <string>View</string>
-                       </property>
-                      </widget>
-                     </item>
                     </layout>
                    </widget>
                   </item>
@@ -199,7 +192,7 @@
                       </spacer>
                      </item>
                      <item>
-                      <widget class="QPushButton" name="pushButton">
+                      <widget class="QPushButton" name="buttonClipping">
                        <property name="text">
                         <string>Clipping</string>
                        </property>
@@ -284,13 +277,6 @@
                          <widget class="QPushButton" name="browseCategRaster">
                           <property name="text">
                            <string>Browse</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="viewCategRaster">
-                          <property name="text">
-                           <string>View</string>
                           </property>
                          </widget>
                         </item>

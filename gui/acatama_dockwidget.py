@@ -68,9 +68,27 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         # shape study area #########
         self.widget_ShapeArea.setHidden(True)
+        self.updateLayersList(self.selectShapeArea, "vector")
+        # handle connect when the list of layers changed
+        self.canvas.layersChanged.connect(lambda: self.updateLayersList(self.selectShapeArea, "vector"))
+        # call to browse the shape area
+        self.browseShapeArea.clicked.connect(lambda: self.fileDialog_browse(
+            self.selectShapeArea,
+            dialog_title=self.tr(u"Select the shape file"),
+            dialog_types=self.tr(u"Shape files (*.shp);;All files (*.*)"),
+            layer_type="vector"))
 
         # categorical raster #########
         self.widget_CategRaster.setHidden(True)
+        self.updateLayersList(self.selectCategRaster, "raster")
+        # handle connect when the list of layers changed
+        self.canvas.layersChanged.connect(lambda: self.updateLayersList(self.selectCategRaster, "raster"))
+        # call to browse the categorical raster
+        self.browseCategRaster.clicked.connect(lambda: self.fileDialog_browse(
+            self.selectCategRaster,
+            dialog_title=self.tr(u"Select the categorical raster file"),
+            dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
+            layer_type="raster"))
 
     def updateLayersList(self, combo_box, layer_type="any"):
         if not QgsMapLayerRegistry:
