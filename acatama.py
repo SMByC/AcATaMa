@@ -19,6 +19,7 @@
  ***************************************************************************/
 """
 import os.path
+import tempfile
 
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
 from PyQt4.QtGui import QAction, QIcon
@@ -64,6 +65,8 @@ class AcATaMa:
         self.menu_name_plugin = self.tr(u"&Accuracy Assessment of Thematic Maps")
         self.pluginIsActive = False
         self.dockwidget = None
+        # tmp dir for all process and intermediate files
+        self.tmp_dir = tempfile.mkdtemp()
 
         # Obtaining the map canvas
         self.canvas = iface.mapCanvas()
@@ -154,7 +157,7 @@ class AcATaMa:
             #    removed on close (see self.onClosePlugin method)
             if self.dockwidget == None:
                 # Create the dockwidget (after translation) and keep reference
-                self.dockwidget = AcATaMaDockWidget()
+                self.dockwidget = AcATaMaDockWidget(tmp_dir=self.tmp_dir)
 
             # connect to provide cleanup on closing of dockwidget
             self.dockwidget.closingPlugin.connect(self.onClosePlugin)
