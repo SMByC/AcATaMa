@@ -26,7 +26,7 @@ from PyQt4.QtCore import pyqtSignal, Qt, pyqtSlot
 from qgis.utils import iface
 from qgis.core import QgsMapLayerRegistry, QgsMapLayer, QgsRasterLayer, QgsVectorLayer
 
-from AcATaMa.core.utils import do_clipping_with_shape, get_file_path, error_handler
+from AcATaMa.core.utils import do_clipping_with_shape, get_file_path, error_handler, wait_process
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -139,6 +139,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     @error_handler()
+    @wait_process()
     def clipping_thematic_raster(self):
         clip_file = do_clipping_with_shape(
             get_file_path(self.selectThematicRaster),
