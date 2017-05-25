@@ -27,7 +27,7 @@ from PyQt4.QtCore import pyqtSignal, Qt, pyqtSlot
 from qgis.utils import iface
 
 from AcATaMa.core.utils import do_clipping_with_shape, get_file_path, error_handler, wait_process, open_layer_in_qgis, \
-    update_layers_list
+    update_layers_list, unload_layer_in_qgis
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -114,6 +114,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         clip_file = do_clipping_with_shape(
             get_file_path(self.selectThematicRaster),
             get_file_path(self.selectShapeArea), self.tmp_dir)
+        # unload old thematic file
+        unload_layer_in_qgis(get_file_path(self.selectThematicRaster))
         # load to qgis and update combobox list
         filename = open_layer_in_qgis(clip_file, "raster")
         update_layers_list(self.selectThematicRaster, "raster")

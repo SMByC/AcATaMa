@@ -96,6 +96,13 @@ def open_layer_in_qgis(file_path, layer_type):
     return filename
 
 
+def unload_layer_in_qgis(layer_path):
+    layers_loaded = QgsMapLayerRegistry.instance().mapLayers().values()
+    for layer_loaded in layers_loaded:
+        if layer_path == layer_loaded.dataProvider().dataSourceUri().split('|layerid')[0]:
+            QgsMapLayerRegistry.instance().removeMapLayer(layer_loaded)
+
+
 def update_layers_list(combo_box, layer_type="any"):
     if not QgsMapLayerRegistry:
         return

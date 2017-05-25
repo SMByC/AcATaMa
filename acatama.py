@@ -23,9 +23,9 @@ import shutil
 
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
 from PyQt4.QtGui import QAction, QIcon
-from qgis.core import QgsMapLayerRegistry
 
 # Import the code for the DockWidget
+from AcATaMa.core.utils import unload_layer_in_qgis
 from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget
 from AcATaMa.gui.about_dialog import AboutDialog
 
@@ -168,18 +168,14 @@ class AcATaMa:
 
     def clear_all(self):
         # unload all layers instances from Qgis saved in tmp dir
-        layers_loaded = QgsMapLayerRegistry.instance().mapLayers().values()
         try:
             d = self.dockwidget.tmp_dir
             files_in_tmp_dir = [os.path.join(d, f) for f in os.listdir(d)
                                 if os.path.isfile(os.path.join(d, f))]
         except: files_in_tmp_dir = []
-        layersToRemove = []
+
         for file_tmp in files_in_tmp_dir:
-            for layer_loaded in layers_loaded:
-                if file_tmp == layer_loaded.dataProvider().dataSourceUri():
-                    layersToRemove.append(layer_loaded)
-        QgsMapLayerRegistry.instance().removeMapLayers(layersToRemove)
+            unload_layer_in_qgis(file_tmp)
 
         # clear self.dockwidget.tmp_dir
         try:
