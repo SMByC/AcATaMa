@@ -395,12 +395,22 @@
                    </widget>
                   </item>
                   <item row="0" column="2">
-                   <widget class="QSpinBox" name="spinBox"/>
+                   <widget class="QSpinBox" name="numberOfSamples">
+                    <property name="minimum">
+                     <number>1</number>
+                    </property>
+                    <property name="maximum">
+                     <number>999999</number>
+                    </property>
+                   </widget>
                   </item>
                   <item row="1" column="2">
-                   <widget class="QSpinBox" name="spinBox_2">
+                   <widget class="QSpinBox" name="minDistance_rs">
                     <property name="suffix">
                      <string> meters</string>
+                    </property>
+                    <property name="maximum">
+                     <number>99999</number>
                     </property>
                    </widget>
                   </item>
@@ -433,9 +443,12 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QSpinBox" name="spinBox_3">
+                   <widget class="QSpinBox" name="minDistance_srs">
                     <property name="suffix">
                      <string> meters</string>
+                    </property>
+                    <property name="maximum">
+                     <number>99999</number>
                     </property>
                    </widget>
                   </item>
@@ -462,7 +475,7 @@
                 </spacer>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButton_2">
+                <widget class="QPushButton" name="buttonGenerateSampling">
                  <property name="text">
                   <string>Generate sampling</string>
                  </property>

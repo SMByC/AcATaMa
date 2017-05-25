@@ -27,6 +27,7 @@ from PyQt4.QtCore import pyqtSignal, Qt, pyqtSlot
 from qgis.utils import iface
 from qgis.gui import QgsMessageBar
 
+from AcATaMa.core.sampling import do_random_sampling
 from AcATaMa.core.utils import do_clipping_with_shape, get_current_file_path_in, error_handler, \
     wait_process, open_layer_in_qgis, update_layers_list, unload_layer_in_qgis
 
@@ -106,6 +107,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.widget_StratifiedSampling.setHidden(True)
         self.groupBox_StratifiedSampling.toggled.connect(lambda: self.toggle_sampling_groupboxs("StratifiedSampling"))
 
+        # generate sampling #########
+        self.buttonGenerateSampling.clicked.connect(self.generate_sampling)
+
     @pyqtSlot()
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
         file_path = str(QtGui.QFileDialog.getOpenFileName(self, dialog_title, "", dialog_types))
@@ -152,3 +156,19 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                     self.widget_RandomSampling.setVisible(False)
             else:
                 self.widget_StratifiedSampling.setVisible(False)
+
+    @pyqtSlot()
+    def generate_sampling(self):
+        if not self.groupBox_RandomSampling.isChecked() and \
+                not self.groupBox_StratifiedSampling.isChecked():
+            iface.messageBar().pushMessage("Error", "Please select and config one sampling method",
+                                           level=QgsMessageBar.WARNING)
+            return
+
+        if self.groupBox_RandomSampling.isChecked():
+            number_of_samples = int(self.numberOfSamples.value())
+            min_distance = int(self.minDistance_rs.value())
+            do_random_sampling(number_of_samples, min_distance)
+
+        if self.groupBox_StratifiedSampling.isChecked():
+            pass
