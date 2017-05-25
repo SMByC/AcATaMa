@@ -74,7 +74,7 @@ def getLayerByName(layer_name):
             return layer
 
 
-def get_file_path(combo_box):
+def get_current_file_path_in(combo_box):
     try:
         return unicode(getLayerByName(combo_box.currentText()).dataProvider().dataSourceUri().split('|layerid')[0])
     except:
