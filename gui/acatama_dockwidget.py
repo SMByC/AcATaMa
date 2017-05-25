@@ -20,6 +20,7 @@
 """
 
 import os
+import tempfile
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSignal, Qt, pyqtSlot
@@ -38,7 +39,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     closingPlugin = pyqtSignal()
 
-    def __init__(self, parent=None, tmp_dir=None):
+    def __init__(self, parent=None):
         """Constructor."""
         super(AcATaMaDockWidget, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -49,7 +50,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.canvas = iface.mapCanvas()
         self.setupUi(self)
         self.setup_gui()
-        self.tmp_dir = tmp_dir
+        # tmp dir for all process and intermediate files
+        self.tmp_dir = tempfile.mkdtemp()
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
