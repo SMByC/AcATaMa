@@ -24,9 +24,9 @@ import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSignal, Qt, pyqtSlot
 from qgis.utils import iface
-from qgis.core import QgsMapLayerRegistry, QgsMapLayer
 
-from AcATaMa.core.utils import do_clipping_with_shape, get_file_path, error_handler, wait_process, open_layer_in_qgis
+from AcATaMa.core.utils import do_clipping_with_shape, get_file_path, error_handler, wait_process, open_layer_in_qgis, \
+    update_layers_list
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -59,9 +59,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # plugin info #########
 
         # load thematic raster image #########
-        self.updateLayersList(self.selectThematicRaster, "raster")
+        update_layers_list(self.selectThematicRaster, "raster")
         # handle connect when the list of layers changed
-        self.canvas.layersChanged.connect(lambda: self.updateLayersList(self.selectThematicRaster, "raster"))
+        self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectThematicRaster, "raster"))
         # call to browse the thematic raster file
         self.browseThematicRaster.clicked.connect(lambda: self.fileDialog_browse(
             self.selectThematicRaster,
@@ -71,9 +71,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         # shape study area #########
         self.widget_ShapeArea.setHidden(True)
-        self.updateLayersList(self.selectShapeArea, "vector")
+        update_layers_list(self.selectShapeArea, "vector")
         # handle connect when the list of layers changed
-        self.canvas.layersChanged.connect(lambda: self.updateLayersList(self.selectShapeArea, "vector"))
+        self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectShapeArea, "vector"))
         # call to browse the shape area
         self.browseShapeArea.clicked.connect(lambda: self.fileDialog_browse(
             self.selectShapeArea,
@@ -85,9 +85,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         # categorical raster #########
         self.widget_CategRaster.setHidden(True)
-        self.updateLayersList(self.selectCategRaster, "raster")
+        update_layers_list(self.selectCategRaster, "raster")
         # handle connect when the list of layers changed
-        self.canvas.layersChanged.connect(lambda: self.updateLayersList(self.selectCategRaster, "raster"))
+        self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectCategRaster, "raster"))
         # call to browse the categorical raster
         self.browseCategRaster.clicked.connect(lambda: self.fileDialog_browse(
             self.selectCategRaster,
@@ -95,35 +95,13 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
 
-    def updateLayersList(self, combo_box, layer_type="any"):
-        if not QgsMapLayerRegistry:
-            return
-        save_selected = combo_box.currentText()
-        combo_box.clear()
-
-        # list of layers loaded in qgis filter by type
-        if layer_type == "raster":
-            layers = [layer for layer in QgsMapLayerRegistry.instance().mapLayers().values()
-                      if layer.type() == QgsMapLayer.RasterLayer]
-        if layer_type == "vector":
-            layers = [layer for layer in QgsMapLayerRegistry.instance().mapLayers().values()
-                      if layer.type() == QgsMapLayer.VectorLayer]
-        if layer_type == "any":
-            layers = QgsMapLayerRegistry.instance().mapLayers().values()
-        # added list to combobox
-        if layers:
-            [combo_box.addItem(layer.name()) for layer in layers]
-
-        selected_index = combo_box.findText(save_selected, Qt.MatchFixedString)
-        combo_box.setCurrentIndex(selected_index)
-
     @pyqtSlot()
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
         file_path = str(QtGui.QFileDialog.getOpenFileName(self, dialog_title, "", dialog_types))
         if file_path != '' and os.path.isfile(file_path):
+            # load to qgis and update combobox list
             filename = open_layer_in_qgis(file_path, layer_type)
-            # add to layers list
-            self.updateLayersList(combo_box, layer_type)
+            update_layers_list(combo_box, layer_type)
             selected_index = combo_box.findText(filename, Qt.MatchFixedString)
             combo_box.setCurrentIndex(selected_index)
 
@@ -134,5 +112,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         clip_file = do_clipping_with_shape(
             get_file_path(self.selectThematicRaster),
             get_file_path(self.selectShapeArea), self.tmp_dir)
-        print clip_file
+        # load to qgis and update combobox list
+        filename = open_layer_in_qgis(clip_file, "raster")
+        update_layers_list(self.selectThematicRaster, "raster")
+        selected_index = self.selectThematicRaster.findText(filename, Qt.MatchFixedString)
+        self.selectThematicRaster.setCurrentIndex(selected_index)
 

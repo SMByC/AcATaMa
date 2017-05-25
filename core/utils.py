@@ -25,7 +25,7 @@ from subprocess import call
 from PyQt4.QtGui import QApplication, QCursor
 from PyQt4.QtCore import Qt
 from qgis.gui import QgsMessageBar
-from qgis.core import QgsMessageLog, QgsMapLayerRegistry, QgsRasterLayer, QgsVectorLayer
+from qgis.core import QgsMessageLog, QgsMapLayerRegistry, QgsRasterLayer, QgsVectorLayer, QgsMapLayer
 from qgis.utils import iface
 
 
@@ -95,6 +95,30 @@ def open_layer_in_qgis(file_path, layer_type):
                                        .format(os.path.basename(file_path), layer_type))
     return filename
 
+
+def update_layers_list(combo_box, layer_type="any"):
+    if not QgsMapLayerRegistry:
+        return
+    save_selected = combo_box.currentText()
+    combo_box.clear()
+
+    # list of layers loaded in qgis filter by type
+    if layer_type == "raster":
+        layers = [layer for layer in QgsMapLayerRegistry.instance().mapLayers().values()
+                  if layer.type() == QgsMapLayer.RasterLayer]
+    if layer_type == "vector":
+        layers = [layer for layer in QgsMapLayerRegistry.instance().mapLayers().values()
+                  if layer.type() == QgsMapLayer.VectorLayer]
+    if layer_type == "any":
+        layers = QgsMapLayerRegistry.instance().mapLayers().values()
+    # added list to combobox
+    if layers:
+        [combo_box.addItem(layer.name()) for layer in layers]
+
+    selected_index = combo_box.findText(save_selected, Qt.MatchFixedString)
+    combo_box.setCurrentIndex(selected_index)
+
+
 def do_clipping_with_shape(target_file, shape, out_path):
     filename, ext = os.path.splitext(os.path.basename(target_file))
     out_file = os.path.join(out_path, filename + "_clip" + ext)
@@ -105,3 +129,4 @@ def do_clipping_with_shape(target_file, shape, out_path):
         return out_file
     else:
         iface.messageBar().pushMessage("Error", "While clipping the thematic raster.", level=QgsMessageBar.WARNING)
+
