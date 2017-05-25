@@ -68,7 +68,7 @@ def wait_process():
     return decorate
 
 
-def getLayerByName(layer_name):
+def get_layer_by_name(layer_name):
     for layer in iface.mapCanvas().layers():
         if layer.name() == layer_name:
             return layer
@@ -76,7 +76,7 @@ def getLayerByName(layer_name):
 
 def get_current_file_path_in(combo_box):
     try:
-        return unicode(getLayerByName(combo_box.currentText()).dataProvider().dataSourceUri().split('|layerid')[0])
+        return unicode(get_layer_by_name(combo_box.currentText()).dataProvider().dataSourceUri().split('|layerid')[0])
     except:
         iface.messageBar().pushMessage("Error", "Please select a valid file", level=QgsMessageBar.WARNING)
 

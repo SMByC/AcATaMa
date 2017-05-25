@@ -25,6 +25,7 @@ import tempfile
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSignal, Qt, pyqtSlot
 from qgis.utils import iface
+from qgis.gui import QgsMessageBar
 
 from AcATaMa.core.utils import do_clipping_with_shape, get_current_file_path_in, error_handler, wait_process, open_layer_in_qgis, \
     update_layers_list, unload_layer_in_qgis
@@ -121,4 +122,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         update_layers_list(self.selectThematicRaster, "raster")
         selected_index = self.selectThematicRaster.findText(filename, Qt.MatchFixedString)
         self.selectThematicRaster.setCurrentIndex(selected_index)
+
+        iface.messageBar().pushMessage("Done", "Clipping the thematic raster with shape, completed",
+                                       level=QgsMessageBar.SUCCESS)
 
