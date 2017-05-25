@@ -18,7 +18,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_load">
        <attribute name="title">
@@ -366,7 +366,7 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_6">
             <item>
-             <widget class="QGroupBox" name="groupBox_2">
+             <widget class="QGroupBox" name="groupBox_RandomSampling">
               <property name="title">
                <string>Random sampling</string>
               </property>
@@ -378,7 +378,7 @@
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_4">
                <item>
-                <widget class="QWidget" name="widget" native="true">
+                <widget class="QWidget" name="widget_RandomSampling" native="true">
                  <layout class="QGridLayout" name="gridLayout_2">
                   <item row="1" column="0">
                    <widget class="QLabel" name="label_2">
@@ -411,7 +411,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_3">
+             <widget class="QGroupBox" name="groupBox_StratifiedSampling">
               <property name="title">
                <string>Stratified random sampling</string>
               </property>
@@ -423,7 +423,7 @@
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_10">
                <item>
-                <widget class="QWidget" name="widget_5" native="true">
+                <widget class="QWidget" name="widget_StratifiedSampling" native="true">
                  <layout class="QHBoxLayout" name="horizontalLayout">
                   <item>
                    <widget class="QLabel" name="label_6">
@@ -508,9 +508,9 @@
  <resources/>
  <connections>
   <connection>
-   <sender>groupBox_2</sender>
+   <sender>groupBox_RandomSampling</sender>
    <signal>clicked(bool)</signal>
-   <receiver>widget</receiver>
+   <receiver>widget_RandomSampling</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -524,9 +524,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>groupBox_3</sender>
+   <sender>groupBox_StratifiedSampling</sender>
    <signal>clicked(bool)</signal>
-   <receiver>widget_5</receiver>
+   <receiver>widget_StratifiedSampling</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
