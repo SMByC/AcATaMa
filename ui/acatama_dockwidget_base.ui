@@ -126,7 +126,7 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>Define a study area from a shape file for make clip to the thematic image</string>
+                     <string>Define a study area from a shape file for make clip to the thematic image.</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -139,7 +139,7 @@
                   <item>
                    <widget class="QLabel" name="label_23">
                     <property name="text">
-                     <string>Select the shape for clip the thematic image:</string>
+                     <string>Select/browse the shape file:</string>
                     </property>
                    </widget>
                   </item>
@@ -250,7 +250,7 @@
                      <item>
                       <widget class="QLabel" name="label_24">
                        <property name="text">
-                        <string>Select the categorical raster:</string>
+                        <string>Select/browse the categorical raster:</string>
                        </property>
                       </widget>
                      </item>
