@@ -26,7 +26,7 @@ from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QVariant
 from qgis.core import QgsGeometry, QgsField, QgsFields, QgsRectangle, QgsSpatialIndex, \
-    QgsPoint, QgsFeature, QGis
+    QgsPoint, QgsFeature, QGis, QgsDistanceArea
 from processing.tools import vector
 
 from AcATaMa.core.utils import error_handler, wait_process, load_layer_in_qgis
@@ -43,6 +43,17 @@ def do_random_sampling_in_extent(dockwidget, number_of_samples, min_distance, ex
     iface.messageBar().pushMessage("Done", "Generate the random sampling in extent, completed",
                                    level=QgsMessageBar.SUCCESS)
 
+@error_handler()
+@wait_process()
+def do_random_sampling_in_shape(dockwidget, number_of_samples, min_distance, shape_layer):
+    output_file = os.path.join(dockwidget.tmp_dir, "random_sampling_t{}".format(datetime.now().strftime('%H%M%S')))
+    # process
+    random_points_with_shape(number_of_samples, min_distance, shape_layer, output_file)
+    # open in Qgis
+    load_layer_in_qgis(output_file + ".shp", "vector")
+    iface.messageBar().pushMessage("Done", "Generate the random sampling inside shape area, completed",
+                                   level=QgsMessageBar.SUCCESS)
+
 
 @error_handler()
 @wait_process()
@@ -51,9 +62,9 @@ def do_stratified_random_sampling(number_of_samples, min_distance):
 
 
 def random_points_with_extent(point_number, min_distance, extent, output_file):
-    '''Code base from (by Alexander Bruy):
+    """Code base from (by Alexander Bruy):
     https://github.com/qgis/QGIS/blob/release-2_18/python/plugins/processing/algs/qgis/RandomPointsExtent.py
-    '''
+    """
 
     xMin = float(extent[0])
     xMax = float(extent[2])
@@ -97,7 +108,69 @@ def random_points_with_extent(point_number, min_distance, extent, output_file):
         nIterations += 1
 
     if nPoints < point_number:
-        iface.messageBar().pushMessage("Warning", "Can not generate requested number of random points",
-                                       level=QgsMessageBar.INFO)
+        iface.messageBar().pushMessage("Warning", "Can not generate requested number of random points, "
+                                                  "attempts exceeded", level=QgsMessageBar.INFO)
+
+    del writer
+
+
+def random_points_with_shape(point_number, min_distance, shape_layer, output_file):
+    """Code base from (by Alexander Bruy):
+    https://github.com/qgis/QGIS/blob/release-2_18/python/plugins/processing/algs/qgis/RandomPointsPolygonsFixed.py
+    """
+    layer = shape_layer
+    value = point_number
+    minDistance = min_distance
+    strategy = 0  # 0=count, 1=density
+
+    fields = QgsFields()
+    fields.append(QgsField('id', QVariant.Int, '', 10, 0))
+    writer = vector.VectorWriter(output_file, None, fields, QGis.WKBPoint, layer.crs())
+
+    da = QgsDistanceArea()
+
+    features = vector.features(layer)
+    for current, f in enumerate(features):
+        fGeom = QgsGeometry(f.geometry())
+        bbox = fGeom.boundingBox()
+        if strategy == 0:
+            pointCount = int(value)
+        else:
+            pointCount = int(round(value * da.measure(fGeom)))
+
+        index = QgsSpatialIndex()
+        points = dict()
+
+        nPoints = 0
+        nIterations = 0
+        maxIterations = pointCount * 200
+        total = 100.0 / pointCount
+
+        random.seed()
+
+        while nIterations < maxIterations and nPoints < pointCount:
+            rx = bbox.xMinimum() + bbox.width() * random.random()
+            ry = bbox.yMinimum() + bbox.height() * random.random()
+
+            pnt = QgsPoint(rx, ry)
+            geom = QgsGeometry.fromPoint(pnt)
+            if geom.within(fGeom) and \
+                    vector.checkMinDistance(pnt, index, minDistance, points):
+                f = QgsFeature(nPoints)
+                f.initAttributes(1)
+                f.setFields(fields)
+                f.setAttribute('id', nPoints)
+                f.setGeometry(geom)
+                writer.addFeature(f)
+                index.insertFeature(f)
+                points[nPoints] = pnt
+                nPoints += 1
+                #progress.setPercentage(int(nPoints * total))
+            nIterations += 1
+
+        if nPoints < pointCount:
+            iface.messageBar().pushMessage("Warning", "Can not generate requested number of random points, "
+                                                      "attempts exceeded", level=QgsMessageBar.INFO)
+        #progress.setPercentage(0)
 
     del writer

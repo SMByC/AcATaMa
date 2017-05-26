@@ -27,9 +27,9 @@ from PyQt4.QtCore import pyqtSignal, Qt, pyqtSlot
 from qgis.utils import iface
 from qgis.gui import QgsMessageBar
 
-from AcATaMa.core.sampling import do_random_sampling_in_extent
+from AcATaMa.core.sampling import do_random_sampling_in_extent, do_random_sampling_in_shape
 from AcATaMa.core.utils import do_clipping_with_shape, get_current_file_path_in, error_handler, \
-    wait_process, load_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_extent
+    wait_process, load_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_extent, get_layer_by_name
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -168,10 +168,14 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         if self.groupBox_RandomSampling.isChecked():
             number_of_samples = int(self.numberOfSamples.value())
             min_distance = int(self.minDistance_rs.value())
-
+            # make random sampling in thematic raster extent
             if not self.groupBox_ShapeArea.isChecked() and not self.groupBox_CategRaster.isChecked():
                 do_random_sampling_in_extent(self, number_of_samples, min_distance,
                                              get_extent(get_current_file_path_in(self.selectThematicRaster)))
+            # make random sampling inside the shape area
+            elif self.groupBox_ShapeArea.isChecked() and not self.groupBox_CategRaster.isChecked():
+                do_random_sampling_in_shape(self, number_of_samples, min_distance,
+                                            get_layer_by_name(self.selectShapeArea.currentText()))
 
         if self.groupBox_StratifiedSampling.isChecked():
             pass
