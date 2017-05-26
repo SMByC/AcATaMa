@@ -70,7 +70,7 @@ def wait_process():
 
 
 def get_layer_by_name(layer_name):
-    for layer in iface.mapCanvas().layers():
+    for layer in QgsMapLayerRegistry.instance().mapLayers().values():
         if layer.name() == layer_name:
             return layer
 
