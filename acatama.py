@@ -35,8 +35,6 @@ import resources
 
 class AcATaMa:
     """QGIS Plugin Implementation."""
-    # global temporal directory for process
-    TMP_DIR = None
 
     def __init__(self, iface):
         """Constructor.
