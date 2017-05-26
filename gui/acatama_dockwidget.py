@@ -27,7 +27,6 @@ from PyQt4.QtCore import pyqtSignal, Qt, pyqtSlot
 from qgis.utils import iface
 from qgis.gui import QgsMessageBar
 
-from AcATaMa.acatama import AcATaMa
 from AcATaMa.core.sampling import do_random_sampling
 from AcATaMa.core.utils import do_clipping_with_shape, get_current_file_path_in, error_handler, \
     wait_process, open_layer_in_qgis, update_layers_list, unload_layer_in_qgis
@@ -55,7 +54,6 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.setup_gui()
         # tmp dir for all process and intermediate files
         self.tmp_dir = tempfile.mkdtemp()
-        AcATaMa.TMP_DIR = self.tmp_dir
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
