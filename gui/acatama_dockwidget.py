@@ -27,9 +27,9 @@ from PyQt4.QtCore import pyqtSignal, Qt, pyqtSlot
 from qgis.utils import iface
 from qgis.gui import QgsMessageBar
 
-from AcATaMa.core.sampling import do_random_sampling
+from AcATaMa.core.sampling import do_random_sampling_in_extent
 from AcATaMa.core.utils import do_clipping_with_shape, get_current_file_path_in, error_handler, \
-    wait_process, open_layer_in_qgis, update_layers_list, unload_layer_in_qgis
+    wait_process, open_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_extent
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -168,7 +168,10 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         if self.groupBox_RandomSampling.isChecked():
             number_of_samples = int(self.numberOfSamples.value())
             min_distance = int(self.minDistance_rs.value())
-            do_random_sampling(number_of_samples, min_distance)
+
+            if not self.groupBox_ShapeArea.isChecked() and not self.groupBox_CategRaster.isChecked():
+                do_random_sampling_in_extent(self, number_of_samples, min_distance,
+                                             get_extent(get_current_file_path_in(self.selectThematicRaster)))
 
         if self.groupBox_StratifiedSampling.isChecked():
             pass
