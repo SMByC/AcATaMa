@@ -29,7 +29,7 @@ from qgis.core import QgsGeometry, QgsField, QgsFields, QgsRectangle, QgsSpatial
     QgsPoint, QgsFeature, QGis
 from processing.tools import vector
 
-from AcATaMa.core.utils import error_handler, wait_process, open_layer_in_qgis
+from AcATaMa.core.utils import error_handler, wait_process, load_layer_in_qgis
 
 
 @error_handler()
@@ -39,7 +39,7 @@ def do_random_sampling_in_extent(dockwidget, number_of_samples, min_distance, ex
     # process
     random_points_with_extent(number_of_samples, min_distance, extent, output_file)
     # open in Qgis
-    open_layer_in_qgis(output_file + ".shp", "vector")
+    load_layer_in_qgis(output_file + ".shp", "vector")
     iface.messageBar().pushMessage("Done", "Generate the random sampling in extent, completed",
                                    level=QgsMessageBar.SUCCESS)
 

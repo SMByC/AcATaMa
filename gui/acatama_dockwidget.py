@@ -29,7 +29,7 @@ from qgis.gui import QgsMessageBar
 
 from AcATaMa.core.sampling import do_random_sampling_in_extent
 from AcATaMa.core.utils import do_clipping_with_shape, get_current_file_path_in, error_handler, \
-    wait_process, open_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_extent
+    wait_process, load_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_extent
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -115,7 +115,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         file_path = str(QtGui.QFileDialog.getOpenFileName(self, dialog_title, "", dialog_types))
         if file_path != '' and os.path.isfile(file_path):
             # load to qgis and update combobox list
-            filename = open_layer_in_qgis(file_path, layer_type)
+            filename = load_layer_in_qgis(file_path, layer_type)
             update_layers_list(combo_box, layer_type)
             selected_index = combo_box.findText(filename, Qt.MatchFixedString)
             combo_box.setCurrentIndex(selected_index)
@@ -130,7 +130,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # unload old thematic file
         unload_layer_in_qgis(get_current_file_path_in(self.selectThematicRaster))
         # load to qgis and update combobox list
-        filename = open_layer_in_qgis(clip_file, "raster")
+        filename = load_layer_in_qgis(clip_file, "raster")
         update_layers_list(self.selectThematicRaster, "raster")
         selected_index = self.selectThematicRaster.findText(filename, Qt.MatchFixedString)
         self.selectThematicRaster.setCurrentIndex(selected_index)
