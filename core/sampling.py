@@ -18,17 +18,86 @@
  *                                                                         *
  ***************************************************************************/
 """
-from AcATaMa.core.utils import error_handler, wait_process
+import os
+import random
+from datetime import datetime
+
+from qgis.gui import QgsMessageBar
+from qgis.utils import iface
+from qgis.PyQt.QtCore import QVariant
+from qgis.core import QgsGeometry, QgsField, QgsFields, QgsRectangle, QgsSpatialIndex, \
+    QgsPoint, QgsFeature, QGis
+from processing.tools import vector
+
+from AcATaMa.core.utils import error_handler, wait_process, open_layer_in_qgis
 
 
 @error_handler()
 @wait_process()
-def do_random_sampling(number_of_samples, min_distance):
-    pass
-
+def do_random_sampling_in_extent(dockwidget, number_of_samples, min_distance, extent):
+    output_file = os.path.join(dockwidget.tmp_dir, "random_sampling_t{}".format(datetime.now().strftime('%H%M%S')))
+    # process
+    random_points_with_extent(number_of_samples, min_distance, extent, output_file)
+    # open in Qgis
+    open_layer_in_qgis(output_file + ".shp", "vector")
+    iface.messageBar().pushMessage("Done", "Generate the random sampling in extent, completed",
+                                   level=QgsMessageBar.SUCCESS)
 
 
 @error_handler()
 @wait_process()
 def do_stratified_random_sampling(number_of_samples, min_distance):
     pass
+
+
+def random_points_with_extent(point_number, min_distance, extent, output_file):
+    '''Code base from (by Alexander Bruy):
+    https://github.com/qgis/QGIS/blob/release-2_18/python/plugins/processing/algs/qgis/RandomPointsExtent.py
+    '''
+
+    xMin = float(extent[0])
+    xMax = float(extent[2])
+    yMin = float(extent[3])
+    yMax = float(extent[1])
+    extent = QgsGeometry().fromRect(QgsRectangle(xMin, yMin, xMax, yMax))
+
+    fields = QgsFields()
+    fields.append(QgsField('id', QVariant.Int, '', 10, 0))
+    mapCRS = iface.mapCanvas().mapSettings().destinationCrs()
+    writer = vector.VectorWriter(output_file, None, fields, QGis.WKBPoint, mapCRS)
+
+    nPoints = 0
+    nIterations = 0
+    maxIterations = point_number * 200
+    total = 100.0 / point_number
+
+    index = QgsSpatialIndex()
+    points = dict()
+
+    random.seed()
+
+    while nIterations < maxIterations and nPoints < point_number:
+        rx = xMin + (xMax - xMin) * random.random()
+        ry = yMin + (yMax - yMin) * random.random()
+
+        pnt = QgsPoint(rx, ry)
+        geom = QgsGeometry.fromPoint(pnt)
+        if geom.within(extent) and \
+                vector.checkMinDistance(pnt, index, min_distance, points):
+            f = QgsFeature(nPoints)
+            f.initAttributes(1)
+            f.setFields(fields)
+            f.setAttribute('id', nPoints)
+            f.setGeometry(geom)
+            writer.addFeature(f)
+            index.insertFeature(f)
+            points[nPoints] = pnt
+            nPoints += 1
+            #feedback.setProgress(int(nPoints * total))
+        nIterations += 1
+
+    if nPoints < point_number:
+        iface.messageBar().pushMessage("Warning", "Can not generate requested number of random points",
+                                       level=QgsMessageBar.INFO)
+
+    del writer
