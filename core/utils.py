@@ -19,6 +19,7 @@
  ***************************************************************************/
 """
 import os
+import gdal
 import traceback
 from subprocess import call
 
@@ -137,3 +138,14 @@ def do_clipping_with_shape(target_file, shape, out_path):
     else:
         iface.messageBar().pushMessage("Error", "While clipping the thematic raster.", level=QgsMessageBar.WARNING)
 
+
+def get_extent(img_path):
+    data = gdal.Open(img_path, gdal.GA_ReadOnly)
+    geoTransform = data.GetGeoTransform()
+    minx = geoTransform[0]
+    maxy = geoTransform[3]
+    maxx = minx + geoTransform[1] * data.RasterXSize
+    miny = maxy + geoTransform[5] * data.RasterYSize
+    del data
+
+    return [round(minx), round(maxy), round(maxx), round(miny)]
