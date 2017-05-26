@@ -82,7 +82,7 @@ def get_current_file_path_in(combo_box):
         iface.messageBar().pushMessage("Error", "Please select a valid file", level=QgsMessageBar.WARNING)
 
 
-def open_layer_in_qgis(file_path, layer_type):
+def load_layer_in_qgis(file_path, layer_type):
     # Open in QGIS
     filename = os.path.splitext(os.path.basename(file_path))[0]
     if layer_type == "raster":
