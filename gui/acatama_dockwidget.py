@@ -100,15 +100,12 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             layer_type="raster"))
 
         # random sampling #########
-        self.widget_RandomSampling.setHidden(True)
-        self.groupBox_RandomSampling.toggled.connect(lambda: self.toggle_sampling_groupboxs("RandomSampling"))
+        self.widget_RSwithCR.setHidden(True)
 
         # stratified random sampling #########
-        self.widget_StratifiedSampling.setHidden(True)
-        self.groupBox_StratifiedSampling.toggled.connect(lambda: self.toggle_sampling_groupboxs("StratifiedSampling"))
 
         # generate sampling #########
-        self.buttonGenerateSampling.clicked.connect(self.generate_sampling)
+
 
     @pyqtSlot()
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
@@ -137,25 +134,6 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         iface.messageBar().pushMessage("Done", "Clipping the thematic raster with shape, completed",
                                        level=QgsMessageBar.SUCCESS)
-
-    @pyqtSlot()
-    def toggle_sampling_groupboxs(self, groupbox_from):
-        if groupbox_from == "RandomSampling":
-            if self.groupBox_RandomSampling.isChecked():
-                self.widget_RandomSampling.setVisible(True)
-                if self.groupBox_StratifiedSampling.isChecked():
-                    self.groupBox_StratifiedSampling.setChecked(False)
-                    self.widget_StratifiedSampling.setVisible(False)
-            else:
-                self.widget_RandomSampling.setVisible(False)
-        if groupbox_from == "StratifiedSampling":
-            if self.groupBox_StratifiedSampling.isChecked():
-                self.widget_StratifiedSampling.setVisible(True)
-                if self.groupBox_RandomSampling.isChecked():
-                    self.groupBox_RandomSampling.setChecked(False)
-                    self.widget_RandomSampling.setVisible(False)
-            else:
-                self.widget_StratifiedSampling.setVisible(False)
 
     @pyqtSlot()
     def generate_sampling(self):
