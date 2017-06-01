@@ -82,6 +82,13 @@ def get_current_file_path_in(combo_box):
         iface.messageBar().pushMessage("Error", "Please select a valid file", level=QgsMessageBar.WARNING)
 
 
+def get_current_layer_in(combo_box):
+    try:
+        return get_layer_by_name(combo_box.currentText())
+    except:
+        iface.messageBar().pushMessage("Error", "Please select a valid file", level=QgsMessageBar.WARNING)
+
+
 def load_layer_in_qgis(file_path, layer_type):
     # Open in QGIS
     filename = os.path.splitext(os.path.basename(file_path))[0]
