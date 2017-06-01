@@ -57,15 +57,26 @@ def do_random_sampling(dockwidget):
         categorical_layer = get_current_layer_in(dockwidget.selectThematicRaster)
         pixel_values = None
 
-
     output_file = os.path.join(dockwidget.tmp_dir, "random_sampling_t{}".format(datetime.now().strftime('%H%M%S')))
     # process
-    random_points_in_thematic(number_of_samples, min_distance, extent, output_file, thematic_layer, nodata_thematic,
-                              categorical_layer, pixel_values)
-    # open in Qgis
-    load_layer_in_qgis(output_file + ".shp", "vector")
-    iface.messageBar().pushMessage("AcATaMa", "Generate the random sampling, completed",
-                                   level=QgsMessageBar.SUCCESS)
+    nPoints = random_points_in_thematic(number_of_samples, min_distance, extent, output_file, thematic_layer,
+                                        nodata_thematic, categorical_layer, pixel_values)
+
+    # success
+    if nPoints == number_of_samples:
+        load_layer_in_qgis(output_file + ".shp", "vector")
+        iface.messageBar().pushMessage("AcATaMa", "Generate the random sampling, completed",
+                                       level=QgsMessageBar.SUCCESS)
+    # success but not completed
+    if nPoints < number_of_samples and nPoints > 0:
+        load_layer_in_qgis(output_file + ".shp", "vector")
+        iface.messageBar().pushMessage("AcATaMa", "Generated the random sampling, but can not generate requested number of "
+                                                  "random points {}/{}, attempts exceeded".format(nPoints, number_of_samples),
+                                       level=QgsMessageBar.INFO, duration=30)
+    # zero points
+    if nPoints < number_of_samples and nPoints == 0:
+        iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any random points with this settings, "
+                                                  "attempts exceeded", level=QgsMessageBar.WARNING, duration=30)
 
 
 @error_handler()
@@ -148,11 +159,9 @@ def random_points_in_thematic(point_number, min_distance, extent, output_file, t
             # feedback.setProgress(int(nPoints * total))
         nIterations += 1
 
-    if nPoints < point_number:
-        iface.messageBar().pushMessage("AcATaMa", "Warning: can not generate requested number of random points, "
-                                                  "attempts exceeded", level=QgsMessageBar.INFO)
-
     del writer
+
+    return nPoints
 
 
 def random_points_in_shape(point_number, min_distance, shape_layer, output_file):
