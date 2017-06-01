@@ -50,7 +50,7 @@ def do_random_sampling(dockwidget):
         try:
             pixel_values = [int(p) for p in dockwidget.pixelsValuesCategRaster.text().split(",")]
         except:
-            iface.messageBar().pushMessage("Error", "Wrong pixel values, set only integers and separated by commas",
+            iface.messageBar().pushMessage("AcATaMa", "Error, wrong pixel values, set only integers and separated by commas",
                                            level=QgsMessageBar.WARNING)
             return
     else:
@@ -64,7 +64,7 @@ def do_random_sampling(dockwidget):
                               categorical_layer, pixel_values)
     # open in Qgis
     load_layer_in_qgis(output_file + ".shp", "vector")
-    iface.messageBar().pushMessage("Done", "Generate the random sampling, completed",
+    iface.messageBar().pushMessage("AcATaMa", "Generate the random sampling, completed",
                                    level=QgsMessageBar.SUCCESS)
 
 
@@ -76,7 +76,7 @@ def do_random_sampling_in_shape(dockwidget, number_of_samples, min_distance, sha
     random_points_in_shape(number_of_samples, min_distance, shape_layer, output_file)
     # open in Qgis
     load_layer_in_qgis(output_file + ".shp", "vector")
-    iface.messageBar().pushMessage("Done", "Generate the random sampling inside shape area, completed",
+    iface.messageBar().pushMessage("AcATaMa", "Generate the random sampling inside shape area, completed",
                                    level=QgsMessageBar.SUCCESS)
 
 
@@ -149,7 +149,7 @@ def random_points_in_thematic(point_number, min_distance, extent, output_file, t
         nIterations += 1
 
     if nPoints < point_number:
-        iface.messageBar().pushMessage("Warning", "Can not generate requested number of random points, "
+        iface.messageBar().pushMessage("AcATaMa", "Warning: can not generate requested number of random points, "
                                                   "attempts exceeded", level=QgsMessageBar.INFO)
 
     del writer
@@ -210,7 +210,7 @@ def random_points_in_shape(point_number, min_distance, shape_layer, output_file)
             nIterations += 1
 
         if nPoints < pointCount:
-            iface.messageBar().pushMessage("Warning", "Can not generate requested number of random points, "
+            iface.messageBar().pushMessage("AcATaMa", "Warning: can not generate requested number of random points, "
                                                       "attempts exceeded", level=QgsMessageBar.INFO)
             # progress.setPercentage(0)
 
