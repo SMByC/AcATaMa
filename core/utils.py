@@ -43,7 +43,7 @@ def error_handler():
                 msg_error = "An error has occurred in AcATaMa plugin. " \
                             "See more in Qgis log messages panel."
                 iface.messageBar().pushMessage("AcATaMa", msg_error,
-                                                    level=QgsMessageBar.CRITICAL, duration=0)
+                                                level=QgsMessageBar.CRITICAL, duration=20)
                 # message in log
                 msg_error = "\n################## ERROR IN ACATAMA PLUGIN:\n"
                 msg_error += traceback.format_exc()
@@ -79,14 +79,16 @@ def get_current_file_path_in(combo_box):
     try:
         return unicode(get_layer_by_name(combo_box.currentText()).dataProvider().dataSourceUri().split('|layerid')[0])
     except:
-        iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file", level=QgsMessageBar.WARNING)
+        iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file",
+                                       level=QgsMessageBar.WARNING, duration=20)
 
 
 def get_current_layer_in(combo_box):
     try:
         return get_layer_by_name(combo_box.currentText())
     except:
-        iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file", level=QgsMessageBar.WARNING)
+        iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file",
+                                       level=QgsMessageBar.WARNING, duration=20)
 
 
 def load_layer_in_qgis(file_path, layer_type):
@@ -143,7 +145,8 @@ def do_clipping_with_shape(target_file, shape, out_path):
     if return_code == 0:  # successfully
         return out_file
     else:
-        iface.messageBar().pushMessage("AcATaMa", "Error while clipping the thematic raster.", level=QgsMessageBar.WARNING)
+        iface.messageBar().pushMessage("AcATaMa", "Error while clipping the thematic raster.",
+                                       level=QgsMessageBar.WARNING, duration=20)
 
 
 def get_extent(img_path):

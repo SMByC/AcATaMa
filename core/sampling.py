@@ -51,7 +51,7 @@ def do_random_sampling(dockwidget):
             pixel_values = [int(p) for p in dockwidget.pixelsValuesCategRaster.text().split(",")]
         except:
             iface.messageBar().pushMessage("AcATaMa", "Error, wrong pixel values, set only integers and separated by commas",
-                                           level=QgsMessageBar.WARNING)
+                                           level=QgsMessageBar.WARNING, duration=20)
             return
     else:
         categorical_layer = get_current_layer_in(dockwidget.selectThematicRaster)
@@ -72,11 +72,11 @@ def do_random_sampling(dockwidget):
         load_layer_in_qgis(output_file + ".shp", "vector")
         iface.messageBar().pushMessage("AcATaMa", "Generated the random sampling, but can not generate requested number of "
                                                   "random points {}/{}, attempts exceeded".format(nPoints, number_of_samples),
-                                       level=QgsMessageBar.INFO, duration=30)
+                                       level=QgsMessageBar.INFO, duration=20)
     # zero points
     if nPoints < number_of_samples and nPoints == 0:
         iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any random points with this settings, "
-                                                  "attempts exceeded", level=QgsMessageBar.WARNING, duration=30)
+                                                  "attempts exceeded", level=QgsMessageBar.WARNING, duration=20)
 
 
 @error_handler()
@@ -220,7 +220,7 @@ def random_points_in_shape(point_number, min_distance, shape_layer, output_file)
 
         if nPoints < pointCount:
             iface.messageBar().pushMessage("AcATaMa", "Warning: can not generate requested number of random points, "
-                                                      "attempts exceeded", level=QgsMessageBar.INFO)
+                                                      "attempts exceeded", level=QgsMessageBar.INFO, duration=20)
             # progress.setPercentage(0)
 
     del writer
