@@ -117,6 +117,17 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.buttonGenerateRSampling.clicked.connect(lambda: do_random_sampling(self))
 
         # stratified random sampling #########
+        update_layers_list(self.selectCategRaster_SRS, "raster")
+        # handle connect when the list of layers changed
+        self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectCategRaster_SRS, "raster"))
+        # call to browse the categorical raster
+        self.browseCategRaster_SRS.clicked.connect(lambda: self.fileDialog_browse(
+            self.selectCategRaster_SRS,
+            dialog_title=self.tr(u"Select the categorical raster file"),
+            dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
+            layer_type="raster"))
+        # generate sampling
+        self.buttonGenerateRSampling.clicked.connect(lambda: do_random_sampling(self))
 
     @pyqtSlot()
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):

@@ -18,7 +18,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_load">
        <attribute name="title">
@@ -407,7 +407,7 @@
             <item>
              <widget class="QToolBox" name="toolBox">
               <property name="currentIndex">
-               <number>0</number>
+               <number>1</number>
               </property>
               <widget class="QWidget" name="page_RandomSampling">
                <property name="geometry">
@@ -699,7 +699,7 @@
                        <number>0</number>
                       </property>
                       <item>
-                       <widget class="QComboBox" name="selectCategRaster_3">
+                       <widget class="QComboBox" name="selectCategRaster_SRS">
                         <property name="sizePolicy">
                          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                           <horstretch>0</horstretch>
@@ -712,7 +712,7 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="browseCategRaster_3">
+                       <widget class="QPushButton" name="browseCategRaster_SRS">
                         <property name="text">
                          <string>Browse</string>
                         </property>
@@ -744,16 +744,6 @@
                          </property>
                         </widget>
                        </item>
-                       <item row="0" column="1">
-                        <widget class="QSpinBox" name="numberOfSamples_SRS">
-                         <property name="minimum">
-                          <number>1</number>
-                         </property>
-                         <property name="maximum">
-                          <number>999999</number>
-                         </property>
-                        </widget>
-                       </item>
                        <item row="1" column="0">
                         <widget class="QLabel" name="label_19">
                          <property name="text">
@@ -768,6 +758,16 @@
                          </property>
                          <property name="maximum">
                           <number>99999</number>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="1">
+                        <widget class="QSpinBox" name="numberOfSamples_SRS">
+                         <property name="minimum">
+                          <number>1</number>
+                         </property>
+                         <property name="maximum">
+                          <number>999999</number>
                          </property>
                         </widget>
                        </item>
