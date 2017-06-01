@@ -43,7 +43,7 @@ def do_random_sampling_in_extent(dockwidget):
 
     if dockwidget.groupBox_RSwithCR.isChecked():
         categorical_raster = get_current_layer_in(dockwidget.selectCategRaster_RS)
-        pixel_values = [int(p) for p in str(dockwidget.pixelsValuesCategRaster.value()).split(",")]
+        pixel_values = [int(p) for p in dockwidget.pixelsValuesCategRaster.text().split(",")]
     else:
         categorical_raster = get_current_layer_in(dockwidget.selectThematicRaster)
         pixel_values = None
@@ -56,7 +56,7 @@ def do_random_sampling_in_extent(dockwidget):
                               pixel_values, no_pixel_values)
     # open in Qgis
     load_layer_in_qgis(output_file + ".shp", "vector")
-    iface.messageBar().pushMessage("Done", "Generate the random sampling in extent, completed",
+    iface.messageBar().pushMessage("Done", "Generate the random sampling, completed",
                                    level=QgsMessageBar.SUCCESS)
 
 
