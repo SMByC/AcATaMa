@@ -87,20 +87,29 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # do clip
         self.buttonClipping.clicked.connect(self.clipping_thematic_raster)
 
-        # categorical raster #########
+        # create categorical  ######### TODO
         self.widget_CategRaster.setHidden(True)
-        update_layers_list(self.selectCategRaster, "raster")
-        # handle connect when the list of layers changed
-        self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectCategRaster, "raster"))
-        # call to browse the categorical raster
-        self.browseCategRaster.clicked.connect(lambda: self.fileDialog_browse(
-            self.selectCategRaster,
-            dialog_title=self.tr(u"Select the categorical raster file"),
-            dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
-            layer_type="raster"))
+        # update_layers_list(self.selectCategRaster, "raster")
+        # # handle connect when the list of layers changed
+        # self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectCategRaster, "raster"))
+        # # call to browse the categorical raster
+        # self.browseCategRaster.clicked.connect(lambda: self.fileDialog_browse(
+        #     self.selectCategRaster,
+        #     dialog_title=self.tr(u"Select the categorical raster file"),
+        #     dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
+        #     layer_type="raster"))
 
         # random sampling #########
         self.widget_RSwithCR.setHidden(True)
+        update_layers_list(self.selectCategRaster_RS, "raster")
+        # handle connect when the list of layers changed
+        self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectCategRaster_RS, "raster"))
+        # call to browse the categorical raster
+        self.browseCategRaster_RS.clicked.connect(lambda: self.fileDialog_browse(
+            self.selectCategRaster_RS,
+            dialog_title=self.tr(u"Select the categorical raster file"),
+            dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
+            layer_type="raster"))
         # generate sampling
         self.buttonGenerateRSampling.clicked.connect(self.generate_random_sampling)
 
