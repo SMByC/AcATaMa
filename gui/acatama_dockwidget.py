@@ -27,7 +27,7 @@ from PyQt4.QtCore import pyqtSignal, Qt, pyqtSlot
 from qgis.utils import iface
 from qgis.gui import QgsMessageBar
 
-from AcATaMa.core.sampling import do_random_sampling_in_extent, do_random_sampling_in_shape
+from AcATaMa.core.sampling import do_random_sampling, do_random_sampling_in_shape
 from AcATaMa.core.utils import do_clipping_with_shape, get_current_file_path_in, error_handler, \
     wait_process, load_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_layer_by_name
 
@@ -111,7 +111,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
         # generate sampling
-        self.buttonGenerateRSampling.clicked.connect(self.generate_random_sampling)
+        self.buttonGenerateRSampling.clicked.connect(lambda: do_random_sampling(self))
 
         # stratified random sampling #########
 
@@ -143,30 +143,3 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         iface.messageBar().pushMessage("Done", "Clipping the thematic raster with shape, completed",
                                        level=QgsMessageBar.SUCCESS)
-
-    @pyqtSlot()
-    def generate_random_sampling(self):
-
-        if self.groupBox_RSwithCR.isChecked():
-            #         not self.groupBox_StratifiedSampling.isChecked():
-            #     iface.messageBar().pushMessage("Error", "Please select and config one sampling method",
-            #                                    level=QgsMessageBar.WARNING)
-            #     return
-            pass
-        else:
-            pass
-
-        if self.tab_SamplingStrategy.currentIndex() == 0:  # tab points count
-            number_of_samples = int(self.numberOfSamples_RS.value())
-            min_distance = int(self.minDistance_RS.value())
-
-            if self.groupBox_ShapeArea.isChecked():
-                # make random sampling inside the shape area
-                do_random_sampling_in_shape(self, number_of_samples, min_distance,
-                                            get_layer_by_name(self.selectShapeArea.currentText()))
-            else:
-                # make random sampling in thematic raster extent
-                do_random_sampling_in_extent(self)
-
-        if self.tab_SamplingStrategy.currentIndex() == 1:  # tab points density
-            pass
