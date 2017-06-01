@@ -35,25 +35,28 @@ from AcATaMa.core.utils import error_handler, wait_process, load_layer_in_qgis, 
 
 @error_handler()
 @wait_process()
-def do_random_sampling_in_extent(dockwidget):
+def do_random_sampling(dockwidget):
     number_of_samples = int(dockwidget.numberOfSamples_RS.value())
     min_distance = int(dockwidget.minDistance_RS.value())
     thematic_raster = get_current_file_path_in(dockwidget.selectThematicRaster)
     extent = get_extent(thematic_raster)
+    # thematic raster
+    thematic_layer = get_current_layer_in(dockwidget.selectThematicRaster)
+    nodata_thematic = int(dockwidget.nodata_ThematicRaster.value())
 
+    # random sampling in categorical raster
     if dockwidget.groupBox_RSwithCR.isChecked():
-        categorical_raster = get_current_layer_in(dockwidget.selectCategRaster_RS)
+        categorical_layer = get_current_layer_in(dockwidget.selectCategRaster_RS)
         pixel_values = [int(p) for p in dockwidget.pixelsValuesCategRaster.text().split(",")]
     else:
-        categorical_raster = get_current_layer_in(dockwidget.selectThematicRaster)
+        categorical_layer = get_current_layer_in(dockwidget.selectThematicRaster)
         pixel_values = None
 
-    no_pixel_values = [int(dockwidget.nodata_ThematicRaster.value())]
 
     output_file = os.path.join(dockwidget.tmp_dir, "random_sampling_t{}".format(datetime.now().strftime('%H%M%S')))
     # process
-    random_points_with_extent(number_of_samples, min_distance, extent, output_file, categorical_raster,
-                              pixel_values, no_pixel_values)
+    random_points_in_thematic(number_of_samples, min_distance, extent, output_file, thematic_layer, nodata_thematic,
+                              categorical_layer, pixel_values)
     # open in Qgis
     load_layer_in_qgis(output_file + ".shp", "vector")
     iface.messageBar().pushMessage("Done", "Generate the random sampling, completed",
@@ -65,7 +68,7 @@ def do_random_sampling_in_extent(dockwidget):
 def do_random_sampling_in_shape(dockwidget, number_of_samples, min_distance, shape_layer):
     output_file = os.path.join(dockwidget.tmp_dir, "random_sampling_t{}".format(datetime.now().strftime('%H%M%S')))
     # process
-    random_points_with_shape(number_of_samples, min_distance, shape_layer, output_file)
+    random_points_in_shape(number_of_samples, min_distance, shape_layer, output_file)
     # open in Qgis
     load_layer_in_qgis(output_file + ".shp", "vector")
     iface.messageBar().pushMessage("Done", "Generate the random sampling inside shape area, completed",
@@ -78,8 +81,8 @@ def do_stratified_random_sampling(number_of_samples, min_distance):
     pass
 
 
-def random_points_with_extent(point_number, min_distance, extent, output_file, categorical_raster,
-                              pixel_values=None, no_pixel_values=None):
+def random_points_in_thematic(point_number, min_distance, extent, output_file, thematic_layer, nodata_thematic,
+                              categorical_layer=None, pixel_values=None):
     """Code base from (by Alexander Bruy):
     https://github.com/qgis/QGIS/blob/release-2_18/python/plugins/processing/algs/qgis/RandomPointsExtent.py
     """
@@ -112,17 +115,17 @@ def random_points_with_extent(point_number, min_distance, extent, output_file, c
         pnt = QgsPoint(rx, ry)
         geom = QgsGeometry.fromPoint(pnt)
 
-        point_value_in_categ_raster = \
-            int(categorical_raster.dataProvider().identify(pnt, QgsRaster.IdentifyFormatValue).results()[1])
-
+        # check if point is not a nodata value in thematic raster
+        point_value_in_thematic = \
+            int(thematic_layer.dataProvider().identify(pnt, QgsRaster.IdentifyFormatValue).results()[1])
+        if point_value_in_thematic == nodata_thematic:
+            nIterations += 1
+            continue
         # check if point in categ raster is in pixel values
         if pixel_values is not None:
+            point_value_in_categ_raster = \
+                int(categorical_layer.dataProvider().identify(pnt, QgsRaster.IdentifyFormatValue).results()[1])
             if point_value_in_categ_raster not in pixel_values:
-                nIterations += 1
-                continue
-        # check if point in categ raster is not a no_pixel_values
-        if no_pixel_values is not None:
-            if point_value_in_categ_raster in no_pixel_values:
                 nIterations += 1
                 continue
 
@@ -147,7 +150,7 @@ def random_points_with_extent(point_number, min_distance, extent, output_file, c
     del writer
 
 
-def random_points_with_shape(point_number, min_distance, shape_layer, output_file):
+def random_points_in_shape(point_number, min_distance, shape_layer, output_file):
     """Code base from (by Alexander Bruy):
     https://github.com/qgis/QGIS/blob/release-2_18/python/plugins/processing/algs/qgis/RandomPointsPolygonsFixed.py
     """
