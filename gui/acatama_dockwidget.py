@@ -29,7 +29,7 @@ from qgis.gui import QgsMessageBar
 
 from AcATaMa.core.sampling import do_random_sampling_in_extent, do_random_sampling_in_shape
 from AcATaMa.core.utils import do_clipping_with_shape, get_current_file_path_in, error_handler, \
-    wait_process, load_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_extent, get_layer_by_name
+    wait_process, load_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_layer_by_name
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -101,10 +101,10 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         # random sampling #########
         self.widget_RSwithCR.setHidden(True)
+        # generate sampling
+        self.buttonGenerateRSampling.clicked.connect(self.generate_random_sampling)
 
         # stratified random sampling #########
-
-        # generate sampling #########
 
 
     @pyqtSlot()
@@ -136,24 +136,28 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                                        level=QgsMessageBar.SUCCESS)
 
     @pyqtSlot()
-    def generate_sampling(self):
-        if not self.groupBox_RandomSampling.isChecked() and \
-                not self.groupBox_StratifiedSampling.isChecked():
-            iface.messageBar().pushMessage("Error", "Please select and config one sampling method",
-                                           level=QgsMessageBar.WARNING)
-            return
+    def generate_random_sampling(self):
 
-        if self.groupBox_RandomSampling.isChecked():
-            number_of_samples = int(self.numberOfSamples.value())
-            min_distance = int(self.minDistance_rs.value())
-            # make random sampling in thematic raster extent
-            if not self.groupBox_ShapeArea.isChecked() and not self.groupBox_CategRaster.isChecked():
-                do_random_sampling_in_extent(self, number_of_samples, min_distance,
-                                             get_extent(get_current_file_path_in(self.selectThematicRaster)))
-            # make random sampling inside the shape area
-            elif self.groupBox_ShapeArea.isChecked() and not self.groupBox_CategRaster.isChecked():
+        if self.groupBox_RSwithCR.isChecked():
+            #         not self.groupBox_StratifiedSampling.isChecked():
+            #     iface.messageBar().pushMessage("Error", "Please select and config one sampling method",
+            #                                    level=QgsMessageBar.WARNING)
+            #     return
+            pass
+        else:
+            pass
+
+        if self.tab_SamplingStrategy.currentIndex() == 0:  # tab points count
+            number_of_samples = int(self.numberOfSamples_RS.value())
+            min_distance = int(self.minDistance_RS.value())
+
+            if self.groupBox_ShapeArea.isChecked():
+                # make random sampling inside the shape area
                 do_random_sampling_in_shape(self, number_of_samples, min_distance,
                                             get_layer_by_name(self.selectShapeArea.currentText()))
+            else:
+                # make random sampling in thematic raster extent
+                do_random_sampling_in_extent(self)
 
-        if self.groupBox_StratifiedSampling.isChecked():
+        if self.tab_SamplingStrategy.currentIndex() == 1:  # tab points density
             pass

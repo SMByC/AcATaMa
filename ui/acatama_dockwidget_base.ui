@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>538</width>
+    <width>514</width>
     <height>879</height>
    </rect>
   </property>
@@ -47,7 +47,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>514</width>
+             <width>490</width>
              <height>800</height>
             </rect>
            </property>
@@ -106,12 +106,15 @@
                   <item>
                    <widget class="QLabel" name="label_2">
                     <property name="text">
-                     <string>Define nodata value:</string>
+                     <string>Set the nodata value:</string>
                     </property>
                    </widget>
                   </item>
                   <item>
                    <widget class="QSpinBox" name="nodata_ThematicRaster">
+                    <property name="minimum">
+                     <number>-999999</number>
+                    </property>
                     <property name="maximum">
                      <number>999999</number>
                     </property>
@@ -239,7 +242,7 @@
             <item>
              <widget class="QGroupBox" name="groupBox_CategRaster">
               <property name="title">
-               <string>Create the categorical raster (optional)</string>
+               <string>Create the categorical shape (optional)</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -290,7 +293,7 @@
                          <number>0</number>
                         </property>
                         <item>
-                         <widget class="QComboBox" name="selectCategRaster">
+                         <widget class="QComboBox" name="selectCategRaster_4">
                           <property name="sizePolicy">
                            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                             <horstretch>0</horstretch>
@@ -303,7 +306,7 @@
                          </widget>
                         </item>
                         <item>
-                         <widget class="QPushButton" name="browseCategRaster">
+                         <widget class="QPushButton" name="browseCategRaster_4">
                           <property name="text">
                            <string>Browse</string>
                           </property>
@@ -329,7 +332,7 @@
                          </widget>
                         </item>
                         <item>
-                         <widget class="QLineEdit" name="pixelsValuesCategRaster"/>
+                         <widget class="QLineEdit" name="pixelsValuesCategRaster_3"/>
                         </item>
                        </layout>
                       </widget>
@@ -396,7 +399,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>514</width>
+             <width>490</width>
              <height>800</height>
             </rect>
            </property>
@@ -411,7 +414,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>502</width>
+                 <width>478</width>
                  <height>702</height>
                 </rect>
                </property>
@@ -433,7 +436,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QTabWidget" name="tabWidget_2">
+                    <widget class="QTabWidget" name="tab_SamplingStrategy">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                        <horstretch>0</horstretch>
@@ -443,7 +446,7 @@
                      <property name="currentIndex">
                       <number>0</number>
                      </property>
-                     <widget class="QWidget" name="tab_1">
+                     <widget class="QWidget" name="points_count">
                       <attribute name="title">
                        <string>Points count/distance</string>
                       </attribute>
@@ -456,7 +459,7 @@
                         </widget>
                        </item>
                        <item row="0" column="1">
-                        <widget class="QSpinBox" name="numberOfSamples_2">
+                        <widget class="QSpinBox" name="numberOfSamples_RS">
                          <property name="minimum">
                           <number>1</number>
                          </property>
@@ -473,7 +476,7 @@
                         </widget>
                        </item>
                        <item row="1" column="1">
-                        <widget class="QSpinBox" name="minDistance_rs_2">
+                        <widget class="QSpinBox" name="minDistance_RS">
                          <property name="suffix">
                           <string> meters</string>
                          </property>
@@ -484,7 +487,7 @@
                        </item>
                       </layout>
                      </widget>
-                     <widget class="QWidget" name="tab_2">
+                     <widget class="QWidget" name="points_density">
                       <attribute name="title">
                        <string>Points density</string>
                       </attribute>
@@ -497,7 +500,7 @@
                         </widget>
                        </item>
                        <item row="0" column="1">
-                        <widget class="QDoubleSpinBox" name="doubleSpinBox">
+                        <widget class="QDoubleSpinBox" name="pointsDensity_RS">
                          <property name="suffix">
                           <string> points/m2</string>
                          </property>
@@ -540,7 +543,7 @@
                          <item>
                           <widget class="QLabel" name="label_12">
                            <property name="text">
-                            <string>Select/browse the categorical raster for make the random sampling only in the selected pixels values in it:</string>
+                            <string>Select/browse the categorical raster for make the random sampling only in the selected pixels values in it (It can be the same thematic file, for example):</string>
                            </property>
                            <property name="alignment">
                             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -557,7 +560,7 @@
                              <number>0</number>
                             </property>
                             <item>
-                             <widget class="QComboBox" name="selectCategRaster_2">
+                             <widget class="QComboBox" name="selectCategRaster_RS">
                               <property name="sizePolicy">
                                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                                 <horstretch>0</horstretch>
@@ -570,7 +573,7 @@
                              </widget>
                             </item>
                             <item>
-                             <widget class="QPushButton" name="browseCategRaster_2">
+                             <widget class="QPushButton" name="browseCategRaster_RS">
                               <property name="text">
                                <string>Browse</string>
                               </property>
@@ -596,7 +599,7 @@
                              </widget>
                             </item>
                             <item>
-                             <widget class="QLineEdit" name="pixelsValuesCategRaster_2"/>
+                             <widget class="QLineEdit" name="pixelsValuesCategRaster"/>
                             </item>
                            </layout>
                           </widget>
@@ -662,7 +665,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>502</width>
+                 <width>478</width>
                  <height>702</height>
                 </rect>
                </property>
@@ -679,7 +682,7 @@
                    <item>
                     <widget class="QLabel" name="label_17">
                      <property name="text">
-                      <string>Select/browse the categorical raster for stratified the random sampling:</string>
+                      <string>Select/browse the categorical raster for stratified the random sampling (It can be the same thematic file, for example):</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -742,7 +745,7 @@
                         </widget>
                        </item>
                        <item row="0" column="1">
-                        <widget class="QSpinBox" name="numberOfSamples_3">
+                        <widget class="QSpinBox" name="numberOfSamples_SRS">
                          <property name="minimum">
                           <number>1</number>
                          </property>
@@ -759,7 +762,7 @@
                         </widget>
                        </item>
                        <item row="1" column="1">
-                        <widget class="QSpinBox" name="minDistance_rs_3">
+                        <widget class="QSpinBox" name="minDistance_SRS">
                          <property name="suffix">
                           <string> meters</string>
                          </property>
