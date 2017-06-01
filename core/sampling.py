@@ -47,7 +47,12 @@ def do_random_sampling(dockwidget):
     # random sampling in categorical raster
     if dockwidget.groupBox_RSwithCR.isChecked():
         categorical_layer = get_current_layer_in(dockwidget.selectCategRaster_RS)
-        pixel_values = [int(p) for p in dockwidget.pixelsValuesCategRaster.text().split(",")]
+        try:
+            pixel_values = [int(p) for p in dockwidget.pixelsValuesCategRaster.text().split(",")]
+        except:
+            iface.messageBar().pushMessage("Error", "Wrong pixel values, set only integers and separated by commas",
+                                           level=QgsMessageBar.WARNING)
+            return
     else:
         categorical_layer = get_current_layer_in(dockwidget.selectThematicRaster)
         pixel_values = None
