@@ -42,7 +42,7 @@ def error_handler():
                 # message in status bar
                 msg_error = "An error has occurred in AcATaMa plugin. " \
                             "See more in Qgis log messages panel."
-                iface.messageBar().pushMessage("Error", msg_error,
+                iface.messageBar().pushMessage("AcATaMa", msg_error,
                                                     level=QgsMessageBar.CRITICAL, duration=0)
                 # message in log
                 msg_error = "\n################## ERROR IN ACATAMA PLUGIN:\n"
@@ -79,14 +79,14 @@ def get_current_file_path_in(combo_box):
     try:
         return unicode(get_layer_by_name(combo_box.currentText()).dataProvider().dataSourceUri().split('|layerid')[0])
     except:
-        iface.messageBar().pushMessage("Error", "Please select a valid file", level=QgsMessageBar.WARNING)
+        iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file", level=QgsMessageBar.WARNING)
 
 
 def get_current_layer_in(combo_box):
     try:
         return get_layer_by_name(combo_box.currentText())
     except:
-        iface.messageBar().pushMessage("Error", "Please select a valid file", level=QgsMessageBar.WARNING)
+        iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file", level=QgsMessageBar.WARNING)
 
 
 def load_layer_in_qgis(file_path, layer_type):
@@ -99,7 +99,7 @@ def load_layer_in_qgis(file_path, layer_type):
     if layer.isValid():
         QgsMapLayerRegistry.instance().addMapLayer(layer)
     else:
-        iface.messageBar().pushMessage("Error", "{} is not a valid {} file!"
+        iface.messageBar().pushMessage("AcATaMa", "Error, {} is not a valid {} file!"
                                        .format(os.path.basename(file_path), layer_type))
     return filename
 
@@ -143,7 +143,7 @@ def do_clipping_with_shape(target_file, shape, out_path):
     if return_code == 0:  # successfully
         return out_file
     else:
-        iface.messageBar().pushMessage("Error", "While clipping the thematic raster.", level=QgsMessageBar.WARNING)
+        iface.messageBar().pushMessage("AcATaMa", "Error while clipping the thematic raster.", level=QgsMessageBar.WARNING)
 
 
 def get_extent(img_path):

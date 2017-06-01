@@ -141,5 +141,5 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         selected_index = self.selectThematicRaster.findText(filename, Qt.MatchFixedString)
         self.selectThematicRaster.setCurrentIndex(selected_index)
 
-        iface.messageBar().pushMessage("Done", "Clipping the thematic raster with shape, completed",
+        iface.messageBar().pushMessage("AcATaMa", "Clipping the thematic raster with shape, completed",
                                        level=QgsMessageBar.SUCCESS)
