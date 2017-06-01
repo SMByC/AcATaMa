@@ -26,22 +26,39 @@ from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QVariant
 from qgis.core import QgsGeometry, QgsField, QgsFields, QgsRectangle, QgsSpatialIndex, \
-    QgsPoint, QgsFeature, QGis, QgsDistanceArea
+    QgsPoint, QgsFeature, QGis, QgsDistanceArea, QgsRaster
 from processing.tools import vector
 
-from AcATaMa.core.utils import error_handler, wait_process, load_layer_in_qgis
+from AcATaMa.core.utils import error_handler, wait_process, load_layer_in_qgis, get_current_file_path_in, get_extent, \
+    get_current_layer_in
 
 
 @error_handler()
 @wait_process()
-def do_random_sampling_in_extent(dockwidget, number_of_samples, min_distance, extent):
+def do_random_sampling_in_extent(dockwidget):
+    number_of_samples = int(dockwidget.numberOfSamples_RS.value())
+    min_distance = int(dockwidget.minDistance_RS.value())
+    thematic_raster = get_current_file_path_in(dockwidget.selectThematicRaster)
+    extent = get_extent(thematic_raster)
+
+    if dockwidget.groupBox_RSwithCR.isChecked():
+        categorical_raster = get_current_layer_in(dockwidget.selectCategRaster_RS)
+        pixel_values = [int(p) for p in str(dockwidget.pixelsValuesCategRaster.value()).split(",")]
+    else:
+        categorical_raster = get_current_layer_in(dockwidget.selectThematicRaster)
+        pixel_values = None
+
+    no_pixel_values = [int(dockwidget.nodata_ThematicRaster.value())]
+
     output_file = os.path.join(dockwidget.tmp_dir, "random_sampling_t{}".format(datetime.now().strftime('%H%M%S')))
     # process
-    random_points_with_extent(number_of_samples, min_distance, extent, output_file)
+    random_points_with_extent(number_of_samples, min_distance, extent, output_file, categorical_raster,
+                              pixel_values, no_pixel_values)
     # open in Qgis
     load_layer_in_qgis(output_file + ".shp", "vector")
     iface.messageBar().pushMessage("Done", "Generate the random sampling in extent, completed",
                                    level=QgsMessageBar.SUCCESS)
+
 
 @error_handler()
 @wait_process()
@@ -61,7 +78,8 @@ def do_stratified_random_sampling(number_of_samples, min_distance):
     pass
 
 
-def random_points_with_extent(point_number, min_distance, extent, output_file):
+def random_points_with_extent(point_number, min_distance, extent, output_file, categorical_raster,
+                              pixel_values=None, no_pixel_values=None):
     """Code base from (by Alexander Bruy):
     https://github.com/qgis/QGIS/blob/release-2_18/python/plugins/processing/algs/qgis/RandomPointsExtent.py
     """
@@ -93,6 +111,21 @@ def random_points_with_extent(point_number, min_distance, extent, output_file):
 
         pnt = QgsPoint(rx, ry)
         geom = QgsGeometry.fromPoint(pnt)
+
+        point_value_in_categ_raster = \
+            int(categorical_raster.dataProvider().identify(pnt, QgsRaster.IdentifyFormatValue).results()[1])
+
+        # check if point in categ raster is in pixel values
+        if pixel_values is not None:
+            if point_value_in_categ_raster not in pixel_values:
+                nIterations += 1
+                continue
+        # check if point in categ raster is not a no_pixel_values
+        if no_pixel_values is not None:
+            if point_value_in_categ_raster in no_pixel_values:
+                nIterations += 1
+                continue
+
         if geom.within(extent) and \
                 vector.checkMinDistance(pnt, index, min_distance, points):
             f = QgsFeature(nPoints)
@@ -104,7 +137,7 @@ def random_points_with_extent(point_number, min_distance, extent, output_file):
             index.insertFeature(f)
             points[nPoints] = pnt
             nPoints += 1
-            #feedback.setProgress(int(nPoints * total))
+            # feedback.setProgress(int(nPoints * total))
         nIterations += 1
 
     if nPoints < point_number:
@@ -165,12 +198,12 @@ def random_points_with_shape(point_number, min_distance, shape_layer, output_fil
                 index.insertFeature(f)
                 points[nPoints] = pnt
                 nPoints += 1
-                #progress.setPercentage(int(nPoints * total))
+                # progress.setPercentage(int(nPoints * total))
             nIterations += 1
 
         if nPoints < pointCount:
             iface.messageBar().pushMessage("Warning", "Can not generate requested number of random points, "
                                                       "attempts exceeded", level=QgsMessageBar.INFO)
-        #progress.setPercentage(0)
+            # progress.setPercentage(0)
 
     del writer
