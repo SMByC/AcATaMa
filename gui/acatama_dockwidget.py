@@ -24,12 +24,13 @@ import tempfile
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSignal, Qt, pyqtSlot
+from numpy.core.umath import isnan
 from qgis.utils import iface
 from qgis.gui import QgsMessageBar
 
-from AcATaMa.core.sampling import do_random_sampling, do_random_sampling_in_shape
+from AcATaMa.core.sampling import do_random_sampling
 from AcATaMa.core.utils import do_clipping_with_shape, get_current_file_path_in, error_handler, \
-    wait_process, load_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_layer_by_name
+    wait_process, load_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_current_layer_in
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -72,6 +73,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             dialog_title=self.tr(u"Select the thematic raster image to evaluate"),
             dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
+        # set the nodata value of the thematic raster
+        self.selectThematicRaster.currentIndexChanged.connect(self.set_nodata_value)
 
         # shape study area #########
         self.widget_ShapeArea.setHidden(True)
@@ -115,7 +118,6 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         # stratified random sampling #########
 
-
     @pyqtSlot()
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
         file_path = str(QtGui.QFileDialog.getOpenFileName(self, dialog_title, "", dialog_types))
@@ -125,6 +127,19 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             update_layers_list(combo_box, layer_type)
             selected_index = combo_box.findText(filename, Qt.MatchFixedString)
             combo_box.setCurrentIndex(selected_index)
+
+    @pyqtSlot()
+    def set_nodata_value(self):
+        current_layer = get_current_layer_in(self.selectThematicRaster)
+        if not current_layer:
+            return
+        extent = current_layer.extent()
+        rows = current_layer.rasterUnitsPerPixelY()
+        cols = current_layer.rasterUnitsPerPixelX()
+        nodata_value = current_layer.dataProvider().block(1, extent, rows, cols).noDataValue()
+        if isnan(nodata_value):
+            nodata_value = 0
+        self.nodata_ThematicRaster.setValue(nodata_value)
 
     @pyqtSlot()
     @error_handler()
