@@ -22,10 +22,12 @@ import os
 import traceback
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QApplication, QCursor
+from PyQt4.QtGui import QApplication, QCursor, QTableWidgetItem, QColor
 from qgis.core import QgsMessageLog, QgsMapLayerRegistry, QgsRasterLayer, QgsVectorLayer, QgsMapLayer
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
+
+from AcATaMa.core.raster import get_color_table
 
 
 def error_handler():
@@ -132,3 +134,48 @@ def update_layers_list(combo_box, layer_type="any"):
 
     selected_index = combo_box.findText(save_selected, Qt.MatchFixedString)
     combo_box.setCurrentIndex(selected_index)
+
+
+def fill_pixel_and_color_table_srs(dockwidget):
+    color_table = get_color_table(get_current_file_path_in(dockwidget.selectCategRaster_SRS))
+    if not color_table:
+        return
+
+    column_count = len(color_table)
+    row_count = len(color_table.values()[0])
+    headers = ["Pixel Value", "Color", "No. samples"]
+
+    dockwidget.table_pixel_colors_SRS.setRowCount(row_count)
+    dockwidget.table_pixel_colors_SRS.setColumnCount(len(headers))
+
+    # enter data onto Table
+    for n, key in enumerate(headers):
+        if key == "Pixel Value":
+            for m, item in enumerate(color_table[key]):
+                newitem = QTableWidgetItem(str(item))
+                newitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                newitem.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                dockwidget.table_pixel_colors_SRS.setItem(m, n, newitem)
+        if key == "Color":
+            for m in range(row_count):
+                newitem = QTableWidgetItem()
+                newitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                newitem.setBackground(QColor(color_table["Red"][m],
+                                             color_table["Green"][m],
+                                             color_table["Blue"][m],
+                                             color_table["Alpha"][m]))
+                dockwidget.table_pixel_colors_SRS.setItem(m, n, newitem)
+        if key == "No. samples":
+            for m in range(row_count):
+                newitem = QTableWidgetItem(str(0))
+                newitem.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                dockwidget.table_pixel_colors_SRS.setItem(m, n, newitem)
+
+    # hidden row labels
+    dockwidget.table_pixel_colors_SRS.verticalHeader().setVisible(False)
+    # add Header
+    dockwidget.table_pixel_colors_SRS.setHorizontalHeaderLabels(headers)
+    # adjust size of Table
+    dockwidget.table_pixel_colors_SRS.resizeColumnsToContents()
+    dockwidget.table_pixel_colors_SRS.resizeRowsToContents()
+
