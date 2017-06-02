@@ -51,7 +51,7 @@ def do_random_sampling(dockwidget):
             pixel_values = [int(p) for p in dockwidget.pixelsValuesCategRaster.text().split(",")]
         except:
             iface.messageBar().pushMessage("AcATaMa", "Error, wrong pixel values, set only integers and separated by commas",
-                                           level=QgsMessageBar.WARNING, duration=20)
+                                           level=QgsMessageBar.WARNING, duration=10)
             return
     else:
         categorical_layer = get_current_layer_in(dockwidget.selectThematicRaster)
@@ -72,11 +72,11 @@ def do_random_sampling(dockwidget):
         load_layer_in_qgis(output_file + ".shp", "vector")
         iface.messageBar().pushMessage("AcATaMa", "Generated the random sampling, but can not generate requested number of "
                                                   "random points {}/{}, attempts exceeded".format(nPoints, number_of_samples),
-                                       level=QgsMessageBar.INFO, duration=20)
+                                       level=QgsMessageBar.INFO, duration=10)
     # zero points
     if nPoints < number_of_samples and nPoints == 0:
         iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any random points with this settings, "
-                                                  "attempts exceeded", level=QgsMessageBar.WARNING, duration=20)
+                                                  "attempts exceeded", level=QgsMessageBar.WARNING, duration=10)
 
 
 @error_handler()
@@ -95,12 +95,12 @@ def do_stratified_random_sampling(dockwidget):
             raise
     except:
         iface.messageBar().pushMessage("AcATaMa", "Error, the number of samples should be only positive integers",
-                                       level=QgsMessageBar.WARNING, duration=20)
+                                       level=QgsMessageBar.WARNING, duration=10)
         return
     total_of_samples = sum(number_of_samples)
     if total_of_samples == 0:
         iface.messageBar().pushMessage("AcATaMa", "Error, no number of samples configured!",
-                                       level=QgsMessageBar.WARNING, duration=20)
+                                       level=QgsMessageBar.WARNING, duration=10)
         return
 
 

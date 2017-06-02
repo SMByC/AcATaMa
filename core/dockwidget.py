@@ -43,7 +43,7 @@ def error_handler():
                 msg_error = "An error has occurred in AcATaMa plugin. " \
                             "See more in Qgis log messages panel."
                 iface.messageBar().pushMessage("AcATaMa", msg_error,
-                                                level=QgsMessageBar.CRITICAL, duration=20)
+                                                level=QgsMessageBar.CRITICAL, duration=10)
                 # message in log
                 msg_error = "\n################## ERROR IN ACATAMA PLUGIN:\n"
                 msg_error += traceback.format_exc()
@@ -80,7 +80,7 @@ def get_current_file_path_in(combo_box):
         return unicode(get_layer_by_name(combo_box.currentText()).dataProvider().dataSourceUri().split('|layerid')[0])
     except:
         iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file",
-                                       level=QgsMessageBar.WARNING, duration=20)
+                                       level=QgsMessageBar.WARNING, duration=10)
 
 
 def get_current_layer_in(combo_box):
@@ -88,7 +88,7 @@ def get_current_layer_in(combo_box):
         return get_layer_by_name(combo_box.currentText())
     except:
         iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file",
-                                       level=QgsMessageBar.WARNING, duration=20)
+                                       level=QgsMessageBar.WARNING, duration=10)
 
 
 def load_layer_in_qgis(file_path, layer_type):
