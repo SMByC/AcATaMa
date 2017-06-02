@@ -30,7 +30,8 @@ from qgis.gui import QgsMessageBar
 
 from AcATaMa.core.sampling import do_random_sampling, do_stratified_random_sampling
 from AcATaMa.core.dockwidget import get_current_file_path_in, error_handler, \
-    wait_process, load_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_current_layer_in
+    wait_process, load_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_current_layer_in, \
+    fill_pixel_and_color_table_srs
 from AcATaMa.core.raster import do_clipping_with_shape
 
 # plugin path
@@ -128,9 +129,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
         # fill attribute table of categorical raster
-        self.selectCategRaster_SRS.currentIndexChanged.connect(lambda: do_stratified_random_sampling(self))
+        self.selectCategRaster_SRS.currentIndexChanged.connect(lambda: fill_pixel_and_color_table_srs(self))
         # generate sampling
-        self.buttonGenerateRSampling.clicked.connect(lambda: do_random_sampling(self))
+        self.buttonGenerateRSampling.clicked.connect(lambda: do_stratified_random_sampling(self))
 
     @pyqtSlot()
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
