@@ -53,12 +53,15 @@ def get_extent(img_path):
 
 
 def get_color_table(raster_path, band_number=1):
-    ds = gdal.Open(str(raster_path))
-
+    try:
+        ds = gdal.Open(str(raster_path))
+    except:
+        return
     gdalBand = ds.GetRasterBand(band_number)
     colorTable = gdalBand.GetColorTable()
     if colorTable is None:
-        print "Image has no color table"
+        iface.messageBar().pushMessage("AcATaMa", "Error, the raster file selected has no color table",
+                                       level=QgsMessageBar.WARNING, duration=20)
         return
 
     count = colorTable.GetCount()
