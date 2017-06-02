@@ -139,6 +139,9 @@ def update_layers_list(combo_box, layer_type="any"):
 def fill_pixel_and_color_table_srs(dockwidget):
     color_table = get_color_table(get_current_file_path_in(dockwidget.selectCategRaster_SRS))
     if not color_table:
+        # clear table
+        dockwidget.table_pixel_colors_SRS.setRowCount(0)
+        dockwidget.table_pixel_colors_SRS.setColumnCount(0)
         return
 
     column_count = len(color_table)
