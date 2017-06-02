@@ -28,9 +28,10 @@ from numpy.core.umath import isnan
 from qgis.utils import iface
 from qgis.gui import QgsMessageBar
 
-from AcATaMa.core.sampling import do_random_sampling
-from AcATaMa.core.utils import do_clipping_with_shape, get_current_file_path_in, error_handler, \
+from AcATaMa.core.sampling import do_random_sampling, do_stratified_random_sampling
+from AcATaMa.core.dockwidget import get_current_file_path_in, error_handler, \
     wait_process, load_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_current_layer_in
+from AcATaMa.core.raster import do_clipping_with_shape
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -126,6 +127,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             dialog_title=self.tr(u"Select the categorical raster file"),
             dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
+        # fill attribute table of categorical raster
+        self.selectCategRaster_SRS.currentIndexChanged.connect(lambda: do_stratified_random_sampling(self))
         # generate sampling
         self.buttonGenerateRSampling.clicked.connect(lambda: do_random_sampling(self))
 

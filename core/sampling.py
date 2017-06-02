@@ -29,7 +29,8 @@ from qgis.core import QgsGeometry, QgsField, QgsFields, QgsRectangle, QgsSpatial
     QgsPoint, QgsFeature, QGis, QgsDistanceArea, QgsRaster
 from processing.tools import vector
 
-from AcATaMa.core.utils import error_handler, wait_process, load_layer_in_qgis, get_current_file_path_in, get_extent, \
+from AcATaMa.core.raster import get_color_table, get_extent
+from AcATaMa.core.dockwidget import error_handler, wait_process, load_layer_in_qgis, get_current_file_path_in, \
     get_current_layer_in
 
 
@@ -40,7 +41,6 @@ def do_random_sampling(dockwidget):
     min_distance = int(dockwidget.minDistance_RS.value())
     thematic_raster = get_current_file_path_in(dockwidget.selectThematicRaster)
     extent = get_extent(thematic_raster)
-    # thematic raster
     thematic_layer = get_current_layer_in(dockwidget.selectThematicRaster)
     nodata_thematic = int(dockwidget.nodata_ThematicRaster.value())
 
@@ -81,8 +81,13 @@ def do_random_sampling(dockwidget):
 
 @error_handler()
 @wait_process()
-def do_stratified_random_sampling(number_of_samples, min_distance):
-    pass
+def do_stratified_random_sampling(dockwidget):
+    thematic_layer = get_current_layer_in(dockwidget.selectThematicRaster)
+    categorical_layer = get_current_layer_in(dockwidget.selectCategRaster_SRS)
+    print get_color_table(get_current_file_path_in(dockwidget.selectCategRaster_SRS))
+
+
+
 
 
 def random_points_in_thematic(point_number, min_distance, extent, output_file, thematic_layer, nodata_thematic,

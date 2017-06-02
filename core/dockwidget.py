@@ -19,14 +19,12 @@
  ***************************************************************************/
 """
 import os
-import gdal
 import traceback
-from subprocess import call
 
-from PyQt4.QtGui import QApplication, QCursor
 from PyQt4.QtCore import Qt
-from qgis.gui import QgsMessageBar
+from PyQt4.QtGui import QApplication, QCursor
 from qgis.core import QgsMessageLog, QgsMapLayerRegistry, QgsRasterLayer, QgsVectorLayer, QgsMapLayer
+from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
 
@@ -134,28 +132,3 @@ def update_layers_list(combo_box, layer_type="any"):
 
     selected_index = combo_box.findText(save_selected, Qt.MatchFixedString)
     combo_box.setCurrentIndex(selected_index)
-
-
-def do_clipping_with_shape(target_file, shape, out_path):
-    filename, ext = os.path.splitext(os.path.basename(target_file))
-    out_file = os.path.join(out_path, filename + "_clip" + ext)
-
-    return_code = call('gdalwarp --config GDALWARP_IGNORE_BAD_CUTLINE YES -cutline "{}" -dstnodata 0 "{}" "{}"'
-                       .format(shape, target_file, out_file), shell=True)
-    if return_code == 0:  # successfully
-        return out_file
-    else:
-        iface.messageBar().pushMessage("AcATaMa", "Error while clipping the thematic raster.",
-                                       level=QgsMessageBar.WARNING, duration=20)
-
-
-def get_extent(img_path):
-    data = gdal.Open(img_path, gdal.GA_ReadOnly)
-    geoTransform = data.GetGeoTransform()
-    minx = geoTransform[0]
-    maxy = geoTransform[3]
-    maxx = minx + geoTransform[1] * data.RasterXSize
-    miny = maxy + geoTransform[5] * data.RasterYSize
-    del data
-
-    return [round(minx), round(maxy), round(maxx), round(miny)]

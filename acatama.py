@@ -25,7 +25,7 @@ from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
 from PyQt4.QtGui import QAction, QIcon
 
 # Import the code for the DockWidget
-from AcATaMa.core.utils import unload_layer_in_qgis
+from AcATaMa.core.dockwidget import unload_layer_in_qgis
 from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget
 from AcATaMa.gui.about_dialog import AboutDialog
 
