@@ -64,9 +64,13 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     def setup_gui(self):
         # plugin info #########
+        # first update all combobox list #########
+        update_layers_list(self.selectThematicRaster, "raster")
+        update_layers_list(self.selectShapeArea, "vector")
+        update_layers_list(self.selectCategRaster_RS, "raster")
+        update_layers_list(self.selectCategRaster_SRS, "raster")
 
         # load thematic raster image #########
-        update_layers_list(self.selectThematicRaster, "raster")
         # handle connect when the list of layers changed
         self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectThematicRaster, "raster"))
         # call to browse the thematic raster file
@@ -80,7 +84,6 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         # shape study area #########
         self.widget_ShapeArea.setHidden(True)
-        update_layers_list(self.selectShapeArea, "vector")
         # handle connect when the list of layers changed
         self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectShapeArea, "vector"))
         # call to browse the shape area
@@ -106,7 +109,6 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         # random sampling #########
         self.widget_RSwithCR.setHidden(True)
-        update_layers_list(self.selectCategRaster_RS, "raster")
         # handle connect when the list of layers changed
         self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectCategRaster_RS, "raster"))
         # call to browse the categorical raster
@@ -119,7 +121,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.buttonGenerateRSampling.clicked.connect(lambda: do_random_sampling(self))
 
         # stratified random sampling #########
-        update_layers_list(self.selectCategRaster_SRS, "raster")
+
         # handle connect when the list of layers changed
         self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectCategRaster_SRS, "raster"))
         # call to browse the categorical raster
