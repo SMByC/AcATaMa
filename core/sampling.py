@@ -59,8 +59,8 @@ def do_random_sampling(dockwidget):
 
     output_file = os.path.join(dockwidget.tmp_dir, "random_sampling_t{}".format(datetime.now().strftime('%H%M%S')))
     # process
-    nPoints = random_points_in_thematic(number_of_samples, min_distance, extent, output_file, thematic_layer,
-                                        nodata_thematic, categorical_layer, pixel_values)
+    nPoints = generate_random_points(number_of_samples, min_distance, extent, output_file, thematic_layer,
+                                     nodata_thematic, categorical_layer, pixel_values)
 
     # success
     if nPoints == number_of_samples:
@@ -82,6 +82,12 @@ def do_random_sampling(dockwidget):
 @error_handler()
 @wait_process()
 def do_stratified_random_sampling(dockwidget):
+    min_distance = int(dockwidget.minDistance_SRS.value())
+    thematic_raster = get_current_file_path_in(dockwidget.selectThematicRaster)
+    extent = get_extent(thematic_raster)
+    thematic_layer = get_current_layer_in(dockwidget.selectThematicRaster)
+    nodata_thematic = int(dockwidget.nodata_ThematicRaster.value())
+    categorical_layer = get_current_layer_in(dockwidget.selectCategRaster_SRS)
     # get values from category table  #########
     point_values = []
     number_of_samples = []
@@ -103,11 +109,30 @@ def do_stratified_random_sampling(dockwidget):
                                        level=QgsMessageBar.WARNING, duration=10)
         return
 
+    output_file = os.path.join(dockwidget.tmp_dir, "stratified_random_sampling_t{}".format(datetime.now().strftime('%H%M%S')))
+    # process
+    nPoints = generate_stratified_random_points(point_values, number_of_samples, min_distance, extent,
+                                                output_file, thematic_layer, nodata_thematic, categorical_layer)
+
+    # success
+    if nPoints == total_of_samples:
+        load_layer_in_qgis(output_file + ".shp", "vector")
+        iface.messageBar().pushMessage("AcATaMa", "Generate the stratified random sampling, completed",
+                                       level=QgsMessageBar.SUCCESS)
+    # success but not completed
+    if nPoints < total_of_samples and nPoints > 0:
+        load_layer_in_qgis(output_file + ".shp", "vector")
+        iface.messageBar().pushMessage("AcATaMa", "Generated the stratified random sampling, but can not generate requested number of "
+                                                  "random points {}/{}, attempts exceeded".format(nPoints, total_of_samples),
+                                       level=QgsMessageBar.INFO, duration=10)
+    # zero points
+    if nPoints < total_of_samples and nPoints == 0:
+        iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any stratified random points with this settings, "
+                                                  "attempts exceeded", level=QgsMessageBar.WARNING, duration=10)
 
 
-
-def random_points_in_thematic(point_number, min_distance, extent, output_file, thematic_layer, nodata_thematic,
-                              categorical_layer=None, pixel_values=None):
+def generate_random_points(point_number, min_distance, extent, output_file, thematic_layer, nodata_thematic,
+                           categorical_layer=None, pixel_values=None):
     """Code base from (by Alexander Bruy):
     https://github.com/qgis/QGIS/blob/release-2_18/python/plugins/processing/algs/qgis/RandomPointsExtent.py
     """
@@ -172,3 +197,72 @@ def random_points_in_thematic(point_number, min_distance, extent, output_file, t
 
     return nPoints
 
+
+def generate_stratified_random_points(point_values, number_of_samples, min_distance, extent, output_file,
+                                      thematic_layer, nodata_thematic, categorical_layer):
+    """Code base from (by Alexander Bruy):
+    https://github.com/qgis/QGIS/blob/release-2_18/python/plugins/processing/algs/qgis/RandomPointsExtent.py
+    """
+
+    xMin = float(extent[0])
+    xMax = float(extent[2])
+    yMin = float(extent[3])
+    yMax = float(extent[1])
+    extent = QgsGeometry().fromRect(QgsRectangle(xMin, yMin, xMax, yMax))
+
+    fields = QgsFields()
+    fields.append(QgsField('id', QVariant.Int, '', 10, 0))
+    mapCRS = iface.mapCanvas().mapSettings().destinationCrs()
+    writer = vector.VectorWriter(output_file, None, fields, QGis.WKBPoint, mapCRS)
+    total_of_samples = sum(number_of_samples)
+
+    nPoints = 0
+    nPointsInCategories = [0]*len(number_of_samples)
+    nIterations = 0
+    maxIterations = total_of_samples * 200
+    total = 100.0 / total_of_samples
+
+    index = QgsSpatialIndex()
+    points = dict()
+
+    random.seed()
+
+    while nIterations < maxIterations and nPoints < total_of_samples:
+        rx = xMin + (xMax - xMin) * random.random()
+        ry = yMin + (yMax - yMin) * random.random()
+
+        pnt = QgsPoint(rx, ry)
+        geom = QgsGeometry.fromPoint(pnt)
+
+        # check if point is not a nodata value in thematic raster
+        point_value_in_thematic = \
+            int(thematic_layer.dataProvider().identify(pnt, QgsRaster.IdentifyFormatValue).results()[1])
+        if point_value_in_thematic == nodata_thematic:
+            nIterations += 1
+            continue
+        # check if point in categ raster is in pixel values
+        point_value_in_categ_raster = \
+            int(categorical_layer.dataProvider().identify(pnt, QgsRaster.IdentifyFormatValue).results()[1])
+        index_point_value = point_values.index(point_value_in_categ_raster)
+        if nPointsInCategories[index_point_value] >= number_of_samples[index_point_value]:
+            nIterations += 1
+            continue
+
+        if geom.within(extent) and \
+                vector.checkMinDistance(pnt, index, min_distance, points):
+            f = QgsFeature(nPoints)
+            f.initAttributes(1)
+            f.setFields(fields)
+            f.setAttribute('id', nPoints)
+            f.setGeometry(geom)
+            writer.addFeature(f)
+            index.insertFeature(f)
+            points[nPoints] = pnt
+            nPoints += 1
+            nPointsInCategories[index_point_value] += 1
+            # feedback.setProgress(int(nPoints * total))
+        nIterations += 1
+
+    del writer
+
+    return nPoints
