@@ -50,3 +50,25 @@ def get_extent(img_path):
     del data
 
     return [round(minx), round(maxy), round(maxx), round(miny)]
+
+
+def get_color_table(raster_path, band_number=1):
+    ds = gdal.Open(str(raster_path))
+
+    gdalBand = ds.GetRasterBand(band_number)
+    colorTable = gdalBand.GetColorTable()
+    if colorTable is None:
+        print "Image has no color table"
+        return
+
+    count = colorTable.GetCount()
+    color_table = {"Pixel Value":[], "Red":[], "Green":[], "Blue":[], "Alpha":[]}
+    for index in range(count):
+        color_table["Pixel Value"].append(index)
+        colorEntry = list(colorTable.GetColorEntry(index))
+        color_table["Red"].append(colorEntry[0])
+        color_table["Green"].append(colorEntry[1])
+        color_table["Blue"].append(colorEntry[2])
+        color_table["Alpha"].append(colorEntry[3])
+
+    return color_table
