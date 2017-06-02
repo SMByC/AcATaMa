@@ -82,7 +82,28 @@ def do_random_sampling(dockwidget):
 @error_handler()
 @wait_process()
 def do_stratified_random_sampling(dockwidget):
-    pass
+    # get values from category table  #########
+    point_values = []
+    number_of_samples = []
+    for row in range(dockwidget.table_pixel_colors_SRS.rowCount()):
+        point_values.append(int(dockwidget.table_pixel_colors_SRS.item(row, 0).text()))
+        number_of_samples.append(dockwidget.table_pixel_colors_SRS.item(row, 2).text())
+    # convert and check if number of samples only positive integers
+    try:
+        number_of_samples = [int(ns) for ns in number_of_samples]
+        if True in [ns < 0 for ns in number_of_samples]:
+            raise
+    except:
+        iface.messageBar().pushMessage("AcATaMa", "Error, the number of samples should be only positive integers",
+                                       level=QgsMessageBar.WARNING, duration=20)
+        return
+    total_of_samples = sum(number_of_samples)
+    if total_of_samples == 0:
+        iface.messageBar().pushMessage("AcATaMa", "Error, no number of samples configured!",
+                                       level=QgsMessageBar.WARNING, duration=20)
+        return
+
+
 
 
 def random_points_in_thematic(point_number, min_distance, extent, output_file, thematic_layer, nodata_thematic,
