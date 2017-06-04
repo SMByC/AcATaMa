@@ -150,7 +150,7 @@ def generate_random_points(point_number, min_distance, extent, output_file, them
 
     nPoints = 0
     nIterations = 0
-    maxIterations = point_number * 200
+    maxIterations = point_number * 4000
     total = 100.0 / point_number
 
     index = QgsSpatialIndex()
@@ -223,7 +223,7 @@ def generate_stratified_random_points(point_values, number_of_samples, min_dista
     nPoints = 0
     nPointsInCategories = [0]*len(number_of_samples)
     nIterations = 0
-    maxIterations = total_of_samples * 200
+    maxIterations = total_of_samples * 4000
     total = 100.0 / total_of_samples
 
     index = QgsSpatialIndex()
