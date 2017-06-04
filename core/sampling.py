@@ -166,8 +166,12 @@ def generate_random_points(point_number, min_distance, extent, output_file, them
         geom = QgsGeometry.fromPoint(pnt)
 
         # check if point is not a nodata value in thematic raster
-        point_value_in_thematic = \
-            int(thematic_layer.dataProvider().identify(pnt, QgsRaster.IdentifyFormatValue).results()[1])
+        try:
+            point_value_in_thematic = \
+                int(thematic_layer.dataProvider().identify(pnt, QgsRaster.IdentifyFormatValue).results()[1])
+        except:
+            nIterations += 1
+            continue
         if point_value_in_thematic == nodata_thematic:
             nIterations += 1
             continue
@@ -235,8 +239,12 @@ def generate_stratified_random_points(point_values, number_of_samples, min_dista
         geom = QgsGeometry.fromPoint(pnt)
 
         # check if point is not a nodata value in thematic raster
-        point_value_in_thematic = \
-            int(thematic_layer.dataProvider().identify(pnt, QgsRaster.IdentifyFormatValue).results()[1])
+        try:
+            point_value_in_thematic = \
+                int(thematic_layer.dataProvider().identify(pnt, QgsRaster.IdentifyFormatValue).results()[1])
+        except:
+            nIterations += 1
+            continue
         if point_value_in_thematic == nodata_thematic:
             nIterations += 1
             continue
