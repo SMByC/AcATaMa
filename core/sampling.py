@@ -31,12 +31,19 @@ from processing.tools import vector
 
 from AcATaMa.core.raster import get_extent
 from AcATaMa.core.dockwidget import error_handler, wait_process, load_layer_in_qgis, get_current_file_path_in, \
-    get_current_layer_in
+    get_current_layer_in, valid_file_selected_in
 
 
 @error_handler()
 @wait_process()
 def do_random_sampling(dockwidget):
+    # first check input files requirements
+    if not valid_file_selected_in(dockwidget.selectThematicRaster, "thematic raster"):
+        return
+    if dockwidget.groupBox_RSwithCR.isChecked():
+        if not valid_file_selected_in(dockwidget.selectCategRaster_RS, "categorical raster"):
+            return
+    # get and define some variables
     number_of_samples = int(dockwidget.numberOfSamples_RS.value())
     min_distance = int(dockwidget.minDistance_RS.value())
     thematic_raster = get_current_file_path_in(dockwidget.selectThematicRaster)
@@ -82,6 +89,12 @@ def do_random_sampling(dockwidget):
 @error_handler()
 @wait_process()
 def do_stratified_random_sampling(dockwidget):
+    # first check input files requirements
+    if not valid_file_selected_in(dockwidget.selectThematicRaster, "thematic raster"):
+        return
+    if not valid_file_selected_in(dockwidget.selectCategRaster_SRS, "categorical raster"):
+        return
+    # get and define some variables
     min_distance = int(dockwidget.minDistance_SRS.value())
     thematic_raster = get_current_file_path_in(dockwidget.selectThematicRaster)
     extent = get_extent(thematic_raster)

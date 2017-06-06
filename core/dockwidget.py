@@ -69,6 +69,16 @@ def wait_process():
     return decorate
 
 
+def valid_file_selected_in(combo_box, combobox_name):
+    try:
+        get_layer_by_name(combo_box.currentText()).dataProvider().dataSourceUri()
+        return True
+    except:
+        iface.messageBar().pushMessage("AcATaMa", "Error, please browse/select a valid file in "+combobox_name,
+                                       level=QgsMessageBar.WARNING, duration=10)
+        return False
+
+
 def get_layer_by_name(layer_name):
     for layer in QgsMapLayerRegistry.instance().mapLayers().values():
         if layer.name() == layer_name:

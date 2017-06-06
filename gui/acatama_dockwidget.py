@@ -31,7 +31,7 @@ from qgis.gui import QgsMessageBar
 from AcATaMa.core.sampling import do_random_sampling, do_stratified_random_sampling
 from AcATaMa.core.dockwidget import get_current_file_path_in, error_handler, \
     wait_process, load_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_current_layer_in, \
-    fill_pixel_and_color_table_srs
+    fill_pixel_and_color_table_srs, valid_file_selected_in
 from AcATaMa.core.raster import do_clipping_with_shape
 
 # plugin path
@@ -160,6 +160,12 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
     @error_handler()
     @wait_process()
     def clipping_thematic_raster(self):
+        # first check input files requirements
+        if not valid_file_selected_in(self.selectThematicRaster, "thematic raster"):
+            return
+        if not valid_file_selected_in(self.selectShapeArea, "shape study area"):
+            return
+
         clip_file = do_clipping_with_shape(
             get_current_file_path_in(self.selectThematicRaster),
             get_current_file_path_in(self.selectShapeArea), self.tmp_dir)
