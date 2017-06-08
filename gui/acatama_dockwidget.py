@@ -31,7 +31,7 @@ from qgis.gui import QgsMessageBar
 from AcATaMa.core.sampling import do_random_sampling, do_stratified_random_sampling
 from AcATaMa.core.dockwidget import get_current_file_path_in, error_handler, \
     wait_process, load_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_current_layer_in, \
-    fill_pixel_and_color_table_srs, valid_file_selected_in
+    fill_stratified_sampling_table, valid_file_selected_in, update_and_save_srs_data_table
 from AcATaMa.core.raster import do_clipping_with_shape
 
 # plugin path
@@ -128,8 +128,12 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             dialog_title=self.tr(u"Select the categorical raster file"),
             dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
-        # fill attribute table of categorical raster
-        self.selectCategRaster_SRS.currentIndexChanged.connect(lambda: fill_pixel_and_color_table_srs(self))
+        # init variable for save table content
+        self.srs_categorical_table = {}
+        # fill table of categorical raster
+        self.selectCategRaster_SRS.currentIndexChanged.connect(lambda: fill_stratified_sampling_table(self))
+        # for each item changed in table, save and update it
+        self.table_pixel_colors_SRS.itemChanged.connect(lambda: update_and_save_srs_data_table(self))
         # generate sampling
         self.buttonGenerateSRSampling.clicked.connect(lambda: do_stratified_random_sampling(self))
 
