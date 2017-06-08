@@ -146,7 +146,7 @@ def update_layers_list(combo_box, layer_type="any"):
     combo_box.setCurrentIndex(selected_index)
 
 
-def fill_pixel_and_color_table_srs(dockwidget):
+def fill_stratified_sampling_table(dockwidget):
     try:
         # check a valid current selected file
         get_layer_by_name(dockwidget.selectCategRaster_SRS.currentText()).dataProvider()
@@ -166,6 +166,12 @@ def fill_pixel_and_color_table_srs(dockwidget):
     column_count = len(color_table)
     row_count = len(color_table.values()[0])
     headers = ["Pixel Value", "Color", "No. samples"]
+
+    # restore values saved for number of samples configured for selected categorical file
+    if dockwidget.selectCategRaster_SRS.currentText() in dockwidget.srs_categorical_table.keys():
+        samples_values = dockwidget.srs_categorical_table[dockwidget.selectCategRaster_SRS.currentText()]
+    else:
+        samples_values = [str(0)]*row_count
 
     dockwidget.table_pixel_colors_SRS.setRowCount(row_count)
     dockwidget.table_pixel_colors_SRS.setColumnCount(len(headers))
@@ -189,7 +195,7 @@ def fill_pixel_and_color_table_srs(dockwidget):
                 dockwidget.table_pixel_colors_SRS.setItem(m, n, newitem)
         if key == "No. samples":
             for m in range(row_count):
-                newitem = QTableWidgetItem(str(0))
+                newitem = QTableWidgetItem(samples_values[m])
                 newitem.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
                 dockwidget.table_pixel_colors_SRS.setItem(m, n, newitem)
 
@@ -201,3 +207,12 @@ def fill_pixel_and_color_table_srs(dockwidget):
     dockwidget.table_pixel_colors_SRS.resizeColumnsToContents()
     dockwidget.table_pixel_colors_SRS.resizeRowsToContents()
 
+
+def update_and_save_srs_data_table(dockwidget):
+    number_of_samples = []
+    try:
+        for row in range(dockwidget.table_pixel_colors_SRS.rowCount()):
+            number_of_samples.append(dockwidget.table_pixel_colors_SRS.item(row, 2).text())
+    except:
+        return
+    dockwidget.srs_categorical_table[dockwidget.selectCategRaster_SRS.currentText()] = number_of_samples
