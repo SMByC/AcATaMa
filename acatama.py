@@ -183,3 +183,6 @@ class AcATaMa:
             self.dockwidget.tmp_dir.close()
             self.dockwidget.tmp_dir = None
         except: pass
+
+        # clear stratified sampling table
+        self.dockwidget.srs_categorical_table = {}
