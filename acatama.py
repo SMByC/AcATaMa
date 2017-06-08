@@ -126,6 +126,8 @@ class AcATaMa:
         # Commented next statement since it causes QGIS crashe
         # when closing the docked window:
         # self.dockwidget = None
+        self.dockwidget.deleteLater()
+        self.dockwidget = None
 
         self.pluginIsActive = False
 
@@ -167,6 +169,8 @@ class AcATaMa:
             self.dockwidget.show()
 
     def clear_all(self):
+        if not self.dockwidget:
+            return
         # unload all layers instances from Qgis saved in tmp dir
         try:
             d = self.dockwidget.tmp_dir
@@ -178,11 +182,6 @@ class AcATaMa:
             unload_layer_in_qgis(file_tmp)
 
         # clear self.dockwidget.tmp_dir
-        try:
+        if self.dockwidget.tmp_dir and os.path.isdir(self.dockwidget.tmp_dir):
             shutil.rmtree(self.dockwidget.tmp_dir, ignore_errors=True)
-            self.dockwidget.tmp_dir.close()
-            self.dockwidget.tmp_dir = None
-        except: pass
-
-        # clear stratified sampling table
-        self.dockwidget.srs_categorical_table = {}
+        self.dockwidget.tmp_dir = None
