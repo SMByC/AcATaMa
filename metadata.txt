@@ -17,8 +17,8 @@ author=Xavier Corredor Llano, SMBYC
 email=xcorredorl@ideam.gov.co
 
 homepage=https://smbyc.bitbucket.io/qgisplugins/acatama
-tracker=https://bitbucket.org/SMBYC/qgisplugin-acatama/issues
-repository=https://bitbucket.org/SMBYC/qgisplugin-acatama
+tracker=https://bitbucket.org/smbyc/qgisplugin-acatama/issues
+repository=https://bitbucket.org/smbyc/qgisplugin-acatama
 
 # Uncomment the following line and add your changelog:
 # changelog=

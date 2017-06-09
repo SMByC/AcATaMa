@@ -48,7 +48,7 @@ def error_handler():
                 msg_error = "\n################## ERROR IN ACATAMA PLUGIN:\n"
                 msg_error += traceback.format_exc()
                 msg_error += "\nPlease report the error in:\n" \
-                             "\thttps://bitbucket.org/SMBYC/qgisplugin-acatama/issues"
+                             "\thttps://bitbucket.org/smbyc/qgisplugin-acatama/issues"
                 msg_error += "\n################## END REPORT"
                 QgsMessageLog.logMessage(msg_error)
         return applicator
