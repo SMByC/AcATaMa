@@ -126,6 +126,8 @@ def unload_layer_in_qgis(layer_path):
 def update_layers_list(combo_box, layer_type="any"):
     if not QgsMapLayerRegistry:
         return
+    # block signals events from here
+    combo_box.blockSignals(True)
     save_selected = combo_box.currentText()
     combo_box.clear()
 
@@ -143,6 +145,8 @@ def update_layers_list(combo_box, layer_type="any"):
         [combo_box.addItem(layer.name()) for layer in layers]
 
     selected_index = combo_box.findText(save_selected, Qt.MatchFixedString)
+    # restore block signals events to normal behaviour
+    combo_box.blockSignals(False)
     combo_box.setCurrentIndex(selected_index)
 
 
