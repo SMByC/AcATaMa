@@ -126,8 +126,12 @@ def unload_layer_in_qgis(layer_path):
 def update_layers_list(combo_box, layer_type="any"):
     if not QgsMapLayerRegistry:
         return
-    # block signals events from here
-    combo_box.blockSignals(True)
+    try:
+        # block signals events from here
+        combo_box.blockSignals(True)
+    except:
+        return
+
     save_selected = combo_box.currentText()
     combo_box.clear()
 
