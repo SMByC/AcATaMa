@@ -35,3 +35,4 @@ class AboutDialog(QtGui.QDialog, FORM_CLASS):
         about_file = os.path.join(plugin_folder, 'gui', 'about.html')
         html_text = open(about_file).read()
         self.about_html.setHtml(html_text)
+        self.about_html.setOpenExternalLinks(True)
