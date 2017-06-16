@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>511</width>
-    <height>886</height>
+    <width>695</width>
+    <height>1102</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>AcATaMa</string>
+   <string>AcA&amp;TaMa</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout">
@@ -47,8 +47,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>487</width>
-             <height>807</height>
+             <width>671</width>
+             <height>960</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -142,7 +142,7 @@
             <item>
              <widget class="QGroupBox" name="groupBox_ShapeArea">
               <property name="title">
-               <string>Work only in a study area (optional)</string>
+               <string>Wor&amp;k only in a study area (optional)</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -359,13 +359,6 @@
               </property>
              </spacer>
             </item>
-            <item>
-             <widget class="QDialogButtonBox" name="buttonBox">
-              <property name="standardButtons">
-               <set>QDialogButtonBox::Close|QDialogButtonBox::Discard|QDialogButtonBox::Help</set>
-              </property>
-             </widget>
-            </item>
            </layout>
           </widget>
          </widget>
@@ -399,8 +392,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>487</width>
-             <height>807</height>
+             <width>671</width>
+             <height>960</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -416,7 +409,7 @@
                <enum>QTabWidget::West</enum>
               </property>
               <property name="currentIndex">
-               <number>0</number>
+               <number>1</number>
               </property>
               <widget class="QWidget" name="tab_RandomSampling">
                <attribute name="title">
@@ -824,7 +817,6 @@
                  </spacer>
                 </item>
                </layout>
-               <zorder>toolBox</zorder>
                <zorder>widget_StratifiedSampling</zorder>
                <zorder>widget_10</zorder>
                <zorder>widget_9</zorder>
@@ -848,6 +840,67 @@
         <string>Results</string>
        </attribute>
       </widget>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QWidget" name="widget_plugin_info" native="true">
+      <layout class="QHBoxLayout" name="horizontalLayout_25">
+       <property name="margin">
+        <number>0</number>
+       </property>
+       <item>
+        <spacer name="horizontalSpacer_10">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="plugin_version">
+         <property name="text">
+          <string>Version</string>
+         </property>
+         <property name="scaledContents">
+          <bool>false</bool>
+         </property>
+         <property name="margin">
+          <number>6</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="button_about">
+         <property name="cursor">
+          <cursorShape>WhatsThisCursor</cursorShape>
+         </property>
+         <property name="text">
+          <string>About</string>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_12">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
      </widget>
     </item>
    </layout>

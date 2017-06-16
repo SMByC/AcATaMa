@@ -21,6 +21,7 @@
 
 import os
 import tempfile
+import ConfigParser
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSignal, Qt, pyqtSlot
@@ -33,12 +34,17 @@ from AcATaMa.core.dockwidget import get_current_file_path_in, error_handler, \
     wait_process, load_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_current_layer_in, \
     fill_stratified_sampling_table, valid_file_selected_in, update_and_save_srs_data_table
 from AcATaMa.core.raster import do_clipping_with_shape
+from AcATaMa.gui.about_dialog import AboutDialog
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     plugin_folder, 'ui', 'acatama_dockwidget_base.ui'))
 
+cfg = ConfigParser.SafeConfigParser()
+cfg.read(os.path.join(plugin_folder, 'metadata.txt'))
+VERSION = cfg.get('general', 'version')
+HOMEPAGE = cfg.get('general', 'homepage')
 
 class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
@@ -64,6 +70,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     def setup_gui(self):
         # plugin info #########
+        self.about_dialog = AboutDialog()
+        self.plugin_version.setText(self.tr(u"AcATaMa v{}".format(VERSION)))
+        self.button_about.clicked.connect(self.about_dialog.show)
 
         # load thematic raster image #########
         update_layers_list(self.selectThematicRaster, "raster")
