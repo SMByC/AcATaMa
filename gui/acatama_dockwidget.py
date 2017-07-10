@@ -125,7 +125,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
         # generate sampling
-        self.buttonGenerateRSampling.clicked.connect(lambda: do_random_sampling(self))
+        self.widget_generate_RS.buttonGenerateSampling.clicked.connect(lambda: do_random_sampling(self))
 
         # stratified random sampling #########
         update_layers_list(self.selectCategRaster_SRS, "raster")
@@ -144,7 +144,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # for each item changed in table, save and update it
         self.table_pixel_colors_SRS.itemChanged.connect(lambda: update_and_save_srs_data_table(self))
         # generate sampling
-        self.buttonGenerateSRSampling.clicked.connect(lambda: do_stratified_random_sampling(self))
+        self.widget_generate_SRS.buttonGenerateSampling.clicked.connect(lambda: do_stratified_random_sampling(self))
 
     @pyqtSlot()
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):

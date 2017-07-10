@@ -409,7 +409,7 @@
                <enum>QTabWidget::West</enum>
               </property>
               <property name="currentIndex">
-               <number>1</number>
+               <number>0</number>
               </property>
               <widget class="QWidget" name="tab_RandomSampling">
                <attribute name="title">
@@ -598,36 +598,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QWidget" name="widget_8" native="true">
-                  <layout class="QHBoxLayout" name="horizontalLayout_5">
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <item>
-                    <spacer name="horizontalSpacer_2">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="buttonGenerateRSampling">
-                     <property name="text">
-                      <string>Generate sampling</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
+                 <widget class="WidgetGenerateSampling" name="widget_generate_RS" native="true"/>
                 </item>
                 <item>
                  <spacer name="verticalSpacer_3">
@@ -772,36 +743,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QWidget" name="widget_9" native="true">
-                  <layout class="QHBoxLayout" name="horizontalLayout_7">
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <item>
-                    <spacer name="horizontalSpacer_4">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="buttonGenerateSRSampling">
-                     <property name="text">
-                      <string>Generate sampling</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
+                 <widget class="WidgetGenerateSampling" name="widget_generate_SRS" native="true"/>
                 </item>
                 <item>
                  <spacer name="verticalSpacer_4">
@@ -817,9 +759,9 @@
                  </spacer>
                 </item>
                </layout>
+               <zorder>widget_generate_SRS</zorder>
                <zorder>widget_StratifiedSampling</zorder>
                <zorder>widget_10</zorder>
-               <zorder>widget_9</zorder>
                <zorder>verticalSpacer_4</zorder>
               </widget>
              </widget>
@@ -906,6 +848,14 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>WidgetGenerateSampling</class>
+   <extends>QWidget</extends>
+   <header>AcATaMa.gui.widget_generate_sampling</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
@@ -915,12 +865,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>122</x>
-     <y>515</y>
+     <x>126</x>
+     <y>558</y>
     </hint>
     <hint type="destinationlabel">
-     <x>291</x>
-     <y>499</y>
+     <x>303</x>
+     <y>592</y>
     </hint>
    </hints>
   </connection>
@@ -931,12 +881,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>151</x>
-     <y>288</y>
+     <x>155</x>
+     <y>359</y>
     </hint>
     <hint type="destinationlabel">
-     <x>291</x>
-     <y>307</y>
+     <x>303</x>
+     <y>423</y>
     </hint>
    </hints>
   </connection>
@@ -947,12 +897,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>122</x>
-     <y>276</y>
+     <x>166</x>
+     <y>706</y>
     </hint>
     <hint type="destinationlabel">
-     <x>34</x>
-     <y>339</y>
+     <x>86</x>
+     <y>702</y>
     </hint>
    </hints>
   </connection>
