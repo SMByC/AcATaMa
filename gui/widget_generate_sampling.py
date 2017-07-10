@@ -32,6 +32,14 @@ class WidgetGenerateSampling(QtGui.QWidget, FORM_CLASS):
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.setupUi(self)
-
+        ######
         self.widget_neighbour_aggregation.setHidden(True)
+        # fill same_class_of_neighbors
+        self.fill_same_class_of_neighbors()
+        self.number_of_neighbors.currentIndexChanged.connect(self.fill_same_class_of_neighbors)
+
+    def fill_same_class_of_neighbors(self):
+        self.same_class_of_neighbors.clear()
+        number_of_neighbor = int(self.number_of_neighbors.currentText())
+        self.same_class_of_neighbors.addItems([str(x) for x in range(1, number_of_neighbor+1)])
 
