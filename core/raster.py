@@ -19,8 +19,8 @@
  ***************************************************************************/
 """
 import os
-import gdal
 import numpy as np
+from osgeo import gdal
 from subprocess import call
 
 from qgis.utils import iface
