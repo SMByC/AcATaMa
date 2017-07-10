@@ -171,7 +171,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     @error_handler()
-    @wait_process()
+    @wait_process("buttonClipping")
     def clipping_thematic_raster(self):
         # first check input files requirements
         if not valid_file_selected_in(self.selectThematicRaster, "thematic raster"):

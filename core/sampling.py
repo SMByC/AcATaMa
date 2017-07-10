@@ -35,7 +35,7 @@ from AcATaMa.core.dockwidget import error_handler, wait_process, load_layer_in_q
 
 
 @error_handler()
-@wait_process()
+@wait_process('widget_generate_RS.buttonGenerateSampling')
 def do_random_sampling(dockwidget):
     # first check input files requirements
     if not valid_file_selected_in(dockwidget.selectThematicRaster, "thematic raster"):
@@ -87,7 +87,7 @@ def do_random_sampling(dockwidget):
 
 
 @error_handler()
-@wait_process()
+@wait_process('widget_generate_SRS.buttonGenerateSampling')
 def do_stratified_random_sampling(dockwidget):
     # first check input files requirements
     if not valid_file_selected_in(dockwidget.selectThematicRaster, "thematic raster"):
