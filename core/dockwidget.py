@@ -55,9 +55,16 @@ def error_handler():
     return decorate
 
 
-def wait_process():
+def wait_process(disable_button=None):
     def decorate(f):
         def applicator(*args, **kwargs):
+            # disable button during process
+            if disable_button:
+                if "." in disable_button:
+                    getattr(getattr(args[0], disable_button.split(".")[0]),
+                            disable_button.split(".")[1]).setEnabled(False)
+                else:
+                    getattr(args[0], disable_button).setEnabled(False)
             # mouse wait
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             # do
@@ -65,6 +72,13 @@ def wait_process():
             # restore mouse
             QApplication.restoreOverrideCursor()
             QApplication.processEvents()
+            # restore button
+            if disable_button:
+                if "." in disable_button:
+                    getattr(getattr(args[0], disable_button.split(".")[0]),
+                            disable_button.split(".")[1]).setEnabled(True)
+                else:
+                    getattr(args[0], disable_button).setEnabled(True)
         return applicator
     return decorate
 
