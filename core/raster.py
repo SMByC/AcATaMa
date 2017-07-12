@@ -75,3 +75,14 @@ def get_color_table(raster_path, band_number=1):
         color_table["Alpha"].append(colorEntry[3])
 
     return color_table
+
+
+class Raster():
+    def __init__(self, file_selected_combo_box, nodata=None):
+        from AcATaMa.core.dockwidget import get_current_file_path_in, get_current_layer_in
+        self.file_path = get_current_file_path_in(file_selected_combo_box)
+        self.qgs_layer = get_current_layer_in(file_selected_combo_box)
+        self.nodata = nodata
+
+    def extent(self):
+        return get_extent(self.file_path)
