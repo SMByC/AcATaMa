@@ -72,8 +72,8 @@ class Point():
         """
         pixel_value_in_categ_raster = \
             int(CategoricalR.qgs_layer.dataProvider().identify(self.QgsPnt, QgsRaster.IdentifyFormatValue).results()[1])
-        index_pixel_value = pixel_values.index(pixel_value_in_categ_raster)
-        if nPointsInCategories[index_pixel_value] >= number_of_samples[index_pixel_value]:
+        self.index_pixel_value = pixel_values.index(pixel_value_in_categ_raster)
+        if nPointsInCategories[self.index_pixel_value] >= number_of_samples[self.index_pixel_value]:
             return False
         return True
 
