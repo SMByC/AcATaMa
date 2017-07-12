@@ -228,5 +228,7 @@ class Sampling():
             self.points[nPoints] = sampling_point.QgsPnt
             nPoints += 1
             nIterations += 1
+            if self.sampling_type == "SRS":
+                nPointsInCategories[sampling_point.index_pixel_value] += 1
             # feedback.setProgress(int(nPoints * total))
         del writer
