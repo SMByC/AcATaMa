@@ -56,7 +56,7 @@ class Point():
             return True
         return False
 
-    def in_categ_raster(self, pixel_values, CategoricalR):
+    def in_categorical_raster(self, pixel_values, CategoricalR):
         """Check if point is at least in one pixel values set of the categorical raster
         """
         if pixel_values is not None:

@@ -60,7 +60,7 @@ def do_random_sampling(dockwidget):
                                            level=QgsMessageBar.WARNING, duration=10)
             return
     else:
-        CategoricalR = Raster(file_selected_combo_box=dockwidget.selectThematicRaster)
+        CategoricalR = None
         pixel_values = None
 
     # process
@@ -209,7 +209,7 @@ class Sampling():
                 nIterations += 1
                 continue
             if self.sampling_type == "RS":
-                if not sampling_point.in_categ_raster(self.pixel_values, self.CategoricalR):
+                if not sampling_point.in_categorical_raster(self.pixel_values, self.CategoricalR):
                     nIterations += 1
                     continue
             if self.sampling_type == "SRS":
