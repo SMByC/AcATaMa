@@ -23,6 +23,7 @@ import numpy as np
 from osgeo import gdal
 from subprocess import call
 
+from qgis.core import QgsRaster, QgsPoint
 from qgis.utils import iface
 from qgis.gui import QgsMessageBar
 
@@ -86,3 +87,9 @@ class Raster():
 
     def extent(self):
         return get_extent(self.file_path)
+
+    def get_pixel_value_from_xy(self, x, y, band=1):
+        return self.qgs_layer.dataProvider().identify(QgsPoint(x, y), QgsRaster.IdentifyFormatValue).results()[band]
+
+    def get_pixel_value_from_pnt(self, point, band=1):
+        return self.qgs_layer.dataProvider().identify(point, QgsRaster.IdentifyFormatValue).results()[band]

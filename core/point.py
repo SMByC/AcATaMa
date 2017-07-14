@@ -18,7 +18,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsGeometry, QgsPoint, QgsRaster
+from qgis.core import QgsGeometry, QgsPoint
 from processing.tools import vector
 
 
@@ -31,8 +31,7 @@ class Point():
         """Check if the point is in valid data in thematic raster
         """
         try:
-            point_value_in_thematic = \
-                int(ThematicR.qgs_layer.dataProvider().identify(self.QgsPnt, QgsRaster.IdentifyFormatValue).results()[1])
+            point_value_in_thematic = int(ThematicR.get_pixel_value_from_pnt(self.QgsPnt, band=1))
         except:
             return False
         if point_value_in_thematic == ThematicR.nodata:
@@ -60,8 +59,7 @@ class Point():
         """Check if point is at least in one pixel values set of the categorical raster
         """
         if pixel_values is not None:
-            point_value_in_categ_raster = \
-                int(CategoricalR.qgs_layer.dataProvider().identify(self.QgsPnt, QgsRaster.IdentifyFormatValue).results()[1])
+            point_value_in_categ_raster = int(CategoricalR.get_pixel_value_from_pnt(self.QgsPnt, band=1))
             if point_value_in_categ_raster not in pixel_values:
                 return False
         return True
@@ -70,8 +68,7 @@ class Point():
         """Check if point is at least in one pixel values set of the stratified
         categorical raster
         """
-        pixel_value_in_categ_raster = \
-            int(CategoricalR.qgs_layer.dataProvider().identify(self.QgsPnt, QgsRaster.IdentifyFormatValue).results()[1])
+        pixel_value_in_categ_raster = int(CategoricalR.get_pixel_value_from_pnt(self.QgsPnt, band=1))
         self.index_pixel_value = pixel_values.index(pixel_value_in_categ_raster)
         if nPointsInCategories[self.index_pixel_value] >= number_of_samples[self.index_pixel_value]:
             return False
