@@ -18,7 +18,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="groupBox_neighbour_aggregation">
      <property name="title">
       <string>With neighbors aggregation (optional)</string>
      </property>
@@ -38,7 +38,7 @@
          <item>
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>Accept the pixel in the sampling if it have at least the number of neighbors of the same class:</string>
+            <string>Only accept the pixel in the sampling if it have at least the number of neighbors of the same class:</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -71,14 +71,14 @@
             <item row="0" column="0">
              <widget class="QLabel" name="label_16">
               <property name="text">
-               <string>Number of neighbors</string>
+               <string>Number of neighbors:</string>
               </property>
              </widget>
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="label_2">
               <property name="text">
-               <string>Neighbors of the same class</string>
+               <string>Min neighbors with the same class:</string>
               </property>
              </widget>
             </item>
@@ -128,7 +128,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>groupBox</sender>
+   <sender>groupBox_neighbour_aggregation</sender>
    <signal>clicked(bool)</signal>
    <receiver>widget_neighbour_aggregation</receiver>
    <slot>setVisible(bool)</slot>
