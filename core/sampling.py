@@ -192,7 +192,7 @@ class Sampling():
         """
 
         xMin, yMax, xMax, yMin = self.ThematicR.extent()
-        ThematicR_boundaries = QgsGeometry().fromRect(QgsRectangle(xMin, yMin, xMax, yMax))
+        self.ThematicR_boundaries = QgsGeometry().fromRect(QgsRectangle(xMin, yMin, xMax, yMax))
 
         fields = QgsFields()
         fields.append(QgsField('id', QVariant.Int, '', 10, 0))
@@ -203,13 +203,13 @@ class Sampling():
             total_of_samples = self.number_of_samples
         if self.sampling_type == "SRS":
             total_of_samples = sum(self.number_of_samples)
-            nPointsInCategories = [0] * len(self.number_of_samples)
+            self.nPointsInCategories = [0] * len(self.number_of_samples)
 
         nPoints = 0
         nIterations = 0
         maxIterations = total_of_samples * 4000
         total = 100.0 / total_of_samples
-        index = QgsSpatialIndex()
+        self.index = QgsSpatialIndex()
         random.seed()
 
         while nIterations < maxIterations and nPoints < total_of_samples:
@@ -218,27 +218,8 @@ class Sampling():
 
             sampling_point = Point(rx, ry)
 
-            # make several checks to the point, else discard
-            if not sampling_point.in_valid_data(self.ThematicR):
-                nIterations += 1
-                continue
-            if not sampling_point.in_extent(ThematicR_boundaries):
-                nIterations += 1
-                continue
-            if not sampling_point.in_mim_distance(index, self.min_distance, self.points):
-                nIterations += 1
-                continue
-            if self.sampling_type == "RS":
-                if not sampling_point.in_categorical_raster(self.pixel_values, self.CategoricalR):
-                    nIterations += 1
-                    continue
-            if self.sampling_type == "SRS":
-                if not sampling_point.in_stratified_raster(self.pixel_values, self.number_of_samples,
-                                                           self.CategoricalR, nPointsInCategories):
-                    nIterations += 1
-                    continue
-            if self.neighbor_aggregation and \
-                    not sampling_point.check_neighbors_aggregation(self.ThematicR, *self.neighbor_aggregation):
+            # checks to the sampling point, else discard and continue
+            if not self.check_sampling_point(sampling_point):
                 nIterations += 1
                 continue
 
@@ -248,11 +229,39 @@ class Sampling():
             f.setAttribute('id', nPoints)
             f.setGeometry(sampling_point.QgsGeom)
             writer.addFeature(f)
-            index.insertFeature(f)
+            self.index.insertFeature(f)
             self.points[nPoints] = sampling_point.QgsPnt
             nPoints += 1
             nIterations += 1
             if self.sampling_type == "SRS":
-                nPointsInCategories[sampling_point.index_pixel_value] += 1
+                self.nPointsInCategories[sampling_point.index_pixel_value] += 1
             # feedback.setProgress(int(nPoints * total))
         del writer
+
+    def check_sampling_point(self, sampling_point):
+        """Make several checks to the sampling point, else discard
+        """
+        if not sampling_point.in_valid_data(self.ThematicR):
+            return False
+
+        if not sampling_point.in_extent(self.ThematicR_boundaries):
+            return False
+
+        if not sampling_point.in_mim_distance(self.index, self.min_distance, self.points):
+            return False
+
+        if self.sampling_type == "RS":
+            if not sampling_point.in_categorical_raster(self.pixel_values, self.CategoricalR):
+                return False
+        if self.sampling_type == "SRS":
+            if not sampling_point.in_stratified_raster(self.pixel_values, self.number_of_samples,
+                                                       self.CategoricalR, self.nPointsInCategories):
+                return False
+
+        if self.neighbor_aggregation and \
+                not sampling_point.check_neighbors_aggregation(self.ThematicR, *self.neighbor_aggregation):
+            return False
+
+        return True
+
+
