@@ -439,7 +439,7 @@
                    <item>
                     <widget class="QLabel" name="label_8">
                      <property name="text">
-                      <string>Generate N number of sampling points inside only valid thematic data and optionally only inside in valid pixel values in categorical raster
+                      <string>Generate N number of sampling points inside only valid thematic data and optionally only inside in valid pixel values in categorical raster and/or with neighbors aggregation
 </string>
                      </property>
                      <property name="alignment">
@@ -472,7 +472,7 @@
                       <item row="0" column="0">
                        <widget class="QLabel" name="label_15">
                         <property name="text">
-                         <string>Number of samples</string>
+                         <string>Number of samples:</string>
                         </property>
                        </widget>
                       </item>
@@ -489,7 +489,7 @@
                       <item row="1" column="0">
                        <widget class="QLabel" name="label_14">
                         <property name="text">
-                         <string>Minumum distance</string>
+                         <string>Minumum distance:</string>
                         </property>
                        </widget>
                       </item>
@@ -643,7 +643,7 @@
                    <item>
                     <widget class="QLabel" name="label_11">
                      <property name="text">
-                      <string>Generate N number of sampling points for each pixel categorical value set and only in valid thematic data
+                      <string>Generate N number of sampling points for each pixel categorical value set and only in valid thematic data and optionally with neighbors aggregation
 </string>
                      </property>
                      <property name="alignment">
@@ -725,7 +725,7 @@
                    <item row="0" column="0">
                     <widget class="QLabel" name="label_18">
                      <property name="text">
-                      <string>Minumum distance</string>
+                      <string>Minumum distance:</string>
                      </property>
                     </widget>
                    </item>

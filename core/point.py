@@ -74,3 +74,30 @@ class Point():
             return False
         return True
 
+    def check_neighbors_aggregation(self, ThematicR, num_neighbors, min_with_same_class):
+        """Check if the pixel have at least the minimum the neighbors with the
+        same class of the pixel
+        """
+        pixel_class_value = int(ThematicR.get_pixel_value_from_pnt(self.QgsPnt, band=1))
+
+        pixel_size_x = ThematicR.qgs_layer.rasterUnitsPerPixelX()
+        pixel_size_y = ThematicR.qgs_layer.rasterUnitsPerPixelY()
+
+        if num_neighbors == 8:
+            x_list = [pixel_size_x*mul+self.QgsPnt.x() for mul in range(-1, 2)]
+            y_list = [pixel_size_y*mul+self.QgsPnt.y() for mul in range(-1, 2)]
+        if num_neighbors == 24:
+            x_list = [pixel_size_x*mul+self.QgsPnt.x() for mul in range(-2, 3)]
+            y_list = [pixel_size_y*mul+self.QgsPnt.y() for mul in range(-2, 3)]
+
+        neighbors = []
+        for x, y in ((_x, _y) for _x in x_list for _y in y_list):
+            try:
+                neighbors.append(int(ThematicR.get_pixel_value_from_xy(x, y, band=1)))
+            except:
+                continue
+
+        if neighbors.count(pixel_class_value) > min_with_same_class:
+            return True
+
+        return False

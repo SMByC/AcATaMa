@@ -63,8 +63,17 @@ def do_random_sampling(dockwidget):
         CategoricalR = None
         pixel_values = None
 
+    # check neighbors aggregation
+    if dockwidget.widget_generate_RS.groupBox_neighbour_aggregation.isChecked():
+        number_of_neighbors = int(dockwidget.widget_generate_RS.number_of_neighbors.currentText())
+        same_class_of_neighbors = int(dockwidget.widget_generate_RS.same_class_of_neighbors.currentText())
+        neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
+    else:
+        neighbor_aggregation = None
+
     # process
-    sampling = Sampling("RS", pixel_values, number_of_samples, min_distance, ThematicR, CategoricalR, dockwidget.tmp_dir)
+    sampling = Sampling("RS", pixel_values, number_of_samples, min_distance, neighbor_aggregation,
+                        ThematicR, CategoricalR, dockwidget.tmp_dir)
     sampling.generate_sampling_points()
 
     # success
@@ -119,8 +128,17 @@ def do_stratified_random_sampling(dockwidget):
                                        level=QgsMessageBar.WARNING, duration=10)
         return
 
+    # check neighbors aggregation
+    if dockwidget.widget_generate_SRS.groupBox_neighbour_aggregation.isChecked():
+        number_of_neighbors = int(dockwidget.widget_generate_SRS.number_of_neighbors.currentText())
+        same_class_of_neighbors = int(dockwidget.widget_generate_SRS.same_class_of_neighbors.currentText())
+        neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
+    else:
+        neighbor_aggregation = None
+
     # process
-    sampling = Sampling("SRS", pixel_values, number_of_samples, min_distance, ThematicR, CategoricalR, dockwidget.tmp_dir)
+    sampling = Sampling("SRS", pixel_values, number_of_samples, min_distance, neighbor_aggregation,
+                        ThematicR, CategoricalR, dockwidget.tmp_dir)
     sampling.generate_sampling_points()
 
     # success
@@ -144,7 +162,8 @@ class Sampling():
     # for save all instances
     samplings = dict()  # {name_in_qgis: class instance}
 
-    def __init__(self, sampling_type, pixel_values, number_of_samples, min_distance, ThematicR, CategoricalR, out_dir):
+    def __init__(self, sampling_type, pixel_values, number_of_samples, min_distance,
+                 neighbor_aggregation, ThematicR, CategoricalR, out_dir):
         # set and init variables
         # sampling_type => "RS" (random sampling),
         #                  "SRS" (stratified random sampling)
@@ -152,6 +171,7 @@ class Sampling():
         self.pixel_values = pixel_values
         self.number_of_samples = number_of_samples
         self.min_distance = min_distance
+        self.neighbor_aggregation = neighbor_aggregation
         self.ThematicR = ThematicR
         self.CategoricalR = CategoricalR
 
@@ -217,6 +237,10 @@ class Sampling():
                                                            self.CategoricalR, nPointsInCategories):
                     nIterations += 1
                     continue
+            if self.neighbor_aggregation and \
+                    not sampling_point.check_neighbors_aggregation(self.ThematicR, *self.neighbor_aggregation):
+                nIterations += 1
+                continue
 
             f = QgsFeature(nPoints)
             f.initAttributes(1)
