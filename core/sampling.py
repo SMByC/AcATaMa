@@ -71,10 +71,16 @@ def do_random_sampling(dockwidget):
     else:
         neighbor_aggregation = None
 
+    # set the attempts_by_sampling
+    if dockwidget.widget_generate_RS.button_attempts_by_sampling.isChecked():
+        attempts_by_sampling = int(dockwidget.widget_generate_RS.attempts_by_sampling.value())
+    else:
+        attempts_by_sampling = None
+
     # process
-    sampling = Sampling("RS", pixel_values, number_of_samples, min_distance, neighbor_aggregation,
-                        ThematicR, CategoricalR, dockwidget.tmp_dir)
-    sampling.generate_sampling_points()
+    sampling = Sampling("RS", ThematicR, CategoricalR, dockwidget.tmp_dir)
+    sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
+                                      neighbor_aggregation, attempts_by_sampling)
 
     # success
     if len(sampling.points) == number_of_samples:
@@ -136,10 +142,16 @@ def do_stratified_random_sampling(dockwidget):
     else:
         neighbor_aggregation = None
 
+    # set the attempts_by_sampling
+    if dockwidget.widget_generate_SRS.button_attempts_by_sampling.isChecked():
+        attempts_by_sampling = int(dockwidget.widget_generate_SRS.attempts_by_sampling.value())
+    else:
+        attempts_by_sampling = None
+
     # process
-    sampling = Sampling("SRS", pixel_values, number_of_samples, min_distance, neighbor_aggregation,
-                        ThematicR, CategoricalR, dockwidget.tmp_dir)
-    sampling.generate_sampling_points()
+    sampling = Sampling("SRS", ThematicR, CategoricalR, dockwidget.tmp_dir)
+    sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
+                                      neighbor_aggregation, attempts_by_sampling)
 
     # success
     if len(sampling.points) == total_of_samples:
@@ -162,16 +174,11 @@ class Sampling():
     # for save all instances
     samplings = dict()  # {name_in_qgis: class instance}
 
-    def __init__(self, sampling_type, pixel_values, number_of_samples, min_distance,
-                 neighbor_aggregation, ThematicR, CategoricalR, out_dir):
+    def __init__(self, sampling_type, ThematicR, CategoricalR, out_dir):
         # set and init variables
         # sampling_type => "RS" (random sampling),
         #                  "SRS" (stratified random sampling)
         self.sampling_type = sampling_type
-        self.pixel_values = pixel_values
-        self.number_of_samples = number_of_samples
-        self.min_distance = min_distance
-        self.neighbor_aggregation = neighbor_aggregation
         self.ThematicR = ThematicR
         self.CategoricalR = CategoricalR
 
@@ -186,10 +193,15 @@ class Sampling():
         # for save all sampling points
         self.points = dict()
 
-    def generate_sampling_points(self):
+    def generate_sampling_points(self, pixel_values, number_of_samples, min_distance,
+                                 neighbor_aggregation, attempts_by_sampling):
         """Some code base from (by Alexander Bruy):
         https://github.com/qgis/QGIS/blob/release-2_18/python/plugins/processing/algs/qgis/RandomPointsExtent.py
         """
+        self.pixel_values = pixel_values
+        self.number_of_samples = number_of_samples
+        self.min_distance = min_distance
+        self.neighbor_aggregation = neighbor_aggregation
 
         xMin, yMax, xMax, yMin = self.ThematicR.extent()
         self.ThematicR_boundaries = QgsGeometry().fromRect(QgsRectangle(xMin, yMin, xMax, yMax))
@@ -207,10 +219,13 @@ class Sampling():
 
         nPoints = 0
         nIterations = 0
-        maxIterations = total_of_samples * 4000
+        random.seed()
         total = 100.0 / total_of_samples
         self.index = QgsSpatialIndex()
-        random.seed()
+        if attempts_by_sampling:
+            maxIterations = total_of_samples * attempts_by_sampling
+        else:
+            maxIterations = float('Inf')
 
         while nIterations < maxIterations and nPoints < total_of_samples:
             rx = xMin + (xMax - xMin) * random.random()
