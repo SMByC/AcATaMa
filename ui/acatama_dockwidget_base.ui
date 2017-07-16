@@ -583,7 +583,11 @@
                              </widget>
                             </item>
                             <item>
-                             <widget class="QLineEdit" name="pixelsValuesCategRaster"/>
+                             <widget class="QLineEdit" name="pixelsValuesCategRaster">
+                              <property name="toolTip">
+                               <string>Enter multiple pixel values separated by comma</string>
+                              </property>
+                             </widget>
                             </item>
                            </layout>
                           </widget>
