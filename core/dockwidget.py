@@ -68,7 +68,7 @@ def wait_process(disable_button=None):
             # mouse wait
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             # do
-            f(*args, **kwargs)
+            obj_returned = f(*args, **kwargs)
             # restore mouse
             QApplication.restoreOverrideCursor()
             QApplication.processEvents()
@@ -79,6 +79,8 @@ def wait_process(disable_button=None):
                             disable_button.split(".")[1]).setEnabled(True)
                 else:
                     getattr(args[0], disable_button).setEnabled(True)
+            # finally return the object by f
+            return obj_returned
         return applicator
     return decorate
 
@@ -168,73 +170,157 @@ def update_layers_list(combo_box, layer_type="any"):
     combo_box.setCurrentIndex(selected_index)
 
 
-def fill_stratified_sampling_table(dockwidget):
-    try:
-        # check a valid current selected file
-        get_layer_by_name(dockwidget.selectCategRaster_SRS.currentText()).dataProvider()
-    except:
-        # clear table
-        dockwidget.table_pixel_colors_SRS.setRowCount(0)
-        dockwidget.table_pixel_colors_SRS.setColumnCount(0)
-        return
+@wait_process()
+def get_pixel_count_by_category(srs_table, categorical_raster):
+    """Get the total pixel count for all pixel values"""
+    from osgeo import gdalnumeric
+    cateR_numpy = gdalnumeric.LoadFile(categorical_raster)
+    pixel_count = []
+    for pixel_value in srs_table["color_table"]["Pixel Value"]:
+        pixel_count.append((cateR_numpy == int(pixel_value)).sum())
+    return pixel_count
 
-    color_table = get_color_table(get_current_file_path_in(dockwidget.selectCategRaster_SRS))
-    if not color_table:
-        # clear table
-        dockwidget.table_pixel_colors_SRS.setRowCount(0)
-        dockwidget.table_pixel_colors_SRS.setColumnCount(0)
-        return
 
-    column_count = len(color_table)
-    row_count = len(color_table.values()[0])
-    headers = ["Pixel Value", "Color", "No. samples"]
+def get_num_samples_by_area_based_proportion(srs_table, total_std_error):
+    total_pixel_count = float(sum(srs_table["pixel_count"]))
+    ratio_pixel_count = [p_c/total_pixel_count for p_c in srs_table["pixel_count"]]
+    Si = [(float(std_error)*(1-float(std_error)))**0.5 for std_error in srs_table["std_error"]]
+    total_num_samples = (sum([rpc*si for rpc, si in zip(ratio_pixel_count, Si)])/total_std_error)**2
+    return [str(int(round(rpc*total_num_samples))) for rpc in ratio_pixel_count]
 
-    # restore values saved for number of samples configured for selected categorical file
-    if dockwidget.selectCategRaster_SRS.currentText() in dockwidget.srs_categorical_table.keys():
-        samples_values = dockwidget.srs_categorical_table[dockwidget.selectCategRaster_SRS.currentText()]
-    else:
-        samples_values = [str(0)]*row_count
 
-    dockwidget.table_pixel_colors_SRS.setRowCount(row_count)
-    dockwidget.table_pixel_colors_SRS.setColumnCount(len(headers))
+@wait_process()
+def update_srs_table_content(dockwidget, srs_table):
+    # block signals events from here
+    dockwidget.TableWidget_SRS.blockSignals(True)
+    # init table
+    dockwidget.TableWidget_SRS.setRowCount(srs_table["row_count"])
+    dockwidget.TableWidget_SRS.setColumnCount(srs_table["column_count"])
 
     # enter data onto Table
-    for n, key in enumerate(headers):
-        if key == "Pixel Value":
-            for m, item in enumerate(color_table[key]):
+    for n, key in enumerate(srs_table["header"]):
+        if key == "Pix Val":
+            for m, item in enumerate(srs_table["color_table"]["Pixel Value"]):
                 newitem = QTableWidgetItem(str(item))
                 newitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                 newitem.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                dockwidget.table_pixel_colors_SRS.setItem(m, n, newitem)
+                dockwidget.TableWidget_SRS.setItem(m, n, newitem)
         if key == "Color":
-            for m in range(row_count):
+            for m in range(srs_table["row_count"]):
                 newitem = QTableWidgetItem()
                 newitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-                newitem.setBackground(QColor(color_table["Red"][m],
-                                             color_table["Green"][m],
-                                             color_table["Blue"][m],
-                                             color_table["Alpha"][m]))
-                dockwidget.table_pixel_colors_SRS.setItem(m, n, newitem)
-        if key == "No. samples":
-            for m in range(row_count):
-                newitem = QTableWidgetItem(samples_values[m])
+                newitem.setBackground(QColor(srs_table["color_table"]["Red"][m],
+                                             srs_table["color_table"]["Green"][m],
+                                             srs_table["color_table"]["Blue"][m],
+                                             srs_table["color_table"]["Alpha"][m]))
+                dockwidget.TableWidget_SRS.setItem(m, n, newitem)
+        if key == "Num Samples":
+            for m in range(srs_table["row_count"]):
+                newitem = QTableWidgetItem(srs_table["num_samples"][m])
                 newitem.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                dockwidget.table_pixel_colors_SRS.setItem(m, n, newitem)
+                dockwidget.TableWidget_SRS.setItem(m, n, newitem)
+        if key == "Std Error":
+            for m in range(srs_table["row_count"]):
+                newitem = QTableWidgetItem(srs_table["std_error"][m])
+                newitem.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                dockwidget.TableWidget_SRS.setItem(m, n, newitem)
 
     # hidden row labels
-    dockwidget.table_pixel_colors_SRS.verticalHeader().setVisible(False)
+    dockwidget.TableWidget_SRS.verticalHeader().setVisible(False)
     # add Header
-    dockwidget.table_pixel_colors_SRS.setHorizontalHeaderLabels(headers)
+    dockwidget.TableWidget_SRS.setHorizontalHeaderLabels(srs_table["header"])
     # adjust size of Table
-    dockwidget.table_pixel_colors_SRS.resizeColumnsToContents()
-    dockwidget.table_pixel_colors_SRS.resizeRowsToContents()
+    dockwidget.TableWidget_SRS.resizeColumnsToContents()
+    dockwidget.TableWidget_SRS.resizeRowsToContents()
+    # set label total samples
+    dockwidget.label_TotalNumSamples.setText(
+        "Total number of samples: {}".format(sum([int(x) for x in srs_table["num_samples"]])))
+    # restore block signals events to normal behaviour
+    dockwidget.TableWidget_SRS.blockSignals(False)
 
 
-def update_and_save_srs_data_table(dockwidget):
-    number_of_samples = []
+def fill_stratified_sampling_table(dockwidget):
     try:
-        for row in range(dockwidget.table_pixel_colors_SRS.rowCount()):
-            number_of_samples.append(dockwidget.table_pixel_colors_SRS.item(row, 2).text())
+        # check the current selected file
+        get_layer_by_name(dockwidget.selectCategRaster_SRS.currentText()).dataProvider()
     except:
+        # clear table
+        dockwidget.TableWidget_SRS.setRowCount(0)
+        dockwidget.TableWidget_SRS.setColumnCount(0)
         return
-    dockwidget.srs_categorical_table[dockwidget.selectCategRaster_SRS.currentText()] = number_of_samples
+
+    if dockwidget.StratifieSamplingMethod.currentText().startswith("Fixed values"):
+        srs_method = "fixed values"
+        dockwidget.widget_TotalExpectedSE.setHidden(True)
+    if dockwidget.StratifieSamplingMethod.currentText().startswith("Area based proportion"):
+        srs_method = "area based proportion"
+        dockwidget.widget_TotalExpectedSE.setVisible(True)
+
+    if dockwidget.selectCategRaster_SRS.currentText() in dockwidget.srs_tables.keys() and \
+        srs_method in dockwidget.srs_tables[dockwidget.selectCategRaster_SRS.currentText()].keys():
+        # restore values saved for number of samples configured for selected categorical file
+        srs_table = dockwidget.srs_tables[dockwidget.selectCategRaster_SRS.currentText()][srs_method]
+    else:
+        # init a new stratified random sampling table
+        srs_table = {"color_table": get_color_table(get_current_file_path_in(dockwidget.selectCategRaster_SRS))}
+
+        if not srs_table["color_table"]:
+            # clear table
+            dockwidget.TableWidget_SRS.setRowCount(0)
+            dockwidget.TableWidget_SRS.setColumnCount(0)
+            return
+        srs_table["row_count"] = len(srs_table["color_table"].values()[0])
+
+        if srs_method == "fixed values":
+            srs_table["header"] = ["Pix Val", "Color", "Num Samples"]
+            srs_table["column_count"] = len(srs_table["header"])
+            srs_table["num_samples"] = [str(0)]*srs_table["row_count"]
+
+        if srs_method == "area based proportion":
+            srs_table["header"] = ["Pix Val", "Color", "Num Samples", "Std Error"]
+            srs_table["column_count"] = len(srs_table["header"])
+            srs_table["std_error"] = [str(0.01)]*srs_table["row_count"]
+            srs_table["pixel_count"] = \
+                get_pixel_count_by_category(srs_table, get_current_file_path_in(dockwidget.selectCategRaster_SRS))
+            total_std_error = dockwidget.TotalExpectedSE.value()
+            srs_table["num_samples"] = get_num_samples_by_area_based_proportion(srs_table, total_std_error)
+
+        # save srs table
+        if dockwidget.selectCategRaster_SRS.currentText() not in dockwidget.srs_tables.keys():
+            dockwidget.srs_tables[dockwidget.selectCategRaster_SRS.currentText()] = {}
+        dockwidget.srs_tables[dockwidget.selectCategRaster_SRS.currentText()][srs_method] = srs_table
+
+    # update content
+    update_srs_table_content(dockwidget, srs_table)
+
+
+def update_stratified_sampling_table(dockwidget, changes_from):
+    if dockwidget.StratifieSamplingMethod.currentText().startswith("Fixed values"):
+        srs_method = "fixed values"
+    if dockwidget.StratifieSamplingMethod.currentText().startswith("Area based proportion"):
+        srs_method = "area based proportion"
+    srs_table = dockwidget.srs_tables[dockwidget.selectCategRaster_SRS.currentText()][srs_method]
+
+    if changes_from == "TotalExpectedSE":
+        srs_table["num_samples"] = get_num_samples_by_area_based_proportion(srs_table, dockwidget.TotalExpectedSE.value())
+
+    if changes_from == "TableContent":
+        num_samples = []
+        std_error = []
+        try:
+            for row in range(dockwidget.TableWidget_SRS.rowCount()):
+                num_samples.append(dockwidget.TableWidget_SRS.item(row, 2).text())
+                if srs_method == "area based proportion":
+                    std_error.append(dockwidget.TableWidget_SRS.item(row, 3).text())
+        except:
+            return
+        srs_table["num_samples"] = num_samples
+        if srs_method == "area based proportion":
+            srs_table["std_error"] = std_error
+            srs_table["num_samples"] = get_num_samples_by_area_based_proportion(srs_table, dockwidget.TotalExpectedSE.value())
+
+    # update content
+    update_srs_table_content(dockwidget, srs_table)
+    # save srs table
+    dockwidget.srs_tables[dockwidget.selectCategRaster_SRS.currentText()][srs_method] = srs_table
+
