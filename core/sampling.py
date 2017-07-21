@@ -116,9 +116,9 @@ def do_stratified_random_sampling(dockwidget):
     # get values from category table  #########
     pixel_values = []
     number_of_samples = []
-    for row in range(dockwidget.table_pixel_colors_SRS.rowCount()):
-        pixel_values.append(int(dockwidget.table_pixel_colors_SRS.item(row, 0).text()))
-        number_of_samples.append(dockwidget.table_pixel_colors_SRS.item(row, 2).text())
+    for row in range(dockwidget.TableWidget_SRS.rowCount()):
+        pixel_values.append(int(dockwidget.TableWidget_SRS.item(row, 0).text()))
+        number_of_samples.append(dockwidget.TableWidget_SRS.item(row, 2).text())
     # convert and check if number of samples only positive integers
     try:
         number_of_samples = [int(ns) for ns in number_of_samples]
