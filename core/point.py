@@ -89,6 +89,9 @@ class Point():
         if num_neighbors == 24:
             x_list = [pixel_size_x*mul+self.QgsPnt.x() for mul in range(-2, 3)]
             y_list = [pixel_size_y*mul+self.QgsPnt.y() for mul in range(-2, 3)]
+        if num_neighbors == 48:
+            x_list = [pixel_size_x*mul+self.QgsPnt.x() for mul in range(-3, 4)]
+            y_list = [pixel_size_y*mul+self.QgsPnt.y() for mul in range(-3, 4)]
 
         neighbors = []
         for x, y in ((_x, _y) for _x in x_list for _y in y_list):
