@@ -201,29 +201,36 @@ def update_srs_table_content(dockwidget, srs_table):
     for n, key in enumerate(srs_table["header"]):
         if key == "Pix Val":
             for m, item in enumerate(srs_table["color_table"]["Pixel Value"]):
-                newitem = QTableWidgetItem(str(item))
-                newitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-                newitem.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                dockwidget.TableWidget_SRS.setItem(m, n, newitem)
+                item_table = QTableWidgetItem(str(item))
+                item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                dockwidget.TableWidget_SRS.setItem(m, n, item_table)
         if key == "Color":
             for m in range(srs_table["row_count"]):
-                newitem = QTableWidgetItem()
-                newitem.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-                newitem.setBackground(QColor(srs_table["color_table"]["Red"][m],
-                                             srs_table["color_table"]["Green"][m],
-                                             srs_table["color_table"]["Blue"][m],
-                                             srs_table["color_table"]["Alpha"][m]))
-                dockwidget.TableWidget_SRS.setItem(m, n, newitem)
+                item_table = QTableWidgetItem()
+                item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                item_table.setBackground(QColor(srs_table["color_table"]["Red"][m],
+                                                srs_table["color_table"]["Green"][m],
+                                                srs_table["color_table"]["Blue"][m],
+                                                srs_table["color_table"]["Alpha"][m]))
+                dockwidget.TableWidget_SRS.setItem(m, n, item_table)
         if key == "Num Samples":
             for m in range(srs_table["row_count"]):
-                newitem = QTableWidgetItem(srs_table["num_samples"][m])
-                newitem.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                dockwidget.TableWidget_SRS.setItem(m, n, newitem)
+                item_table = QTableWidgetItem(srs_table["num_samples"][m])
+                item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                dockwidget.TableWidget_SRS.setItem(m, n, item_table)
         if key == "Std Error":
             for m in range(srs_table["row_count"]):
-                newitem = QTableWidgetItem(srs_table["std_error"][m])
-                newitem.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                dockwidget.TableWidget_SRS.setItem(m, n, newitem)
+                item_table = QTableWidgetItem(srs_table["std_error"][m])
+                item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                dockwidget.TableWidget_SRS.setItem(m, n, item_table)
+        if key == "On":
+            for m in range(srs_table["row_count"]):
+                item_table = QTableWidgetItem()
+                item_table.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
+                item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                item_table.setCheckState(Qt.Checked)
+                dockwidget.TableWidget_SRS.setItem(m, n, item_table)
 
     # hidden row labels
     dockwidget.TableWidget_SRS.verticalHeader().setVisible(False)
@@ -277,7 +284,7 @@ def fill_stratified_sampling_table(dockwidget):
             srs_table["num_samples"] = [str(0)]*srs_table["row_count"]
 
         if srs_method == "area based proportion":
-            srs_table["header"] = ["Pix Val", "Color", "Num Samples", "Std Error"]
+            srs_table["header"] = ["Pix Val", "Color", "Num Samples", "Std Error", "On"]
             srs_table["column_count"] = len(srs_table["header"])
             srs_table["std_error"] = [str(0.01)]*srs_table["row_count"]
             srs_table["pixel_count"] = \
