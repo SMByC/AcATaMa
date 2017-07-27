@@ -181,12 +181,35 @@ def get_pixel_count_by_category(srs_table, categorical_raster):
     return pixel_count
 
 
+def mask(input_list, boolean_mask):
+    """Apply boolean mask to input list
+
+    Args:
+        input_list (list): Input list for apply mask
+        boolean_mask (list): The boolean mask list
+
+    Examples:
+        >>> mask(['A','B','C','D'], [1,0,1,0])
+        ['A', 'C']
+    """
+    return [i for i, b in zip(input_list, boolean_mask) if b]
+
+
 def get_num_samples_by_area_based_proportion(srs_table, total_std_error):
-    total_pixel_count = float(sum(srs_table["pixel_count"]))
-    ratio_pixel_count = [p_c/total_pixel_count for p_c in srs_table["pixel_count"]]
-    Si = [(float(std_error)*(1-float(std_error)))**0.5 for std_error in srs_table["std_error"]]
+    total_pixel_count = float(sum(mask(srs_table["pixel_count"], srs_table["On"])))
+    ratio_pixel_count = [p_c/total_pixel_count for p_c in mask(srs_table["pixel_count"], srs_table["On"])]
+    Si = [(float(std_error)*(1-float(std_error)))**0.5 for std_error in mask(srs_table["std_error"], srs_table["On"])]
     total_num_samples = (sum([rpc*si for rpc, si in zip(ratio_pixel_count, Si)])/total_std_error)**2
-    return [str(int(round(rpc*total_num_samples))) for rpc in ratio_pixel_count]
+
+    num_samples = []
+    idx = 0
+    for item_enable in srs_table["On"]:
+        if item_enable:
+            num_samples.append(str(int(round(ratio_pixel_count[idx] * total_num_samples))))
+            idx += 1
+        else:
+            num_samples.append(str("0"))
+    return num_samples
 
 
 @wait_process()
@@ -218,7 +241,7 @@ def update_srs_table_content(dockwidget, srs_table):
             for m in range(srs_table["row_count"]):
                 item_table = QTableWidgetItem(srs_table["num_samples"][m])
                 item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                if "On" in srs_table and not srs_table["On"][m]:
+                if not srs_table["On"][m]:
                     item_table.setForeground(QColor("lightGrey"))
                     item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                 dockwidget.TableWidget_SRS.setItem(m, n, item_table)
@@ -226,7 +249,7 @@ def update_srs_table_content(dockwidget, srs_table):
             for m in range(srs_table["row_count"]):
                 item_table = QTableWidgetItem(srs_table["std_error"][m])
                 item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                if "On" in srs_table and not srs_table["On"][m]:
+                if not srs_table["On"][m]:
                     item_table.setForeground(QColor("lightGrey"))
                     item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                 dockwidget.TableWidget_SRS.setItem(m, n, item_table)
@@ -250,7 +273,7 @@ def update_srs_table_content(dockwidget, srs_table):
     dockwidget.TableWidget_SRS.resizeRowsToContents()
     # set label total samples
     dockwidget.label_TotalNumSamples.setText(
-        "Total number of samples: {}".format(sum([int(x) for x in srs_table["num_samples"]])))
+        "Total number of samples: {}".format(sum([int(x) for x in mask(srs_table["num_samples"], srs_table["On"])])))
     # restore block signals events to normal behaviour
     dockwidget.TableWidget_SRS.blockSignals(False)
 
@@ -291,6 +314,7 @@ def fill_stratified_sampling_table(dockwidget):
             srs_table["header"] = ["Pix Val", "Color", "Num Samples"]
             srs_table["column_count"] = len(srs_table["header"])
             srs_table["num_samples"] = [str(0)]*srs_table["row_count"]
+            srs_table["On"] = [True] * srs_table["row_count"]
 
         if srs_method == "area based proportion":
             srs_table["header"] = ["Pix Val", "Color", "Num Samples", "Std Error", "On"]
@@ -299,8 +323,8 @@ def fill_stratified_sampling_table(dockwidget):
             srs_table["pixel_count"] = \
                 get_pixel_count_by_category(srs_table, get_current_file_path_in(dockwidget.selectCategRaster_SRS))
             total_std_error = dockwidget.TotalExpectedSE.value()
-            srs_table["num_samples"] = get_num_samples_by_area_based_proportion(srs_table, total_std_error)
             srs_table["On"] = [True] * srs_table["row_count"]
+            srs_table["num_samples"] = get_num_samples_by_area_based_proportion(srs_table, total_std_error)
 
         # save srs table
         if dockwidget.selectCategRaster_SRS.currentText() not in dockwidget.srs_tables.keys():
@@ -319,7 +343,8 @@ def update_stratified_sampling_table(dockwidget, changes_from):
     srs_table = dockwidget.srs_tables[dockwidget.selectCategRaster_SRS.currentText()][srs_method]
 
     if changes_from == "TotalExpectedSE":
-        srs_table["num_samples"] = get_num_samples_by_area_based_proportion(srs_table, dockwidget.TotalExpectedSE.value())
+        srs_table["num_samples"] = \
+            get_num_samples_by_area_based_proportion(srs_table, dockwidget.TotalExpectedSE.value())
 
     if changes_from == "TableContent":
         num_samples = []
@@ -339,8 +364,9 @@ def update_stratified_sampling_table(dockwidget, changes_from):
         srs_table["num_samples"] = num_samples
         if srs_method == "area based proportion":
             srs_table["std_error"] = std_error
-            srs_table["num_samples"] = get_num_samples_by_area_based_proportion(srs_table, dockwidget.TotalExpectedSE.value())
             srs_table["On"] = on
+            srs_table["num_samples"] = \
+                get_num_samples_by_area_based_proportion(srs_table, dockwidget.TotalExpectedSE.value())
 
     # update content
     update_srs_table_content(dockwidget, srs_table)
