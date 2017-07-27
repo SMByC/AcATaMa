@@ -212,6 +212,33 @@ def get_num_samples_by_area_based_proportion(srs_table, total_std_error):
     return num_samples
 
 
+def get_num_samples_by_keeping_total_samples(srs_table, new_num_samples):
+    """Redistribute the samples number by area based proportion keeping
+    the total of samples, this occur when one num sample is changed
+    """
+    for idx, (old_ns, new_ns) in enumerate(zip(srs_table["num_samples"], new_num_samples)):
+        if old_ns != new_ns:
+            sample_idx = idx
+            sample_diff = float(old_ns) - float(new_ns)
+            break
+    distribute_on = list(srs_table["On"])
+    distribute_on[sample_idx] = False
+
+    total_pixel_count = float(sum(mask(srs_table["pixel_count"], distribute_on)))
+    ratio_pixel_count = [p_c / total_pixel_count for p_c in mask(srs_table["pixel_count"], distribute_on)]
+
+    num_samples = []
+    idx = 0
+    for global_idx, item_enable in enumerate(distribute_on):
+        if item_enable:
+            num_samples.append(str(int(round(int(new_num_samples[global_idx]) + ratio_pixel_count[idx] * sample_diff))))
+            idx += 1
+        else:
+            num_samples.append(str(new_num_samples[global_idx]))
+
+    return num_samples
+
+
 @wait_process()
 def update_srs_table_content(dockwidget, srs_table):
     # block signals events from here
@@ -361,12 +388,17 @@ def update_stratified_sampling_table(dockwidget, changes_from):
                         on.append(False)
         except:
             return
-        srs_table["num_samples"] = num_samples
+        if srs_method == "fixed values":
+            srs_table["num_samples"] = num_samples
         if srs_method == "area based proportion":
             srs_table["std_error"] = std_error
             srs_table["On"] = on
-            srs_table["num_samples"] = \
-                get_num_samples_by_area_based_proportion(srs_table, dockwidget.TotalExpectedSE.value())
+            if srs_table["num_samples"] != num_samples:
+                # only change the number of samples keeping the total samples
+                srs_table["num_samples"] = get_num_samples_by_keeping_total_samples(srs_table, num_samples)
+            else:
+                srs_table["num_samples"] = \
+                    get_num_samples_by_area_based_proportion(srs_table, dockwidget.TotalExpectedSE.value())
 
     # update content
     update_srs_table_content(dockwidget, srs_table)
