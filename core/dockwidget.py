@@ -229,7 +229,10 @@ def update_srs_table_content(dockwidget, srs_table):
                 item_table = QTableWidgetItem()
                 item_table.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
                 item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                item_table.setCheckState(Qt.Checked)
+                if srs_table["On"][m]:
+                    item_table.setCheckState(Qt.Checked)
+                else:
+                    item_table.setCheckState(Qt.Unchecked)
                 dockwidget.TableWidget_SRS.setItem(m, n, item_table)
 
     # hidden row labels
@@ -291,6 +294,7 @@ def fill_stratified_sampling_table(dockwidget):
                 get_pixel_count_by_category(srs_table, get_current_file_path_in(dockwidget.selectCategRaster_SRS))
             total_std_error = dockwidget.TotalExpectedSE.value()
             srs_table["num_samples"] = get_num_samples_by_area_based_proportion(srs_table, total_std_error)
+            srs_table["On"] = [True] * srs_table["row_count"]
 
         # save srs table
         if dockwidget.selectCategRaster_SRS.currentText() not in dockwidget.srs_tables.keys():
@@ -314,17 +318,23 @@ def update_stratified_sampling_table(dockwidget, changes_from):
     if changes_from == "TableContent":
         num_samples = []
         std_error = []
+        on = []
         try:
             for row in range(dockwidget.TableWidget_SRS.rowCount()):
                 num_samples.append(dockwidget.TableWidget_SRS.item(row, 2).text())
                 if srs_method == "area based proportion":
                     std_error.append(dockwidget.TableWidget_SRS.item(row, 3).text())
+                    if dockwidget.TableWidget_SRS.item(row, 4).checkState() == 2:
+                        on.append(True)
+                    if dockwidget.TableWidget_SRS.item(row, 4).checkState() == 0:
+                        on.append(False)
         except:
             return
         srs_table["num_samples"] = num_samples
         if srs_method == "area based proportion":
             srs_table["std_error"] = std_error
             srs_table["num_samples"] = get_num_samples_by_area_based_proportion(srs_table, dockwidget.TotalExpectedSE.value())
+            srs_table["On"] = on
 
     # update content
     update_srs_table_content(dockwidget, srs_table)
