@@ -218,11 +218,17 @@ def update_srs_table_content(dockwidget, srs_table):
             for m in range(srs_table["row_count"]):
                 item_table = QTableWidgetItem(srs_table["num_samples"][m])
                 item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                if "On" in srs_table and not srs_table["On"][m]:
+                    item_table.setForeground(QColor("lightGrey"))
+                    item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                 dockwidget.TableWidget_SRS.setItem(m, n, item_table)
         if key == "Std Error":
             for m in range(srs_table["row_count"]):
                 item_table = QTableWidgetItem(srs_table["std_error"][m])
                 item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                if "On" in srs_table and not srs_table["On"][m]:
+                    item_table.setForeground(QColor("lightGrey"))
+                    item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                 dockwidget.TableWidget_SRS.setItem(m, n, item_table)
         if key == "On":
             for m in range(srs_table["row_count"]):
