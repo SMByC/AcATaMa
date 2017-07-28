@@ -19,9 +19,9 @@
  ***************************************************************************/
 """
 import os
-import numpy as np
 from osgeo import gdal
 from subprocess import call
+from numpy.core.umath import isnan
 
 from qgis.core import QgsRaster, QgsPoint
 from qgis.utils import iface
@@ -53,11 +53,25 @@ def get_extent(img_path):
     return [round(minx), round(maxy), round(maxx), round(miny)]
 
 
-def get_color_table(raster_path, band_number=1):
+def get_nodata_value(layer_file):
+    extent = layer_file.extent()
+    rows = layer_file.rasterUnitsPerPixelY()
+    cols = layer_file.rasterUnitsPerPixelX()
+    nodata_value = layer_file.dataProvider().block(1, extent, rows, cols).noDataValue()
+    if isnan(nodata_value):
+        nodata_value = -1
+    return nodata_value
+
+
+def get_color_table(raster_path, band_number=1, nodata=None):
     try:
         ds = gdal.Open(str(raster_path))
     except:
         return
+    # set all negative values as None to nodata
+    if nodata is not None:
+        nodata = nodata if nodata >= 0 else None
+
     gdalBand = ds.GetRasterBand(band_number)
     colorTable = gdalBand.GetColorTable()
     if colorTable is None:
@@ -68,6 +82,8 @@ def get_color_table(raster_path, band_number=1):
     count = colorTable.GetCount()
     color_table = {"Pixel Value":[], "Red":[], "Green":[], "Blue":[], "Alpha":[]}
     for index in range(count):
+        if nodata is not None and index == int(nodata):
+            continue
         color_table["Pixel Value"].append(index)
         colorEntry = list(colorTable.GetColorEntry(index))
         color_table["Red"].append(colorEntry[0])
