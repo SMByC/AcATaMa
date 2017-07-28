@@ -25,7 +25,6 @@ import ConfigParser
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSignal, Qt, pyqtSlot
-from numpy.core.umath import isnan
 from qgis.utils import iface
 from qgis.gui import QgsMessageBar
 
@@ -33,7 +32,7 @@ from AcATaMa.core.sampling import do_random_sampling, do_stratified_random_sampl
 from AcATaMa.core.dockwidget import get_current_file_path_in, error_handler, \
     wait_process, load_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_current_layer_in, \
     fill_stratified_sampling_table, valid_file_selected_in, update_stratified_sampling_table
-from AcATaMa.core.raster import do_clipping_with_shape
+from AcATaMa.core.raster import do_clipping_with_shape, get_nodata_value
 from AcATaMa.gui.about_dialog import AboutDialog
 
 # plugin path
@@ -45,6 +44,7 @@ cfg = ConfigParser.SafeConfigParser()
 cfg.read(os.path.join(plugin_folder, 'metadata.txt'))
 VERSION = cfg.get('general', 'version')
 HOMEPAGE = cfg.get('general', 'homepage')
+
 
 class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
@@ -85,7 +85,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
         # set the nodata value of the thematic raster
-        self.selectThematicRaster.currentIndexChanged.connect(self.set_nodata_value)
+        self.selectThematicRaster.currentIndexChanged.connect(self.set_nodata_value_thematic_raster)
 
         # shape study area #########
         self.widget_ShapeArea.setHidden(True)
@@ -124,6 +124,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             dialog_title=self.tr(u"Select the categorical raster file"),
             dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
+        # set the nodata value of the categorical raster
+        self.selectCategRaster_SRS.currentIndexChanged.connect(self.set_nodata_value_categorical_raster)
+        self.nodata_CategRaster_SRS.valueChanged.connect(self.reset_nodata_to_categorical_raster)
         # generate sampling
         self.widget_generate_RS.widget_generate_sampling_options.setHidden(True)
         self.widget_generate_RS.buttonGenerateSampling.clicked.connect(lambda: do_random_sampling(self))
@@ -162,17 +165,34 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             combo_box.setCurrentIndex(selected_index)
 
     @pyqtSlot()
-    def set_nodata_value(self):
+    def set_nodata_value_thematic_raster(self):
         current_layer = get_current_layer_in(self.selectThematicRaster)
         if not current_layer:
             return
-        extent = current_layer.extent()
-        rows = current_layer.rasterUnitsPerPixelY()
-        cols = current_layer.rasterUnitsPerPixelX()
-        nodata_value = current_layer.dataProvider().block(1, extent, rows, cols).noDataValue()
-        if isnan(nodata_value):
-            nodata_value = 0
-        self.nodata_ThematicRaster.setValue(nodata_value)
+
+        self.nodata_ThematicRaster.setValue(get_nodata_value(current_layer))
+
+    @pyqtSlot()
+    def set_nodata_value_categorical_raster(self):
+        current_layer = get_current_layer_in(self.selectCategRaster_SRS)
+        if not current_layer:
+            return
+        # set the same nodata value if select the thematic raster
+        if current_layer == get_current_layer_in(self.selectThematicRaster):
+            self.nodata_CategRaster_SRS.setValue(self.nodata_ThematicRaster.value())
+            return
+
+        self.nodata_CategRaster_SRS.setValue(get_nodata_value(current_layer))
+
+    @pyqtSlot()
+    def reset_nodata_to_categorical_raster(self):
+        # reinit variable for save tables content
+        self.srs_tables = {}
+        # clear table
+        self.TableWidget_SRS.setRowCount(0)
+        self.TableWidget_SRS.setColumnCount(0)
+        # clear select
+        self.StratifieSamplingMethod.setCurrentIndex(-1)
 
     @pyqtSlot()
     @error_handler()

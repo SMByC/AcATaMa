@@ -309,6 +309,9 @@ def fill_stratified_sampling_table(dockwidget):
     try:
         # check the current selected file
         get_layer_by_name(dockwidget.selectCategRaster_SRS.currentText()).dataProvider()
+        # check sampling method selected
+        if not dockwidget.StratifieSamplingMethod.currentText():
+            raise
     except:
         # clear table
         dockwidget.TableWidget_SRS.setRowCount(0)
@@ -328,7 +331,9 @@ def fill_stratified_sampling_table(dockwidget):
         srs_table = dockwidget.srs_tables[dockwidget.selectCategRaster_SRS.currentText()][srs_method]
     else:
         # init a new stratified random sampling table
-        srs_table = {"color_table": get_color_table(get_current_file_path_in(dockwidget.selectCategRaster_SRS))}
+        nodata = int(dockwidget.nodata_CategRaster_SRS.value())
+        srs_table = {"color_table": get_color_table(
+            get_current_file_path_in(dockwidget.selectCategRaster_SRS), band_number=1, nodata=nodata)}
 
         if not srs_table["color_table"]:
             # clear table
