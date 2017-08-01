@@ -156,7 +156,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
-        file_path = str(QtGui.QFileDialog.getOpenFileName(self, dialog_title, "", dialog_types))
+        file_path = QtGui.QFileDialog.getOpenFileName(self, dialog_title, "", dialog_types)
         if file_path != '' and os.path.isfile(file_path):
             # load to qgis and update combobox list
             filename = load_layer_in_qgis(file_path, layer_type)
