@@ -95,6 +95,8 @@ def do_random_sampling(dockwidget):
                                        level=QgsMessageBar.INFO, duration=10)
     # zero points
     if len(sampling.points) < number_of_samples and len(sampling.points) == 0:
+        # delete instance where storage all sampling generated
+        Sampling.samplings.pop(sampling.sampling_name, None)
         iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any random points with this settings, "
                                                   "attempts exceeded", level=QgsMessageBar.WARNING, duration=10)
 
@@ -166,6 +168,8 @@ def do_stratified_random_sampling(dockwidget):
                                        level=QgsMessageBar.INFO, duration=10)
     # zero points
     if len(sampling.points) < total_of_samples and len(sampling.points) == 0:
+        # delete instance where storage all sampling generated
+        Sampling.samplings.pop(sampling.sampling_name, None)
         iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any stratified random points with this settings, "
                                                   "attempts exceeded", level=QgsMessageBar.WARNING, duration=10)
 
