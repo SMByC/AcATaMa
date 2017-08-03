@@ -99,7 +99,7 @@ class Raster():
         from AcATaMa.core.dockwidget import get_current_file_path_in, get_current_layer_in
         self.file_path = get_current_file_path_in(file_selected_combo_box)
         self.qgs_layer = get_current_layer_in(file_selected_combo_box)
-        self.nodata = nodata
+        self.nodata = nodata if nodata != -1 else None
 
     def extent(self):
         return get_extent(self.file_path)
