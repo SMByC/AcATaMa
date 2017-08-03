@@ -20,6 +20,7 @@
 """
 import os
 import random
+import ConfigParser
 from datetime import datetime
 
 from qgis.gui import QgsMessageBar
@@ -78,23 +79,23 @@ def do_random_sampling(dockwidget):
         attempts_by_sampling = None
 
     # process
-    sampling = Sampling("RS", ThematicR, CategoricalR, dockwidget.tmp_dir)
+    sampling = Sampling("RS", ThematicR, CategoricalR, out_dir=dockwidget.tmp_dir)
     sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
                                       neighbor_aggregation, attempts_by_sampling)
 
     # success
-    if len(sampling.points) == number_of_samples:
+    if sampling.total_of_samples == number_of_samples:
         load_layer_in_qgis(sampling.output_file + ".shp", "vector")
         iface.messageBar().pushMessage("AcATaMa", "Generate the random sampling, completed",
                                        level=QgsMessageBar.SUCCESS)
     # success but not completed
-    if len(sampling.points) < number_of_samples and len(sampling.points) > 0:
+    if sampling.total_of_samples < number_of_samples and sampling.total_of_samples > 0:
         load_layer_in_qgis(sampling.output_file + ".shp", "vector")
         iface.messageBar().pushMessage("AcATaMa", "Generated the random sampling, but can not generate requested number of "
-                                                  "random points {}/{}, attempts exceeded".format(len(sampling.points), number_of_samples),
+                                                  "random points {}/{}, attempts exceeded".format(sampling.total_of_samples, number_of_samples),
                                        level=QgsMessageBar.INFO, duration=10)
     # zero points
-    if len(sampling.points) < number_of_samples and len(sampling.points) == 0:
+    if sampling.total_of_samples < number_of_samples and sampling.total_of_samples == 0:
         # delete instance where storage all sampling generated
         Sampling.samplings.pop(sampling.sampling_name, None)
         iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any random points with this settings, "
@@ -113,7 +114,8 @@ def do_stratified_random_sampling(dockwidget):
     min_distance = int(dockwidget.minDistance_SRS.value())
     ThematicR = Raster(file_selected_combo_box=dockwidget.selectThematicRaster,
                        nodata=int(dockwidget.nodata_ThematicRaster.value()))
-    CategoricalR = Raster(file_selected_combo_box=dockwidget.selectCategRaster_SRS)
+    CategoricalR = Raster(file_selected_combo_box=dockwidget.selectCategRaster_SRS,
+                          nodata=int(dockwidget.nodata_CategRaster_SRS.value()))
 
     # get values from category table  #########
     pixel_values = []
@@ -150,47 +152,57 @@ def do_stratified_random_sampling(dockwidget):
     else:
         attempts_by_sampling = None
 
+    # set the method of stratified sampling
+    if dockwidget.StratifieSamplingMethod.currentText().startswith("Fixed values"):
+        sampling_method = "fixed values"
+    if dockwidget.StratifieSamplingMethod.currentText().startswith("Area based proportion"):
+        sampling_method = "area based proportion"
+
     # process
-    sampling = Sampling("SRS", ThematicR, CategoricalR, dockwidget.tmp_dir)
+    sampling = Sampling("SRS", ThematicR, CategoricalR, sampling_method, dockwidget.tmp_dir)
     sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
                                       neighbor_aggregation, attempts_by_sampling)
 
     # success
-    if len(sampling.points) == total_of_samples:
+    if sampling.total_of_samples == total_of_samples:
         load_layer_in_qgis(sampling.output_file + ".shp", "vector")
         iface.messageBar().pushMessage("AcATaMa", "Generate the stratified random sampling, completed",
                                        level=QgsMessageBar.SUCCESS)
     # success but not completed
-    if len(sampling.points) < total_of_samples and len(sampling.points) > 0:
+    if sampling.total_of_samples < total_of_samples and sampling.total_of_samples > 0:
         load_layer_in_qgis(sampling.output_file + ".shp", "vector")
         iface.messageBar().pushMessage("AcATaMa", "Generated the stratified random sampling, but can not generate requested number of "
-                                                  "random points {}/{}, attempts exceeded".format(len(sampling.points), total_of_samples),
+                                                  "random points {}/{}, attempts exceeded".format(sampling.total_of_samples, total_of_samples),
                                        level=QgsMessageBar.INFO, duration=10)
     # zero points
-    if len(sampling.points) < total_of_samples and len(sampling.points) == 0:
+    if sampling.total_of_samples < total_of_samples and sampling.total_of_samples == 0:
         # delete instance where storage all sampling generated
         Sampling.samplings.pop(sampling.sampling_name, None)
         iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any stratified random points with this settings, "
                                                   "attempts exceeded", level=QgsMessageBar.WARNING, duration=10)
 
 
-class Sampling():
+class Sampling:
     # for save all instances
     samplings = dict()  # {name_in_qgis: class instance}
 
-    def __init__(self, sampling_type, ThematicR, CategoricalR, out_dir):
+    def __init__(self, sampling_type, ThematicR, CategoricalR, sampling_method=None, out_dir=None):
         # set and init variables
         # sampling_type => "RS" (random sampling),
         #                  "SRS" (stratified random sampling)
         self.sampling_type = sampling_type
         self.ThematicR = ThematicR
         self.CategoricalR = CategoricalR
-
         # set the name and output file
         if self.sampling_type == "RS":
             self.sampling_name = "random_sampling_{}".format(datetime.now().strftime('%H:%M:%S'))
         if self.sampling_type == "SRS":
             self.sampling_name = "stratified_random_sampling_{}".format(datetime.now().strftime('%H:%M:%S'))
+        # for stratified sampling
+        self.sampling_method = sampling_method
+        # set the output dir for save sampling
+        if out_dir is None:
+            out_dir = os.path.dirname(ThematicR.file_path)
         self.output_file = os.path.join(out_dir, self.sampling_name)
         # save instance
         Sampling.samplings[self.sampling_name] = self
@@ -203,7 +215,8 @@ class Sampling():
         https://github.com/qgis/QGIS/blob/release-2_18/python/plugins/processing/algs/qgis/RandomPointsExtent.py
         """
         self.pixel_values = pixel_values
-        self.number_of_samples = number_of_samples
+        self.number_of_samples = number_of_samples  # desired
+        self.total_of_samples = None  # total generated
         self.min_distance = min_distance
         self.neighbor_aggregation = neighbor_aggregation
 
@@ -219,7 +232,7 @@ class Sampling():
             total_of_samples = self.number_of_samples
         if self.sampling_type == "SRS":
             total_of_samples = sum(self.number_of_samples)
-            self.nPointsInCategories = [0] * len(self.number_of_samples)
+            self.samples_in_categories = [0] * len(self.number_of_samples)  # total generated by categories
 
         nPoints = 0
         nIterations = 0
@@ -253,8 +266,10 @@ class Sampling():
             nPoints += 1
             nIterations += 1
             if self.sampling_type == "SRS":
-                self.nPointsInCategories[sampling_point.index_pixel_value] += 1
+                self.samples_in_categories[sampling_point.index_pixel_value] += 1
             # feedback.setProgress(int(nPoints * total))
+        # save the total point generated
+        self.total_of_samples = nPoints
         del writer
 
     def check_sampling_point(self, sampling_point):
@@ -274,7 +289,7 @@ class Sampling():
                 return False
         if self.sampling_type == "SRS":
             if not sampling_point.in_stratified_raster(self.pixel_values, self.number_of_samples,
-                                                       self.CategoricalR, self.nPointsInCategories):
+                                                       self.CategoricalR, self.samples_in_categories):
                 return False
 
         if self.neighbor_aggregation and \
@@ -283,4 +298,44 @@ class Sampling():
 
         return True
 
+    def save_config(self, file_out):
+        config = ConfigParser.RawConfigParser()
+
+        config.add_section('general')
+        if self.sampling_type == "RS":
+            config.set('general', 'sampling_type', 'random sampling')
+        if self.sampling_type == "SRS":
+            config.set('general', 'sampling_type', 'stratified random sampling')
+        config.set('general', 'thematic_raster', self.ThematicR.file_path)
+        config.set('general', 'thematic_raster_nodata', str(self.ThematicR.nodata))
+        if isinstance(self.CategoricalR, Raster):
+            config.set('general', 'categorical_raster', self.CategoricalR.file_path)
+            config.set('general', 'categorical_raster_nodata', self.CategoricalR.nodata)
+        else:
+            config.set('general', 'categorical_raster', 'None')
+            config.set('general', 'categorical_raster_nodata', 'None')
+
+        config.add_section('sampling')
+        if self.sampling_type == "RS":
+            config.set('sampling', 'total_of_samples', self.total_of_samples)
+            config.set('sampling', 'min_distance', self.min_distance)
+            config.set('sampling', 'in_categorical_raster',
+                       ','.join(map(str, self.pixel_values)) if self.pixel_values is not None else 'None')
+            config.set('sampling', 'with_neighbors_aggregation',
+                       '{1}/{0}'.format(*self.neighbor_aggregation) if self.neighbor_aggregation is not None else 'None')
+        if self.sampling_type == "SRS":
+            config.set('sampling', 'sampling_method', self.sampling_method)
+            config.set('sampling', 'total_of_samples', self.total_of_samples)
+            config.set('sampling', 'min_distance', self.min_distance)
+            config.set('sampling', 'with_neighbors_aggregation',
+                       '{1}/{0}'.format(
+                           *self.neighbor_aggregation) if self.neighbor_aggregation is not None else 'None')
+
+            config.add_section('sampling_table')
+            for pixel, count in zip(self.pixel_values, self.samples_in_categories):
+                if count > 0:
+                    config.set('sampling_table', 'pix_val_'+str(pixel), str(count))
+
+        with open(file_out, 'wb') as configfile:
+            config.write(configfile)
 

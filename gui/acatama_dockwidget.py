@@ -25,10 +25,11 @@ import ConfigParser
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSignal, Qt, pyqtSlot
+from qgis.core import QgsMapLayerRegistry, QgsVectorFileWriter
 from qgis.utils import iface
 from qgis.gui import QgsMessageBar
 
-from AcATaMa.core.sampling import do_random_sampling, do_stratified_random_sampling
+from AcATaMa.core.sampling import do_random_sampling, do_stratified_random_sampling, Sampling
 from AcATaMa.core.dockwidget import get_current_file_path_in, error_handler, \
     wait_process, load_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_current_layer_in, \
     fill_stratified_sampling_table, valid_file_selected_in, update_stratified_sampling_table
@@ -127,8 +128,17 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # set the nodata value of the categorical raster
         self.selectCategRaster_SRS.currentIndexChanged.connect(self.set_nodata_value_categorical_raster)
         self.nodata_CategRaster_SRS.valueChanged.connect(self.reset_nodata_to_categorical_raster)
-        # generate sampling
+        # generate sampling options
         self.widget_generate_RS.widget_generate_sampling_options.setHidden(True)
+        # save config
+        self.widget_generate_RS.widget_save_sampling.setHidden(True)
+        self.canvas.layersChanged.connect(
+            lambda: self.update_generated_sampling_list_in(self.widget_generate_RS.selectSamplingToSave))
+        self.widget_generate_RS.buttonSaveSampling.clicked.connect(
+            lambda: self.fileDialog_saveSampling(self.widget_generate_RS.selectSamplingToSave))
+        self.widget_generate_RS.buttonSaveSamplingConf.clicked.connect(
+            lambda: self.fileDialog_saveSamplingConf(self.widget_generate_RS.selectSamplingToSave))
+        # generate sampling
         self.widget_generate_RS.buttonGenerateSampling.clicked.connect(lambda: do_random_sampling(self))
 
         # stratified random sampling #########
@@ -150,8 +160,17 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # for each item changed in table, save and update it
         self.TotalExpectedSE.valueChanged.connect(lambda: update_stratified_sampling_table(self, "TotalExpectedSE"))
         self.TableWidget_SRS.itemChanged.connect(lambda: update_stratified_sampling_table(self, "TableContent"))
-        # generate sampling
+        # generate sampling options
         self.widget_generate_SRS.widget_generate_sampling_options.setHidden(True)
+        # save config
+        self.widget_generate_SRS.widget_save_sampling.setHidden(True)
+        self.canvas.layersChanged.connect(
+            lambda: self.update_generated_sampling_list_in(self.widget_generate_SRS.selectSamplingToSave))
+        self.widget_generate_SRS.buttonSaveSampling.clicked.connect(
+            lambda: self.fileDialog_saveSampling(self.widget_generate_SRS.selectSamplingToSave))
+        self.widget_generate_SRS.buttonSaveSamplingConf.clicked.connect(
+            lambda: self.fileDialog_saveSamplingConf(self.widget_generate_SRS.selectSamplingToSave))
+        # generate sampling
         self.widget_generate_SRS.buttonGenerateSampling.clicked.connect(lambda: do_stratified_random_sampling(self))
 
     @pyqtSlot()
@@ -217,3 +236,42 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         iface.messageBar().pushMessage("AcATaMa", "Clipping the thematic raster with shape, completed",
                                        level=QgsMessageBar.SUCCESS)
+
+    @pyqtSlot()
+    def update_generated_sampling_list_in(self, combo_box):
+        combo_box.clear()
+        layers = QgsMapLayerRegistry.instance().mapLayers().values()
+
+        for layer in layers:
+            if layer.name() in Sampling.samplings.keys():
+                combo_box.addItem(layer.name())
+
+    @pyqtSlot()
+    def fileDialog_saveSampling(self, combo_box):
+        if combo_box.currentText() not in Sampling.samplings:
+            iface.messageBar().pushMessage("AcATaMa",
+                                           "Error, please select a valid sampling file", level=QgsMessageBar.WARNING)
+            return
+        suggested_filename = os.path.splitext(Sampling.samplings[combo_box.currentText()].ThematicR.file_path)[0] \
+                             + "_sampling.shp"
+        file_out = QtGui.QFileDialog.getSaveFileName(self, self.tr(u"Save sampling file"),
+                                                     suggested_filename,
+                                                     self.tr(u"Shape files (*.shp);;All files (*.*)"))
+        if file_out != '':
+            layer = get_current_layer_in(combo_box)
+            QgsVectorFileWriter.writeAsVectorFormat(layer, file_out, "utf-8", layer.crs(), "ESRI Shapefile")
+
+    @pyqtSlot()
+    def fileDialog_saveSamplingConf(self, combo_box):
+        if combo_box.currentText() not in Sampling.samplings:
+            iface.messageBar().pushMessage("AcATaMa",
+                                           "Error, please select a valid sampling file", level=QgsMessageBar.WARNING)
+            return
+        sampling_selected = Sampling.samplings[combo_box.currentText()]
+        suggested_filename = os.path.splitext(sampling_selected.ThematicR.file_path)[0] \
+                             + "_sampling.ini"
+        file_out = QtGui.QFileDialog.getSaveFileName(self, self.tr(u"Save sampling configuration"),
+                                                     suggested_filename,
+                                                     self.tr(u"Ini files (*.ini);;All files (*.*)"))
+        if file_out != '':
+            sampling_selected.save_config(file_out)
