@@ -299,7 +299,11 @@ def update_srs_table_content(dockwidget, srs_table):
     dockwidget.TableWidget_SRS.resizeColumnsToContents()
     dockwidget.TableWidget_SRS.resizeRowsToContents()
     # set label total samples
-    dockwidget.TotalNumSamples.setText(str(sum([int(x) for x in mask(srs_table["num_samples"], srs_table["On"])])))
+    total_num_samples = sum([int(x) for x in mask(srs_table["num_samples"], srs_table["On"])])
+    dockwidget.TotalNumSamples.setText(str(total_num_samples))
+    # set maximum and reset the value in progress bar status
+    dockwidget.widget_generate_SRS.progressGenerateSampling.setValue(0)
+    dockwidget.widget_generate_SRS.progressGenerateSampling.setMaximum(total_num_samples)
     # restore block signals events to normal behaviour
     dockwidget.TableWidget_SRS.blockSignals(False)
 
