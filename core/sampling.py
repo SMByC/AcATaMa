@@ -81,7 +81,8 @@ def do_random_sampling(dockwidget):
     # process
     sampling = Sampling("RS", ThematicR, CategoricalR, out_dir=dockwidget.tmp_dir)
     sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
-                                      neighbor_aggregation, attempts_by_sampling)
+                                      neighbor_aggregation, attempts_by_sampling,
+                                      dockwidget.widget_generate_RS.progressGenerateSampling)
 
     # success
     if sampling.total_of_samples == number_of_samples:
@@ -161,7 +162,8 @@ def do_stratified_random_sampling(dockwidget):
     # process
     sampling = Sampling("SRS", ThematicR, CategoricalR, sampling_method, dockwidget.tmp_dir)
     sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
-                                      neighbor_aggregation, attempts_by_sampling)
+                                      neighbor_aggregation, attempts_by_sampling,
+                                      dockwidget.widget_generate_SRS.progressGenerateSampling)
 
     # success
     if sampling.total_of_samples == total_of_samples:
@@ -210,7 +212,7 @@ class Sampling:
         self.points = dict()
 
     def generate_sampling_points(self, pixel_values, number_of_samples, min_distance,
-                                 neighbor_aggregation, attempts_by_sampling):
+                                 neighbor_aggregation, attempts_by_sampling, progress_bar):
         """Some code base from (by Alexander Bruy):
         https://github.com/qgis/QGIS/blob/release-2_18/python/plugins/processing/algs/qgis/RandomPointsExtent.py
         """
@@ -219,6 +221,7 @@ class Sampling:
         self.total_of_samples = None  # total generated
         self.min_distance = min_distance
         self.neighbor_aggregation = neighbor_aggregation
+        progress_bar.setValue(0)  # init progress bar
 
         xMin, yMax, xMax, yMin = self.ThematicR.extent()
         self.ThematicR_boundaries = QgsGeometry().fromRect(QgsRectangle(xMin, yMin, xMax, yMax))
@@ -237,7 +240,6 @@ class Sampling:
         nPoints = 0
         nIterations = 0
         random.seed()
-        total = 100.0 / total_of_samples
         self.index = QgsSpatialIndex()
         if attempts_by_sampling:
             maxIterations = total_of_samples * attempts_by_sampling
@@ -267,7 +269,8 @@ class Sampling:
             nIterations += 1
             if self.sampling_type == "SRS":
                 self.samples_in_categories[sampling_point.index_pixel_value] += 1
-            # feedback.setProgress(int(nPoints * total))
+            # update progress bar
+            progress_bar.setValue(int(nPoints))
         # save the total point generated
         self.total_of_samples = nPoints
         del writer

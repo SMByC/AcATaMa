@@ -140,6 +140,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             lambda: self.fileDialog_saveSamplingConf(self.widget_generate_RS.selectSamplingToSave))
         # generate sampling
         self.widget_generate_RS.buttonGenerateSampling.clicked.connect(lambda: do_random_sampling(self))
+        # update progress bar limits
+        self.numberOfSamples_RS.valueChanged.connect(lambda: self.widget_generate_RS.progressGenerateSampling.setValue(0))
+        self.numberOfSamples_RS.valueChanged.connect(self.widget_generate_RS.progressGenerateSampling.setMaximum)
 
         # stratified random sampling #########
         update_layers_list(self.selectCategRaster_SRS, "raster")
