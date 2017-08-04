@@ -299,8 +299,7 @@ def update_srs_table_content(dockwidget, srs_table):
     dockwidget.TableWidget_SRS.resizeColumnsToContents()
     dockwidget.TableWidget_SRS.resizeRowsToContents()
     # set label total samples
-    dockwidget.label_TotalNumSamples.setText(
-        "Total number of samples: {}".format(sum([int(x) for x in mask(srs_table["num_samples"], srs_table["On"])])))
+    dockwidget.TotalNumSamples.setText(str(sum([int(x) for x in mask(srs_table["num_samples"], srs_table["On"])])))
     # restore block signals events to normal behaviour
     dockwidget.TableWidget_SRS.blockSignals(False)
 
