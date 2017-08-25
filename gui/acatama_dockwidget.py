@@ -176,6 +176,17 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # generate sampling
         self.widget_generate_SRS.buttonGenerateSampling.clicked.connect(lambda: do_stratified_random_sampling(self))
 
+        # Validation #########
+        update_layers_list(self.selectSamplingFile, "vector", "points")
+        # handle connect when the list of layers changed
+        self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectSamplingFile, "vector", "points"))
+        # call to browse the sampling file
+        self.browseSamplingFile.clicked.connect(lambda: self.fileDialog_browse(
+            self.selectSamplingFile,
+            dialog_title=self.tr(u"Select the Sampling points file to validate"),
+            dialog_types=self.tr(u"Shape files (*.shp);;All files (*.*)"),
+            layer_type="vector"))
+
     @pyqtSlot()
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
         file_path = QtGui.QFileDialog.getOpenFileName(self, dialog_title, "", dialog_types)
