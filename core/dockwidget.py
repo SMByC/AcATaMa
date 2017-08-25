@@ -139,7 +139,17 @@ def unload_layer_in_qgis(layer_path):
             QgsMapLayerRegistry.instance().removeMapLayer(layer_loaded)
 
 
-def update_layers_list(combo_box, layer_type="any"):
+def update_layers_list(combo_box, layer_type="any", geometry_type="any"):
+    """
+
+    Args:
+        combo_box: combo box instance
+        layer_type: "any", "raster", "vector"
+        geometry_type: Only for vector layer type: "any", "points", "lines", "polygons"
+
+    Returns:
+        None: Refill the combo_box instance
+    """
     if not QgsMapLayerRegistry:
         return
     try:
@@ -160,6 +170,12 @@ def update_layers_list(combo_box, layer_type="any"):
                   if layer.type() == QgsMapLayer.VectorLayer]
     if layer_type == "any":
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
+
+    # filter by geometry type
+    if geometry_type in ["points", "lines", "polygons"]:
+        geometry_type = {"points": 0, "lines": 1, "polygons": 2}[geometry_type]
+        layers = [layer for layer in layers if layer.geometryType() == geometry_type]
+
     # added list to combobox
     if layers:
         [combo_box.addItem(layer.name()) for layer in layers]
