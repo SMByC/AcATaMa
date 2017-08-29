@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab_load">
        <attribute name="title">
@@ -391,8 +391,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>760</width>
-             <height>1192</height>
+             <width>657</width>
+             <height>1220</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -616,7 +616,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="WidgetGenerateSampling" name="widget_generate_RS" native="true"/>
+                 <widget class="GenerateSamplingWidget" name="widget_generate_RS" native="true"/>
                 </item>
                 <item>
                  <spacer name="verticalSpacer_3">
@@ -915,7 +915,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="WidgetGenerateSampling" name="widget_generate_SRS" native="true"/>
+                 <widget class="GenerateSamplingWidget" name="widget_generate_SRS" native="true"/>
                 </item>
                 <item>
                  <spacer name="verticalSpacer_4">
@@ -1028,7 +1028,7 @@
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_25">
                <item>
-                <widget class="QPushButton" name="pushButton">
+                <widget class="QPushButton" name="buttonOpenValidationDialog">
                  <property name="text">
                   <string>PushButton</string>
                  </property>
@@ -1129,9 +1129,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>WidgetGenerateSampling</class>
+   <class>GenerateSamplingWidget</class>
    <extends>QWidget</extends>
-   <header>AcATaMa.gui.widget_generate_sampling</header>
+   <header>AcATaMa.gui.generate_sampling_widget</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

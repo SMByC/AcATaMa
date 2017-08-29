@@ -44,7 +44,7 @@ PY_FILES = \
 	__init__.py \
 	acatama.py acatama_dockwidget.py
 
-UI_FILES = acatama_dockwidget_base.ui
+UI_FILES = acatama_dockwidget.ui
 
 EXTRAS = metadata.txt icon.png
 

@@ -88,7 +88,7 @@ class AcATaMa:
         return QCoreApplication.translate('AcATaMa', message)
 
     def initGui(self):
-        ### Main dockwidget
+        ### Main dockwidget menu
         # Create action that will start plugin configuration
         icon_path = ':/plugins/AcATaMa/icon.png'
         self.dockable_action = QAction(QIcon(icon_path), self.tr(u'&AcATaMa'), self.iface.mainWindow())
@@ -98,7 +98,7 @@ class AcATaMa:
         self.iface.addToolBarIcon(self.dockable_action)
         self.iface.addPluginToMenu(self.menu_name_plugin, self.dockable_action)
 
-        ### About dialog
+        ### About dialog menu
         # Create action that will start plugin configuration
         icon_path = ':/plugins/AcATaMa/gui/about.png'
         self.about_action = QAction(QIcon(icon_path), self.tr(u'About'), self.iface.mainWindow())

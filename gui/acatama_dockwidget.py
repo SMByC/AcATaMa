@@ -35,11 +35,12 @@ from AcATaMa.core.dockwidget import get_current_file_path_in, error_handler, \
     fill_stratified_sampling_table, valid_file_selected_in, update_stratified_sampling_table
 from AcATaMa.core.raster import do_clipping_with_shape, get_nodata_value
 from AcATaMa.gui.about_dialog import AboutDialog
+from AcATaMa.gui.validation_dialog import ValidationDialog
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'acatama_dockwidget_base.ui'))
+    plugin_folder, 'ui', 'acatama_dockwidget.ui'))
 
 cfg = ConfigParser.SafeConfigParser()
 cfg.read(os.path.join(plugin_folder, 'metadata.txt'))
@@ -70,12 +71,12 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         event.accept()
 
     def setup_gui(self):
-        # plugin info #########
+        # ######### plugin about ######### #
         self.about_dialog = AboutDialog()
         self.plugin_version.setText(self.tr(u"AcATaMa v{}".format(VERSION)))
         self.button_about.clicked.connect(self.about_dialog.show)
 
-        # load thematic raster image #########
+        # ######### load thematic raster image ######### #
         update_layers_list(self.selectThematicRaster, "raster")
         # handle connect when the list of layers changed
         self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectThematicRaster, "raster"))
@@ -88,7 +89,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # set the nodata value of the thematic raster
         self.selectThematicRaster.currentIndexChanged.connect(self.set_nodata_value_thematic_raster)
 
-        # shape study area #########
+        # ######### shape study area ######### #
         self.widget_ShapeArea.setHidden(True)
         update_layers_list(self.selectShapeArea, "vector")
         # handle connect when the list of layers changed
@@ -102,7 +103,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # do clip
         self.buttonClipping.clicked.connect(self.clipping_thematic_raster)
 
-        # create categorical  ######### TODO
+        # ######### create categorical  ######### # TODO
         self.widget_CategRaster.setHidden(True)
         # update_layers_list(self.selectCategRaster, "raster")
         # # handle connect when the list of layers changed
@@ -114,7 +115,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         #     dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
         #     layer_type="raster"))
 
-        # random sampling #########
+        # ######### random sampling ######### #
         self.widget_RSwithCR.setHidden(True)
         update_layers_list(self.selectCategRaster_RS, "raster")
         # handle connect when the list of layers changed
@@ -129,7 +130,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.selectCategRaster_SRS.currentIndexChanged.connect(self.set_nodata_value_categorical_raster)
         self.nodata_CategRaster_SRS.valueChanged.connect(self.reset_nodata_to_categorical_raster)
         # generate sampling options
-        self.widget_generate_RS.widget_generate_sampling_options.setHidden(True)
+        self.widget_generate_RS.generate_sampling_widget_options.setHidden(True)
         # save config
         self.widget_generate_RS.widget_save_sampling.setHidden(True)
         self.canvas.layersChanged.connect(
@@ -144,7 +145,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.numberOfSamples_RS.valueChanged.connect(lambda: self.widget_generate_RS.progressGenerateSampling.setValue(0))
         self.numberOfSamples_RS.valueChanged.connect(self.widget_generate_RS.progressGenerateSampling.setMaximum)
 
-        # stratified random sampling #########
+        # ######### stratified random sampling ######### #
         update_layers_list(self.selectCategRaster_SRS, "raster")
         # handle connect when the list of layers changed
         self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectCategRaster_SRS, "raster"))
@@ -164,7 +165,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.TotalExpectedSE.valueChanged.connect(lambda: update_stratified_sampling_table(self, "TotalExpectedSE"))
         self.TableWidget_SRS.itemChanged.connect(lambda: update_stratified_sampling_table(self, "TableContent"))
         # generate sampling options
-        self.widget_generate_SRS.widget_generate_sampling_options.setHidden(True)
+        self.widget_generate_SRS.generate_sampling_widget_options.setHidden(True)
         # save config
         self.widget_generate_SRS.widget_save_sampling.setHidden(True)
         self.canvas.layersChanged.connect(
@@ -176,7 +177,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # generate sampling
         self.widget_generate_SRS.buttonGenerateSampling.clicked.connect(lambda: do_stratified_random_sampling(self))
 
-        # Validation #########
+        # ######### Validation sampling ######### #
         update_layers_list(self.selectSamplingFile, "vector", "points")
         # handle connect when the list of layers changed
         self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectSamplingFile, "vector", "points"))
@@ -186,6 +187,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             dialog_title=self.tr(u"Select the Sampling points file to validate"),
             dialog_types=self.tr(u"Shape files (*.shp);;All files (*.*)"),
             layer_type="vector"))
+
+        # connect the action to the run method
+        self.buttonOpenValidationDialog.clicked.connect(self.validation)
 
     @pyqtSlot()
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
@@ -289,3 +293,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                                                      self.tr(u"Ini files (*.ini);;All files (*.*)"))
         if file_out != '':
             sampling_selected.save_config(file_out)
+
+    @pyqtSlot()
+    def validation(self):
+        self.validation_dialog = ValidationDialog()
+        self.validation_dialog.show()
+
