@@ -22,7 +22,7 @@
 import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import QSettings
-from qgis.gui import QgsMapCanvas, QgsMapCanvasLayer
+from qgis.gui import QgsMapCanvas, QgsMapCanvasLayer, QgsMapToolPan
 from qgis.utils import iface
 
 from AcATaMa.core.dockwidget import update_layers_list, get_current_layer_in
@@ -42,9 +42,14 @@ class RenderWidget(QtGui.QWidget):
         settings = QSettings()
         self.canvas.enableAntiAliasing(settings.value("/qgis/enable_anti_aliasing", False, type=bool))
         self.canvas.useImageToRender(settings.value("/qgis/use_qimage_to_render", False, type=bool))
+        # action zoom
         action = settings.value("/qgis/wheel_action", 0, type=int)
         zoomFactor = settings.value("/qgis/zoom_factor", 2.0, type=float)
         self.canvas.setWheelAction(QgsMapCanvas.WheelAction(action), zoomFactor)
+        # action pan
+        self.toolPan = QgsMapToolPan(self.canvas)
+        self.canvas.setMapTool(self.toolPan)
+
         gridLayout.addWidget(self.canvas)
 
     def render_layer(self, layer):
