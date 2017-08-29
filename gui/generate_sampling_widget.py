@@ -25,10 +25,10 @@ from PyQt4 import QtGui, uic
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'widget_generate_sampling.ui'))
+    plugin_folder, 'ui', 'generate_sampling_widget.ui'))
 
 
-class WidgetGenerateSampling(QtGui.QWidget, FORM_CLASS):
+class GenerateSamplingWidget(QtGui.QWidget, FORM_CLASS):
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.setupUi(self)

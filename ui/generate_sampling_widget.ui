@@ -118,7 +118,7 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
-          <widget class="QWidget" name="widget_generate_sampling_options" native="true">
+          <widget class="QWidget" name="generate_sampling_widget_options" native="true">
            <layout class="QGridLayout" name="gridLayout_2">
             <item row="0" column="0">
              <widget class="QRadioButton" name="button_attempts_by_sampling">
@@ -310,7 +310,7 @@ impossible complete the sampling set configured.</string>
   <connection>
    <sender>groupBox_generate_sampling_options</sender>
    <signal>clicked(bool)</signal>
-   <receiver>widget_generate_sampling_options</receiver>
+   <receiver>generate_sampling_widget_options</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
