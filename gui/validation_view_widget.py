@@ -59,12 +59,12 @@ class RenderWidget(QtGui.QWidget):
             return
         self.canvas.setExtent(layer.extent())
         self.canvas.setLayerSet([QgsMapCanvasLayer(layer)])
-        #self.refreshLayerButtons()
-        #self.onExtentsChanged()
+
+        self.extents_changed()
 
     def extents_changed(self):
-        self.canvas.setExtent(self.iface.mapCanvas().extent())
-        self.canvas.zoomByFactor(self.scaleFactor.value())
+        self.canvas.setExtent(iface.mapCanvas().extent())
+        self.canvas.zoomByFactor(self.parent().scaleFactor.value())
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -86,5 +86,6 @@ class ValidationViewWidget(QtGui.QWidget, FORM_CLASS):
         self.selectRenderFile.currentIndexChanged.connect(
             lambda: self.render_widget.render_layer(get_current_layer_in(self.selectRenderFile)))
 
-
+        # zoom factor
+        self.scaleFactor.valueChanged.connect(self.render_widget.extents_changed)
 
