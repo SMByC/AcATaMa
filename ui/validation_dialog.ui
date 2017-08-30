@@ -92,14 +92,14 @@
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <widget class="ValidationRenderWidget" name="render_window_1" native="true">
+          <widget class="ValidationViewWidget" name="render_window_1" native="true">
            <layout class="QVBoxLayout" name="verticalLayout_6"/>
           </widget>
-          <widget class="ValidationRenderWidget" name="render_window_2" native="true">
+          <widget class="ValidationViewWidget" name="render_window_2" native="true">
            <layout class="QVBoxLayout" name="verticalLayout_7"/>
           </widget>
          </widget>
-         <widget class="ValidationRenderWidget" name="render_window_3" native="true">
+         <widget class="ValidationViewWidget" name="render_window_3" native="true">
           <layout class="QVBoxLayout" name="verticalLayout_16"/>
          </widget>
         </widget>
@@ -111,14 +111,14 @@
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <widget class="ValidationRenderWidget" name="render_window_4" native="true">
+          <widget class="ValidationViewWidget" name="render_window_4" native="true">
            <layout class="QVBoxLayout" name="verticalLayout_10"/>
           </widget>
-          <widget class="ValidationRenderWidget" name="render_window_5" native="true">
+          <widget class="ValidationViewWidget" name="render_window_5" native="true">
            <layout class="QVBoxLayout" name="verticalLayout_13"/>
           </widget>
          </widget>
-         <widget class="ValidationRenderWidget" name="render_window_6" native="true">
+         <widget class="ValidationViewWidget" name="render_window_6" native="true">
           <layout class="QVBoxLayout" name="verticalLayout_19"/>
          </widget>
         </widget>
@@ -171,9 +171,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ValidationRenderWidget</class>
+   <class>ValidationViewWidget</class>
    <extends>QWidget</extends>
-   <header>AcATaMa.gui.validation_render_widget</header>
+   <header>AcATaMa.gui.validation_view_widget</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
