@@ -22,7 +22,8 @@
 import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import QSettings
-from qgis.gui import QgsMapCanvas, QgsMapCanvasLayer, QgsMapToolPan
+from qgis.core import QgsStyleV2, QgsMapLayer
+from qgis.gui import QgsMapCanvas, QgsMapCanvasLayer, QgsMapToolPan, QgsRendererV2PropertiesDialog
 from qgis.utils import iface
 
 from AcATaMa.core.dockwidget import update_layers_list, get_current_layer_in
@@ -32,6 +33,7 @@ class RenderWidget(QtGui.QWidget):
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.setupUi()
+        self.layer = None
 
     def setupUi(self):
 
@@ -56,15 +58,29 @@ class RenderWidget(QtGui.QWidget):
         if not layer:
             self.canvas.clear()
             self.canvas.refreshAllLayers()
+            self.layer = None
             return
         self.canvas.setExtent(layer.extent())
         self.canvas.setLayerSet([QgsMapCanvasLayer(layer)])
+        self.layer = layer
 
         self.extents_changed()
 
     def extents_changed(self):
         self.canvas.setExtent(iface.mapCanvas().extent())
         self.canvas.zoomByFactor(self.parent().scaleFactor.value())
+
+    def edit_style(self):
+        if not self.layer:
+            return
+        if self.layer.type() == QgsMapLayer.VectorLayer:
+            style_dlg = QgsRendererV2PropertiesDialog(self.layer, QgsStyleV2.defaultStyle(),
+                                                      embedded=False, parent=self.parent().parent())
+            style_dlg.show()
+        if self.layer.type() == QgsMapLayer.RasterLayer:
+            pass
+
+        self.canvas.refresh()
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -88,4 +104,7 @@ class ValidationViewWidget(QtGui.QWidget, FORM_CLASS):
 
         # zoom factor
         self.scaleFactor.valueChanged.connect(self.render_widget.extents_changed)
+
+        # edit style
+        self.editStyle.clicked.connect(self.render_widget.edit_style)
 
