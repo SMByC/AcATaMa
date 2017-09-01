@@ -189,7 +189,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             layer_type="vector"))
 
         # connect the action to the run method
-        self.buttonOpenValidationDialog.clicked.connect(self.validation)
+        self.buttonOpenValidationDialog.clicked.connect(self.open_validation_dialog)
 
     @pyqtSlot()
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
@@ -295,7 +295,13 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             sampling_selected.save_config(file_out)
 
     @pyqtSlot()
-    def validation(self):
-        self.validation_dialog = ValidationDialog()
+    def open_validation_dialog(self):
+        sampling_layer = get_current_layer_in(self.selectSamplingFile)
+        if not sampling_layer:
+            iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid sampling file to validate",
+                                           level=QgsMessageBar.WARNING, duration=10)
+            return
+
+        self.validation_dialog = ValidationDialog(sampling_layer)
         self.validation_dialog.show()
 
