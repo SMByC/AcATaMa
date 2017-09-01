@@ -29,7 +29,10 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 
 class ValidationDialog(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, sampling_layer, parent=None):
-        QtGui.QDialog.__init__(self, parent)
-        self.sampling_layer = sampling_layer
+    sampling_layer = None
+
+    def __init__(self, sampling_layer):
+        QtGui.QDialog.__init__(self)
+        ValidationDialog.sampling_layer = sampling_layer
+
         self.setupUi(self)

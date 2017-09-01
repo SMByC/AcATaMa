@@ -32,6 +32,8 @@ class RenderWidget(QtGui.QWidget):
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.setupUi()
+
+        self.sampling_layer = self.parent().sampling_layer
         self.layer = None
 
     def setupUi(self):
@@ -59,7 +61,7 @@ class RenderWidget(QtGui.QWidget):
             self.canvas.refreshAllLayers()
             self.layer = None
             return
-        self.canvas.setLayerSet([QgsMapCanvasLayer(layer)])
+        self.canvas.setLayerSet([QgsMapCanvasLayer(self.sampling_layer), QgsMapCanvasLayer(layer)])
         self.canvas.setExtent(layer.extent())
         self.canvas.refresh()
         self.layer = layer
@@ -86,6 +88,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 class ValidationViewWidget(QtGui.QWidget, FORM_CLASS):
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
+        # import the sampling layer to validate
+        from AcATaMa.gui.validation_dialog import ValidationDialog
+        self.sampling_layer = ValidationDialog.sampling_layer
         self.canvas = iface.mapCanvas()
         self.setupUi(self)
         self.is_active = False
