@@ -59,14 +59,13 @@ class RenderWidget(QtGui.QWidget):
             self.canvas.refreshAllLayers()
             self.layer = None
             return
-        self.canvas.setExtent(layer.extent())
         self.canvas.setLayerSet([QgsMapCanvasLayer(layer)])
+        self.canvas.setExtent(layer.extent())
+        self.canvas.refresh()
         self.layer = layer
 
-        self.extents_changed()
-
     def extents_changed(self):
-        self.canvas.setExtent(iface.mapCanvas().extent())
+        #self.canvas.setExtent(iface.mapCanvas().extent())
         self.canvas.zoomByFactor(self.parent().scaleFactor.value())
 
     def layer_properties(self):
@@ -120,4 +119,5 @@ class ValidationViewWidget(QtGui.QWidget, FORM_CLASS):
             selected_index = combo_box.findText(filename, Qt.MatchFixedString)
             combo_box.setCurrentIndex(selected_index)
 
-            self.render_widget.render_layer(get_current_layer_in(combo_box))
+            self.render_widget.canvas.setExtent(get_current_layer_in(combo_box).extent())
+            self.render_widget.canvas.refresh()
