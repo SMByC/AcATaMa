@@ -62,9 +62,17 @@ class RenderWidget(QtGui.QWidget):
             self.layer = None
             return
         self.canvas.setLayerSet([QgsMapCanvasLayer(self.sampling_layer), QgsMapCanvasLayer(layer)])
+        self.update_crs()
         self.canvas.setExtent(layer.extent())
         self.canvas.refresh()
         self.layer = layer
+
+    def update_crs(self):
+        renderer = iface.mapCanvas().mapRenderer()
+        self.canvas.mapRenderer().setDestinationCrs(renderer.destinationCrs())
+        self.canvas.mapRenderer().setMapUnits(renderer.mapUnits())
+        # transform enable
+        self.canvas.mapRenderer().setProjectionsEnabled(True)
 
     def extents_changed(self):
         #self.canvas.setExtent(iface.mapCanvas().extent())
