@@ -21,11 +21,11 @@
 
 import os
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import QSettings
+from PyQt4.QtCore import QSettings, Qt, pyqtSlot
 from qgis.gui import QgsMapCanvas, QgsMapCanvasLayer, QgsMapToolPan
 from qgis.utils import iface
 
-from AcATaMa.core.dockwidget import update_layers_list, get_current_layer_in
+from AcATaMa.core.dockwidget import update_layers_list, get_current_layer_in, load_layer_in_qgis
 
 
 class RenderWidget(QtGui.QWidget):
@@ -97,6 +97,12 @@ class ValidationViewWidget(QtGui.QWidget, FORM_CLASS):
         self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectRenderFile, "any"))
         self.selectRenderFile.currentIndexChanged.connect(
             lambda: self.render_widget.render_layer(get_current_layer_in(self.selectRenderFile)))
+        # call to browse the render file
+        self.browseRenderFile.clicked.connect(lambda: self.fileDialog_browse(
+            self.selectRenderFile,
+            dialog_title=self.tr(u"Select the file for this view"),
+            dialog_types=self.tr(u"Raster or vector files (*.tif *.img *.shp);;All files (*.*)"),
+            layer_type="any"))
 
         # zoom factor
         self.scaleFactor.valueChanged.connect(self.render_widget.extents_changed)
@@ -104,3 +110,14 @@ class ValidationViewWidget(QtGui.QWidget, FORM_CLASS):
         # edit layer properties
         self.layerProperties.clicked.connect(self.render_widget.layer_properties)
 
+    @pyqtSlot()
+    def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
+        file_path = QtGui.QFileDialog.getOpenFileName(self, dialog_title, "", dialog_types)
+        if file_path != '' and os.path.isfile(file_path):
+            # load to qgis and update combobox list
+            filename = load_layer_in_qgis(file_path, layer_type)
+            update_layers_list(combo_box, layer_type)
+            selected_index = combo_box.findText(filename, Qt.MatchFixedString)
+            combo_box.setCurrentIndex(selected_index)
+
+            self.render_widget.render_layer(get_current_layer_in(combo_box))

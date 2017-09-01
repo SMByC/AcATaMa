@@ -118,12 +118,18 @@ def get_current_layer_in(combo_box):
 
 
 def load_layer_in_qgis(file_path, layer_type):
-    # Open in QGIS
+    # create layer
     filename = os.path.splitext(os.path.basename(file_path))[0]
     if layer_type == "raster":
         layer = QgsRasterLayer(file_path, filename)
     if layer_type == "vector":
         layer = QgsVectorLayer(file_path, filename, "ogr")
+    if layer_type == "any":
+        if file_path.endswith((".tif", ".TIF", ".img", ".IMG")):
+            layer = QgsRasterLayer(file_path, filename)
+        if file_path.endswith((".shp", ".SHP")):
+            layer = QgsVectorLayer(file_path, filename, "ogr")
+    # load
     if layer.isValid():
         QgsMapLayerRegistry.instance().addMapLayer(layer)
     else:

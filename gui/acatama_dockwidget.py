@@ -177,7 +177,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # generate sampling
         self.widget_generate_SRS.buttonGenerateSampling.clicked.connect(lambda: do_stratified_random_sampling(self))
 
-        # ######### Validation sampling ######### #
+        # ######### Validation sampling tab ######### #
         update_layers_list(self.selectSamplingFile, "vector", "points")
         # handle connect when the list of layers changed
         self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectSamplingFile, "vector", "points"))
