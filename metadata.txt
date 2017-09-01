@@ -28,7 +28,7 @@ tags=accuracy assessment,thematic map
 
 
 category=Plugins
-icon=icon.png
+icon=icons/acatama.svg
 # experimental flag
 experimental=True
 

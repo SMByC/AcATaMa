@@ -90,7 +90,7 @@ class AcATaMa:
     def initGui(self):
         ### Main dockwidget menu
         # Create action that will start plugin configuration
-        icon_path = ':/plugins/AcATaMa/icon.png'
+        icon_path = ':/plugins/AcATaMa/icons/acatama.svg'
         self.dockable_action = QAction(QIcon(icon_path), self.tr(u'&AcATaMa'), self.iface.mainWindow())
         # connect the action to the run method
         self.dockable_action.triggered.connect(self.run)
@@ -100,7 +100,7 @@ class AcATaMa:
 
         ### About dialog menu
         # Create action that will start plugin configuration
-        icon_path = ':/plugins/AcATaMa/gui/about.png'
+        icon_path = ':/plugins/AcATaMa/icons/about.svg'
         self.about_action = QAction(QIcon(icon_path), self.tr(u'About'), self.iface.mainWindow())
         # connect the action to the run method
         self.about_action.triggered.connect(self.about)
