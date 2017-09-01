@@ -1,8 +1,7 @@
 <RCC>
     <qresource prefix="/plugins/AcATaMa" >
-        <file>icon.png</file>
-        <file>gui/about.png</file>
-        <file>gui/acatama.png</file>
-        <file>gui/layer_properties.svg</file>
+        <file>icons/acatama.svg</file>
+        <file>icons/about.svg</file>
+        <file>icons/layer_properties.svg</file>
     </qresource>
 </RCC>
