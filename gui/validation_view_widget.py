@@ -56,16 +56,25 @@ class RenderWidget(QtGui.QWidget):
         gridLayout.addWidget(self.canvas)
 
     def render_layer(self, layer):
+        self.blockSignals(True)
         if not layer:
             self.canvas.clear()
             self.canvas.refreshAllLayers()
             self.layer = None
+            # set status for view widget
+            self.parent().is_active = False
             return
         self.canvas.setLayerSet([QgsMapCanvasLayer(self.sampling_layer), QgsMapCanvasLayer(layer)])
         self.update_crs()
-        self.canvas.setExtent(layer.extent())
+        if self.parent().master_view.is_active:
+            self.canvas.setExtent(self.parent().master_view.render_widget.canvas.extent())
+        else:
+            self.canvas.setExtent(layer.extent())
         self.canvas.refresh()
+        self.blockSignals(False)
         self.layer = layer
+        # set status for view widget
+        self.parent().is_active = True
 
     def update_crs(self):
         renderer = iface.mapCanvas().mapRenderer()
@@ -74,9 +83,11 @@ class RenderWidget(QtGui.QWidget):
         # transform enable
         self.canvas.mapRenderer().setProjectionsEnabled(True)
 
-    def extents_changed(self):
-        #self.canvas.setExtent(iface.mapCanvas().extent())
+    def set_extents_and_scalefactor(self, extent):
+        self.canvas.blockSignals(True)
+        self.canvas.setExtent(extent)
         self.canvas.zoomByFactor(self.parent().scaleFactor.value())
+        self.canvas.blockSignals(False)
 
     def layer_properties(self):
         if not self.layer:
@@ -101,6 +112,7 @@ class ValidationViewWidget(QtGui.QWidget, FORM_CLASS):
         self.sampling_layer = ValidationDialog.sampling_layer
         self.canvas = iface.mapCanvas()
         self.setupUi(self)
+        self.master_view = None
         self.is_active = False
 
         # render layer actions
@@ -118,10 +130,12 @@ class ValidationViewWidget(QtGui.QWidget, FORM_CLASS):
             layer_type="any"))
 
         # zoom factor
-        self.scaleFactor.valueChanged.connect(self.render_widget.extents_changed)
-
+        self.scaleFactor.valueChanged.connect(
+            lambda: self.render_widget.set_extents_and_scalefactor(self.master_view.render_widget.canvas.extent()))
         # edit layer properties
         self.layerProperties.clicked.connect(self.render_widget.layer_properties)
+        # action for synchronize all view extent
+        self.render_widget.canvas.extentsChanged.connect(self.extent_changed)
 
     @pyqtSlot()
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
@@ -135,3 +149,13 @@ class ValidationViewWidget(QtGui.QWidget, FORM_CLASS):
 
             self.render_widget.canvas.setExtent(get_current_layer_in(combo_box).extent())
             self.render_widget.canvas.refresh()
+
+    @pyqtSlot()
+    def extent_changed(self):
+        if self.is_active:
+            from AcATaMa.gui.validation_dialog import ValidationDialog
+            # set extent and scale factor for all view activated
+            for view_widget in ValidationDialog.view_widgets:
+                if view_widget.is_active and view_widget != self:
+                    view_widget.render_widget.set_extents_and_scalefactor(self.master_view.render_widget.canvas.extent())
+
