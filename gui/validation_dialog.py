@@ -43,6 +43,7 @@ class ValidationDialog(QtGui.QDialog, FORM_CLASS):
             [self.render_window_1, self.render_window_2, self.render_window_3,
              self.render_window_4, self.render_window_5, self.render_window_6]
 
-        # set the label names for each view
+        # set the master view and label names for each view
         for num_view, view_widget in zip(range(1, 7), ValidationDialog.view_widgets):
+            view_widget.master_view = ValidationDialog.view_widgets[0]
             view_widget.view_label_name.setText("View {}:".format(num_view))
