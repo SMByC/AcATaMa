@@ -80,43 +80,33 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QSplitter" name="splitter_5">
+       <widget class="QSplitter" name="splitter_3">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
-        <widget class="QSplitter" name="splitter_3">
+        <widget class="QSplitter" name="splitter">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <widget class="QSplitter" name="splitter">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <widget class="ValidationViewWidget" name="render_window_1" native="true">
-           <layout class="QVBoxLayout" name="verticalLayout_6"/>
-          </widget>
-          <widget class="ValidationViewWidget" name="render_window_2" native="true">
-           <layout class="QVBoxLayout" name="verticalLayout_7"/>
-          </widget>
+         <widget class="ValidationViewWidget" name="render_window_1" native="true">
+          <layout class="QVBoxLayout" name="verticalLayout_6"/>
+         </widget>
+         <widget class="ValidationViewWidget" name="render_window_2" native="true">
+          <layout class="QVBoxLayout" name="verticalLayout_7"/>
          </widget>
          <widget class="ValidationViewWidget" name="render_window_3" native="true">
           <layout class="QVBoxLayout" name="verticalLayout_16"/>
          </widget>
         </widget>
-        <widget class="QSplitter" name="splitter_4">
+        <widget class="QSplitter" name="splitter_2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <widget class="QSplitter" name="splitter_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <widget class="ValidationViewWidget" name="render_window_4" native="true">
-           <layout class="QVBoxLayout" name="verticalLayout_10"/>
-          </widget>
-          <widget class="ValidationViewWidget" name="render_window_5" native="true">
-           <layout class="QVBoxLayout" name="verticalLayout_13"/>
-          </widget>
+         <widget class="ValidationViewWidget" name="render_window_4" native="true">
+          <layout class="QVBoxLayout" name="verticalLayout_10"/>
+         </widget>
+         <widget class="ValidationViewWidget" name="render_window_5" native="true">
+          <layout class="QVBoxLayout" name="verticalLayout_13"/>
          </widget>
          <widget class="ValidationViewWidget" name="render_window_6" native="true">
           <layout class="QVBoxLayout" name="verticalLayout_19"/>

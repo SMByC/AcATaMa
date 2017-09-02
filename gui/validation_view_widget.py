@@ -42,6 +42,7 @@ class RenderWidget(QtGui.QWidget):
         gridLayout.setContentsMargins(0, 0, 0, 0)
         self.canvas = QgsMapCanvas()
         self.canvas.setCanvasColor(QtGui.QColor(255, 255, 255))
+        self.canvas.setStyleSheet("border: 0px;")
         settings = QSettings()
         self.canvas.enableAntiAliasing(settings.value("/qgis/enable_anti_aliasing", False, type=bool))
         self.canvas.useImageToRender(settings.value("/qgis/use_qimage_to_render", False, type=bool))
