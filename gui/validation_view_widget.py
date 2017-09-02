@@ -104,9 +104,10 @@ class ValidationViewWidget(QtGui.QWidget, FORM_CLASS):
         self.is_active = False
 
         # render layer actions
-        update_layers_list(self.selectRenderFile, "any")
+        update_layers_list(self.selectRenderFile, "any", ignore_layers=[self.sampling_layer])
         # handle connect when the list of layers changed
-        self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectRenderFile, "any"))
+        self.canvas.layersChanged.connect(
+            lambda: update_layers_list(self.selectRenderFile, "any", ignore_layers=[self.sampling_layer]))
         self.selectRenderFile.currentIndexChanged.connect(
             lambda: self.render_widget.render_layer(get_current_layer_in(self.selectRenderFile)))
         # call to browse the render file
@@ -128,7 +129,7 @@ class ValidationViewWidget(QtGui.QWidget, FORM_CLASS):
         if file_path != '' and os.path.isfile(file_path):
             # load to qgis and update combobox list
             filename = load_layer_in_qgis(file_path, layer_type)
-            update_layers_list(combo_box, layer_type)
+            update_layers_list(combo_box, layer_type, ignore_layers=[self.sampling_layer])
             selected_index = combo_box.findText(filename, Qt.MatchFixedString)
             combo_box.setCurrentIndex(selected_index)
 
