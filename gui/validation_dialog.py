@@ -47,3 +47,9 @@ class ValidationDialog(QtGui.QDialog, FORM_CLASS):
         for num_view, view_widget in zip(range(1, 7), ValidationDialog.view_widgets):
             view_widget.master_view = ValidationDialog.view_widgets[0]
             view_widget.view_label_name.setText("View {}:".format(num_view))
+
+        # set some config for master view
+        ValidationDialog.view_widgets[0].view_label_name.setText("Master:")
+        ValidationDialog.view_widgets[0].scaleFactor.setReadOnly(True)
+        ValidationDialog.view_widgets[0].scaleFactor.setEnabled(False)
+        ValidationDialog.view_widgets[0].scaleFactor.setToolTip("Always 1 for the master view")
