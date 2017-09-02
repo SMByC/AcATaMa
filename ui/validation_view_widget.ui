@@ -24,19 +24,19 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="view_label_name">
         <property name="font">
          <font>
           <pointsize>8</pointsize>
          </font>
         </property>
         <property name="text">
-         <string>View 1:</string>
+         <string>View N:</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="lineEdit">
+       <widget class="QLineEdit" name="view_name">
         <property name="font">
          <font>
           <pointsize>8</pointsize>
