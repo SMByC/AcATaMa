@@ -145,7 +145,7 @@ def unload_layer_in_qgis(layer_path):
             QgsMapLayerRegistry.instance().removeMapLayer(layer_loaded)
 
 
-def update_layers_list(combo_box, layer_type="any", geometry_type="any"):
+def update_layers_list(combo_box, layer_type="any", geometry_type="any", ignore_layers=[]):
     """
 
     Args:
@@ -176,6 +176,9 @@ def update_layers_list(combo_box, layer_type="any", geometry_type="any"):
                   if layer.type() == QgsMapLayer.VectorLayer]
     if layer_type == "any":
         layers = QgsMapLayerRegistry.instance().mapLayers().values()
+
+    if ignore_layers:
+        layers = [layer for layer in layers if layer not in ignore_layers]
 
     # filter by geometry type
     if geometry_type in ["points", "lines", "polygons"]:
