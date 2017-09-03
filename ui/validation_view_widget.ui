@@ -170,11 +170,6 @@
       </item>
       <item>
        <widget class="QToolButton" name="layerProperties">
-        <property name="font">
-         <font>
-          <pointsize>7</pointsize>
-         </font>
-        </property>
         <property name="toolTip">
          <string>Open the properties of this layer</string>
         </property>
@@ -184,7 +179,7 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
+          <width>31</width>
           <height>25</height>
          </size>
         </property>
