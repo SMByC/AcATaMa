@@ -3,5 +3,6 @@
         <file>icons/acatama.svg</file>
         <file>icons/about.svg</file>
         <file>icons/layer_properties.svg</file>
+        <file>icons/zoom_to_sample.svg</file>
     </qresource>
 </RCC>

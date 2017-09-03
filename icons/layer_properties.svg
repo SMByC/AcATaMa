@@ -7,9 +7,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   height="64"
-   viewBox="0 0 16.933333 16.933334"
-   width="64"
+   height="52"
+   viewBox="0 0 17.197916 13.758338"
+   width="65"
    version="1.1"
    id="svg57"
    sodipodi:docname="layer_properties.svg"
@@ -22,6 +22,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -41,8 +42,8 @@
      id="namedview59"
      showgrid="false"
      inkscape:zoom="10.429825"
-     inkscape:cx="11.116181"
-     inkscape:cy="26.802299"
+     inkscape:cx="8.0001172"
+     inkscape:cy="27.56933"
      inkscape:window-x="0"
      inkscape:window-y="36"
      inkscape:window-maximized="0"
@@ -86,7 +87,7 @@
      gradientTransform="matrix(0.9837838,0,0,1,-0.08938991,0.09453092)"
      gradientUnits="userSpaceOnUse"
      x1="5.0081882"
-     x2=".89769715"
+     x2="0.89769715"
      y1="281.89978"
      y2="280.76587">
     <stop
@@ -104,7 +105,7 @@
      gradientTransform="matrix(0.98378379,0,0,1,-0.08938989,3.004935)"
      gradientUnits="userSpaceOnUse"
      x1="5.0081882"
-     x2=".89769715"
+     x2="0.89769715"
      y1="281.89978"
      y2="280.76587">
     <stop
@@ -122,7 +123,7 @@
      gradientTransform="matrix(0.98378379,0,0,1,-0.08938989,5.9153515)"
      gradientUnits="userSpaceOnUse"
      x1="5.0081882"
-     x2=".89769715"
+     x2="0.89769715"
      y1="281.89978"
      y2="280.76587">
     <stop
@@ -136,7 +137,7 @@
        id="stop24" />
   </linearGradient>
   <g
-     transform="matrix(1.0669152,0,0,1.0669152,-0.43462215,-299.3921)"
+     transform="matrix(1.0669152,0,0,1.0669152,-0.29639041,-301.2517)"
      id="g55">
     <g
        transform="matrix(0.81317949,0.35395959,-0.39866173,0.91709757,115.33282,25.155894)"
