@@ -53,3 +53,28 @@ class ValidationDialog(QtGui.QDialog, FORM_CLASS):
         ValidationDialog.view_widgets[0].scaleFactor.setReadOnly(True)
         ValidationDialog.view_widgets[0].scaleFactor.setEnabled(False)
         ValidationDialog.view_widgets[0].scaleFactor.setToolTip("Always 1 for the master view")
+
+        # set classification buttons
+        self.class_buttons_config = ClassificationButtonsConfig()
+        self.SetClassification.clicked.connect(self.set_buttons_classification)
+
+    def set_buttons_classification(self):
+        if self.class_buttons_config.exec_():
+            print self.class_buttons_config.table.rowCount()
+
+            buttons = {}
+            for i in range(5):
+                # keep a reference to the buttons
+                buttons[i] = QtGui.QPushButton('row %d, col %d' % (i, 0))
+                # add to the layout
+                self.gridButtonsClassification.addWidget(buttons[i], i, 0)
+
+
+FORM_CLASS, _ = uic.loadUiType(os.path.join(
+    plugin_folder, 'ui', 'classification_buttons_config.ui'))
+
+
+class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
+    def __init__(self):
+        QtGui.QDialog.__init__(self)
+        self.setupUi(self)
