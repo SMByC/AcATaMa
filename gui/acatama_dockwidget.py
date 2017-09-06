@@ -35,7 +35,7 @@ from AcATaMa.core.dockwidget import get_current_file_path_in, error_handler, \
     fill_stratified_sampling_table, valid_file_selected_in, update_stratified_sampling_table
 from AcATaMa.core.raster import do_clipping_with_shape, get_nodata_value
 from AcATaMa.gui.about_dialog import AboutDialog
-from AcATaMa.gui.validation_dialog import ValidationDialog
+from AcATaMa.gui.classification_dialog import ClassificationDialog
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -177,19 +177,19 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # generate sampling
         self.widget_generate_SRS.buttonGenerateSampling.clicked.connect(lambda: do_stratified_random_sampling(self))
 
-        # ######### Validation sampling tab ######### #
+        # ######### Classification sampling tab ######### #
         update_layers_list(self.selectSamplingFile, "vector", "points")
         # handle connect when the list of layers changed
         self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectSamplingFile, "vector", "points"))
         # call to browse the sampling file
         self.browseSamplingFile.clicked.connect(lambda: self.fileDialog_browse(
             self.selectSamplingFile,
-            dialog_title=self.tr(u"Select the Sampling points file to validate"),
+            dialog_title=self.tr(u"Select the Sampling points file to classify"),
             dialog_types=self.tr(u"Shape files (*.shp);;All files (*.*)"),
             layer_type="vector"))
 
         # connect the action to the run method
-        self.buttonOpenValidationDialog.clicked.connect(self.open_validation_dialog)
+        self.buttonOpenClassificationDialog.clicked.connect(self.open_classification_dialog)
 
     @pyqtSlot()
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
@@ -295,13 +295,13 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             sampling_selected.save_config(file_out)
 
     @pyqtSlot()
-    def open_validation_dialog(self):
+    def open_classification_dialog(self):
         sampling_layer = get_current_layer_in(self.selectSamplingFile)
         if not sampling_layer:
-            iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid sampling file to validate",
+            iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid sampling file to classify",
                                            level=QgsMessageBar.WARNING, duration=10)
             return
 
-        self.validation_dialog = ValidationDialog(sampling_layer)
-        self.validation_dialog.show()
+        self.classification_dialog = ClassificationDialog(sampling_layer)
+        self.classification_dialog.show()
 

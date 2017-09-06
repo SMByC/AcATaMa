@@ -391,8 +391,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>657</width>
-             <height>1220</height>
+             <width>760</width>
+             <height>1192</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -408,7 +408,7 @@
                <enum>QTabWidget::West</enum>
               </property>
               <property name="currentIndex">
-               <number>0</number>
+               <number>1</number>
               </property>
               <widget class="QWidget" name="tab_RandomSampling">
                <attribute name="title">
@@ -944,9 +944,9 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_validation">
+      <widget class="QWidget" name="tab_classification">
        <attribute name="title">
-        <string>Validation</string>
+        <string>Classification</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_21">
         <item>
@@ -979,7 +979,7 @@
                <item>
                 <widget class="QLabel" name="label_22">
                  <property name="text">
-                  <string>Select/browse the sampling points shape file for make the validation:</string>
+                  <string>Select/browse the sampling points shape file for make the classification:</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -1024,13 +1024,13 @@
             <item>
              <widget class="QGroupBox" name="groupBox_6">
               <property name="title">
-               <string>Validation point by point</string>
+               <string>Classification sample by sample</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_25">
                <item>
-                <widget class="QPushButton" name="buttonOpenValidationDialog">
+                <widget class="QPushButton" name="buttonOpenClassificationDialog">
                  <property name="text">
-                  <string>PushButton</string>
+                  <string>Classification of samples</string>
                  </property>
                 </widget>
                </item>

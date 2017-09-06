@@ -234,7 +234,7 @@
   <customwidget>
    <class>RenderWidget</class>
    <extends>QWidget</extends>
-   <header>AcATaMa.gui.validation_view_widget</header>
+   <header>AcATaMa.gui.classification_view_widget</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

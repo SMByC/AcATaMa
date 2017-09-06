@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Validation samples</string>
+   <string>Classification of samples</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0" colspan="2">
@@ -39,13 +39,13 @@
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <widget class="ValidationViewWidget" name="render_window_1" native="true">
+         <widget class="ClassificationViewWidget" name="render_window_1" native="true">
           <layout class="QVBoxLayout" name="verticalLayout_6"/>
          </widget>
-         <widget class="ValidationViewWidget" name="render_window_2" native="true">
+         <widget class="ClassificationViewWidget" name="render_window_2" native="true">
           <layout class="QVBoxLayout" name="verticalLayout_7"/>
          </widget>
-         <widget class="ValidationViewWidget" name="render_window_3" native="true">
+         <widget class="ClassificationViewWidget" name="render_window_3" native="true">
           <layout class="QVBoxLayout" name="verticalLayout_16"/>
          </widget>
         </widget>
@@ -53,13 +53,13 @@
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <widget class="ValidationViewWidget" name="render_window_4" native="true">
+         <widget class="ClassificationViewWidget" name="render_window_4" native="true">
           <layout class="QVBoxLayout" name="verticalLayout_10"/>
          </widget>
-         <widget class="ValidationViewWidget" name="render_window_5" native="true">
+         <widget class="ClassificationViewWidget" name="render_window_5" native="true">
           <layout class="QVBoxLayout" name="verticalLayout_13"/>
          </widget>
-         <widget class="ValidationViewWidget" name="render_window_6" native="true">
+         <widget class="ClassificationViewWidget" name="render_window_6" native="true">
           <layout class="QVBoxLayout" name="verticalLayout_19"/>
          </widget>
         </widget>
@@ -152,7 +152,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QProgressBar" name="progressValidation">
+          <widget class="QProgressBar" name="progressClassification">
            <property name="minimumSize">
             <size>
              <width>150</width>
@@ -389,9 +389,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ValidationViewWidget</class>
+   <class>ClassificationViewWidget</class>
    <extends>QWidget</extends>
-   <header>AcATaMa.gui.validation_view_widget</header>
+   <header>AcATaMa.gui.classification_view_widget</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
