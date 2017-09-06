@@ -89,13 +89,13 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>64</width>
+          <width>76</width>
           <height>22</height>
          </size>
         </property>
         <property name="font">
          <font>
-          <pointsize>8</pointsize>
+          <pointsize>7</pointsize>
          </font>
         </property>
         <property name="text">
@@ -171,6 +171,9 @@
         </property>
         <property name="frame">
          <bool>false</bool>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
         <property name="decimals">
          <number>3</number>
