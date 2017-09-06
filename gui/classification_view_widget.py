@@ -102,15 +102,15 @@ class RenderWidget(QtGui.QWidget):
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'validation_view_widget.ui'))
+    plugin_folder, 'ui', 'classification_view_widget.ui'))
 
 
-class ValidationViewWidget(QtGui.QWidget, FORM_CLASS):
+class ClassificationViewWidget(QtGui.QWidget, FORM_CLASS):
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
-        # import the sampling layer to validate
-        from AcATaMa.gui.validation_dialog import ValidationDialog
-        self.sampling_layer = ValidationDialog.sampling_layer
+        # import the sampling layer to classification
+        from AcATaMa.gui.classification_dialog import ClassificationDialog
+        self.sampling_layer = ClassificationDialog.sampling_layer
         self.canvas = iface.mapCanvas()
         self.setupUi(self)
         self.master_view = None
@@ -154,9 +154,9 @@ class ValidationViewWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot()
     def extent_changed(self):
         if self.is_active:
-            from AcATaMa.gui.validation_dialog import ValidationDialog
+            from AcATaMa.gui.classification_dialog import ClassificationDialog
             # set extent and scale factor for all view activated
-            for view_widget in ValidationDialog.view_widgets:
+            for view_widget in ClassificationDialog.view_widgets:
                 if view_widget.is_active and view_widget != self:
                     view_widget.render_widget.set_extents_and_scalefactor(self.master_view.render_widget.canvas.extent())
 

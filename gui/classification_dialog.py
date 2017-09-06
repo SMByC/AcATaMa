@@ -25,34 +25,34 @@ from PyQt4 import QtGui, uic
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'validation_dialog.ui'))
+    plugin_folder, 'ui', 'classification_dialog.ui'))
 
 
-class ValidationDialog(QtGui.QDialog, FORM_CLASS):
+class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
     sampling_layer = None
     view_widgets = []
 
     def __init__(self, sampling_layer):
         QtGui.QDialog.__init__(self)
-        ValidationDialog.sampling_layer = sampling_layer
+        ClassificationDialog.sampling_layer = sampling_layer
 
         self.setupUi(self)
 
         # save the six view render widgets
-        ValidationDialog.view_widgets = \
+        ClassificationDialog.view_widgets = \
             [self.render_window_1, self.render_window_2, self.render_window_3,
              self.render_window_4, self.render_window_5, self.render_window_6]
 
         # set the master view and label names for each view
-        for num_view, view_widget in zip(range(1, 7), ValidationDialog.view_widgets):
-            view_widget.master_view = ValidationDialog.view_widgets[0]
+        for num_view, view_widget in zip(range(1, 7), ClassificationDialog.view_widgets):
+            view_widget.master_view = ClassificationDialog.view_widgets[0]
             view_widget.view_label_name.setText("View {}:".format(num_view))
 
         # set some config for master view
-        ValidationDialog.view_widgets[0].view_label_name.setText("Master:")
-        ValidationDialog.view_widgets[0].scaleFactor.setReadOnly(True)
-        ValidationDialog.view_widgets[0].scaleFactor.setEnabled(False)
-        ValidationDialog.view_widgets[0].scaleFactor.setToolTip("Always 1 for the master view")
+        ClassificationDialog.view_widgets[0].view_label_name.setText("Master:")
+        ClassificationDialog.view_widgets[0].scaleFactor.setReadOnly(True)
+        ClassificationDialog.view_widgets[0].scaleFactor.setEnabled(False)
+        ClassificationDialog.view_widgets[0].scaleFactor.setToolTip("Always 1 for the master view")
 
         # set classification buttons
         self.class_buttons_config = ClassificationButtonsConfig()
