@@ -29,12 +29,10 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 
 class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
-    sampling_layer = None
     view_widgets = []
 
     def __init__(self, sampling_layer):
         QtGui.QDialog.__init__(self)
-        ClassificationDialog.sampling_layer = sampling_layer
 
         self.setupUi(self)
 
@@ -42,6 +40,9 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         ClassificationDialog.view_widgets = \
             [self.render_window_1, self.render_window_2, self.render_window_3,
              self.render_window_4, self.render_window_5, self.render_window_6]
+
+        # setup view widget
+        [view_widget.setup_view_widget(sampling_layer) for view_widget in ClassificationDialog.view_widgets]
 
         # set the master view and label names for each view
         for num_view, view_widget in zip(range(1, 7), ClassificationDialog.view_widgets):

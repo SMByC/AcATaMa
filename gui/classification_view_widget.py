@@ -32,8 +32,6 @@ class RenderWidget(QtGui.QWidget):
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.setupUi()
-
-        self.sampling_layer = self.parent().sampling_layer
         self.layer = None
 
     def setupUi(self):
@@ -65,7 +63,7 @@ class RenderWidget(QtGui.QWidget):
             # set status for view widget
             self.parent().is_active = False
             return
-        self.canvas.setLayerSet([QgsMapCanvasLayer(self.sampling_layer), QgsMapCanvasLayer(layer)])
+        self.canvas.setLayerSet([QgsMapCanvasLayer(self.parent().sampling_layer), QgsMapCanvasLayer(layer)])
         self.update_crs()
         if self.parent().master_view.is_active:
             self.canvas.setExtent(self.parent().master_view.render_widget.canvas.extent())
@@ -108,14 +106,13 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 class ClassificationViewWidget(QtGui.QWidget, FORM_CLASS):
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
-        # import the sampling layer to classification
-        from AcATaMa.gui.classification_dialog import ClassificationDialog
-        self.sampling_layer = ClassificationDialog.sampling_layer
         self.canvas = iface.mapCanvas()
-        self.setupUi(self)
         self.master_view = None
         self.is_active = False
+        self.setupUi(self)
 
+    def setup_view_widget(self, sampling_layer):
+        self.sampling_layer = sampling_layer
         # render layer actions
         update_layers_list(self.selectRenderFile, "any", ignore_layers=[self.sampling_layer])
         # handle connect when the list of layers changed
