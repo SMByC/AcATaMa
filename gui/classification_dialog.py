@@ -67,6 +67,9 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         # set dialog title
         self.setWindowTitle("Classification of samples for " + sampling_layer.name())
 
+        # set total samples
+        self.progressClassification.setMaximum(len(self.classification.points))
+
     def set_buttons_classification(self):
         if self.classification_btns_config.exec_():
             # clear layout
