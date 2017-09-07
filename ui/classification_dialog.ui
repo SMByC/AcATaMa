@@ -160,15 +160,9 @@
          </item>
          <item>
           <widget class="QProgressBar" name="progressClassification">
-           <property name="minimumSize">
-            <size>
-             <width>150</width>
-             <height>0</height>
-            </size>
-           </property>
            <property name="font">
             <font>
-             <pointsize>7</pointsize>
+             <pointsize>8</pointsize>
              <weight>75</weight>
              <bold>true</bold>
             </font>
@@ -241,15 +235,9 @@
          </item>
          <item>
           <widget class="QDoubleSpinBox" name="FitToSample">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>22</height>
-            </size>
-           </property>
            <property name="font">
             <font>
-             <pointsize>7</pointsize>
+             <pointsize>8</pointsize>
             </font>
            </property>
            <property name="frame">
@@ -376,7 +364,7 @@
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>60</width>
+             <width>70</width>
              <height>20</height>
             </size>
            </property>
@@ -445,7 +433,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>287</width>
+           <width>297</width>
            <height>521</height>
           </rect>
          </property>

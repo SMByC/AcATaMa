@@ -26,7 +26,14 @@ class Classification:
     def __init__(self, sampling_layer):
         self.sampling_layer = sampling_layer
         self.btns_config = None
-
+        # save instance
         Classification.instances[sampling_layer] = self
+        # get all points from the layer
+        self.points = self.getPoints()
 
-
+    def getPoints(self):
+        points = []
+        for qgs_feature in self.sampling_layer.getFeatures():
+            geom = qgs_feature.geometry()
+            points.append(geom.asPoint())
+        return points
