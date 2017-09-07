@@ -21,6 +21,10 @@
 
 import os
 from PyQt4 import QtGui, uic
+from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QTableWidgetItem
+
+from AcATaMa.core.classification import Classification
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -33,6 +37,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
 
     def __init__(self, sampling_layer):
         QtGui.QDialog.__init__(self)
+        self.classification = Classification(sampling_layer)
 
         self.setupUi(self)
 
@@ -56,19 +61,27 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         ClassificationDialog.view_widgets[0].scaleFactor.setToolTip("Always 1 for the master view")
 
         # set classification buttons
-        self.class_buttons_config = ClassificationButtonsConfig()
+        self.classification_btns_config = ClassificationButtonsConfig()
         self.SetClassification.clicked.connect(self.set_buttons_classification)
 
     def set_buttons_classification(self):
-        if self.class_buttons_config.exec_():
-            print self.class_buttons_config.table.rowCount()
+        if self.classification_btns_config.exec_():
+            # clear layout
+            for i in range(self.gridButtonsClassification.count()):
+                self.gridButtonsClassification.itemAt(i).widget().close()
 
             buttons = {}
-            for i in range(5):
-                # keep a reference to the buttons
-                buttons[i] = QtGui.QPushButton('row %d, col %d' % (i, 0))
-                # add to the layout
-                self.gridButtonsClassification.addWidget(buttons[i], i, 0)
+            for row in range(self.classification_btns_config.tableBtnsConfig.rowCount()):
+                classification_num = self.classification_btns_config.tableBtnsConfig.item(row, 0).text()
+                classification_name = self.classification_btns_config.tableBtnsConfig.item(row, 1).text()
+                if classification_name != "":
+                    # keep a reference to the buttons
+                    buttons[int(classification_num)] = QtGui.QPushButton(classification_name)
+                    # add to the layout
+                    self.gridButtonsClassification.addWidget(buttons[int(classification_num)], len(buttons)-1, 0)
+
+            # save btns config
+            self.classification.btns_config = buttons
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -79,3 +92,33 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
     def __init__(self):
         QtGui.QDialog.__init__(self)
         self.setupUi(self)
+        # init with empty table
+        self.table_buttons = dict(zip(range(1,31), [""]*30))
+        self.create_table()
+
+    def create_table(self):
+        header = ["No.", "Classification Name"]
+        # init table
+        self.tableBtnsConfig.setRowCount(len(self.table_buttons))
+        self.tableBtnsConfig.setColumnCount(2)
+        # insert items
+        for n, h in enumerate(header):
+            if h == "No.":
+                for m, item in enumerate(self.table_buttons.keys()):
+                    item_table = QTableWidgetItem(str(item))
+                    item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    self.tableBtnsConfig.setItem(m, n, item_table)
+            if h == "Classification Name":
+                for m, item in enumerate(self.table_buttons.values()):
+                    item_table = QTableWidgetItem(str(item))
+                    #item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    self.tableBtnsConfig.setItem(m, n, item_table)
+        # hidden row labels
+        self.tableBtnsConfig.verticalHeader().setVisible(False)
+        # add Header
+        self.tableBtnsConfig.setHorizontalHeaderLabels(header)
+        # adjust size of Table
+        self.tableBtnsConfig.resizeColumnsToContents()
+        self.tableBtnsConfig.resizeRowsToContents()
