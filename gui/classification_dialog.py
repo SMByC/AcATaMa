@@ -64,6 +64,9 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.classification_btns_config = ClassificationButtonsConfig()
         self.SetClassification.clicked.connect(self.set_buttons_classification)
 
+        # set sampling file name
+        self.SamplingFileLabel.setText(sampling_layer.name())
+
     def set_buttons_classification(self):
         if self.classification_btns_config.exec_():
             # clear layout
@@ -112,7 +115,6 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
             if h == "Classification Name":
                 for m, item in enumerate(self.table_buttons.values()):
                     item_table = QTableWidgetItem(str(item))
-                    #item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
                     self.tableBtnsConfig.setItem(m, n, item_table)
         # hidden row labels
