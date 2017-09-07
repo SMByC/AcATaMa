@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>513</width>
-    <height>580</height>
+    <width>424</width>
+    <height>566</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Set the classifications buttons</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -25,7 +25,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QTableWidget" name="table"/>
+    <widget class="QTableWidget" name="tableBtnsConfig"/>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
