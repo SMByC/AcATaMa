@@ -64,8 +64,8 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.classification_btns_config = ClassificationButtonsConfig()
         self.SetClassification.clicked.connect(self.set_buttons_classification)
 
-        # set sampling file name
-        self.SamplingFileLabel.setText(sampling_layer.name())
+        # set dialog title
+        self.setWindowTitle("Classification of samples for " + sampling_layer.name())
 
     def set_buttons_classification(self):
         if self.classification_btns_config.exec_():
