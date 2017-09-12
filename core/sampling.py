@@ -19,7 +19,6 @@
  ***************************************************************************/
 """
 import os
-import random
 import ConfigParser
 from datetime import datetime
 
@@ -30,7 +29,7 @@ from qgis.core import QgsGeometry, QgsField, QgsFields, QgsRectangle, QgsSpatial
     QgsFeature, QGis
 from processing.tools import vector
 
-from AcATaMa.core.point import Point
+from AcATaMa.core.point import RandomPoint
 from AcATaMa.core.raster import Raster
 from AcATaMa.core.dockwidget import error_handler, wait_process, load_layer_in_qgis, valid_file_selected_in
 
@@ -239,7 +238,6 @@ class Sampling:
 
         nPoints = 0
         nIterations = 0
-        random.seed()
         self.index = QgsSpatialIndex()
         if attempts_by_sampling:
             maxIterations = total_of_samples * attempts_by_sampling
@@ -247,28 +245,27 @@ class Sampling:
             maxIterations = float('Inf')
 
         while nIterations < maxIterations and nPoints < total_of_samples:
-            rx = xMin + (xMax - xMin) * random.random()
-            ry = yMin + (yMax - yMin) * random.random()
 
-            sampling_point = Point(rx, ry)
+            random_sampling_point = RandomPoint(xMin, yMax, xMax, yMin)
 
             # checks to the sampling point, else discard and continue
-            if not self.check_sampling_point(sampling_point):
+            if not self.check_sampling_point(random_sampling_point):
                 nIterations += 1
                 continue
 
+            # random sampling point passed the checks, save it
             f = QgsFeature(nPoints)
             f.initAttributes(1)
             f.setFields(fields)
             f.setAttribute('id', nPoints)
-            f.setGeometry(sampling_point.QgsGeom)
+            f.setGeometry(random_sampling_point.QgsGeom)
             writer.addFeature(f)
             self.index.insertFeature(f)
-            self.points[nPoints] = sampling_point.QgsPnt
+            self.points[nPoints] = random_sampling_point.QgsPnt
             nPoints += 1
             nIterations += 1
             if self.sampling_type == "SRS":
-                self.samples_in_categories[sampling_point.index_pixel_value] += 1
+                self.samples_in_categories[random_sampling_point.index_pixel_value] += 1
             # update progress bar
             progress_bar.setValue(int(nPoints))
         # save the total point generated
