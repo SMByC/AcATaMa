@@ -93,7 +93,7 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="QToolButton" name="toolButton">
+             <widget class="QToolButton" name="previousSampleButton">
               <property name="font">
                <font>
                 <pointsize>8</pointsize>
@@ -131,7 +131,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QToolButton" name="toolButton_2">
+             <widget class="QToolButton" name="nextSampleButton">
               <property name="font">
                <font>
                 <pointsize>8</pointsize>
