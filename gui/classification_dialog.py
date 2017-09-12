@@ -67,8 +67,39 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         # set dialog title
         self.setWindowTitle("Classification of samples for " + sampling_layer.name())
 
+        # move through samples
+        self.previousSampleButton.clicked.connect(self.previous_sample)
+        self.nextSampleButton.clicked.connect(self.next_sample)
+
         # set total samples
         self.progressClassification.setMaximum(len(self.classification.points))
+
+        # init current point
+        self.current_sample_idx = 0
+        self.current_sample = None
+        self.set_current_sample()
+
+    def set_current_sample(self):
+        """Set the current sample"""
+        if self.current_sample:
+            self.current_sample.remove_marker()
+        self.current_sample = self.classification.points[self.current_sample_idx]
+        # update progress bar
+        self.progressClassification.setValue(self.current_sample_idx + 1)
+        # show marker
+        self.current_sample.show_marker()
+
+    def previous_sample(self):
+        if self.current_sample_idx < 1:
+            return
+        self.current_sample_idx -= 1
+        self.set_current_sample()
+
+    def next_sample(self):
+        if self.current_sample_idx >= len(self.classification.points):
+            return
+        self.current_sample_idx += 1
+        self.set_current_sample()
 
     def set_buttons_classification(self):
         if self.classification_btns_config.exec_():
