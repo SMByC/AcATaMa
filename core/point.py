@@ -20,6 +20,8 @@
 """
 import random
 from qgis.core import QgsGeometry, QgsPoint
+from qgis.gui import QgsVertexMarker
+from qgis.utils import iface
 from processing.tools import vector
 
 
@@ -127,8 +129,20 @@ class ClassificationPoint(Point):
     def __init__(self, x, y):
         super(ClassificationPoint, self).__init__(x, y)
         # init param
+        self.canvas = iface.mapCanvas()  # TODO
         self.is_classified = False
         self.class_id = None
         self.class_name = None
+        self.marker = None
 
+    def show_marker(self):
+        if self.marker is None:
+            self.marker = QgsVertexMarker(self.canvas)
+        self.marker.setCenter(self.QgsPnt)
+        self.marker.setIconSize(18)
+        self.marker.setPenWidth(2)
+        self.marker.setIconType(QgsVertexMarker.ICON_CROSS)
 
+    def remove_marker(self):
+        self.canvas.scene().removeItem(self.marker)
+        self.marker = None
