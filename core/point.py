@@ -18,14 +18,30 @@
  *                                                                         *
  ***************************************************************************/
 """
+import random
 from qgis.core import QgsGeometry, QgsPoint
 from processing.tools import vector
 
 
 class Point():
-    def __init__(self, rx, ry):
-        self.QgsPnt = QgsPoint(rx, ry)
+
+    def __init__(self, x, y):
+        self.setQgsPnt(x, y)
+
+    def setQgsPnt(self, x, y):
+        self.QgsPnt = QgsPoint(x, y)
         self.QgsGeom = QgsGeometry.fromPoint(self.QgsPnt)
+
+
+class RandomPoint(Point):
+    # init random
+    random.seed()
+
+    def __init__(self, xMin, yMax, xMax, yMin):
+        # generate the random x and y between boundaries
+        rx = xMin + (xMax - xMin) * random.random()
+        ry = yMin + (yMax - yMin) * random.random()
+        self.setQgsPnt(rx, ry)
 
     def in_valid_data(self, ThematicR):
         """Check if the point is in valid data in thematic raster
