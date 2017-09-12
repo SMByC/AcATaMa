@@ -19,8 +19,11 @@
  ***************************************************************************/
 """
 
+from AcATaMa.core.point import ClassificationPoint
+
 
 class Classification:
+    # save instances for each sampling layer
     instances = {}
 
     def __init__(self, sampling_layer):
@@ -35,5 +38,8 @@ class Classification:
         points = []
         for qgs_feature in self.sampling_layer.getFeatures():
             geom = qgs_feature.geometry()
-            points.append(geom.asPoint())
+            x, y = geom.asPoint()
+            points.append(ClassificationPoint(x, y))
+            print points[-1].QgsPnt.x()
         return points
+

@@ -23,7 +23,7 @@ from qgis.core import QgsGeometry, QgsPoint
 from processing.tools import vector
 
 
-class Point():
+class Point(object):
 
     def __init__(self, x, y):
         self.setQgsPnt(x, y)
@@ -120,3 +120,15 @@ class RandomPoint(Point):
             return True
 
         return False
+
+
+class ClassificationPoint(Point):
+
+    def __init__(self, x, y):
+        super(ClassificationPoint, self).__init__(x, y)
+        # init param
+        self.is_classified = False
+        self.class_id = None
+        self.class_name = None
+
+
