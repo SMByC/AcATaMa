@@ -48,6 +48,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
 
         # setup view widget
         [view_widget.setup_view_widget(sampling_layer) for view_widget in ClassificationDialog.view_widgets]
+        for idx, view_widget in enumerate(ClassificationDialog.view_widgets): view_widget.id = idx
 
         # set the master view and label names for each view
         for num_view, view_widget in zip(range(1, 7), ClassificationDialog.view_widgets):
@@ -81,13 +82,18 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
 
     def set_current_sample(self):
         """Set the current sample"""
+        # clean the old mark first
         if self.current_sample:
-            self.current_sample.remove_markers()
+            for idx, view_widget in enumerate(ClassificationDialog.view_widgets):
+                if view_widget.is_active:
+                    self.current_sample.remove_marker(view_widget)
         self.current_sample = self.classification.points[self.current_sample_idx]
         # update progress bar
         self.progressClassification.setValue(self.current_sample_idx + 1)
         # show marker
-        self.current_sample.show_markers()
+        for idx, view_widget in enumerate(ClassificationDialog.view_widgets):
+            if view_widget.is_active:
+                self.current_sample.show_marker(view_widget)
 
     def previous_sample(self):
         if self.current_sample_idx < 1:

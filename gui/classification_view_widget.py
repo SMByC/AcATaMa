@@ -35,7 +35,6 @@ class RenderWidget(QtGui.QWidget):
         self.layer = None
 
     def setupUi(self):
-
         gridLayout = QtGui.QGridLayout(self)
         gridLayout.setContentsMargins(0, 0, 0, 0)
         self.canvas = QgsMapCanvas()
@@ -106,9 +105,10 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 class ClassificationViewWidget(QtGui.QWidget, FORM_CLASS):
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
-        self.canvas = iface.mapCanvas()
-        self.master_view = None
+        self.id = None
         self.is_active = False
+        self.master_view = None
+        self.qgs_main_canvas = iface.mapCanvas()
         self.setupUi(self)
 
     def setup_view_widget(self, sampling_layer):
@@ -116,7 +116,7 @@ class ClassificationViewWidget(QtGui.QWidget, FORM_CLASS):
         # render layer actions
         update_layers_list(self.selectRenderFile, "any", ignore_layers=[self.sampling_layer])
         # handle connect when the list of layers changed
-        self.canvas.layersChanged.connect(
+        self.qgs_main_canvas.layersChanged.connect(
             lambda: update_layers_list(self.selectRenderFile, "any", ignore_layers=[self.sampling_layer]))
         self.selectRenderFile.currentIndexChanged.connect(
             lambda: self.render_widget.render_layer(get_current_layer_in(self.selectRenderFile)))
