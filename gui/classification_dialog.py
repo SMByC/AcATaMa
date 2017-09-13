@@ -82,12 +82,12 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
     def set_current_sample(self):
         """Set the current sample"""
         if self.current_sample:
-            self.current_sample.remove_marker()
+            self.current_sample.remove_markers()
         self.current_sample = self.classification.points[self.current_sample_idx]
         # update progress bar
         self.progressClassification.setValue(self.current_sample_idx + 1)
         # show marker
-        self.current_sample.show_marker()
+        self.current_sample.show_markers()
 
     def previous_sample(self):
         if self.current_sample_idx < 1:
@@ -119,6 +119,10 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
 
             # save btns config
             self.classification.btns_config = buttons
+
+    def closeEvent(self, e):
+        """Called when the dialog is being closed"""
+        pass
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(

@@ -133,16 +133,23 @@ class ClassificationPoint(Point):
         self.is_classified = False
         self.class_id = None
         self.class_name = None
-        self.marker = None
+        self.markers = [None]*6
 
-    def show_marker(self):
-        if self.marker is None:
-            self.marker = QgsVertexMarker(self.canvas)
-        self.marker.setCenter(self.QgsPnt)
-        self.marker.setIconSize(18)
-        self.marker.setPenWidth(2)
-        self.marker.setIconType(QgsVertexMarker.ICON_CROSS)
+    def show_markers(self):
+        """Show markers for the 6 render views"""
+        from AcATaMa.gui.classification_dialog import ClassificationDialog
+        for idx, view_widget in enumerate(ClassificationDialog.view_widgets):
+            if view_widget.is_active:
+                if self.markers[idx] is None:
+                    self.markers[idx] = QgsVertexMarker(view_widget.render_widget.canvas)
+                self.markers[idx].setCenter(self.QgsPnt)
+                self.markers[idx].setIconSize(18)
+                self.markers[idx].setPenWidth(2)
+                self.markers[idx].setIconType(QgsVertexMarker.ICON_CROSS)
 
-    def remove_marker(self):
-        self.canvas.scene().removeItem(self.marker)
-        self.marker = None
+    def remove_markers(self):
+        from AcATaMa.gui.classification_dialog import ClassificationDialog
+        for idx, view_widget in enumerate(ClassificationDialog.view_widgets):
+            if view_widget.is_active:
+                view_widget.render_widget.canvas.scene().removeItem(self.markers[idx])
+                self.markers[idx] = None
