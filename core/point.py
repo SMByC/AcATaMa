@@ -19,9 +19,10 @@
  ***************************************************************************/
 """
 import random
-from qgis.core import QgsGeometry, QgsPoint
-from qgis.gui import QgsVertexMarker
-from qgis.utils import iface
+from PyQt4.QtCore import QTimer
+from qgis.PyQt import QtGui
+from qgis.core import QgsGeometry, QgsPoint, QgsRectangle, QGis
+from qgis.gui import QgsVertexMarker, QgsRubberBand
 from processing.tools import vector
 
 
@@ -129,27 +130,21 @@ class ClassificationPoint(Point):
     def __init__(self, x, y):
         super(ClassificationPoint, self).__init__(x, y)
         # init param
-        self.canvas = iface.mapCanvas()  # TODO
         self.is_classified = False
         self.class_id = None
         self.class_name = None
         self.markers = [None]*6
 
-    def show_markers(self):
-        """Show markers for the 6 render views"""
-        from AcATaMa.gui.classification_dialog import ClassificationDialog
-        for idx, view_widget in enumerate(ClassificationDialog.view_widgets):
-            if view_widget.is_active:
-                if self.markers[idx] is None:
-                    self.markers[idx] = QgsVertexMarker(view_widget.render_widget.canvas)
-                self.markers[idx].setCenter(self.QgsPnt)
-                self.markers[idx].setIconSize(18)
-                self.markers[idx].setPenWidth(2)
-                self.markers[idx].setIconType(QgsVertexMarker.ICON_CROSS)
+    def show_marker(self, view_widget):
+        """Show marker for the respective view widget"""
+        if self.markers[view_widget.id] is None:
+            self.markers[view_widget.id] = QgsVertexMarker(view_widget.render_widget.canvas)
+        self.markers[view_widget.id].setCenter(self.QgsPnt)
+        self.markers[view_widget.id].setIconSize(18)
+        self.markers[view_widget.id].setPenWidth(2)
+        self.markers[view_widget.id].setIconType(QgsVertexMarker.ICON_CROSS)
 
-    def remove_markers(self):
-        from AcATaMa.gui.classification_dialog import ClassificationDialog
-        for idx, view_widget in enumerate(ClassificationDialog.view_widgets):
-            if view_widget.is_active:
-                view_widget.render_widget.canvas.scene().removeItem(self.markers[idx])
-                self.markers[idx] = None
+    def remove_marker(self, view_widget):
+        """Remove marker for the respective view widget"""
+        view_widget.render_widget.canvas.scene().removeItem(self.markers[view_widget.id])
+        self.markers[view_widget.id] = None
