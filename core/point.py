@@ -148,3 +148,30 @@ class ClassificationPoint(Point):
         """Remove marker for the respective view widget"""
         view_widget.render_widget.canvas.scene().removeItem(self.markers[view_widget.id])
         self.markers[view_widget.id] = None
+
+    def highlight(self, view_widget):
+        curr_ext = view_widget.render_widget.canvas.extent()
+
+        leftPt = QgsPoint(curr_ext.xMinimum(), self.QgsPnt.y())
+        rightPt = QgsPoint(curr_ext.xMaximum(), self.QgsPnt.y())
+
+        topPt = QgsPoint(self.QgsPnt.x(), curr_ext.yMaximum())
+        bottomPt = QgsPoint(self.QgsPnt.x(), curr_ext.yMinimum())
+
+        horizLine = QgsGeometry.fromPolyline([leftPt, rightPt])
+        vertLine = QgsGeometry.fromPolyline([topPt, bottomPt])
+
+        self.crossRb = QgsRubberBand(view_widget.render_widget.canvas, QGis.Line)
+        self.crossRb.setColor(QtGui.QColor(255, 0, 0))
+        self.crossRb.reset(QGis.Line)
+        self.crossRb.addGeometry(horizLine, None)
+        self.crossRb.addGeometry(vertLine, None)
+
+        QTimer.singleShot(500, self.crossRb.reset)
+        view_widget.render_widget.canvas.refresh()
+
+    def fit_to(self, view_widget, radius):
+        # fit to current sample with min radius of extent
+        rect = QgsRectangle(self.QgsPnt.x()-radius, self.QgsPnt.y()-radius,
+                            self.QgsPnt.x()+radius, self.QgsPnt.y()+radius)
+        view_widget.render_widget.canvas.setExtent(rect)

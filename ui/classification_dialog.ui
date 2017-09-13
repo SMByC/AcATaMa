@@ -234,17 +234,32 @@
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="FitToSample">
+          <widget class="QDoubleSpinBox" name="radiusFitToSample">
            <property name="font">
             <font>
              <pointsize>8</pointsize>
             </font>
+           </property>
+           <property name="toolTip">
+            <string>Units for the radius to fit for the current sample</string>
            </property>
            <property name="frame">
             <bool>false</bool>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
+           </property>
+           <property name="decimals">
+            <number>3</number>
+           </property>
+           <property name="minimum">
+            <double>1.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>9000.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>120.000000000000000</double>
            </property>
           </widget>
          </item>
