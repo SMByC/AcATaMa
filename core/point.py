@@ -152,22 +152,22 @@ class ClassificationPoint(Point):
     def highlight(self, view_widget):
         curr_ext = view_widget.render_widget.canvas.extent()
 
-        leftPt = QgsPoint(curr_ext.xMinimum(), self.QgsPnt.y())
-        rightPt = QgsPoint(curr_ext.xMaximum(), self.QgsPnt.y())
+        left_point = QgsPoint(curr_ext.xMinimum(), self.QgsPnt.y())
+        right_point = QgsPoint(curr_ext.xMaximum(), self.QgsPnt.y())
 
-        topPt = QgsPoint(self.QgsPnt.x(), curr_ext.yMaximum())
-        bottomPt = QgsPoint(self.QgsPnt.x(), curr_ext.yMinimum())
+        top_point = QgsPoint(self.QgsPnt.x(), curr_ext.yMaximum())
+        bottom_point = QgsPoint(self.QgsPnt.x(), curr_ext.yMinimum())
 
-        horizLine = QgsGeometry.fromPolyline([leftPt, rightPt])
-        vertLine = QgsGeometry.fromPolyline([topPt, bottomPt])
+        horiz_line = QgsGeometry.fromPolyline([left_point, right_point])
+        vert_line = QgsGeometry.fromPolyline([top_point, bottom_point])
 
-        self.crossRb = QgsRubberBand(view_widget.render_widget.canvas, QGis.Line)
-        self.crossRb.setColor(QtGui.QColor(255, 0, 0))
-        self.crossRb.reset(QGis.Line)
-        self.crossRb.addGeometry(horizLine, None)
-        self.crossRb.addGeometry(vertLine, None)
+        cross_rb = QgsRubberBand(view_widget.render_widget.canvas, QGis.Line)
+        cross_rb.setColor(QtGui.QColor(255, 0, 0))
+        cross_rb.reset(QGis.Line)
+        cross_rb.addGeometry(horiz_line, None)
+        cross_rb.addGeometry(vert_line, None)
 
-        QTimer.singleShot(500, self.crossRb.reset)
+        QTimer.singleShot(600, cross_rb.reset)
         view_widget.render_widget.canvas.refresh()
 
     def fit_to(self, view_widget, radius):
