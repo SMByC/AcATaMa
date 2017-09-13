@@ -132,7 +132,6 @@ class ClassificationPoint(Point):
         # init param
         self.is_classified = False
         self.class_id = None
-        self.class_name = None
         self.markers = [None]*6
 
     def show_marker(self, view_widget):
