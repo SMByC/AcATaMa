@@ -96,6 +96,21 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.progressClassification.setValue(self.current_sample_idx + 1)
         # show and go to marker
         self.show_and_go_to_current_sample()
+        self.display_sample_status()
+
+    def classify_sample(self, class_id):
+        if class_id:
+            self.current_sample.class_id = class_id
+            self.current_sample.is_classified = True
+            self.display_sample_status()
+
+    def display_sample_status(self):
+        if self.current_sample.is_classified:
+            self.statusCurrentSample.setText("classified")
+            self.statusCurrentSample.setStyleSheet('QLabel {color: green;}')
+        else:
+            self.statusCurrentSample.setText("not classified")
+            self.statusCurrentSample.setStyleSheet('QLabel {color: red;}')
 
     def show_and_go_to_current_sample(self, highlight=True):
         for idx, view_widget in enumerate(ClassificationDialog.view_widgets):

@@ -123,10 +123,17 @@
             <item>
              <widget class="QLabel" name="label_3">
               <property name="text">
-               <string>Current sample</string>
+               <string>Current sample:</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="statusCurrentSample">
+              <property name="text">
+               <string/>
               </property>
              </widget>
             </item>
