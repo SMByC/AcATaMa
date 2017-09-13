@@ -75,6 +75,10 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         # set total samples
         self.progressClassification.setMaximum(len(self.classification.points))
 
+        # actions for fit and go to current sample
+        self.radiusFitToSample.valueChanged.connect(lambda: self.show_and_go_to_current_sample(highlight=False))
+        self.gotoCurrentSample.clicked.connect(lambda: self.show_and_go_to_current_sample(highlight=True))
+
         # init current point
         self.current_sample_idx = 0
         self.current_sample = None
@@ -90,10 +94,19 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.current_sample = self.classification.points[self.current_sample_idx]
         # update progress bar
         self.progressClassification.setValue(self.current_sample_idx + 1)
-        # show marker
+        # show and go to marker
+        self.show_and_go_to_current_sample()
+
+    def show_and_go_to_current_sample(self, highlight=True):
         for idx, view_widget in enumerate(ClassificationDialog.view_widgets):
             if view_widget.is_active:
+                # create the marker
                 self.current_sample.show_marker(view_widget)
+                # fit to current point/marker
+                self.current_sample.fit_to(view_widget, self.radiusFitToSample.value())
+                if highlight:
+                    # highlight to marker
+                    self.current_sample.highlight(view_widget)
 
     def previous_sample(self):
         if self.current_sample_idx < 1:
