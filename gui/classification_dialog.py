@@ -94,6 +94,8 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.current_sample = self.classification.points[self.current_sample_idx]
         # update progress bar
         self.progressClassification.setValue(self.current_sample_idx + 1)
+        # show the class assigned
+        self.display_sample_status()
         # show and go to marker
         self.show_and_go_to_current_sample()
 
