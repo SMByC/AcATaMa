@@ -104,6 +104,9 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
             self.current_sample.class_id = class_id
             self.current_sample.is_classified = True
             self.display_sample_status()
+            if self.autoNextSample.isChecked():
+                # automatically follows the next sample
+                self.next_sample()
 
     def display_sample_status(self):
         if self.current_sample.is_classified:
@@ -112,7 +115,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
             self.statusCurrentSample.setStyleSheet('QLabel {color: green;}')
         else:
             self.statusCurrentSample.setText("not classified")
-            self.statusCurrentSample.setStyleSheet('QLabel {color: red;}')
+            self.statusCurrentSample.setStyleSheet('QLabel {color: gray;}')
 
     def show_and_go_to_current_sample(self, highlight=True):
         for idx, view_widget in enumerate(ClassificationDialog.view_widgets):
