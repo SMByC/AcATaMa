@@ -96,7 +96,6 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.progressClassification.setValue(self.current_sample_idx + 1)
         # show and go to marker
         self.show_and_go_to_current_sample()
-        self.display_sample_status()
 
     def classify_sample(self, class_id):
         if class_id:
@@ -106,7 +105,8 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
 
     def display_sample_status(self):
         if self.current_sample.is_classified:
-            self.statusCurrentSample.setText("classified")
+            class_name = self.classification.btns_config[self.current_sample.class_id]
+            self.statusCurrentSample.setText(class_name)
             self.statusCurrentSample.setStyleSheet('QLabel {color: green;}')
         else:
             self.statusCurrentSample.setText("not classified")
@@ -146,10 +146,12 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                 classification_num = self.classification_btns_config.tableBtnsConfig.item(row, 0).text()
                 classification_name = self.classification_btns_config.tableBtnsConfig.item(row, 1).text()
                 if classification_name != "":
-                    # keep a reference to the buttons
-                    buttons[int(classification_num)] = QtGui.QPushButton(classification_name)
-                    # add to the layout
-                    self.gridButtonsClassification.addWidget(buttons[int(classification_num)], len(buttons)-1, 0)
+                    # save button config
+                    buttons[int(classification_num)] = classification_name
+                    # create button
+                    QPButton = QtGui.QPushButton(classification_name)
+                    QPButton.clicked.connect(lambda state, x=int(classification_num): self.classify_sample(x))
+                    self.gridButtonsClassification.addWidget(QPButton, len(buttons)-1, 0)
 
             # save btns config
             self.classification.btns_config = buttons
