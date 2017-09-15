@@ -196,9 +196,9 @@ class Sampling:
         self.CategoricalR = CategoricalR
         # set the name and output file
         if self.sampling_type == "RS":
-            self.sampling_name = "random_sampling_{}".format(datetime.now().strftime('%H:%M:%S'))
+            self.sampling_name = "random_sampling_{}".format(datetime.now().strftime('%H-%M-%S'))
         if self.sampling_type == "SRS":
-            self.sampling_name = "stratified_random_sampling_{}".format(datetime.now().strftime('%H:%M:%S'))
+            self.sampling_name = "stratified_random_sampling_{}".format(datetime.now().strftime('%H-%M-%S'))
         # for stratified sampling
         self.sampling_method = sampling_method
         # set the output dir for save sampling
