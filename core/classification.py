@@ -43,6 +43,5 @@ class Classification:
             geom = qgs_feature.geometry()
             x, y = geom.asPoint()
             points.append(ClassificationPoint(x, y))
-            print points[-1].QgsPnt.x()
         return points
 
