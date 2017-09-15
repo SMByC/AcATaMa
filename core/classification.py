@@ -18,6 +18,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from random import shuffle
 
 from AcATaMa.core.point import ClassificationPoint
 
@@ -33,6 +34,8 @@ class Classification:
         Classification.instances[sampling_layer] = self
         # get all points from the layer
         self.points = self.getPoints()
+        # shuffle the list items
+        shuffle(self.points)
 
     def getPoints(self):
         points = []
