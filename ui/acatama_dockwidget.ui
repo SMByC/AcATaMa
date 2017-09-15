@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_load">
        <attribute name="title">
@@ -55,13 +55,13 @@
             <item>
              <widget class="QGroupBox" name="groupBox_ThematicRaster">
               <property name="title">
-               <string>Thematic raster image</string>
+               <string>Thematic raster</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_3">
                <item>
                 <widget class="QLabel" name="label">
                  <property name="text">
-                  <string>Select/browse the thematic raster image for evaluate:</string>
+                  <string>Select/browse the thematic raster for evaluate:</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -408,7 +408,7 @@
                <enum>QTabWidget::West</enum>
               </property>
               <property name="currentIndex">
-               <number>1</number>
+               <number>0</number>
               </property>
               <widget class="QWidget" name="tab_RandomSampling">
                <attribute name="title">
