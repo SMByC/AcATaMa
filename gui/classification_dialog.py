@@ -115,7 +115,10 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
             self.statusCurrentSample.setStyleSheet('QLabel {color: green;}')
         else:
             self.statusCurrentSample.setText("not classified")
-            self.statusCurrentSample.setStyleSheet('QLabel {color: gray;}')
+            self.statusCurrentSample.setStyleSheet('QLabel {color: red;}')
+        # update the total classified and not classified samples labels
+        self.totalClassified.setText(str(sum(sample.is_classified for sample in self.classification.points)))
+        self.totalNotClassified.setText(str(sum(not sample.is_classified for sample in self.classification.points)))
 
     def show_and_go_to_current_sample(self, highlight=True):
         for idx, view_widget in enumerate(ClassificationDialog.view_widgets):
