@@ -25,6 +25,11 @@
       </property>
       <item>
        <widget class="QLabel" name="view_label_name">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>View N:</string>
         </property>
@@ -34,6 +39,7 @@
        <widget class="QLineEdit" name="view_name">
         <property name="font">
          <font>
+          <pointsize>8</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -145,7 +151,7 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>8</pointsize>
+          <pointsize>7</pointsize>
          </font>
         </property>
         <property name="text">
