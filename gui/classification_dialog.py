@@ -127,7 +127,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                 self.current_sample.show_marker(view_widget)
                 # fit to current point/marker
                 self.current_sample.fit_to(view_widget, self.radiusFitToSample.value())
-                if highlight:
+                if highlight and view_widget.render_widget.canvas.renderFlag():
                     # highlight to marker
                     self.current_sample.highlight(view_widget)
 

@@ -55,6 +55,16 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QCheckBox" name="OnOff_RenderView">
+        <property name="toolTip">
+         <string>Enable/disable render this view</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>

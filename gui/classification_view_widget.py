@@ -50,6 +50,8 @@ class RenderWidget(QtGui.QWidget):
         # action pan
         self.toolPan = QgsMapToolPan(self.canvas)
         self.canvas.setMapTool(self.toolPan)
+        # toggled render view widget
+        self.parent().OnOff_RenderView.toggled.connect(self.toggle_render)
 
         gridLayout.addWidget(self.canvas)
 
@@ -95,6 +97,10 @@ class RenderWidget(QtGui.QWidget):
 
         self.parent().activateWindow()
         self.canvas.refresh()
+
+    def toggle_render(self, enabled):
+        self.canvas.setRenderFlag(enabled)
+
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
