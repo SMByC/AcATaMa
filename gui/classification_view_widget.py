@@ -66,10 +66,18 @@ class RenderWidget(QtGui.QWidget):
             return
         self.canvas.setLayerSet([QgsMapCanvasLayer(self.parent().sampling_layer), QgsMapCanvasLayer(layer)])
         self.update_crs()
-        if self.parent().master_view.is_active:
-            self.canvas.setExtent(self.parent().master_view.render_widget.canvas.extent())
+
+        # set init extent from other view if any is activated else set layer extent
+        from AcATaMa.gui.classification_dialog import ClassificationDialog
+        others_view = [(view_widget.render_widget.canvas.extent(), view_widget.current_scale_factor) for view_widget
+                       in ClassificationDialog.view_widgets if view_widget.is_active]
+        if others_view:
+            extent, scale = others_view[0]
+            extent.scale(1 / scale)
+            self.canvas.setExtent(extent)
         else:
             self.canvas.setExtent(layer.extent())
+
         self.canvas.refresh()
         self.blockSignals(False)
         self.layer = layer
