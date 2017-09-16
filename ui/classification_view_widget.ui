@@ -183,7 +183,7 @@
          </font>
         </property>
         <property name="toolTip">
-         <string>Scale factor respect to the master view</string>
+         <string>Scale factor for the current view</string>
         </property>
         <property name="frame">
          <bool>false</bool>
