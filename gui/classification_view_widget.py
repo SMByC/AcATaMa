@@ -134,9 +134,8 @@ class ClassificationViewWidget(QtGui.QWidget, FORM_CLASS):
             dialog_types=self.tr(u"Raster or vector files (*.tif *.img *.shp);;All files (*.*)"),
             layer_type="any"))
 
-        # zoom factor
-        self.scaleFactor.valueChanged.connect(
-            lambda: self.render_widget.set_extents_and_scalefactor(self.master_view.render_widget.canvas.extent()))
+        # zoom scale factor
+        self.scaleFactor.valueChanged.connect(self.scalefactor_changed)
         # edit layer properties
         self.layerProperties.clicked.connect(self.render_widget.layer_properties)
         # action for synchronize all view extent
@@ -167,3 +166,13 @@ class ClassificationViewWidget(QtGui.QWidget, FORM_CLASS):
                 if view_widget.is_active and view_widget != self:
                     view_widget.render_widget.set_extents_and_scalefactor(view_extent)
 
+    @pyqtSlot()
+    def scalefactor_changed(self):
+        if self.is_active:
+            # adjust view with the original extent (scale factor=1)
+            # and with the new scale factor
+            view_extent = self.render_widget.canvas.extent()
+            view_extent.scale(1 / self.current_scale_factor)
+            self.render_widget.set_extents_and_scalefactor(view_extent)
+            # save the new scale factor
+            self.current_scale_factor = self.scaleFactor.value()
