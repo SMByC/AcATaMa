@@ -171,6 +171,8 @@ class ClassificationPoint(Point):
 
     def fit_to(self, view_widget, radius):
         # fit to current sample with min radius of extent
-        rect = QgsRectangle(self.QgsPnt.x()-radius, self.QgsPnt.y()-radius,
-                            self.QgsPnt.x()+radius, self.QgsPnt.y()+radius)
-        view_widget.render_widget.canvas.setExtent(rect)
+        fit_extent = QgsRectangle(self.QgsPnt.x()-radius, self.QgsPnt.y()-radius,
+                                  self.QgsPnt.x()+radius, self.QgsPnt.y()+radius)
+        view_widget.render_widget.canvas.blockSignals(True)
+        view_widget.render_widget.set_extents_and_scalefactor(fit_extent)
+        view_widget.render_widget.canvas.blockSignals(False)
