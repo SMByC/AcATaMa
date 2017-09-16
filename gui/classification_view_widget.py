@@ -114,6 +114,7 @@ class ClassificationViewWidget(QtGui.QWidget, FORM_CLASS):
         self.id = None
         self.is_active = False
         self.master_view = None
+        self.current_scale_factor = 1.0
         self.qgs_main_canvas = iface.mapCanvas()
         self.setupUi(self)
 
@@ -158,8 +159,11 @@ class ClassificationViewWidget(QtGui.QWidget, FORM_CLASS):
     def extent_changed(self):
         if self.is_active:
             from AcATaMa.gui.classification_dialog import ClassificationDialog
-            # set extent and scale factor for all view activated
+            view_extent = self.render_widget.canvas.extent()
+            view_extent.scale(1/self.current_scale_factor)
+
+            # set extent and scale factor for all view activated except this view
             for view_widget in ClassificationDialog.view_widgets:
                 if view_widget.is_active and view_widget != self:
-                    view_widget.render_widget.set_extents_and_scalefactor(self.master_view.render_widget.canvas.extent())
+                    view_widget.render_widget.set_extents_and_scalefactor(view_extent)
 
