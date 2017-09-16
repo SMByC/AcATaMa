@@ -121,14 +121,12 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.totalNotClassified.setText(str(sum(not sample.is_classified for sample in self.classification.points)))
 
     def show_and_go_to_current_sample(self, highlight=True):
-        for idx, view_widget in enumerate(ClassificationDialog.view_widgets):
+        for view_widget in ClassificationDialog.view_widgets:
             if view_widget.is_active:
                 # create the marker
                 self.current_sample.show_marker(view_widget)
-                # only the master view fit to current point/marker
-                # the others are synchronized with the master
-                if view_widget.master_view:
-                    self.current_sample.fit_to(view_widget, self.radiusFitToSample.value())
+                # fit to current point/marker
+                self.current_sample.fit_to(view_widget, self.radiusFitToSample.value())
                 if highlight and view_widget.render_widget.canvas.renderFlag():
                     # highlight to marker
                     self.current_sample.highlight(view_widget)
