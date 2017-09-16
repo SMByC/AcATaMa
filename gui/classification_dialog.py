@@ -50,16 +50,9 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         [view_widget.setup_view_widget(sampling_layer) for view_widget in ClassificationDialog.view_widgets]
         for idx, view_widget in enumerate(ClassificationDialog.view_widgets): view_widget.id = idx
 
-        # set the master view and label names for each view
+        # set the label names for each view
         for num_view, view_widget in zip(range(1, 7), ClassificationDialog.view_widgets):
-            view_widget.master_view = ClassificationDialog.view_widgets[0]
             view_widget.view_label_name.setText("View {}:".format(num_view))
-
-        # set some config for master view
-        ClassificationDialog.view_widgets[0].view_label_name.setText("Master:")
-        ClassificationDialog.view_widgets[0].scaleFactor.setReadOnly(True)
-        ClassificationDialog.view_widgets[0].scaleFactor.setEnabled(False)
-        ClassificationDialog.view_widgets[0].scaleFactor.setToolTip("Always 1 for the master view")
 
         # set classification buttons
         self.classification_btns_config = ClassificationButtonsConfig()

@@ -121,7 +121,6 @@ class ClassificationViewWidget(QtGui.QWidget, FORM_CLASS):
         QtGui.QWidget.__init__(self, parent)
         self.id = None
         self.is_active = False
-        self.master_view = None
         self.current_scale_factor = 1.0
         self.qgs_main_canvas = iface.mapCanvas()
         self.setupUi(self)
