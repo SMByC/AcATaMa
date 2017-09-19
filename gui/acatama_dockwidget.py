@@ -30,9 +30,9 @@ from qgis.utils import iface
 from qgis.gui import QgsMessageBar
 
 from AcATaMa.core.sampling import do_random_sampling, do_stratified_random_sampling, Sampling
-from AcATaMa.core.dockwidget import get_current_file_path_in, error_handler, \
-    wait_process, load_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_current_layer_in, \
+from AcATaMa.core.dockwidget import get_current_file_path_in, load_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_current_layer_in, \
     fill_stratified_sampling_table, valid_file_selected_in, update_stratified_sampling_table
+from AcATaMa.core.utils import wait_process, error_handler
 from AcATaMa.core.raster import do_clipping_with_shape, get_nodata_value
 from AcATaMa.gui.about_dialog import AboutDialog
 from AcATaMa.gui.classification_dialog import ClassificationDialog
