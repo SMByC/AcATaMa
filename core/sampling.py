@@ -31,7 +31,8 @@ from processing.tools import vector
 
 from AcATaMa.core.point import RandomPoint
 from AcATaMa.core.raster import Raster
-from AcATaMa.core.dockwidget import error_handler, wait_process, load_layer_in_qgis, valid_file_selected_in
+from AcATaMa.core.dockwidget import load_layer_in_qgis, valid_file_selected_in
+from AcATaMa.core.utils import wait_process, error_handler
 
 
 @error_handler()

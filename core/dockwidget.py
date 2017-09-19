@@ -19,70 +19,15 @@
  ***************************************************************************/
 """
 import os
-import traceback
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QApplication, QCursor, QTableWidgetItem, QColor
-from qgis.core import QgsMessageLog, QgsMapLayerRegistry, QgsRasterLayer, QgsVectorLayer, QgsMapLayer
+from PyQt4.QtGui import QTableWidgetItem, QColor
+from qgis.core import QgsMapLayerRegistry, QgsRasterLayer, QgsVectorLayer, QgsMapLayer
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
 from AcATaMa.core.raster import get_color_table
-
-
-def error_handler():
-    def decorate(f):
-        def applicator(*args, **kwargs):
-            try:
-                f(*args, **kwargs)
-            except Exception as e:
-                # restore mouse
-                QApplication.restoreOverrideCursor()
-                QApplication.processEvents()
-                # message in status bar
-                msg_error = "An error has occurred in AcATaMa plugin. " \
-                            "See more in Qgis log messages panel."
-                iface.messageBar().pushMessage("AcATaMa", msg_error,
-                                                level=QgsMessageBar.CRITICAL, duration=10)
-                # message in log
-                msg_error = "\n################## ERROR IN ACATAMA PLUGIN:\n"
-                msg_error += traceback.format_exc()
-                msg_error += "\nPlease report the error in:\n" \
-                             "\thttps://bitbucket.org/smbyc/qgisplugin-acatama/issues"
-                msg_error += "\n################## END REPORT"
-                QgsMessageLog.logMessage(msg_error)
-        return applicator
-    return decorate
-
-
-def wait_process(disable_button=None):
-    def decorate(f):
-        def applicator(*args, **kwargs):
-            # disable button during process
-            if disable_button:
-                if "." in disable_button:
-                    getattr(getattr(args[0], disable_button.split(".")[0]),
-                            disable_button.split(".")[1]).setEnabled(False)
-                else:
-                    getattr(args[0], disable_button).setEnabled(False)
-            # mouse wait
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            # do
-            obj_returned = f(*args, **kwargs)
-            # restore mouse
-            QApplication.restoreOverrideCursor()
-            QApplication.processEvents()
-            # restore button
-            if disable_button:
-                if "." in disable_button:
-                    getattr(getattr(args[0], disable_button.split(".")[0]),
-                            disable_button.split(".")[1]).setEnabled(True)
-                else:
-                    getattr(args[0], disable_button).setEnabled(True)
-            # finally return the object by f
-            return obj_returned
-        return applicator
-    return decorate
+from AcATaMa.core.utils import wait_process, mask
 
 
 def valid_file_selected_in(combo_box, combobox_name):
@@ -206,24 +151,10 @@ def get_pixel_count_by_category(srs_table, categorical_raster):
     return pixel_count
 
 
-def mask(input_list, boolean_mask):
-    """Apply boolean mask to input list
-
-    Args:
-        input_list (list): Input list for apply mask
-        boolean_mask (list): The boolean mask list
-
-    Examples:
-        >>> mask(['A','B','C','D'], [1,0,1,0])
-        ['A', 'C']
-    """
-    return [i for i, b in zip(input_list, boolean_mask) if b]
-
-
 def get_num_samples_by_area_based_proportion(srs_table, total_std_error):
     total_pixel_count = float(sum(mask(srs_table["pixel_count"], srs_table["On"])))
-    ratio_pixel_count = [p_c/total_pixel_count for p_c in mask(srs_table["pixel_count"], srs_table["On"])]
-    Si = [(float(std_error)*(1-float(std_error)))**0.5 for std_error in mask(srs_table["std_error"], srs_table["On"])]
+    ratio_pixel_count = [p_c / total_pixel_count for p_c in mask(srs_table["pixel_count"], srs_table["On"])]
+    Si = [(float(std_error)*(1-float(std_error))) ** 0.5 for std_error in mask(srs_table["std_error"], srs_table["On"])]
     total_num_samples = (sum([rpc*si for rpc, si in zip(ratio_pixel_count, Si)])/total_std_error)**2
 
     num_samples = []
