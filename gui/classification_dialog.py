@@ -33,10 +33,12 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 
 class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
+    is_opened = False
     view_widgets = []
 
     def __init__(self, sampling_layer):
         QtGui.QDialog.__init__(self)
+        ClassificationDialog.is_opened = True
         self.classification = Classification(sampling_layer)
 
         self.setupUi(self)
@@ -159,7 +161,8 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
 
     def closeEvent(self, e):
         """Called when the dialog is being closed"""
-        pass
+        ClassificationDialog.is_opened = False
+        #self.parent().buttonOpenClassificationDialog.setText(u"Classification of samples")
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
