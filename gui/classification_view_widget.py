@@ -26,6 +26,7 @@ from qgis.gui import QgsMapCanvas, QgsMapCanvasLayer, QgsMapToolPan
 from qgis.utils import iface
 
 from AcATaMa.core.dockwidget import update_layers_list, get_current_layer_in, load_layer_in_qgis
+from AcATaMa.core.utils import block_signals_to
 
 
 class RenderWidget(QtGui.QWidget):
@@ -56,33 +57,32 @@ class RenderWidget(QtGui.QWidget):
         gridLayout.addWidget(self.canvas)
 
     def render_layer(self, layer):
-        self.blockSignals(True)
-        if not layer:
-            self.canvas.clear()
-            self.canvas.refreshAllLayers()
-            self.layer = None
+        with block_signals_to(self):
+            if not layer:
+                self.canvas.clear()
+                self.canvas.refreshAllLayers()
+                self.layer = None
+                # set status for view widget
+                self.parent().is_active = False
+                return
+            self.canvas.setLayerSet([QgsMapCanvasLayer(self.parent().sampling_layer), QgsMapCanvasLayer(layer)])
+            self.update_crs()
+
+            # set init extent from other view if any is activated else set layer extent
+            from AcATaMa.gui.classification_dialog import ClassificationDialog
+            others_view = [(view_widget.render_widget.canvas.extent(), view_widget.current_scale_factor) for view_widget
+                           in ClassificationDialog.view_widgets if view_widget.is_active]
+            if others_view:
+                extent, scale = others_view[0]
+                extent.scale(1 / scale)
+                self.canvas.setExtent(extent)
+            else:
+                self.canvas.setExtent(layer.extent())
+
+            self.canvas.refresh()
+            self.layer = layer
             # set status for view widget
-            self.parent().is_active = False
-            return
-        self.canvas.setLayerSet([QgsMapCanvasLayer(self.parent().sampling_layer), QgsMapCanvasLayer(layer)])
-        self.update_crs()
-
-        # set init extent from other view if any is activated else set layer extent
-        from AcATaMa.gui.classification_dialog import ClassificationDialog
-        others_view = [(view_widget.render_widget.canvas.extent(), view_widget.current_scale_factor) for view_widget
-                       in ClassificationDialog.view_widgets if view_widget.is_active]
-        if others_view:
-            extent, scale = others_view[0]
-            extent.scale(1 / scale)
-            self.canvas.setExtent(extent)
-        else:
-            self.canvas.setExtent(layer.extent())
-
-        self.canvas.refresh()
-        self.blockSignals(False)
-        self.layer = layer
-        # set status for view widget
-        self.parent().is_active = True
+            self.parent().is_active = True
 
     def update_crs(self):
         renderer = iface.mapCanvas().mapRenderer()
@@ -92,10 +92,9 @@ class RenderWidget(QtGui.QWidget):
         self.canvas.mapRenderer().setProjectionsEnabled(True)
 
     def set_extents_and_scalefactor(self, extent):
-        self.canvas.blockSignals(True)
-        self.canvas.setExtent(extent)
-        self.canvas.zoomByFactor(self.parent().scaleFactor.value())
-        self.canvas.blockSignals(False)
+        with block_signals_to(self.canvas):
+            self.canvas.setExtent(extent)
+            self.canvas.zoomByFactor(self.parent().scaleFactor.value())
 
     def layer_properties(self):
         if not self.layer:

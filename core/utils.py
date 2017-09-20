@@ -20,6 +20,7 @@
 """
 import traceback
 
+import sys
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QApplication, QCursor
 from qgis.core import QgsMessageLog
@@ -95,3 +96,16 @@ def mask(input_list, boolean_mask):
     """
     return [i for i, b in zip(input_list, boolean_mask) if b]
 
+
+class block_signals_to:
+    """Block all signals emits from specific QT object"""
+    def __init__(self, object_to_block):
+        self.object_to_block = object_to_block
+
+    def __enter__(self):
+        # block
+        self.object_to_block.blockSignals(True)
+
+    def __exit__(self, type, value, traceback):
+        # unblock
+        self.object_to_block.blockSignals(False)

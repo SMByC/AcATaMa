@@ -25,6 +25,8 @@ from qgis.core import QgsGeometry, QgsPoint, QgsRectangle, QGis
 from qgis.gui import QgsVertexMarker, QgsRubberBand
 from processing.tools import vector
 
+from AcATaMa.core.utils import block_signals_to
+
 
 class Point(object):
 
@@ -173,6 +175,5 @@ class ClassificationPoint(Point):
         # fit to current sample with min radius of extent
         fit_extent = QgsRectangle(self.QgsPnt.x()-radius, self.QgsPnt.y()-radius,
                                   self.QgsPnt.x()+radius, self.QgsPnt.y()+radius)
-        view_widget.render_widget.canvas.blockSignals(True)
-        view_widget.render_widget.set_extents_and_scalefactor(fit_extent)
-        view_widget.render_widget.canvas.blockSignals(False)
+        with block_signals_to(view_widget.render_widget.canvas):
+            view_widget.render_widget.set_extents_and_scalefactor(fit_extent)
