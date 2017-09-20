@@ -296,6 +296,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     def open_classification_dialog(self):
+        if ClassificationDialog.is_opened:
+            self.classification_dialog.activateWindow()
+            return
         sampling_layer = get_current_layer_in(self.selectSamplingFile)
         if not sampling_layer:
             iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid sampling file to classify",
@@ -303,5 +306,6 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             return
 
         self.classification_dialog = ClassificationDialog(sampling_layer)
+        #self.buttonOpenClassificationDialog.setText(u"Classification in progress, click to show")
         self.classification_dialog.show()
 
