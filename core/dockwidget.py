@@ -27,7 +27,7 @@ from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
 from AcATaMa.core.raster import get_color_table
-from AcATaMa.core.utils import wait_process, mask
+from AcATaMa.core.utils import wait_process, mask, block_signals_to
 
 
 def valid_file_selected_in(combo_box, combobox_name):
@@ -92,7 +92,6 @@ def unload_layer_in_qgis(layer_path):
 
 def update_layers_list(combo_box, layer_type="any", geometry_type="any", ignore_layers=[]):
     """
-
     Args:
         combo_box: combo box instance
         layer_type: "any", "raster", "vector"
@@ -103,41 +102,35 @@ def update_layers_list(combo_box, layer_type="any", geometry_type="any", ignore_
     """
     if not QgsMapLayerRegistry:
         return
-    try:
-        # block signals events from here
-        combo_box.blockSignals(True)
-    except:
-        return
 
-    save_selected = combo_box.currentText()
-    combo_box.clear()
+    with block_signals_to(combo_box):
+        save_selected = combo_box.currentText()
+        combo_box.clear()
 
-    # list of layers loaded in qgis filter by type
-    if layer_type == "raster":
-        layers = [layer for layer in QgsMapLayerRegistry.instance().mapLayers().values()
-                  if layer.type() == QgsMapLayer.RasterLayer]
-    if layer_type == "vector":
-        layers = [layer for layer in QgsMapLayerRegistry.instance().mapLayers().values()
-                  if layer.type() == QgsMapLayer.VectorLayer]
-    if layer_type == "any":
-        layers = QgsMapLayerRegistry.instance().mapLayers().values()
+        # list of layers loaded in qgis filter by type
+        if layer_type == "raster":
+            layers = [layer for layer in QgsMapLayerRegistry.instance().mapLayers().values()
+                      if layer.type() == QgsMapLayer.RasterLayer]
+        if layer_type == "vector":
+            layers = [layer for layer in QgsMapLayerRegistry.instance().mapLayers().values()
+                      if layer.type() == QgsMapLayer.VectorLayer]
+        if layer_type == "any":
+            layers = QgsMapLayerRegistry.instance().mapLayers().values()
 
-    if ignore_layers:
-        layers = [layer for layer in layers if layer not in ignore_layers]
+        if ignore_layers:
+            layers = [layer for layer in layers if layer not in ignore_layers]
 
-    # filter by geometry type
-    if geometry_type in ["points", "lines", "polygons"]:
-        geometry_type = {"points": 0, "lines": 1, "polygons": 2}[geometry_type]
-        layers = [layer for layer in layers if layer.geometryType() == geometry_type]
+        # filter by geometry type
+        if geometry_type in ["points", "lines", "polygons"]:
+            geometry_type = {"points": 0, "lines": 1, "polygons": 2}[geometry_type]
+            layers = [layer for layer in layers if layer.geometryType() == geometry_type]
 
-    # added list to combobox
-    if layers:
-        [combo_box.addItem(layer.name()) for layer in layers]
+        # added list to combobox
+        if layers:
+            [combo_box.addItem(layer.name()) for layer in layers]
 
-    selected_index = combo_box.findText(save_selected, Qt.MatchFixedString)
-    # restore block signals events to normal behaviour
-    combo_box.blockSignals(False)
-    combo_box.setCurrentIndex(selected_index)
+        selected_index = combo_box.findText(save_selected, Qt.MatchFixedString)
+        combo_box.setCurrentIndex(selected_index)
 
 
 @wait_process()
@@ -197,71 +190,68 @@ def get_num_samples_by_keeping_total_samples(srs_table, new_num_samples):
 
 @wait_process()
 def update_srs_table_content(dockwidget, srs_table):
-    # block signals events from here
-    dockwidget.TableWidget_SRS.blockSignals(True)
-    # init table
-    dockwidget.TableWidget_SRS.setRowCount(srs_table["row_count"])
-    dockwidget.TableWidget_SRS.setColumnCount(srs_table["column_count"])
+    with block_signals_to(dockwidget.TableWidget_SRS):
+        # init table
+        dockwidget.TableWidget_SRS.setRowCount(srs_table["row_count"])
+        dockwidget.TableWidget_SRS.setColumnCount(srs_table["column_count"])
 
-    # enter data onto Table
-    for n, key in enumerate(srs_table["header"]):
-        if key == "Pix Val":
-            for m, item in enumerate(srs_table["color_table"]["Pixel Value"]):
-                item_table = QTableWidgetItem(str(item))
-                item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-                item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                dockwidget.TableWidget_SRS.setItem(m, n, item_table)
-        if key == "Color":
-            for m in range(srs_table["row_count"]):
-                item_table = QTableWidgetItem()
-                item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-                item_table.setBackground(QColor(srs_table["color_table"]["Red"][m],
-                                                srs_table["color_table"]["Green"][m],
-                                                srs_table["color_table"]["Blue"][m],
-                                                srs_table["color_table"]["Alpha"][m]))
-                dockwidget.TableWidget_SRS.setItem(m, n, item_table)
-        if key == "Num Samples":
-            for m in range(srs_table["row_count"]):
-                item_table = QTableWidgetItem(srs_table["num_samples"][m])
-                item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                if not srs_table["On"][m]:
-                    item_table.setForeground(QColor("lightGrey"))
+        # enter data onto Table
+        for n, key in enumerate(srs_table["header"]):
+            if key == "Pix Val":
+                for m, item in enumerate(srs_table["color_table"]["Pixel Value"]):
+                    item_table = QTableWidgetItem(str(item))
                     item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-                dockwidget.TableWidget_SRS.setItem(m, n, item_table)
-        if key == "Std Error":
-            for m in range(srs_table["row_count"]):
-                item_table = QTableWidgetItem(srs_table["std_error"][m])
-                item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                if not srs_table["On"][m]:
-                    item_table.setForeground(QColor("lightGrey"))
+                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    dockwidget.TableWidget_SRS.setItem(m, n, item_table)
+            if key == "Color":
+                for m in range(srs_table["row_count"]):
+                    item_table = QTableWidgetItem()
                     item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-                dockwidget.TableWidget_SRS.setItem(m, n, item_table)
-        if key == "On":
-            for m in range(srs_table["row_count"]):
-                item_table = QTableWidgetItem()
-                item_table.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
-                item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                if srs_table["On"][m]:
-                    item_table.setCheckState(Qt.Checked)
-                else:
-                    item_table.setCheckState(Qt.Unchecked)
-                dockwidget.TableWidget_SRS.setItem(m, n, item_table)
+                    item_table.setBackground(QColor(srs_table["color_table"]["Red"][m],
+                                                    srs_table["color_table"]["Green"][m],
+                                                    srs_table["color_table"]["Blue"][m],
+                                                    srs_table["color_table"]["Alpha"][m]))
+                    dockwidget.TableWidget_SRS.setItem(m, n, item_table)
+            if key == "Num Samples":
+                for m in range(srs_table["row_count"]):
+                    item_table = QTableWidgetItem(srs_table["num_samples"][m])
+                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    if not srs_table["On"][m]:
+                        item_table.setForeground(QColor("lightGrey"))
+                        item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                    dockwidget.TableWidget_SRS.setItem(m, n, item_table)
+            if key == "Std Error":
+                for m in range(srs_table["row_count"]):
+                    item_table = QTableWidgetItem(srs_table["std_error"][m])
+                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    if not srs_table["On"][m]:
+                        item_table.setForeground(QColor("lightGrey"))
+                        item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                    dockwidget.TableWidget_SRS.setItem(m, n, item_table)
+            if key == "On":
+                for m in range(srs_table["row_count"]):
+                    item_table = QTableWidgetItem()
+                    item_table.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
+                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    if srs_table["On"][m]:
+                        item_table.setCheckState(Qt.Checked)
+                    else:
+                        item_table.setCheckState(Qt.Unchecked)
+                    dockwidget.TableWidget_SRS.setItem(m, n, item_table)
 
-    # hidden row labels
-    dockwidget.TableWidget_SRS.verticalHeader().setVisible(False)
-    # add Header
-    dockwidget.TableWidget_SRS.setHorizontalHeaderLabels(srs_table["header"])
-    # adjust size of Table
-    dockwidget.TableWidget_SRS.resizeColumnsToContents()
-    dockwidget.TableWidget_SRS.resizeRowsToContents()
-    # set label total samples
-    total_num_samples = sum([int(x) for x in mask(srs_table["num_samples"], srs_table["On"])])
-    dockwidget.TotalNumSamples.setText(str(total_num_samples))
-    # set maximum and reset the value in progress bar status
-    dockwidget.widget_generate_SRS.progressGenerateSampling.setValue(0)
-    dockwidget.widget_generate_SRS.progressGenerateSampling.setMaximum(total_num_samples)
-    # restore block signals events to normal behaviour
-    dockwidget.TableWidget_SRS.blockSignals(False)
+        # hidden row labels
+        dockwidget.TableWidget_SRS.verticalHeader().setVisible(False)
+        # add Header
+        dockwidget.TableWidget_SRS.setHorizontalHeaderLabels(srs_table["header"])
+        # adjust size of Table
+        dockwidget.TableWidget_SRS.resizeColumnsToContents()
+        dockwidget.TableWidget_SRS.resizeRowsToContents()
+        # set label total samples
+        total_num_samples = sum([int(x) for x in mask(srs_table["num_samples"], srs_table["On"])])
+        dockwidget.TotalNumSamples.setText(str(total_num_samples))
+        # set maximum and reset the value in progress bar status
+        dockwidget.widget_generate_SRS.progressGenerateSampling.setValue(0)
+        dockwidget.widget_generate_SRS.progressGenerateSampling.setMaximum(total_num_samples)
 
 
 def fill_stratified_sampling_table(dockwidget):
