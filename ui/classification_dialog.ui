@@ -243,6 +243,9 @@
            <property name="text">
             <string>Fit to sample</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
           </widget>
          </item>
          <item>
@@ -495,7 +498,7 @@
            <x>0</x>
            <y>0</y>
            <width>320</width>
-           <height>424</height>
+           <height>428</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -640,12 +643,15 @@
        </widget>
       </item>
       <item>
-       <widget class="QDialogButtonBox" name="buttonBox">
+       <widget class="QDialogButtonBox" name="OkCancelButtons">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
         <property name="standardButtons">
-         <set>QDialogButtonBox::Ok</set>
+         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+        </property>
+        <property name="centerButtons">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -672,7 +678,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>OkCancelButtons</sender>
    <signal>accepted()</signal>
    <receiver>Dialog</receiver>
    <slot>accept()</slot>
@@ -688,7 +694,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>OkCancelButtons</sender>
    <signal>rejected()</signal>
    <receiver>Dialog</receiver>
    <slot>reject()</slot>
