@@ -36,10 +36,11 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
     is_opened = False
     view_widgets = []
 
-    def __init__(self, sampling_layer):
+    def __init__(self, iface, sampling_layer):
         QtGui.QDialog.__init__(self)
-        ClassificationDialog.is_opened = True
+        self.iface = iface
         self.classification = Classification(sampling_layer)
+        ClassificationDialog.is_opened = True
 
         self.setupUi(self)
 
