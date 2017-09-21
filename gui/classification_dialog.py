@@ -22,7 +22,7 @@
 import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QTableWidgetItem
+from PyQt4.QtGui import QTableWidgetItem, QMessageBox
 
 from AcATaMa.core.classification import Classification
 
@@ -166,15 +166,21 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
             self.classification.btns_config = buttons
 
     def closeEvent(self, event):
-        self.closing()
+        self.cancel_dialog()
+        event.ignore()
 
     def accept_dialog(self):
         self.closing()
         super(ClassificationDialog, self).accept()
 
     def cancel_dialog(self):
-        self.closing()
-        super(ClassificationDialog, self).reject()
+        quit_msg = "Are you sure you want to close the classification? " \
+                   "all settings will be lost in the classification window"
+        reply = QMessageBox.question(self, 'Close classification window',
+                                     quit_msg, QMessageBox.Yes, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            self.closing()
+            super(ClassificationDialog, self).reject()
 
     def closing(self):
         """Do this before close the classification dialog"""
