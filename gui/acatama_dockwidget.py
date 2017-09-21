@@ -305,7 +305,11 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                                                 level=QgsMessageBar.WARNING, duration=10)
             return
 
-        self.classification_dialog = ClassificationDialog(self.iface, sampling_layer)
-        #self.buttonOpenClassificationDialog.setText(u"Classification in progress, click to show")
+        self.classification_dialog = ClassificationDialog(self, sampling_layer)
+        # adjust some objects in the dockwidget while is classifying
+        self.selectSamplingFile.setDisabled(True)
+        self.browseSamplingFile.setDisabled(True)
+        self.buttonOpenClassificationDialog.setText(u"Classification in progress, click to show")
+        # open dialog
         self.classification_dialog.show()
 
