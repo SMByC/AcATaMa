@@ -26,7 +26,6 @@ import ConfigParser
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSignal, Qt, pyqtSlot
 from qgis.core import QgsMapLayerRegistry, QgsVectorFileWriter
-from qgis.utils import iface
 from qgis.gui import QgsMessageBar
 
 from AcATaMa.core.sampling import do_random_sampling, do_stratified_random_sampling, Sampling
@@ -52,7 +51,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     closingPlugin = pyqtSignal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent, iface):
         """Constructor."""
         super(AcATaMaDockWidget, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -60,7 +59,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
-        self.canvas = iface.mapCanvas()
+        self.iface = iface
+        self.canvas = self.iface.mapCanvas()
         self.setupUi(self)
         self.setup_gui()
         # tmp dir for all process and intermediate files
@@ -252,8 +252,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         selected_index = self.selectThematicRaster.findText(filename, Qt.MatchFixedString)
         self.selectThematicRaster.setCurrentIndex(selected_index)
 
-        iface.messageBar().pushMessage("AcATaMa", "Clipping the thematic raster with shape, completed",
-                                       level=QgsMessageBar.SUCCESS)
+        self.iface.messageBar().pushMessage("AcATaMa", "Clipping the thematic raster with shape, completed",
+                                            level=QgsMessageBar.SUCCESS)
 
     @pyqtSlot()
     def update_generated_sampling_list_in(self, combo_box):
@@ -267,8 +267,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
     @pyqtSlot()
     def fileDialog_saveSampling(self, combo_box):
         if combo_box.currentText() not in Sampling.samplings:
-            iface.messageBar().pushMessage("AcATaMa",
-                                           "Error, please select a valid sampling file", level=QgsMessageBar.WARNING)
+            self.iface.messageBar().pushMessage("AcATaMa",
+                                                "Error, please select a valid sampling file", level=QgsMessageBar.WARNING)
             return
         suggested_filename = os.path.splitext(Sampling.samplings[combo_box.currentText()].ThematicR.file_path)[0] \
                              + "_sampling.shp"
@@ -282,8 +282,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
     @pyqtSlot()
     def fileDialog_saveSamplingConf(self, combo_box):
         if combo_box.currentText() not in Sampling.samplings:
-            iface.messageBar().pushMessage("AcATaMa",
-                                           "Error, please select a valid sampling file", level=QgsMessageBar.WARNING)
+            self.iface.messageBar().pushMessage("AcATaMa",
+                                                "Error, please select a valid sampling file", level=QgsMessageBar.WARNING)
             return
         sampling_selected = Sampling.samplings[combo_box.currentText()]
         suggested_filename = os.path.splitext(sampling_selected.ThematicR.file_path)[0] \
@@ -301,11 +301,11 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             return
         sampling_layer = get_current_layer_in(self.selectSamplingFile)
         if not sampling_layer:
-            iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid sampling file to classify",
-                                           level=QgsMessageBar.WARNING, duration=10)
+            self.iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid sampling file to classify",
+                                                level=QgsMessageBar.WARNING, duration=10)
             return
 
-        self.classification_dialog = ClassificationDialog(sampling_layer)
+        self.classification_dialog = ClassificationDialog(self.iface, sampling_layer)
         #self.buttonOpenClassificationDialog.setText(u"Classification in progress, click to show")
         self.classification_dialog.show()
 
