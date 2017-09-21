@@ -36,9 +36,10 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
     is_opened = False
     view_widgets = []
 
-    def __init__(self, iface, sampling_layer):
+    def __init__(self, acatama_dockwidget, sampling_layer):
         QtGui.QDialog.__init__(self)
-        self.iface = iface
+        self.acatama_dockwidget = acatama_dockwidget
+        self.iface = acatama_dockwidget.iface
         self.classification = Classification(sampling_layer)
         ClassificationDialog.is_opened = True
 
@@ -163,7 +164,10 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
     def closeEvent(self, e):
         """Called when the dialog is being closed"""
         ClassificationDialog.is_opened = False
-        #self.parent().buttonOpenClassificationDialog.setText(u"Classification of samples")
+        # restore the states for some objects in the dockwidget
+        self.acatama_dockwidget.selectSamplingFile.setEnabled(True)
+        self.acatama_dockwidget.browseSamplingFile.setEnabled(True)
+        self.acatama_dockwidget.buttonOpenClassificationDialog.setText(u"Classify the sampling file")
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
