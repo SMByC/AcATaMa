@@ -65,6 +65,10 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         # set dialog title
         self.setWindowTitle("Classification of samples for " + sampling_layer.name())
 
+        # dialog buttons box
+        self.OkCancelButtons.accepted.connect(self.accept_dialog)
+        self.OkCancelButtons.rejected.connect(self.cancel_dialog)
+
         # move through samples
         self.previousSampleButton.clicked.connect(self.previous_sample)
         self.nextSampleButton.clicked.connect(self.next_sample)
@@ -161,8 +165,19 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
             # save btns config
             self.classification.btns_config = buttons
 
-    def closeEvent(self, e):
-        """Called when the dialog is being closed"""
+    def closeEvent(self, event):
+        self.closing()
+
+    def accept_dialog(self):
+        self.closing()
+        super(ClassificationDialog, self).accept()
+
+    def cancel_dialog(self):
+        self.closing()
+        super(ClassificationDialog, self).reject()
+
+    def closing(self):
+        """Do this before close the classification dialog"""
         ClassificationDialog.is_opened = False
         # restore the states for some objects in the dockwidget
         self.acatama_dockwidget.selectSamplingFile.setEnabled(True)
