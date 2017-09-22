@@ -22,7 +22,7 @@
 import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QTableWidgetItem, QMessageBox
+from PyQt4.QtGui import QTableWidgetItem, QMessageBox, QDialogButtonBox
 
 from AcATaMa.core.classification import Classification
 
@@ -66,6 +66,8 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.setWindowTitle("Classification of samples for " + sampling_layer.name())
 
         # dialog buttons box
+        self.OkCancelButtons.button(QDialogButtonBox.Ok).setDisabled(True)
+        self.OkCancelButtons.button(QDialogButtonBox.Ok).setToolTip("Only enabled when all samples are classified")
         self.OkCancelButtons.accepted.connect(self.accept_dialog)
         self.OkCancelButtons.rejected.connect(self.cancel_dialog)
 
@@ -118,8 +120,13 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
             self.statusCurrentSample.setText("not classified")
             self.statusCurrentSample.setStyleSheet('QLabel {color: red;}')
         # update the total classified and not classified samples labels
-        self.totalClassified.setText(str(sum(sample.is_classified for sample in self.classification.points)))
-        self.totalNotClassified.setText(str(sum(not sample.is_classified for sample in self.classification.points)))
+        total_classified = sum(sample.is_classified for sample in self.classification.points)
+        total_not_classified = sum(not sample.is_classified for sample in self.classification.points)
+        self.totalClassified.setText(str(total_classified))
+        self.totalNotClassified.setText(str(total_not_classified))
+        # check is the classification is completed
+        if total_not_classified == 0:
+            self.OkCancelButtons.button(QDialogButtonBox.Ok).setEnabled(True)
 
     def show_and_go_to_current_sample(self, highlight=True):
         for view_widget in ClassificationDialog.view_widgets:
@@ -139,7 +146,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.set_current_sample()
 
     def next_sample(self):
-        if self.current_sample_idx >= len(self.classification.points):
+        if self.current_sample_idx >= len(self.classification.points)-1:
             return
         self.current_sample_idx += 1
         self.set_current_sample()
