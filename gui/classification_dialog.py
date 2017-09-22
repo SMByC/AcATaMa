@@ -187,7 +187,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                                      quit_msg, QMessageBox.Yes, QMessageBox.No)
         if reply == QMessageBox.Yes:
             self.closing()
-            super(ClassificationDialog, self).reject()
+            self.reject(is_ok_to_close=True)
 
     def closing(self):
         """Do this before close the classification dialog"""
@@ -196,6 +196,10 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.acatama_dockwidget.selectSamplingFile.setEnabled(True)
         self.acatama_dockwidget.browseSamplingFile.setEnabled(True)
         self.acatama_dockwidget.buttonOpenClassificationDialog.setText(u"Classify the sampling file")
+
+    def reject(self, is_ok_to_close=False):
+        if is_ok_to_close:
+            super(ClassificationDialog, self).reject()
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
