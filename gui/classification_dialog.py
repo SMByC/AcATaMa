@@ -95,7 +95,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
 
         # actions for fit and go to current sample
         self.radiusFitToSample.valueChanged.connect(lambda: self.show_and_go_to_current_sample(highlight=False))
-        self.gotoCurrentSample.clicked.connect(lambda: self.show_and_go_to_current_sample(highlight=True))
+        self.currentSample.clicked.connect(lambda: self.show_and_go_to_current_sample(highlight=True))
 
         # init current point
         self.current_sample_idx = 0

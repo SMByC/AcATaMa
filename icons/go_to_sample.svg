@@ -10,7 +10,7 @@
    viewBox="0 0 16 16"
    version="1.1"
    id="svg6"
-   sodipodi:docname="zoom_to_sample.svg"
+   sodipodi:docname="go_to_sample.svg"
    inkscape:version="0.92.2 5c3e80d, 2017-08-06">
   <metadata
      id="metadata10">
@@ -20,6 +20,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -32,15 +33,15 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="2331"
-     inkscape:window-height="1234"
+     inkscape:window-width="1600"
+     inkscape:window-height="1133"
      id="namedview8"
      showgrid="false"
-     inkscape:zoom="45.254834"
-     inkscape:cx="7.9059431"
-     inkscape:cy="8.1952336"
+     inkscape:zoom="16"
+     inkscape:cx="-0.6246182"
+     inkscape:cy="5.4860636"
      inkscape:window-x="0"
-     inkscape:window-y="36"
+     inkscape:window-y="0"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg6" />
   <defs
@@ -53,10 +54,21 @@
       }
       </style>
   </defs>
+  <circle
+     id="path4502"
+     cx="8"
+     cy="8.00245"
+     r="4.6534405"
+     style="fill:none;stroke:#4d4d4d;stroke-width:1.445;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   <path
-     style="color:#4d4d4d;fill:currentColor;fill-opacity:1;stroke:none;stroke-width:1.33289194"
-     d="m 0.0026483,0.0026483 v 3.9986758 h 1.332892 V 1.3355403 H 4.0013241 V 0.0026483 H 1.3355403 Z m 11.9960277,0 v 1.332892 h 2.665784 v 2.6657838 h 1.332892 V 0.0026483 H 14.66446 Z M 2.6684323,2.6684323 V 13.331567 H 13.331567 V 2.6684323 Z M 4.0013241,4.0013241 H 11.998676 V 11.998676 H 4.0013241 Z M 0.0026483,11.998676 v 3.998676 h 1.332892 2.6657838 V 14.66446 H 1.3355403 v -2.665784 z m 14.6618117,0 v 2.665784 h -2.665784 v 1.332892 h 3.998676 V 14.66446 11.998676 Z"
-     class="ColorScheme-Text"
-     id="path4"
+     style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:0.842;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
+     d="m 8,0.00245 v 16"
+     id="path4510"
      inkscape:connector-curvature="0" />
+  <path
+     style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:0.842;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
+     d="M 16,8.00245 H 6.4375 0"
+     id="path4510-3"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="ccc" />
 </svg>
