@@ -199,7 +199,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         quit_msg = "Are you sure you want to close the classification? " \
                    "all settings will be lost in the classification window"
         reply = QMessageBox.question(self, 'Close classification window',
-                                     quit_msg, QMessageBox.Yes, QMessageBox.No)
+                                     quit_msg, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
             self.closing()
             self.reject(is_ok_to_close=True)
