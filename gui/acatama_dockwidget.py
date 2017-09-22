@@ -305,7 +305,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                                                 level=QgsMessageBar.WARNING, duration=10)
             return
 
-        self.classification_dialog = ClassificationDialog(self, sampling_layer)
+        columns = self.grid_columns.value()
+        rows = self.grid_rows.value()
+        self.classification_dialog = ClassificationDialog(self, sampling_layer, columns, rows)
         # adjust some objects in the dockwidget while is classifying
         self.selectSamplingFile.setDisabled(True)
         self.browseSamplingFile.setDisabled(True)

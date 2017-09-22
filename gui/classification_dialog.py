@@ -22,9 +22,10 @@
 import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QTableWidgetItem, QMessageBox, QDialogButtonBox
+from PyQt4.QtGui import QTableWidgetItem, QMessageBox, QDialogButtonBox, QSplitter
 
 from AcATaMa.core.classification import Classification
+from AcATaMa.gui.classification_view_widget import ClassificationViewWidget
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -36,7 +37,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
     is_opened = False
     view_widgets = []
 
-    def __init__(self, acatama_dockwidget, sampling_layer):
+    def __init__(self, acatama_dockwidget, sampling_layer, columns, rows):
         QtGui.QDialog.__init__(self)
         self.acatama_dockwidget = acatama_dockwidget
         self.iface = acatama_dockwidget.iface
@@ -45,18 +46,32 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
 
         self.setupUi(self)
 
-        # save the six view render widgets
-        ClassificationDialog.view_widgets = \
-            [self.render_window_1, self.render_window_2, self.render_window_3,
-             self.render_window_4, self.render_window_5, self.render_window_6]
+        # create dynamic size of the view render widgets windows
+        # inside the grid with columns x rows divide by splitters
+        h_splitters = []
+        view_widgets = []
+        for row in range(rows):
+            splitter = QSplitter(Qt.Horizontal)
+            for column in range(columns):
+                new_view_widget = ClassificationViewWidget()
+                splitter.addWidget(new_view_widget)
+                h_splitters.append(splitter)
+                view_widgets.append(new_view_widget)
+        v_splitter = QSplitter(Qt.Vertical)
+        for splitter in h_splitters:
+            v_splitter.addWidget(splitter)
+        # add to classification dialog
+        self.widget_view_windows.layout().addWidget(v_splitter)
+        # save instances
+        ClassificationDialog.view_widgets = view_widgets
 
         # setup view widget
         [view_widget.setup_view_widget(sampling_layer) for view_widget in ClassificationDialog.view_widgets]
         for idx, view_widget in enumerate(ClassificationDialog.view_widgets): view_widget.id = idx
 
         # set the label names for each view
-        for num_view, view_widget in zip(range(1, 7), ClassificationDialog.view_widgets):
-            view_widget.view_label_name.setText("View {}:".format(num_view))
+        for num_view, view_widget in enumerate(ClassificationDialog.view_widgets):
+            view_widget.view_label_name.setText("View {}:".format(num_view+1))
 
         # set classification buttons
         self.classification_btns_config = ClassificationButtonsConfig()
