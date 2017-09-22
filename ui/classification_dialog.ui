@@ -86,20 +86,65 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_3">
-              <property name="text">
-               <string>Current sample:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="statusCurrentSample">
-              <property name="text">
-               <string/>
-              </property>
+             <widget class="QWidget" name="widget_11" native="true">
+              <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <property name="margin">
+                <number>0</number>
+               </property>
+               <item>
+                <spacer name="horizontalSpacer_8">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QToolButton" name="currentSample">
+                 <property name="toolTip">
+                  <string>Go to current sample</string>
+                 </property>
+                 <property name="text">
+                  <string>Current sample</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>:/plugins/AcATaMa/icons/go_to_sample.svg</normaloff>:/plugins/AcATaMa/icons/go_to_sample.svg</iconset>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
+                 </property>
+                 <property name="autoRaise">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="statusCurrentSample">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_9">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
@@ -244,41 +289,6 @@
           </widget>
          </item>
         </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="gotoCurrentSample">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>34</width>
-          <height>34</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Go to current sample</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>:/plugins/AcATaMa/icons/zoom_to_sample.svg</normaloff>:/plugins/AcATaMa/icons/zoom_to_sample.svg</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>34</width>
-          <height>34</height>
-         </size>
-        </property>
-        <property name="autoRaise">
-         <bool>true</bool>
-        </property>
        </widget>
       </item>
      </layout>
@@ -463,7 +473,7 @@
            <x>0</x>
            <y>0</y>
            <width>320</width>
-           <height>428</height>
+           <height>533</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
