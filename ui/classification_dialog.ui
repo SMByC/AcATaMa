@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="2" column="0" colspan="2">
-    <widget class="QWidget" name="widget_windows" native="true">
+    <widget class="QWidget" name="widget_view_windows" native="true">
      <layout class="QVBoxLayout" name="verticalLayout_20">
       <property name="spacing">
        <number>0</number>
@@ -23,41 +23,6 @@
       <property name="margin">
        <number>0</number>
       </property>
-      <item>
-       <widget class="QSplitter" name="splitter_3">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <widget class="QSplitter" name="splitter">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <widget class="ClassificationViewWidget" name="render_window_1" native="true">
-          <layout class="QVBoxLayout" name="verticalLayout_6"/>
-         </widget>
-         <widget class="ClassificationViewWidget" name="render_window_2" native="true">
-          <layout class="QVBoxLayout" name="verticalLayout_7"/>
-         </widget>
-         <widget class="ClassificationViewWidget" name="render_window_3" native="true">
-          <layout class="QVBoxLayout" name="verticalLayout_16"/>
-         </widget>
-        </widget>
-        <widget class="QSplitter" name="splitter_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <widget class="ClassificationViewWidget" name="render_window_4" native="true">
-          <layout class="QVBoxLayout" name="verticalLayout_10"/>
-         </widget>
-         <widget class="ClassificationViewWidget" name="render_window_5" native="true">
-          <layout class="QVBoxLayout" name="verticalLayout_13"/>
-         </widget>
-         <widget class="ClassificationViewWidget" name="render_window_6" native="true">
-          <layout class="QVBoxLayout" name="verticalLayout_19"/>
-         </widget>
-        </widget>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
@@ -661,14 +626,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>ClassificationViewWidget</class>
-   <extends>QWidget</extends>
-   <header>AcATaMa.gui.classification_view_widget</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>
