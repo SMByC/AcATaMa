@@ -36,6 +36,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
     is_opened = False
     view_widgets = []
+    current_sample = None
 
     def __init__(self, acatama_dockwidget, sampling_layer, columns, rows):
         QtGui.QDialog.__init__(self)
@@ -106,6 +107,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
     def set_current_sample(self):
         """Set the current sample"""
         self.current_sample = self.classification.points[self.current_sample_idx]
+        ClassificationDialog.current_sample = self.current_sample
         # update progress bar
         self.progressClassification.setValue(self.current_sample_idx + 1)
         # show the class assigned
