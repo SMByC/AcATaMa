@@ -125,6 +125,8 @@ class RenderWidget(QtGui.QWidget):
 
             self.canvas.refresh()
             self.layer = layer
+            # show marker
+            self.marker.show(ClassificationDialog.current_sample)
             # set status for view widget
             self.parent().is_active = True
 
