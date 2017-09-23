@@ -41,9 +41,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         QtGui.QDialog.__init__(self)
         self.acatama_dockwidget = acatama_dockwidget
         self.iface = acatama_dockwidget.iface
-        self.classification = Classification(sampling_layer)
         ClassificationDialog.is_opened = True
-
         self.setupUi(self)
 
         # create dynamic size of the view render widgets windows
@@ -64,6 +62,9 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.widget_view_windows.layout().addWidget(v_splitter)
         # save instances
         ClassificationDialog.view_widgets = view_widgets
+
+        # init classification
+        self.classification = Classification(sampling_layer)
 
         # setup view widget
         [view_widget.setup_view_widget(sampling_layer) for view_widget in ClassificationDialog.view_widgets]
@@ -104,11 +105,6 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
 
     def set_current_sample(self):
         """Set the current sample"""
-        # clean the old mark first
-        if self.current_sample:
-            for idx, view_widget in enumerate(ClassificationDialog.view_widgets):
-                if view_widget.is_active:
-                    self.current_sample.remove_marker(view_widget)
         self.current_sample = self.classification.points[self.current_sample_idx]
         # update progress bar
         self.progressClassification.setValue(self.current_sample_idx + 1)
@@ -146,13 +142,13 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
     def show_and_go_to_current_sample(self, highlight=True):
         for view_widget in ClassificationDialog.view_widgets:
             if view_widget.is_active:
-                # create the marker
-                self.current_sample.show_marker(view_widget)
-                # fit to current point/marker
+                # fit to current point
                 self.current_sample.fit_to(view_widget, self.radiusFitToSample.value())
+                # create the marker
+                view_widget.render_widget.marker.show(self.current_sample)
                 if highlight and view_widget.render_widget.canvas.renderFlag():
                     # highlight to marker
-                    self.current_sample.highlight(view_widget)
+                    view_widget.render_widget.marker.highlight()
 
     def previous_sample(self):
         if self.current_sample_idx < 1:

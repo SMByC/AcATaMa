@@ -21,12 +21,55 @@
 
 import os
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import QSettings, Qt, pyqtSlot
-from qgis.gui import QgsMapCanvas, QgsMapCanvasLayer, QgsMapToolPan
+from PyQt4.QtCore import QSettings, Qt, pyqtSlot, QTimer
+from qgis.core import QgsGeometry, QgsPoint, QGis
+from qgis.gui import QgsMapCanvas, QgsMapCanvasLayer, QgsMapToolPan, QgsRubberBand, QgsVertexMarker
 from qgis.utils import iface
 
 from AcATaMa.core.dockwidget import update_layers_list, get_current_layer_in, load_layer_in_qgis
 from AcATaMa.core.utils import block_signals_to
+
+
+class Marker():
+    def __init__(self, canvas):
+        self.marker = None
+        self.canvas = canvas
+
+    def show(self, in_point):
+        """Show marker for the respective view widget"""
+        if self.marker is None:
+            self.marker = QgsVertexMarker(self.canvas)
+            self.marker.setIconSize(18)
+            self.marker.setPenWidth(2)
+            self.marker.setIconType(QgsVertexMarker.ICON_CROSS)
+        self.marker.setCenter(in_point.QgsPnt)
+        self.marker.updatePosition()
+
+    def remove(self):
+        """Remove marker for the respective view widget"""
+        self.canvas.scene().removeItem(self.marker)
+        self.marker = None
+
+    def highlight(self):
+        curr_ext = self.canvas.extent()
+
+        left_point = QgsPoint(curr_ext.xMinimum(), curr_ext.center().y())
+        right_point = QgsPoint(curr_ext.xMaximum(), curr_ext.center().y())
+
+        top_point = QgsPoint(curr_ext.center().x(), curr_ext.yMaximum())
+        bottom_point = QgsPoint(curr_ext.center().x(), curr_ext.yMinimum())
+
+        horiz_line = QgsGeometry.fromPolyline([left_point, right_point])
+        vert_line = QgsGeometry.fromPolyline([top_point, bottom_point])
+
+        cross_rb = QgsRubberBand(self.canvas, QGis.Line)
+        cross_rb.setColor(QtGui.QColor(255, 0, 0))
+        cross_rb.reset(QGis.Line)
+        cross_rb.addGeometry(horiz_line, None)
+        cross_rb.addGeometry(vert_line, None)
+
+        QTimer.singleShot(600, cross_rb.reset)
+        self.canvas.refresh()
 
 
 class RenderWidget(QtGui.QWidget):
@@ -34,6 +77,7 @@ class RenderWidget(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
         self.setupUi()
         self.layer = None
+        self.marker = Marker(self.canvas)
 
     def setupUi(self):
         gridLayout = QtGui.QGridLayout(self)
