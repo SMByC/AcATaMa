@@ -19,10 +19,7 @@
  ***************************************************************************/
 """
 import random
-from PyQt4.QtCore import QTimer
-from qgis.PyQt import QtGui
-from qgis.core import QgsGeometry, QgsPoint, QgsRectangle, QGis
-from qgis.gui import QgsVertexMarker, QgsRubberBand
+from qgis.core import QgsGeometry, QgsPoint, QgsRectangle
 from processing.tools import vector
 
 from AcATaMa.core.utils import block_signals_to
@@ -134,42 +131,6 @@ class ClassificationPoint(Point):
         # init param
         self.is_classified = False
         self.class_id = None
-        self.markers = [None]*6
-
-    def show_marker(self, view_widget):
-        """Show marker for the respective view widget"""
-        if self.markers[view_widget.id] is None:
-            self.markers[view_widget.id] = QgsVertexMarker(view_widget.render_widget.canvas)
-        self.markers[view_widget.id].setCenter(self.QgsPnt)
-        self.markers[view_widget.id].setIconSize(18)
-        self.markers[view_widget.id].setPenWidth(2)
-        self.markers[view_widget.id].setIconType(QgsVertexMarker.ICON_CROSS)
-
-    def remove_marker(self, view_widget):
-        """Remove marker for the respective view widget"""
-        view_widget.render_widget.canvas.scene().removeItem(self.markers[view_widget.id])
-        self.markers[view_widget.id] = None
-
-    def highlight(self, view_widget):
-        curr_ext = view_widget.render_widget.canvas.extent()
-
-        left_point = QgsPoint(curr_ext.xMinimum(), self.QgsPnt.y())
-        right_point = QgsPoint(curr_ext.xMaximum(), self.QgsPnt.y())
-
-        top_point = QgsPoint(self.QgsPnt.x(), curr_ext.yMaximum())
-        bottom_point = QgsPoint(self.QgsPnt.x(), curr_ext.yMinimum())
-
-        horiz_line = QgsGeometry.fromPolyline([left_point, right_point])
-        vert_line = QgsGeometry.fromPolyline([top_point, bottom_point])
-
-        cross_rb = QgsRubberBand(view_widget.render_widget.canvas, QGis.Line)
-        cross_rb.setColor(QtGui.QColor(255, 0, 0))
-        cross_rb.reset(QGis.Line)
-        cross_rb.addGeometry(horiz_line, None)
-        cross_rb.addGeometry(vert_line, None)
-
-        QTimer.singleShot(600, cross_rb.reset)
-        view_widget.render_widget.canvas.refresh()
 
     def fit_to(self, view_widget, radius):
         # fit to current sample with min radius of extent
