@@ -28,6 +28,7 @@ from PyQt4.QtCore import pyqtSignal, Qt, pyqtSlot
 from qgis.core import QgsMapLayerRegistry, QgsVectorFileWriter
 from qgis.gui import QgsMessageBar
 
+from AcATaMa.core.classification import Classification
 from AcATaMa.core.sampling import do_random_sampling, do_stratified_random_sampling, Sampling
 from AcATaMa.core.dockwidget import get_current_file_path_in, load_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_current_layer_in, \
     fill_stratified_sampling_table, valid_file_selected_in, update_stratified_sampling_table
@@ -181,6 +182,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         update_layers_list(self.selectSamplingFile, "vector", "points")
         # handle connect when the list of layers changed
         self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectSamplingFile, "vector", "points"))
+        # sampling file info
+        self.selectSamplingFile.currentIndexChanged.connect(self.sampling_file_info)
         # call to browse the sampling file
         self.browseSamplingFile.clicked.connect(lambda: self.fileDialog_browse(
             self.selectSamplingFile,
@@ -293,6 +296,19 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                                                      self.tr(u"Ini files (*.ini);;All files (*.*)"))
         if file_out != '':
             sampling_selected.save_config(file_out)
+
+    @pyqtSlot()
+    def sampling_file_info(self):
+        sampling_layer = get_current_layer_in(self.selectSamplingFile)
+        if sampling_layer:
+            self.SamplinFileName.setText(self.selectSamplingFile.currentText())
+            count_samples = len(list(sampling_layer.getFeatures()))
+            self.totalSamples.setText(str(count_samples))
+
+            if sampling_layer in Classification.instances:
+                self.samplingFileStatus.setText("Classified")
+            else:
+                self.samplingFileStatus.setText("Not classified")
 
     @pyqtSlot()
     def open_classification_dialog(self):
