@@ -36,7 +36,7 @@ def valid_file_selected_in(combo_box, combobox_name):
         return True
     except:
         iface.messageBar().pushMessage("AcATaMa", "Error, please browse/select a valid file in "+combobox_name,
-                                       level=QgsMessageBar.WARNING, duration=10)
+                                       level=QgsMessageBar.WARNING)
         return False
 
 
@@ -51,7 +51,7 @@ def get_current_file_path_in(combo_box):
         return unicode(get_layer_by_name(combo_box.currentText()).dataProvider().dataSourceUri().split('|layerid')[0])
     except:
         iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file",
-                                       level=QgsMessageBar.WARNING, duration=10)
+                                       level=QgsMessageBar.WARNING)
 
 
 def get_current_layer_in(combo_box):
@@ -59,7 +59,7 @@ def get_current_layer_in(combo_box):
         return get_layer_by_name(combo_box.currentText())
     except:
         iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file",
-                                       level=QgsMessageBar.WARNING, duration=10)
+                                       level=QgsMessageBar.WARNING)
 
 
 def load_layer_in_qgis(file_path, layer_type):
