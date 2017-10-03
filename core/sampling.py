@@ -58,7 +58,7 @@ def do_random_sampling(dockwidget):
             pixel_values = [int(p) for p in dockwidget.pixelsValuesCategRaster.text().split(",")]
         except:
             iface.messageBar().pushMessage("AcATaMa", "Error, wrong pixel values, set only integers and separated by commas",
-                                           level=QgsMessageBar.WARNING, duration=10)
+                                           level=QgsMessageBar.WARNING)
             return
     else:
         CategoricalR = None
@@ -131,12 +131,12 @@ def do_stratified_random_sampling(dockwidget):
             raise
     except:
         iface.messageBar().pushMessage("AcATaMa", "Error, the number of samples should be only positive integers",
-                                       level=QgsMessageBar.WARNING, duration=10)
+                                       level=QgsMessageBar.WARNING)
         return
     total_of_samples = sum(number_of_samples)
     if total_of_samples == 0:
         iface.messageBar().pushMessage("AcATaMa", "Error, no number of samples configured!",
-                                       level=QgsMessageBar.WARNING, duration=10)
+                                       level=QgsMessageBar.WARNING)
         return
 
     # check neighbors aggregation

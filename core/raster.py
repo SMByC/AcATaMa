@@ -38,7 +38,7 @@ def do_clipping_with_shape(target_file, shape, out_path):
         return out_file
     else:
         iface.messageBar().pushMessage("AcATaMa", "Error while clipping the raster file with shape.",
-                                       level=QgsMessageBar.WARNING, duration=10)
+                                       level=QgsMessageBar.WARNING)
 
 
 def get_extent(img_path):
@@ -76,7 +76,7 @@ def get_color_table(raster_path, band_number=1, nodata=None):
     colorTable = gdalBand.GetColorTable()
     if colorTable is None:
         iface.messageBar().pushMessage("AcATaMa", "Error, the raster file selected has no color table",
-                                       level=QgsMessageBar.WARNING, duration=10)
+                                       level=QgsMessageBar.WARNING)
         return
 
     count = colorTable.GetCount()

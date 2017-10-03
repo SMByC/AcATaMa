@@ -318,7 +318,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         sampling_layer = get_current_layer_in(self.selectSamplingFile)
         if not sampling_layer:
             self.iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid sampling file to classify",
-                                                level=QgsMessageBar.WARNING, duration=10)
+                                                level=QgsMessageBar.WARNING)
             return
 
         columns = self.grid_columns.value()
