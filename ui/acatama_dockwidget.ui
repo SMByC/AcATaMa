@@ -48,7 +48,7 @@
              <x>0</x>
              <y>0</y>
              <width>780</width>
-             <height>1027</height>
+             <height>1003</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -138,7 +138,7 @@
             <item>
              <widget class="QGroupBox" name="groupBox_ShapeArea">
               <property name="title">
-               <string>Wor&amp;k only in a study area (optional)</string>
+               <string>Working alone in an area of interest (optional)</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -161,7 +161,7 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>Select/browse the shape file to define a study area for make the sampling only inside the shape area and the thematic raster:</string>
+                     <string>Select/browse the shape file to define an area of interest for make the sampling only inside the shape area:</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -392,7 +392,7 @@
              <x>0</x>
              <y>0</y>
              <width>760</width>
-             <height>1172</height>
+             <height>1338</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -966,7 +966,7 @@
              <x>0</x>
              <y>0</y>
              <width>768</width>
-             <height>1015</height>
+             <height>991</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_24">
