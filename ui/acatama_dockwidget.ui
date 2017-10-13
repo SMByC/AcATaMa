@@ -236,116 +236,6 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_CategRaster">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="title">
-               <string>Create the categorical shape (optional)</string>
-              </property>
-              <property name="checkable">
-               <bool>true</bool>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_8">
-               <item>
-                <widget class="QWidget" name="widget_CategRaster" native="true">
-                 <layout class="QVBoxLayout" name="verticalLayout_11">
-                  <property name="spacing">
-                   <number>0</number>
-                  </property>
-                  <property name="margin">
-                   <number>0</number>
-                  </property>
-                  <item>
-                   <widget class="QWidget" name="widget_4" native="true">
-                    <layout class="QVBoxLayout" name="verticalLayout_9">
-                     <property name="margin">
-                      <number>0</number>
-                     </property>
-                     <item>
-                      <widget class="QLabel" name="label_4">
-                       <property name="text">
-                        <string>Define a study area from a categorical raster for make the sampling only in the selected pixels values.</string>
-                       </property>
-                       <property name="alignment">
-                        <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-                       </property>
-                       <property name="wordWrap">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_24">
-                       <property name="text">
-                        <string>Select/browse the categorical raster:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QWidget" name="widget_23" native="true">
-                       <layout class="QHBoxLayout" name="horizontalLayout_22">
-                        <property name="margin">
-                         <number>0</number>
-                        </property>
-                        <item>
-                         <widget class="QComboBox" name="selectCategRaster_4">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="editable">
-                           <bool>false</bool>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="browseCategRaster_4">
-                          <property name="text">
-                           <string>Browse</string>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QWidget" name="widget_2" native="true">
-                       <layout class="QHBoxLayout" name="horizontalLayout_2">
-                        <property name="spacing">
-                         <number>0</number>
-                        </property>
-                        <property name="margin">
-                         <number>0</number>
-                        </property>
-                        <item>
-                         <widget class="QLabel" name="label_3">
-                          <property name="text">
-                           <string>Select pixels values:</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QLineEdit" name="pixelsValuesCategRaster_3"/>
-                        </item>
-                       </layout>
-                      </widget>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
              <spacer name="verticalSpacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -1306,22 +1196,6 @@
  </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>groupBox_CategRaster</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>widget_CategRaster</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>126</x>
-     <y>558</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>117</x>
-     <y>563</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>groupBox_ShapeArea</sender>
    <signal>clicked(bool)</signal>

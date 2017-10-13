@@ -105,7 +105,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.buttonClipping.clicked.connect(self.clipping_thematic_raster)
 
         # ######### create categorical  ######### # TODO
-        self.widget_CategRaster.setHidden(True)
+        #self.widget_CategRaster.setHidden(True)
         # update_layers_list(self.selectCategRaster, "raster")
         # # handle connect when the list of layers changed
         # self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectCategRaster, "raster"))
