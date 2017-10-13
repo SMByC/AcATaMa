@@ -86,7 +86,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.OkCancelButtons.button(QDialogButtonBox.Ok).setDisabled(True)
         self.OkCancelButtons.button(QDialogButtonBox.Ok).setToolTip("Only enabled when all samples are classified")
         self.OkCancelButtons.accepted.connect(self.accept_dialog)
-        self.OkCancelButtons.rejected.connect(self.cancel_dialog)
+        self.OkCancelButtons.rejected.connect(self.close_dialog)
 
         # move through samples
         self.previousSampleButton.clicked.connect(self.previous_sample)
@@ -186,14 +186,14 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
             self.classification.btns_config = buttons
 
     def closeEvent(self, event):
-        self.cancel_dialog()
+        self.close_dialog()
         event.ignore()
 
     def accept_dialog(self):
         self.closing()
         super(ClassificationDialog, self).accept()
 
-    def cancel_dialog(self):
+    def close_dialog(self):
         quit_msg = "Are you sure you want to close the classification? " \
                    "all settings will be lost in the classification window"
         reply = QMessageBox.question(self, 'Close classification window',
