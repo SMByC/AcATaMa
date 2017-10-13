@@ -28,6 +28,7 @@ from PyQt4.QtGui import QAction, QIcon
 from AcATaMa.core.dockwidget import unload_layer_in_qgis
 from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget
 from AcATaMa.gui.about_dialog import AboutDialog
+from AcATaMa.gui.classification_dialog import ClassificationDialog
 
 # Initialize Qt resources from file resources.py
 import resources
@@ -116,6 +117,11 @@ class AcATaMa:
         """Cleanup necessary items here when plugin dockwidget is closed"""
 
         print "** CLOSING AcATaMa"
+
+        if ClassificationDialog.is_opened:
+            self.dockwidget.classification_dialog.closing()
+            self.dockwidget.classification_dialog.reject(is_ok_to_close=True)
+
         self.clear_all()
 
         # disconnects
