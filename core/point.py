@@ -73,8 +73,8 @@ class RandomPoint(Point):
             return True
         return False
 
-    def in_categorical_raster(self, pixel_values, CategoricalR):
-        """Check if point is at least in one pixel values set of the categorical raster
+    def in_categorical_raster_RS(self, pixel_values, CategoricalR):
+        """Check if point is at least in one pixel values set in the categorical raster
         """
         if pixel_values is not None:
             point_value_in_categ_raster = int(CategoricalR.get_pixel_value_from_pnt(self.QgsPnt, band=1))
@@ -82,11 +82,12 @@ class RandomPoint(Point):
                 return False
         return True
 
-    def in_stratified_raster(self, pixel_values, number_of_samples, CategoricalR, nPointsInCategories):
-        """Check if point is at least in one pixel values set of the stratified
-        categorical raster
+    def in_categorical_raster_SRS(self, pixel_values, number_of_samples, CategoricalR, nPointsInCategories):
+        """Check if point pass the number of samples in the category or is nodata
         """
         pixel_value_in_categ_raster = int(CategoricalR.get_pixel_value_from_pnt(self.QgsPnt, band=1))
+        if pixel_value_in_categ_raster == CategoricalR.nodata:
+            return False
         self.index_pixel_value = pixel_values.index(pixel_value_in_categ_raster)
         if nPointsInCategories[self.index_pixel_value] >= number_of_samples[self.index_pixel_value]:
             return False

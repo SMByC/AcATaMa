@@ -297,11 +297,11 @@ class Sampling:
             return False
 
         if self.sampling_type == "RS":
-            if not sampling_point.in_categorical_raster(self.pixel_values, self.CategoricalR):
+            if not sampling_point.in_categorical_raster_RS(self.pixel_values, self.CategoricalR):
                 return False
         if self.sampling_type == "SRS":
-            if not sampling_point.in_stratified_raster(self.pixel_values, self.number_of_samples,
-                                                       self.CategoricalR, self.samples_in_categories):
+            if not sampling_point.in_categorical_raster_SRS(self.pixel_values, self.number_of_samples,
+                                                            self.CategoricalR, self.samples_in_categories):
                 return False
 
         if self.neighbor_aggregation and \
@@ -331,7 +331,7 @@ class Sampling:
         if self.sampling_type == "RS":
             config.set('sampling', 'total_of_samples', self.total_of_samples)
             config.set('sampling', 'min_distance', self.min_distance)
-            config.set('sampling', 'in_categorical_raster',
+            config.set('sampling', 'in_categorical_raster_RS',
                        ','.join(map(str, self.pixel_values)) if self.pixel_values is not None else 'None')
             config.set('sampling', 'with_neighbors_aggregation',
                        '{1}/{0}'.format(*self.neighbor_aggregation) if self.neighbor_aggregation is not None else 'None')
