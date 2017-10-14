@@ -89,8 +89,10 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.OkCancelButtons.rejected.connect(self.close_dialog)
 
         # move through samples
-        self.previousSampleButton.clicked.connect(self.previous_sample)
-        self.nextSampleButton.clicked.connect(self.next_sample)
+        self.nextSample.clicked.connect(self.next_sample)
+        self.nextSampleNotClassified.clicked.connect(self.next_sample_not_classified)
+        self.previousSample.clicked.connect(self.previous_sample)
+        self.previousSampleNotClassified.clicked.connect(self.previous_sample_not_classified)
 
         # set total samples
         self.progressClassification.setMaximum(len(self.classification.points))
@@ -152,17 +154,36 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                     # highlight to marker
                     view_widget.render_widget.marker.highlight()
 
+    def next_sample(self):
+        if self.current_sample_idx >= len(self.classification.points)-1:
+            return
+        self.current_sample_idx += 1
+        self.set_current_sample()
+
+    def next_sample_not_classified(self):
+        tmp_sample_idx = self.current_sample_idx + 1
+        while tmp_sample_idx < len(self.classification.points) and \
+                self.classification.points[tmp_sample_idx].is_classified:
+            tmp_sample_idx += 1
+        if tmp_sample_idx < len(self.classification.points) and \
+                not self.classification.points[tmp_sample_idx].is_classified:
+            self.current_sample_idx = tmp_sample_idx
+            self.set_current_sample()
+
     def previous_sample(self):
         if self.current_sample_idx < 1:
             return
         self.current_sample_idx -= 1
         self.set_current_sample()
 
-    def next_sample(self):
-        if self.current_sample_idx >= len(self.classification.points)-1:
-            return
-        self.current_sample_idx += 1
-        self.set_current_sample()
+    def previous_sample_not_classified(self):
+        tmp_sample_idx = self.current_sample_idx - 1
+        while self.classification.points[tmp_sample_idx].is_classified \
+              and tmp_sample_idx >= 0:
+            tmp_sample_idx -= 1
+        if not self.classification.points[tmp_sample_idx].is_classified and tmp_sample_idx >= 0:
+            self.current_sample_idx = tmp_sample_idx
+            self.set_current_sample()
 
     def set_buttons_classification(self):
         if self.classification_btns_config.exec_():

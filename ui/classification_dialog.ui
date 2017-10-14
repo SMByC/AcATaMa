@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1389</width>
-    <height>803</height>
+    <width>1444</width>
+    <height>859</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -58,11 +58,39 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="QToolButton" name="previousSampleButton">
+             <widget class="QToolButton" name="previousSampleNotClassified">
               <property name="font">
                <font>
                 <pointsize>8</pointsize>
                </font>
+              </property>
+              <property name="toolTip">
+               <string>Go to the previous sample not classified</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset>
+                <normaloff>:/plugins/AcATaMa/icons/previous_nc.svg</normaloff>:/plugins/AcATaMa/icons/previous_nc.svg</iconset>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="previousSample">
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>Go to the previous sample</string>
               </property>
               <property name="text">
                <string>Previous</string>
@@ -70,12 +98,6 @@
               <property name="icon">
                <iconset>
                 <normaloff>:/plugins/AcATaMa/icons/previous.svg</normaloff>:/plugins/AcATaMa/icons/previous.svg</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>19</width>
-                <height>19</height>
-               </size>
               </property>
               <property name="toolButtonStyle">
                <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -148,11 +170,14 @@
              </widget>
             </item>
             <item>
-             <widget class="QToolButton" name="nextSampleButton">
+             <widget class="QToolButton" name="nextSample">
               <property name="font">
                <font>
                 <pointsize>8</pointsize>
                </font>
+              </property>
+              <property name="toolTip">
+               <string>Go to the next sample</string>
               </property>
               <property name="layoutDirection">
                <enum>Qt::RightToLeft</enum>
@@ -163,6 +188,31 @@
               <property name="icon">
                <iconset>
                 <normaloff>:/plugins/AcATaMa/icons/next.svg</normaloff>:/plugins/AcATaMa/icons/next.svg</iconset>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="nextSampleNotClassified">
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>Go to the next sample not classified</string>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::RightToLeft</enum>
+              </property>
+              <property name="icon">
+               <iconset>
+                <normaloff>:/plugins/AcATaMa/icons/next_nc.svg</normaloff>:/plugins/AcATaMa/icons/next_nc.svg</iconset>
               </property>
               <property name="toolButtonStyle">
                <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -473,7 +523,7 @@
            <x>0</x>
            <y>0</y>
            <width>320</width>
-           <height>533</height>
+           <height>435</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">

@@ -4,7 +4,9 @@
         <file>icons/about.svg</file>
         <file>icons/layer_properties.svg</file>
         <file>icons/go_to_sample.svg</file>
-        <file>icons/previous.svg</file>
         <file>icons/next.svg</file>
+        <file>icons/next_nc.svg</file>
+        <file>icons/previous.svg</file>
+        <file>icons/previous_nc.svg</file>
     </qresource>
 </RCC>
