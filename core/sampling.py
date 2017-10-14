@@ -153,14 +153,23 @@ def do_stratified_random_sampling(dockwidget):
     else:
         attempts_by_sampling = None
 
-    # set the method of stratified sampling
+    # set the method of stratified sampling and save SRS config
     if dockwidget.StratifieSamplingMethod.currentText().startswith("Fixed values"):
         sampling_method = "fixed values"
+        srs_config = None
     if dockwidget.StratifieSamplingMethod.currentText().startswith("Area based proportion"):
         sampling_method = "area based proportion"
+        srs_config = {}
+        # save total expected std error
+        srs_config["total_std_error"] = dockwidget.TotalExpectedSE.value()
+        # get std_error from table
+        srs_config["std_error"] = []
+        for row in range(dockwidget.TableWidget_SRS.rowCount()):
+            srs_config["std_error"].append(float(dockwidget.TableWidget_SRS.item(row, 3).text()))
 
     # process
-    sampling = Sampling("SRS", ThematicR, CategoricalR, sampling_method, dockwidget.tmp_dir)
+    sampling = Sampling("SRS", ThematicR, CategoricalR, sampling_method,
+                        srs_config=srs_config, out_dir=dockwidget.tmp_dir)
     sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
                                       neighbor_aggregation, attempts_by_sampling,
                                       dockwidget.widget_generate_SRS.progressGenerateSampling)
@@ -188,7 +197,7 @@ class Sampling:
     # for save all instances
     samplings = dict()  # {name_in_qgis: class instance}
 
-    def __init__(self, sampling_type, ThematicR, CategoricalR, sampling_method=None, out_dir=None):
+    def __init__(self, sampling_type, ThematicR, CategoricalR, sampling_method=None, srs_config=None, out_dir=None):
         # set and init variables
         # sampling_type => "RS" (random sampling),
         #                  "SRS" (stratified random sampling)
@@ -202,6 +211,8 @@ class Sampling:
             self.sampling_name = "stratified_random_sampling_{}".format(datetime.now().strftime('%H-%M-%S'))
         # for stratified sampling
         self.sampling_method = sampling_method
+        # save some SRS sampling configuration
+        self.srs_config = srs_config
         # set the output dir for save sampling
         if out_dir is None:
             out_dir = os.path.dirname(ThematicR.file_path)
@@ -332,10 +343,17 @@ class Sampling:
                        '{1}/{0}'.format(
                            *self.neighbor_aggregation) if self.neighbor_aggregation is not None else 'None')
 
-            config.add_section('sampling_table')
+            config.add_section('num_samples')
             for pixel, count in zip(self.pixel_values, self.samples_in_categories):
                 if count > 0:
-                    config.set('sampling_table', 'pix_val_'+str(pixel), str(count))
+                    config.set('num_samples', 'pix_val_'+str(pixel), str(count))
+
+            if self.sampling_method == "area based proportion":
+                config.set('sampling', 'total_expected_std_error', self.srs_config["total_std_error"])
+                config.add_section('std_error')
+                for pixel, count, std_error in zip(self.pixel_values, self.samples_in_categories, self.srs_config["std_error"]):
+                    if count > 0:
+                        config.set('std_error', 'pix_val_' + str(pixel), str(std_error))
 
         with open(file_out, 'wb') as configfile:
             config.write(configfile)
