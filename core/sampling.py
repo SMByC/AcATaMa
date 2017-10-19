@@ -239,8 +239,8 @@ class Sampling:
 
         fields = QgsFields()
         fields.append(QgsField('id', QVariant.Int, '', 10, 0))
-        mapCRS = iface.mapCanvas().mapSettings().destinationCrs()
-        writer = vector.VectorWriter(self.output_file, None, fields, QGis.WKBPoint, mapCRS)
+        thematic_CRS = self.ThematicR.qgs_layer.crs()
+        writer = vector.VectorWriter(self.output_file, None, fields, QGis.WKBPoint, thematic_CRS)
 
         if self.sampling_type == "RS":
             total_of_samples = self.number_of_samples
