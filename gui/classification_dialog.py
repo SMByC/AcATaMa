@@ -307,7 +307,9 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
         if tableItem.text() == "No thematic raster":
             return
         if tableItem.column() == 2:
-            color = QColorDialog.getColor(tableItem.backgroundColor())
+            remember_color = tableItem.backgroundColor()
+            remember_color = QColor("white") if remember_color.name() == QColor("black").name() else remember_color
+            color = QColorDialog.getColor(remember_color, self)
             if color.isValid():
                 tableItem.setBackground(color)
                 self.tableBtnsConfig.clearSelection()
