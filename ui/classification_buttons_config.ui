@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>674</width>
-    <height>653</height>
+    <width>544</width>
+    <height>550</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,16 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="label">
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
      <property name="text">
-      <string>Set the name of buttons for the classification the samples</string>
+      <string>Set the name, color (optional) and thematic class (optional but necessary for results) of buttons for the classification of the samples:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignJustify|Qt::AlignVCenter</set>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
