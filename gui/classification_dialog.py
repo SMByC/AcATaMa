@@ -23,8 +23,10 @@ import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QTableWidgetItem, QMessageBox, QDialogButtonBox, QSplitter, QColor, QColorDialog
+
 from AcATaMa.core.classification import Classification
-from AcATaMa.core.dockwidget import valid_file_selected_in
+from AcATaMa.core.dockwidget import valid_file_selected_in, get_current_file_path_in
+from AcATaMa.core.raster import get_color_table
 from AcATaMa.gui.classification_view_widget import ClassificationViewWidget
 
 # plugin path
@@ -306,6 +308,7 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
     def table_item_clicked(self, tableItem):
         if tableItem.text() == "No thematic raster":
             return
+        # set color
         if tableItem.column() == 2:
             remember_color = tableItem.backgroundColor()
             remember_color = QColor("white") if remember_color.name() == QColor("black").name() else remember_color
@@ -313,5 +316,79 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
             if color.isValid():
                 tableItem.setBackground(color)
                 self.tableBtnsConfig.clearSelection()
+        # set the thematic raster class
+        if tableItem.column() == 3:
+            thematic_raster_table = ThematicRasterTable(self.acatama_dockwidget)
+            if thematic_raster_table.exec_():
+                tableItem.setText(thematic_raster_table.pix_value)
+                self.tableBtnsConfig.item(tableItem.row(), 2).setBackground(thematic_raster_table.color)
 
 
+FORM_CLASS, _ = uic.loadUiType(os.path.join(
+    plugin_folder, 'ui', 'classification_thematic_table.ui'))
+
+
+class ThematicRasterTable(QtGui.QDialog, FORM_CLASS):
+    def __init__(self, acatama_dockwidget):
+        QtGui.QDialog.__init__(self)
+        self.setupUi(self)
+        self.acatama_dockwidget = acatama_dockwidget
+        # init with empty table
+        self.create_table()
+
+    def create_table(self):
+        header = ["Pix Val", "Color", "Select"]
+        # get color table from raster
+        nodata = int(self.acatama_dockwidget.nodata_ThematicRaster.value())
+        thematic_table = {"color_table": get_color_table(
+            get_current_file_path_in(self.acatama_dockwidget.selectThematicRaster), band_number=1, nodata=nodata)}
+
+        if not thematic_table["color_table"]:
+            # clear table
+            self.thematicTableWidget.setRowCount(0)
+            self.thematicTableWidget.setColumnCount(0)
+            return
+        thematic_table["row_count"] = len(thematic_table["color_table"].values()[0])
+        # init table
+        self.thematicTableWidget.setRowCount(thematic_table["row_count"])
+        self.thematicTableWidget.setColumnCount(3)
+        # hidden row labels
+        self.thematicTableWidget.verticalHeader().setVisible(False)
+        # add Header
+        self.thematicTableWidget.setHorizontalHeaderLabels(header)
+
+        # insert items
+        for n, h in enumerate(header):
+            if h == "Pix Val":
+                for m, item in enumerate(thematic_table["color_table"]["Pixel Value"]):
+                    item_table = QTableWidgetItem(str(item))
+                    item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    self.thematicTableWidget.setItem(m, n, item_table)
+            if h == "Color":
+                for m in range(thematic_table["row_count"]):
+                    item_table = QTableWidgetItem()
+                    item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                    item_table.setBackground(QColor(thematic_table["color_table"]["Red"][m],
+                                                    thematic_table["color_table"]["Green"][m],
+                                                    thematic_table["color_table"]["Blue"][m],
+                                                    thematic_table["color_table"]["Alpha"][m]))
+                    self.thematicTableWidget.setItem(m, n, item_table)
+            if h == "Select":
+                for m in range(thematic_table["row_count"]):
+                    item_table = QtGui.QPushButton("Select this")
+                    item_table.clicked.connect(self.select_clicked)
+                    self.thematicTableWidget.setCellWidget(m, n, item_table)
+
+        # adjust size of Table
+        self.thematicTableWidget.resizeColumnsToContents()
+        self.thematicTableWidget.resizeRowsToContents()
+
+    def select_clicked(self):
+        button = self.sender()
+        row = self.thematicTableWidget.indexAt(button.pos()).row()
+
+        self.pix_value = self.thematicTableWidget.item(row, 0).text()
+        self.color = self.thematicTableWidget.item(row, 1).backgroundColor()
+
+        self.accept()
