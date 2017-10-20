@@ -24,6 +24,7 @@ from PyQt4 import QtGui, uic
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QTableWidgetItem, QMessageBox, QDialogButtonBox, QSplitter, QColor, QColorDialog
 from AcATaMa.core.classification import Classification
+from AcATaMa.core.dockwidget import valid_file_selected_in
 from AcATaMa.gui.classification_view_widget import ClassificationViewWidget
 
 # plugin path
@@ -75,7 +76,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
             view_widget.view_label_name.setText("View {}:".format(num_view+1))
 
         # set classification buttons
-        self.classification_btns_config = ClassificationButtonsConfig()
+        self.classification_btns_config = ClassificationButtonsConfig(self.acatama_dockwidget)
         self.SetClassification.clicked.connect(self.set_buttons_classification)
 
         # set dialog title
@@ -127,7 +128,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
 
     def display_sample_status(self):
         if self.current_sample.is_classified:
-            class_name = self.classification.btns_config[self.current_sample.class_id]
+            class_name = self.classification.btns_config[self.current_sample.class_id]["name"]
             self.statusCurrentSample.setText(class_name)
             self.statusCurrentSample.setStyleSheet('QLabel {color: green;}')
         else:
@@ -192,16 +193,20 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
 
             buttons = {}
             for row in range(self.classification_btns_config.tableBtnsConfig.rowCount()):
-                classification_num = self.classification_btns_config.tableBtnsConfig.item(row, 0).text()
-                classification_name = self.classification_btns_config.tableBtnsConfig.item(row, 1).text()
-                if classification_name != "":
+                item_num = self.classification_btns_config.tableBtnsConfig.item(row, 0).text()
+                item_name = self.classification_btns_config.tableBtnsConfig.item(row, 1).text()
+                item_color = self.classification_btns_config.tableBtnsConfig.item(row, 2).backgroundColor().name()
+                item_thematic_class = self.classification_btns_config.tableBtnsConfig.item(row, 3).text()
+                item_thematic_class = None if item_thematic_class == "No thematic raster" else item_thematic_class
+                if item_name != "":
                     # save button config
-                    buttons[int(classification_num)] = classification_name
+                    buttons[int(item_num)] = {"name": item_name, "color": item_color,
+                                              "thematic_class": item_thematic_class}
                     # create button
-                    QPButton = QtGui.QPushButton(classification_name)
-                    QPButton.clicked.connect(lambda state, x=int(classification_num): self.classify_sample(x))
+                    QPButton = QtGui.QPushButton(item_name)
+                    QPButton.setStyleSheet('QPushButton {color: '+item_color+'}')
+                    QPButton.clicked.connect(lambda state, x=int(item_num): self.classify_sample(x))
                     self.gridButtonsClassification.addWidget(QPButton, len(buttons)-1, 0)
-
             # save btns config
             self.classification.btns_config = buttons
 
@@ -240,9 +245,10 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 
 class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
-    def __init__(self):
+    def __init__(self, acatama_dockwidget):
         QtGui.QDialog.__init__(self)
         self.setupUi(self)
+        self.acatama_dockwidget = acatama_dockwidget
         # init with empty table
         self.table_buttons = dict(zip(range(1,31), [""]*30))
         self.create_table()
@@ -277,7 +283,7 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
                     self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "Thematic raster class":
                 for m, item in enumerate(self.table_buttons.values()):
-                    if False:
+                    if valid_file_selected_in(self.acatama_dockwidget.selectThematicRaster):
                         item_table = QTableWidgetItem(str(item))
                     else:
                         item_table = QTableWidgetItem("No thematic raster")
