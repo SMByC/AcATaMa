@@ -22,8 +22,7 @@
 import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QTableWidgetItem, QMessageBox, QDialogButtonBox, QSplitter
-
+from PyQt4.QtGui import QTableWidgetItem, QMessageBox, QDialogButtonBox, QSplitter, QColor, QColorDialog
 from AcATaMa.core.classification import Classification
 from AcATaMa.gui.classification_view_widget import ClassificationViewWidget
 
@@ -249,10 +248,14 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
         self.create_table()
 
     def create_table(self):
-        header = ["No.", "Classification Name"]
+        header = ["No.", "Classification Name", "Color", "Thematic raster class"]
         # init table
         self.tableBtnsConfig.setRowCount(len(self.table_buttons))
-        self.tableBtnsConfig.setColumnCount(2)
+        self.tableBtnsConfig.setColumnCount(4)
+        # hidden row labels
+        self.tableBtnsConfig.verticalHeader().setVisible(False)
+        # add Header
+        self.tableBtnsConfig.setHorizontalHeaderLabels(header)
         # insert items
         for n, h in enumerate(header):
             if h == "No.":
@@ -266,10 +269,40 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
                     item_table = QTableWidgetItem(str(item))
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
                     self.tableBtnsConfig.setItem(m, n, item_table)
-        # hidden row labels
-        self.tableBtnsConfig.verticalHeader().setVisible(False)
-        # add Header
-        self.tableBtnsConfig.setHorizontalHeaderLabels(header)
+            if h == "Color":
+                for m, item in enumerate(self.table_buttons.values()):
+                    item_table = QTableWidgetItem(str(item))
+                    item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    self.tableBtnsConfig.setItem(m, n, item_table)
+            if h == "Thematic raster class":
+                for m, item in enumerate(self.table_buttons.values()):
+                    if False:
+                        item_table = QTableWidgetItem(str(item))
+                    else:
+                        item_table = QTableWidgetItem("No thematic raster")
+                        item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                        item_table.setForeground(QColor("lightGrey"))
+                        item_h = QTableWidgetItem(h)
+                        item_h.setForeground(QColor("lightGrey"))
+                        self.tableBtnsConfig.setHorizontalHeaderItem(3, item_h)
+
+                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    self.tableBtnsConfig.setItem(m, n, item_table)
+
         # adjust size of Table
         self.tableBtnsConfig.resizeColumnsToContents()
         self.tableBtnsConfig.resizeRowsToContents()
+
+        self.tableBtnsConfig.itemClicked.connect(self.table_item_clicked)
+
+    def table_item_clicked(self, tableItem):
+        if tableItem.text() == "No thematic raster":
+            return
+        if tableItem.column() == 2:
+            color = QColorDialog.getColor()
+            if color.isValid():
+                tableItem.setBackground(color)
+                self.tableBtnsConfig.clearSelection()
+
+
