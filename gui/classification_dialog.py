@@ -302,6 +302,9 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
         # adjust size of Table
         self.tableBtnsConfig.resizeColumnsToContents()
         self.tableBtnsConfig.resizeRowsToContents()
+        # adjust the dialog based on table content
+        dialog_width = self.tableBtnsConfig.horizontalHeader().length() + 50
+        self.resize(dialog_width, self.height())
 
         self.tableBtnsConfig.itemClicked.connect(self.table_item_clicked)
 
@@ -318,17 +321,17 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
                 self.tableBtnsConfig.clearSelection()
         # set the thematic raster class
         if tableItem.column() == 3:
-            thematic_raster_table = ThematicRasterTable(self.acatama_dockwidget)
-            if thematic_raster_table.exec_():
-                tableItem.setText(thematic_raster_table.pix_value)
-                self.tableBtnsConfig.item(tableItem.row(), 2).setBackground(thematic_raster_table.color)
+            thematic_raster_class = ThematicRasterClasses(self.acatama_dockwidget)
+            if thematic_raster_class.exec_():
+                tableItem.setText(thematic_raster_class.pix_value)
+                self.tableBtnsConfig.item(tableItem.row(), 2).setBackground(thematic_raster_class.color)
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'classification_thematic_table.ui'))
+    plugin_folder, 'ui', 'classification_thematic_raster_classes.ui'))
 
 
-class ThematicRasterTable(QtGui.QDialog, FORM_CLASS):
+class ThematicRasterClasses(QtGui.QDialog, FORM_CLASS):
     def __init__(self, acatama_dockwidget):
         QtGui.QDialog.__init__(self)
         self.setupUi(self)
@@ -345,17 +348,17 @@ class ThematicRasterTable(QtGui.QDialog, FORM_CLASS):
 
         if not thematic_table["color_table"]:
             # clear table
-            self.thematicTableWidget.setRowCount(0)
-            self.thematicTableWidget.setColumnCount(0)
+            self.tableOfClasses.setRowCount(0)
+            self.tableOfClasses.setColumnCount(0)
             return
         thematic_table["row_count"] = len(thematic_table["color_table"].values()[0])
         # init table
-        self.thematicTableWidget.setRowCount(thematic_table["row_count"])
-        self.thematicTableWidget.setColumnCount(3)
+        self.tableOfClasses.setRowCount(thematic_table["row_count"])
+        self.tableOfClasses.setColumnCount(3)
         # hidden row labels
-        self.thematicTableWidget.verticalHeader().setVisible(False)
+        self.tableOfClasses.verticalHeader().setVisible(False)
         # add Header
-        self.thematicTableWidget.setHorizontalHeaderLabels(header)
+        self.tableOfClasses.setHorizontalHeaderLabels(header)
 
         # insert items
         for n, h in enumerate(header):
@@ -364,7 +367,7 @@ class ThematicRasterTable(QtGui.QDialog, FORM_CLASS):
                     item_table = QTableWidgetItem(str(item))
                     item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                    self.thematicTableWidget.setItem(m, n, item_table)
+                    self.tableOfClasses.setItem(m, n, item_table)
             if h == "Color":
                 for m in range(thematic_table["row_count"]):
                     item_table = QTableWidgetItem()
@@ -373,22 +376,25 @@ class ThematicRasterTable(QtGui.QDialog, FORM_CLASS):
                                                     thematic_table["color_table"]["Green"][m],
                                                     thematic_table["color_table"]["Blue"][m],
                                                     thematic_table["color_table"]["Alpha"][m]))
-                    self.thematicTableWidget.setItem(m, n, item_table)
+                    self.tableOfClasses.setItem(m, n, item_table)
             if h == "Select":
                 for m in range(thematic_table["row_count"]):
                     item_table = QtGui.QPushButton("Select this")
                     item_table.clicked.connect(self.select_clicked)
-                    self.thematicTableWidget.setCellWidget(m, n, item_table)
+                    self.tableOfClasses.setCellWidget(m, n, item_table)
 
         # adjust size of Table
-        self.thematicTableWidget.resizeColumnsToContents()
-        self.thematicTableWidget.resizeRowsToContents()
+        self.tableOfClasses.resizeColumnsToContents()
+        self.tableOfClasses.resizeRowsToContents()
+        # adjust the dialog based on table content
+        dialog_width = self.tableOfClasses.horizontalHeader().length() + 50
+        self.resize(dialog_width, self.height())
 
     def select_clicked(self):
         button = self.sender()
-        row = self.thematicTableWidget.indexAt(button.pos()).row()
+        row = self.tableOfClasses.indexAt(button.pos()).row()
 
-        self.pix_value = self.thematicTableWidget.item(row, 0).text()
-        self.color = self.thematicTableWidget.item(row, 1).backgroundColor()
+        self.pix_value = self.tableOfClasses.item(row, 0).text()
+        self.color = self.tableOfClasses.item(row, 1).backgroundColor()
 
         self.accept()

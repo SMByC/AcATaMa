@@ -6,18 +6,26 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>423</width>
-    <height>608</height>
+    <width>277</width>
+    <height>574</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Set the thematic raster class</string>
+   <string>Thematic raster classes</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="label">
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
      <property name="text">
-      <string>Select the row for set the thematic pixel value in the classification buttons</string>
+      <string>Set the thematic raster class for the classification button:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignJustify|Qt::AlignVCenter</set>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -25,7 +33,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QTableWidget" name="thematicTableWidget"/>
+    <widget class="QTableWidget" name="tableOfClasses"/>
    </item>
   </layout>
  </widget>
