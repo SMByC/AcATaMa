@@ -30,13 +30,14 @@ from AcATaMa.core.raster import get_color_table
 from AcATaMa.core.utils import wait_process, mask, block_signals_to
 
 
-def valid_file_selected_in(combo_box, combobox_name):
+def valid_file_selected_in(combo_box, combobox_name=False):
     try:
         get_layer_by_name(combo_box.currentText()).dataProvider().dataSourceUri()
         return True
     except:
-        iface.messageBar().pushMessage("AcATaMa", "Error, please browse/select a valid file in "+combobox_name,
-                                       level=QgsMessageBar.WARNING)
+        if combobox_name:
+            iface.messageBar().pushMessage("AcATaMa", "Error, please browse/select a valid file in "
+                                           + combobox_name, level=QgsMessageBar.WARNING)
         return False
 
 
