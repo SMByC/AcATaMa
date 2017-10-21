@@ -14,18 +14,6 @@
    <string>Classification of samples</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="0" colspan="2">
-    <widget class="QWidget" name="widget_view_windows" native="true">
-     <layout class="QVBoxLayout" name="verticalLayout_20">
-      <property name="spacing">
-       <number>0</number>
-      </property>
-      <property name="margin">
-       <number>0</number>
-      </property>
-     </layout>
-    </widget>
-   </item>
    <item row="0" column="2" rowspan="3">
     <widget class="Line" name="line_2">
      <property name="orientation">
@@ -668,9 +656,9 @@
        </widget>
       </item>
       <item>
-       <widget class="QDialogButtonBox" name="OkCancelButtons">
+       <widget class="QDialogButtonBox" name="closeButton">
         <property name="standardButtons">
-         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+         <set>QDialogButtonBox::Close</set>
         </property>
        </widget>
       </item>
@@ -684,8 +672,37 @@
      </property>
     </widget>
    </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QWidget" name="widget_view_windows" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout_20">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="margin">
+       <number>0</number>
+      </property>
+     </layout>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>closeButton</sender>
+   <signal>rejected()</signal>
+   <receiver>Dialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1315</x>
+     <y>821</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1478</x>
+     <y>651</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

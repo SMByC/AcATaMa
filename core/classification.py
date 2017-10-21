@@ -36,6 +36,9 @@ class Classification:
         self.points = self.getPoints()
         # save and init the current sample index
         self.current_sample_idx = 0
+        # when all points are classified
+        self.is_completed = False
+
         # shuffle the list items
         shuffle(self.points)
         # save instance
