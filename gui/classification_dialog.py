@@ -88,10 +88,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.setWindowTitle("Classification of samples for " + sampling_layer.name())
 
         # dialog buttons box
-        self.OkCancelButtons.button(QDialogButtonBox.Ok).setDisabled(True)
-        self.OkCancelButtons.button(QDialogButtonBox.Ok).setToolTip("Only enabled when all samples are classified")
-        self.OkCancelButtons.accepted.connect(self.accept_dialog)
-        self.OkCancelButtons.rejected.connect(self.close_dialog)
+        self.closeButton.rejected.connect(self.closing)
 
         # move through samples
         self.nextSample.clicked.connect(self.next_sample)
@@ -148,7 +145,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.totalNotClassified.setText(str(total_not_classified))
         # check is the classification is completed
         if total_not_classified == 0:
-            self.OkCancelButtons.button(QDialogButtonBox.Ok).setEnabled(True)
+            self.classification.is_completed = True
 
     def show_and_go_to_current_sample(self, highlight=True):
         for view_widget in ClassificationDialog.view_widgets:
@@ -218,21 +215,8 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
             self.classification.btns_config = buttons
 
     def closeEvent(self, event):
-        self.close_dialog()
-        event.ignore()
-
-    def accept_dialog(self):
         self.closing()
-        super(ClassificationDialog, self).accept()
-
-    def close_dialog(self):
-        quit_msg = "Are you sure you want to close the classification? " \
-                   "all settings will be lost in the classification window"
-        reply = QMessageBox.question(self, 'Close classification window',
-                                     quit_msg, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        if reply == QMessageBox.Yes:
-            self.closing()
-            self.reject(is_ok_to_close=True)
+        event.ignore()
 
     def closing(self):
         """Do this before close the classification dialog"""
@@ -241,6 +225,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.acatama_dockwidget.selectSamplingFile.setEnabled(True)
         self.acatama_dockwidget.browseSamplingFile.setEnabled(True)
         self.acatama_dockwidget.buttonOpenClassificationDialog.setText(u"Classify the sampling file")
+        self.reject(is_ok_to_close=True)
 
     def reject(self, is_ok_to_close=False):
         if is_ok_to_close:
