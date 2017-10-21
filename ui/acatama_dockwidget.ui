@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>804</width>
+    <width>738</width>
     <height>1166</height>
    </rect>
   </property>
@@ -47,7 +47,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>780</width>
+             <width>714</width>
              <height>1003</height>
             </rect>
            </property>
@@ -281,8 +281,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>760</width>
-             <height>1338</height>
+             <width>694</width>
+             <height>1374</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -855,8 +855,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>768</width>
-             <height>991</height>
+             <width>709</width>
+             <height>971</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_24">
@@ -918,16 +918,12 @@
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_27">
                <item>
-                <widget class="QLabel" name="label_25">
-                 <property name="text">
-                  <string>The status of the samples classification for this file:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
                 <widget class="QProgressBar" name="ClassificationStatusPB">
                  <property name="enabled">
                   <bool>true</bool>
+                 </property>
+                 <property name="toolTip">
+                  <string>The status of the samples classification for this sampling file</string>
                  </property>
                  <property name="minimum">
                   <number>0</number>
@@ -949,21 +945,15 @@
                <item>
                 <widget class="QWidget" name="widget_9" native="true">
                  <layout class="QHBoxLayout" name="horizontalLayout_9">
-                  <property name="margin">
+                  <property name="bottomMargin">
                    <number>0</number>
                   </property>
                   <item>
-                   <spacer name="horizontalSpacer_6">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
+                   <widget class="QLabel" name="label_3">
+                    <property name="text">
+                     <string>Restore or save the classification status:</string>
                     </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
+                   </widget>
                   </item>
                   <item>
                    <widget class="QPushButton" name="pushButton">
@@ -979,18 +969,28 @@
                     </property>
                    </widget>
                   </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QWidget" name="widget_2" native="true">
+                 <layout class="QHBoxLayout" name="horizontalLayout_2">
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
                   <item>
-                   <spacer name="horizontalSpacer_7">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
+                   <widget class="QLabel" name="label_4">
+                    <property name="text">
+                     <string>Save sampling with the classification:</string>
                     </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_3">
+                    <property name="text">
+                     <string>Save sampling</string>
                     </property>
-                   </spacer>
+                   </widget>
                   </item>
                  </layout>
                 </widget>
