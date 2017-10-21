@@ -130,8 +130,8 @@ class ClassificationPoint(Point):
     def __init__(self, x, y):
         super(ClassificationPoint, self).__init__(x, y)
         # init param
+        self.btn_id = None
         self.is_classified = False
-        self.class_id = None
 
     def fit_to(self, view_widget, radius):
         # fit to current sample with min radius of extent

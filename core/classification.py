@@ -29,6 +29,8 @@ class Classification:
 
     def __init__(self, sampling_layer):
         self.sampling_layer = sampling_layer
+        # for store the classification buttons properties
+        # {btn_id: {"name", "color", "thematic_class"}}
         self.btns_config = None
         # save instance
         Classification.instances[sampling_layer] = self
