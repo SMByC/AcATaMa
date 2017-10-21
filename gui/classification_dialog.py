@@ -107,7 +107,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.currentSample.clicked.connect(lambda: self.show_and_go_to_current_sample(highlight=True))
 
         # init current point
-        self.current_sample_idx = 0
+        self.current_sample_idx = self.classification.current_sample_idx
         self.current_sample = None
         self.set_current_sample()
 
@@ -115,6 +115,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         """Set the current sample"""
         self.current_sample = self.classification.points[self.current_sample_idx]
         ClassificationDialog.current_sample = self.current_sample
+        self.classification.current_sample_idx = self.current_sample_idx
         # update progress bar
         self.progressClassification.setValue(self.current_sample_idx + 1)
         # show the class assigned

@@ -32,12 +32,14 @@ class Classification:
         # for store the classification buttons properties
         # {btn_id: {"name", "color", "thematic_class"}}
         self.btns_config = None
-        # save instance
-        Classification.instances[sampling_layer] = self
         # get all points from the layer
         self.points = self.getPoints()
+        # save and init the current sample index
+        self.current_sample_idx = 0
         # shuffle the list items
         shuffle(self.points)
+        # save instance
+        Classification.instances[sampling_layer] = self
 
     def getPoints(self):
         points = []
