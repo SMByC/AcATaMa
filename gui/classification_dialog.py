@@ -66,8 +66,11 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         # save instances
         ClassificationDialog.view_widgets = view_widgets
 
-        # init classification
-        self.classification = Classification(sampling_layer)
+        # get classification or init new instance
+        if sampling_layer in Classification.instances:
+            self.classification = Classification.instances[sampling_layer]
+        else:
+            self.classification = Classification(sampling_layer)
 
         # setup view widget
         [view_widget.setup_view_widget(sampling_layer) for view_widget in ClassificationDialog.view_widgets]
@@ -119,9 +122,9 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         # show and go to marker
         self.show_and_go_to_current_sample()
 
-    def classify_sample(self, class_id):
-        if class_id:
-            self.current_sample.class_id = class_id
+    def classify_sample(self, btn_id):
+        if btn_id:
+            self.current_sample.btn_id = int(btn_id)
             self.current_sample.is_classified = True
             self.display_sample_status()
             if self.autoNextSample.isChecked():
@@ -130,10 +133,10 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
 
     def display_sample_status(self):
         if self.current_sample.is_classified:
-            class_name = self.classification.btns_config[self.current_sample.class_id]["name"]
+            class_name = self.classification.btns_config[self.current_sample.btn_id]["name"]
             self.statusCurrentSample.setText(class_name)
             self.statusCurrentSample.setStyleSheet(
-                'QLabel {color: '+self.classification.btns_config[self.current_sample.class_id]["color"]+';}')
+                'QLabel {color: '+self.classification.btns_config[self.current_sample.btn_id]["color"]+';}')
         else:
             self.statusCurrentSample.setText("not classified")
             self.statusCurrentSample.setStyleSheet('QLabel {color: gray;}')
@@ -208,7 +211,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                     # create button
                     QPButton = QtGui.QPushButton(item_name)
                     QPButton.setStyleSheet('QPushButton {color: '+item_color+'}')
-                    QPButton.clicked.connect(lambda state, x=int(item_num): self.classify_sample(x))
+                    QPButton.clicked.connect(lambda state, btn_id=item_num: self.classify_sample(btn_id))
                     self.gridButtonsClassification.addWidget(QPButton, len(buttons)-1, 0)
             # save btns config
             self.classification.btns_config = buttons
