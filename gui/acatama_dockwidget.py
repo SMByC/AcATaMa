@@ -301,14 +301,16 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
     def sampling_file_info(self):
         sampling_layer = get_current_layer_in(self.selectSamplingFile)
         if sampling_layer:
-            self.SamplinFileName.setText(self.selectSamplingFile.currentText())
-            count_samples = len(list(sampling_layer.getFeatures()))
-            self.totalSamples.setText(str(count_samples))
-
             if sampling_layer in Classification.instances:
-                self.samplingFileStatus.setText("Classified")
+                classification = Classification.instances[sampling_layer]
+                total_classified = sum(sample.is_classified for sample in classification.points)
+                self.ClassificationStatusPB.setMaximum(len(classification.points))
+                self.ClassificationStatusPB.setValue(total_classified)
             else:
-                self.samplingFileStatus.setText("Not classified")
+                count_samples = len(list(sampling_layer.getFeatures()))
+                self.ClassificationStatusPB.setMaximum(count_samples)
+                self.ClassificationStatusPB.setValue(0)
+            self.ClassificationStatusPB.setTextVisible(True)
 
     @pyqtSlot()
     def open_classification_dialog(self):

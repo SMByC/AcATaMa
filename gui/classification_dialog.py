@@ -143,6 +143,8 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         total_not_classified = sum(not sample.is_classified for sample in self.classification.points)
         self.totalClassified.setText(str(total_classified))
         self.totalNotClassified.setText(str(total_not_classified))
+        # update in dockwidget status
+        self.acatama_dockwidget.ClassificationStatusPB.setValue(total_classified)
         # check is the classification is completed
         if total_not_classified == 0:
             self.classification.is_completed = True
