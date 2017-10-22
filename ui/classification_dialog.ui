@@ -313,7 +313,7 @@
             <set>Qt::AlignCenter</set>
            </property>
            <property name="decimals">
-            <number>3</number>
+            <number>0</number>
            </property>
            <property name="minimum">
             <double>1.000000000000000</double>
@@ -322,7 +322,7 @@
             <double>9000.000000000000000</double>
            </property>
            <property name="value">
-            <double>120.000000000000000</double>
+            <double>1.000000000000000</double>
            </property>
           </widget>
          </item>
