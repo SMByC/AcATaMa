@@ -251,8 +251,9 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.classification.fit_to_sample = self.radiusFitToSample.value()
         ClassificationDialog.is_opened = False
         # restore the states for some objects in the dockwidget
-        self.acatama_dockwidget.selectSamplingFile.setEnabled(True)
-        self.acatama_dockwidget.browseSamplingFile.setEnabled(True)
+        self.acatama_dockwidget.groupBox_SamplingFile.setEnabled(True)
+        self.acatama_dockwidget.groupBox_grid_settings.setEnabled(True)
+        self.acatama_dockwidget.groupBox_ClassificationStatus.setEnabled(True)
         self.acatama_dockwidget.buttonOpenClassificationDialog.setText(u"Classify the sampling file")
         self.reject(is_ok_to_close=True)
 

@@ -861,7 +861,7 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_24">
             <item>
-             <widget class="QGroupBox" name="groupBox_5">
+             <widget class="QGroupBox" name="groupBox_SamplingFile">
               <property name="title">
                <string>Load Sampling File</string>
               </property>
@@ -912,7 +912,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_8">
+             <widget class="QGroupBox" name="groupBox_ClassificationStatus">
               <property name="title">
                <string>Classification Status</string>
               </property>
@@ -999,7 +999,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="grid_settings">
+             <widget class="QGroupBox" name="groupBox_grid_settings">
               <property name="title">
                <string>Grid Settings</string>
               </property>

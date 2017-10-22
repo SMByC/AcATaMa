@@ -318,11 +318,11 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             # grid settings
             if sampling_layer in Classification.instances:
                 classification = Classification.instances[sampling_layer]
-                with block_signals_to(self.grid_settings):
+                with block_signals_to(self.groupBox_grid_settings):
                     self.grid_columns.setValue(classification.grid_columns)
                     self.grid_rows.setValue(classification.grid_rows)
             else:
-                with block_signals_to(self.grid_settings):
+                with block_signals_to(self.groupBox_grid_settings):
                     self.grid_columns.setValue(3)
                     self.grid_rows.setValue(2)
 
@@ -350,8 +350,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.classification_dialog = \
             ClassificationDialog(self, sampling_layer, self.grid_columns.value(), self.grid_rows.value())
         # adjust some objects in the dockwidget while is classifying
-        self.selectSamplingFile.setDisabled(True)
-        self.browseSamplingFile.setDisabled(True)
+        self.groupBox_SamplingFile.setDisabled(True)
+        self.groupBox_grid_settings.setDisabled(True)
+        self.groupBox_ClassificationStatus.setDisabled(True)
         self.buttonOpenClassificationDialog.setText(u"Classification in progress, click to show")
         # open dialog
         self.classification_dialog.show()
