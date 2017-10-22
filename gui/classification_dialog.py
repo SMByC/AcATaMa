@@ -84,6 +84,19 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         # set the label names for each view
         for num_view, view_widget in enumerate(ClassificationDialog.view_widgets):
             view_widget.view_label_name.setText("View {}:".format(num_view+1))
+        # restore view widgets status
+        for config_id, view_config in self.classification.view_widgets_config.items():
+            for view_widget in ClassificationDialog.view_widgets:
+                if config_id == view_widget.id:
+                    view_widget = ClassificationDialog.view_widgets[config_id]
+                    # load file for this view widget if exists
+                    file_name = os.path.splitext(os.path.basename(view_config["render_file"]))[0]
+                    file_index = view_widget.selectRenderFile.findText(file_name, Qt.MatchFixedString)
+                    if file_index != -1:
+                        view_widget.selectRenderFile.setCurrentIndex(file_index)
+                    # restore others config in view widget
+                    view_widget.view_name.setText(view_config["name"])
+                    view_widget.scaleFactor.setValue(view_config["scale_factor"])
 
         # set classification buttons
         self.classification_btns_config = ClassificationButtonsConfig(self.acatama_dockwidget,
@@ -249,6 +262,19 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         """
         # save some config of classification dialog for this sampling file
         self.classification.fit_to_sample = self.radiusFitToSample.value()
+        # save view widgets status
+        view_widgets_config = {}
+        for view_widget in ClassificationDialog.view_widgets:
+            if view_widget.is_active:
+                # {N: {"name", "render_file", "scale_factor"}, ...}
+                view_widgets_config[view_widget.id] = \
+                    {"name": view_widget.view_name.text(),
+                     "render_file":  get_current_file_path_in(view_widget.selectRenderFile),
+                     "scale_factor": view_widget.current_scale_factor}
+
+        self.classification.view_widgets_config = view_widgets_config
+        print view_widgets_config
+
         ClassificationDialog.is_opened = False
         # restore the states for some objects in the dockwidget
         self.acatama_dockwidget.groupBox_SamplingFile.setEnabled(True)
