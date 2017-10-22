@@ -39,6 +39,8 @@ class Classification:
         # grid config
         self.grid_columns = 3
         self.grid_rows = 2
+        # others config
+        self.fit_to_sample = 120
         # when all points are classified
         self.is_completed = False
 

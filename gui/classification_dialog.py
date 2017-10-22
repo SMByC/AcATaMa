@@ -55,6 +55,11 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
             self.classification.grid_columns = columns
             self.classification.grid_rows = rows
 
+        #### settings the classification dialog
+
+        # set dialog title
+        self.setWindowTitle("Classification of samples for " + sampling_layer.name())
+
         # create dynamic size of the view render widgets windows
         # inside the grid with columns x rows divide by splitters
         h_splitters = []
@@ -73,11 +78,9 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.widget_view_windows.layout().addWidget(v_splitter)
         # save instances
         ClassificationDialog.view_widgets = view_widgets
-
         # setup view widget
         [view_widget.setup_view_widget(sampling_layer) for view_widget in ClassificationDialog.view_widgets]
         for idx, view_widget in enumerate(ClassificationDialog.view_widgets): view_widget.id = idx
-
         # set the label names for each view
         for num_view, view_widget in enumerate(ClassificationDialog.view_widgets):
             view_widget.view_label_name.setText("View {}:".format(num_view+1))
@@ -88,17 +91,8 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.create_classification_buttons(btns_config=self.classification.btns_config)
         self.SetClassification.clicked.connect(self.open_set_classification_dialog)
 
-        # set dialog title
-        self.setWindowTitle("Classification of samples for " + sampling_layer.name())
-
-        # dialog buttons box
-        self.closeButton.rejected.connect(self.closing)
-
-        # move through samples
-        self.nextSample.clicked.connect(self.next_sample)
-        self.nextSampleNotClassified.clicked.connect(self.next_sample_not_classified)
-        self.previousSample.clicked.connect(self.previous_sample)
-        self.previousSampleNotClassified.clicked.connect(self.previous_sample_not_classified)
+        # set radius fit to sample
+        self.radiusFitToSample.setValue(self.classification.fit_to_sample)
 
         # set total samples
         self.progressClassification.setMaximum(len(self.classification.points))
@@ -106,6 +100,15 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         # actions for fit and go to current sample
         self.radiusFitToSample.valueChanged.connect(lambda: self.show_and_go_to_current_sample(highlight=False))
         self.currentSample.clicked.connect(lambda: self.show_and_go_to_current_sample(highlight=True))
+
+        # move through samples
+        self.nextSample.clicked.connect(self.next_sample)
+        self.nextSampleNotClassified.clicked.connect(self.next_sample_not_classified)
+        self.previousSample.clicked.connect(self.previous_sample)
+        self.previousSampleNotClassified.clicked.connect(self.previous_sample_not_classified)
+
+        # dialog buttons box
+        self.closeButton.rejected.connect(self.closing)
 
         # init current point
         self.current_sample_idx = self.classification.current_sample_idx
@@ -241,7 +244,11 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         event.ignore()
 
     def closing(self):
-        """Do this before close the classification dialog"""
+        """
+        Do this before close the classification dialog
+        """
+        # save some config of classification dialog for this sampling file
+        self.classification.fit_to_sample = self.radiusFitToSample.value()
         ClassificationDialog.is_opened = False
         # restore the states for some objects in the dockwidget
         self.acatama_dockwidget.selectSamplingFile.setEnabled(True)
