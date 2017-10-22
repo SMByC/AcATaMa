@@ -36,6 +36,9 @@ class Classification:
         self.points = self.getPoints()
         # save and init the current sample index
         self.current_sample_idx = 0
+        # grid config
+        self.grid_columns = 3
+        self.grid_rows = 2
         # when all points are classified
         self.is_completed = False
 
