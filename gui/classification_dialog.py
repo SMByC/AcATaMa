@@ -81,8 +81,10 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
             view_widget.view_label_name.setText("View {}:".format(num_view+1))
 
         # set classification buttons
-        self.classification_btns_config = ClassificationButtonsConfig(self.acatama_dockwidget)
-        self.SetClassification.clicked.connect(self.set_buttons_classification)
+        self.classification_btns_config = ClassificationButtonsConfig(self.acatama_dockwidget,
+                                                                      self.classification.btns_config)
+        self.create_classification_buttons(btns_config=self.classification.btns_config)
+        self.SetClassification.clicked.connect(self.open_set_classification_dialog)
 
         # set dialog title
         self.setWindowTitle("Classification of samples for " + sampling_layer.name())
@@ -191,30 +193,46 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
             self.current_sample_idx = tmp_sample_idx
             self.set_current_sample()
 
-    def set_buttons_classification(self):
+    def open_set_classification_dialog(self):
         if self.classification_btns_config.exec_():
+            self.create_classification_buttons(tableBtnsConfig=self.classification_btns_config.tableBtnsConfig)
+
+    def create_classification_buttons(self, tableBtnsConfig=None, btns_config=None):
+            if not tableBtnsConfig and not btns_config:
+                return
             # clear layout
             for i in range(self.gridButtonsClassification.count()):
                 self.gridButtonsClassification.itemAt(i).widget().close()
 
             buttons = {}
-            for row in range(self.classification_btns_config.tableBtnsConfig.rowCount()):
-                item_num = self.classification_btns_config.tableBtnsConfig.item(row, 0).text()
-                item_name = self.classification_btns_config.tableBtnsConfig.item(row, 1).text()
-                item_color = self.classification_btns_config.tableBtnsConfig.item(row, 2).backgroundColor().name()
-                item_thematic_class = self.classification_btns_config.tableBtnsConfig.item(row, 3).text()
-                item_thematic_class = None if item_thematic_class == "No thematic raster" else item_thematic_class
-                if item_name != "":
-                    # save button config
-                    buttons[int(item_num)] = {"name": item_name, "color": item_color,
-                                              "thematic_class": item_thematic_class}
-                    # create button
-                    QPButton = QtGui.QPushButton(item_name)
-                    QPButton.setStyleSheet('QPushButton {color: '+item_color+'}')
-                    QPButton.clicked.connect(lambda state, btn_id=item_num: self.classify_sample(btn_id))
-                    self.gridButtonsClassification.addWidget(QPButton, len(buttons)-1, 0)
-            # save btns config
-            self.classification.btns_config = buttons
+
+            def create_button(item_num, item_name, item_color, item_thematic_class):
+                # save button config
+                buttons[int(item_num)] = {"name": item_name, "color": item_color,
+                                          "thematic_class": item_thematic_class}
+                # create button
+                QPButton = QtGui.QPushButton(item_name)
+                QPButton.setStyleSheet('QPushButton {color: '+item_color+'}')
+                QPButton.clicked.connect(lambda state, btn_id=item_num: self.classify_sample(btn_id))
+                self.gridButtonsClassification.addWidget(QPButton, len(buttons)-1, 0)
+
+            # from tableBtnsConfig
+            if tableBtnsConfig:
+                for row in range(self.classification_btns_config.tableBtnsConfig.rowCount()):
+                    item_num = self.classification_btns_config.tableBtnsConfig.item(row, 0).text()
+                    item_name = self.classification_btns_config.tableBtnsConfig.item(row, 1).text()
+                    item_color = self.classification_btns_config.tableBtnsConfig.item(row, 2).backgroundColor().name()
+                    item_thematic_class = self.classification_btns_config.tableBtnsConfig.item(row, 3).text()
+                    item_thematic_class = None if item_thematic_class == "No thematic raster" else item_thematic_class
+                    if item_name != "":
+                        create_button(item_num, item_name, item_color, item_thematic_class)
+                # save btns config
+                self.classification.btns_config = buttons
+            # from btns_config
+            if btns_config:
+                for row in sorted(btns_config.keys()):
+                    create_button(row, btns_config[row]["name"], btns_config[row]["color"],
+                                  btns_config[row]["thematic_class"])
 
     def closeEvent(self, event):
         self.closing()
@@ -239,10 +257,11 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 
 class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, acatama_dockwidget):
+    def __init__(self, acatama_dockwidget, btns_config):
         QtGui.QDialog.__init__(self)
         self.setupUi(self)
         self.acatama_dockwidget = acatama_dockwidget
+        self.btns_config = btns_config if btns_config is not None else {}
         # init with empty table
         self.table_buttons = dict(zip(range(1,31), [""]*30))
         self.create_table()
@@ -266,19 +285,27 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
                     self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "Classification Name":
                 for m, item in enumerate(self.table_buttons.values()):
-                    item_table = QTableWidgetItem(str(item))
+                    if m+1 in self.btns_config:
+                        item_table = QTableWidgetItem(self.btns_config[m+1]["name"])
+                    else:
+                        item_table = QTableWidgetItem(str(item))
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
                     self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "Color":
                 for m, item in enumerate(self.table_buttons.values()):
-                    item_table = QTableWidgetItem(str(item))
+                    item_table = QTableWidgetItem()
+                    if m+1 in self.btns_config:
+                        item_table.setBackground(QColor(self.btns_config[m+1]["color"]))
                     item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
                     self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "Thematic raster class":
                 for m, item in enumerate(self.table_buttons.values()):
                     if valid_file_selected_in(self.acatama_dockwidget.selectThematicRaster):
-                        item_table = QTableWidgetItem(str(item))
+                        if m+1 in self.btns_config and self.btns_config[m+1]["thematic_class"] is not None:
+                            item_table = QTableWidgetItem(self.btns_config[m+1]["thematic_class"])
+                        else:
+                            item_table = QTableWidgetItem(str(item))
                     else:
                         item_table = QTableWidgetItem("No thematic raster")
                         item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
