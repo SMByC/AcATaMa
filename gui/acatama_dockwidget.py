@@ -32,7 +32,7 @@ from AcATaMa.core.classification import Classification
 from AcATaMa.core.sampling import do_random_sampling, do_stratified_random_sampling, Sampling
 from AcATaMa.core.dockwidget import get_current_file_path_in, load_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_current_layer_in, \
     fill_stratified_sampling_table, valid_file_selected_in, update_stratified_sampling_table
-from AcATaMa.core.utils import wait_process, error_handler
+from AcATaMa.core.utils import wait_process, error_handler, block_signals_to
 from AcATaMa.core.raster import do_clipping_with_shape, get_nodata_value
 from AcATaMa.gui.about_dialog import AboutDialog
 from AcATaMa.gui.classification_dialog import ClassificationDialog
@@ -182,14 +182,17 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         update_layers_list(self.selectSamplingFile, "vector", "points")
         # handle connect when the list of layers changed
         self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectSamplingFile, "vector", "points"))
-        # sampling file info
-        self.selectSamplingFile.currentIndexChanged.connect(self.sampling_file_info)
+        # show the classification file settings in plugin when it is selected
+        self.selectSamplingFile.currentIndexChanged.connect(self.set_classification_file_settings)
         # call to browse the sampling file
         self.browseSamplingFile.clicked.connect(lambda: self.fileDialog_browse(
             self.selectSamplingFile,
             dialog_title=self.tr(u"Select the Sampling points file to classify"),
             dialog_types=self.tr(u"Shape files (*.shp);;All files (*.*)"),
             layer_type="vector"))
+        # change grid config
+        self.grid_columns.valueChanged.connect(lambda: self.set_grid_setting("column"))
+        self.grid_rows.valueChanged.connect(lambda: self.set_grid_setting("row"))
 
         # connect the action to the run method
         self.buttonOpenClassificationDialog.clicked.connect(self.open_classification_dialog)
@@ -298,9 +301,10 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             sampling_selected.save_config(file_out)
 
     @pyqtSlot()
-    def sampling_file_info(self):
+    def set_classification_file_settings(self):
         sampling_layer = get_current_layer_in(self.selectSamplingFile)
         if sampling_layer:
+            # classification status
             if sampling_layer in Classification.instances:
                 classification = Classification.instances[sampling_layer]
                 total_classified = sum(sample.is_classified for sample in classification.points)
@@ -311,6 +315,26 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 self.ClassificationStatusPB.setMaximum(count_samples)
                 self.ClassificationStatusPB.setValue(0)
             self.ClassificationStatusPB.setTextVisible(True)
+            # grid settings
+            if sampling_layer in Classification.instances:
+                classification = Classification.instances[sampling_layer]
+                with block_signals_to(self.grid_settings):
+                    self.grid_columns.setValue(classification.grid_columns)
+                    self.grid_rows.setValue(classification.grid_rows)
+            else:
+                with block_signals_to(self.grid_settings):
+                    self.grid_columns.setValue(3)
+                    self.grid_rows.setValue(2)
+
+    @pyqtSlot()
+    def set_grid_setting(self, item):
+        sampling_layer = get_current_layer_in(self.selectSamplingFile)
+        if sampling_layer in Classification.instances:
+            classification = Classification.instances[sampling_layer]
+            if item == "column":
+                classification.grid_columns = self.grid_columns.value()
+            if item == "row":
+                classification.grid_rows = self.grid_rows.value()
 
     @pyqtSlot()
     def open_classification_dialog(self):
@@ -323,9 +347,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                                                 level=QgsMessageBar.WARNING)
             return
 
-        columns = self.grid_columns.value()
-        rows = self.grid_rows.value()
-        self.classification_dialog = ClassificationDialog(self, sampling_layer, columns, rows)
+        self.classification_dialog = \
+            ClassificationDialog(self, sampling_layer, self.grid_columns.value(), self.grid_rows.value())
         # adjust some objects in the dockwidget while is classifying
         self.selectSamplingFile.setDisabled(True)
         self.browseSamplingFile.setDisabled(True)

@@ -999,7 +999,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_7">
+             <widget class="QGroupBox" name="grid_settings">
               <property name="title">
                <string>Grid Settings</string>
               </property>

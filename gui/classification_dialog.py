@@ -22,7 +22,7 @@
 import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QTableWidgetItem, QMessageBox, QDialogButtonBox, QSplitter, QColor, QColorDialog
+from PyQt4.QtGui import QTableWidgetItem, QSplitter, QColor, QColorDialog
 
 from AcATaMa.core.classification import Classification
 from AcATaMa.core.dockwidget import valid_file_selected_in, get_current_file_path_in
@@ -47,13 +47,21 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         ClassificationDialog.is_opened = True
         self.setupUi(self)
 
+        # get classification or init new instance
+        if sampling_layer in Classification.instances:
+            self.classification = Classification.instances[sampling_layer]
+        else:
+            self.classification = Classification(sampling_layer)
+            self.classification.grid_columns = columns
+            self.classification.grid_rows = rows
+
         # create dynamic size of the view render widgets windows
         # inside the grid with columns x rows divide by splitters
         h_splitters = []
         view_widgets = []
-        for row in range(rows):
+        for row in range(self.classification.grid_rows):
             splitter = QSplitter(Qt.Horizontal)
-            for column in range(columns):
+            for column in range(self.classification.grid_columns):
                 new_view_widget = ClassificationViewWidget()
                 splitter.addWidget(new_view_widget)
                 h_splitters.append(splitter)
@@ -65,12 +73,6 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.widget_view_windows.layout().addWidget(v_splitter)
         # save instances
         ClassificationDialog.view_widgets = view_widgets
-
-        # get classification or init new instance
-        if sampling_layer in Classification.instances:
-            self.classification = Classification.instances[sampling_layer]
-        else:
-            self.classification = Classification(sampling_layer)
 
         # setup view widget
         [view_widget.setup_view_widget(sampling_layer) for view_widget in ClassificationDialog.view_widgets]
