@@ -51,6 +51,7 @@ HOMEPAGE = cfg.get('general', 'homepage')
 class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     closingPlugin = pyqtSignal()
+    dockwidget = None
 
     def __init__(self, parent, iface):
         """Constructor."""
@@ -66,6 +67,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.setup_gui()
         # tmp dir for all process and intermediate files
         self.tmp_dir = tempfile.mkdtemp()
+        # save instance
+        AcATaMaDockWidget.dockwidget = self
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
@@ -190,6 +193,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             dialog_title=self.tr(u"Select the Sampling points file to classify"),
             dialog_types=self.tr(u"Shape files (*.shp);;All files (*.*)"),
             layer_type="vector"))
+        # call to load and save classification config
+        self.saveClassificationConfig.clicked.connect(self.fileDialog_saveClassificationConfig)
         # change grid config
         self.grid_columns.valueChanged.connect(lambda: self.set_grid_setting("column"))
         self.grid_rows.valueChanged.connect(lambda: self.set_grid_setting("row"))
@@ -335,6 +340,30 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 classification.grid_columns = self.grid_columns.value()
             if item == "row":
                 classification.grid_rows = self.grid_rows.value()
+
+    @pyqtSlot()
+    def fileDialog_saveClassificationConfig(self):
+        if not valid_file_selected_in(self.selectSamplingFile):
+            self.iface.messageBar().pushMessage("AcATaMa",
+                                                "Error, please select a sampling file to save configuration",
+                                                level=QgsMessageBar.WARNING)
+            return
+        # get file path to suggest to save but not in tmp directory
+        path, filename = os.path.split(get_current_file_path_in(self.selectSamplingFile))
+        if self.tmp_dir in path:
+            path = os.path.split(get_current_file_path_in(self.selectThematicRaster))[0]
+        suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_config.yml"
+
+        file_out = QtGui.QFileDialog.getSaveFileName(self, self.tr(u"Save settings and classification status"),
+                                                     suggested_filename, self.tr(u"Yaml (*.yaml *.yml);;All files (*.*)"))
+        if file_out != '':
+            sampling_layer = get_current_layer_in(self.selectSamplingFile)
+            if sampling_layer in Classification.instances:
+                Classification.instances[sampling_layer].save_config(file_out)
+            else:
+                self.iface.messageBar().pushMessage("AcATaMa",
+                                                    "Failed to save, there isn't any configuration to save",
+                                                    level=QgsMessageBar.WARNING)
 
     @pyqtSlot()
     def open_classification_dialog(self):

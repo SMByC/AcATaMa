@@ -47,12 +47,21 @@ def get_layer_by_name(layer_name):
             return layer
 
 
-def get_current_file_path_in(combo_box):
+def get_file_path_of_layer(layer):
+    try:
+        return unicode(layer.dataProvider().dataSourceUri().split('|layerid')[0])
+    except:
+        return None
+
+
+def get_current_file_path_in(combo_box, show_message=True):
     try:
         return unicode(get_layer_by_name(combo_box.currentText()).dataProvider().dataSourceUri().split('|layerid')[0])
     except:
-        iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file",
-                                       level=QgsMessageBar.WARNING)
+        if show_message:
+            iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file",
+                                           level=QgsMessageBar.WARNING)
+        return None
 
 
 def get_current_layer_in(combo_box):
