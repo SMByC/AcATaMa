@@ -18,8 +18,10 @@
  *                                                                         *
  ***************************************************************************/
 """
+from collections import OrderedDict
 from random import shuffle
 
+from AcATaMa.core.dockwidget import get_current_file_path_in, get_file_path_of_layer
 from AcATaMa.core.point import ClassificationPoint
 
 
@@ -60,4 +62,37 @@ class Classification:
             x, y = geom.asPoint()
             points.append(ClassificationPoint(x, y))
         return points
+
+    def save_config(self, file_out):
+        import yaml
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
+        def setup_yaml():
+            """
+            Keep dump ordered with orderedDict
+            """
+            represent_dict_order = lambda self, data: self.represent_mapping('tag:yaml.org,2002:map', data.items())
+            yaml.add_representer(OrderedDict, represent_dict_order)
+        setup_yaml()
+
+        data = OrderedDict({
+            "thematic_raster": {"path": get_current_file_path_in(AcATaMa.dockwidget.selectThematicRaster, show_message=False),
+                                "nodata": AcATaMa.dockwidget.nodata_ThematicRaster.value()},
+            "sampling_layer": get_file_path_of_layer(self.sampling_layer),
+            "fit_to_sample": self.fit_to_sample,
+            "current_sample_idx": self.current_sample_idx,
+            "grid_view_widgets": {"columns": self.grid_columns, "rows": self.grid_rows},
+            "view_widgets_config": self.view_widgets_config,
+            "classification_buttons": self.btns_config,
+        })
+        # save samples status
+        points_config = {}
+        for pnt_idx, point in enumerate(self.points):
+            if point.is_classified:
+                points_config[pnt_idx] = {"btn_id": point.btn_id,}
+        data["points"] = points_config
+
+        with open(file_out, 'w') as yaml_file:
+            yaml.dump(data, yaml_file, default_flow_style=False)
+
 
