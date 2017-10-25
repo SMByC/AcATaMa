@@ -26,7 +26,7 @@ from qgis.core import QgsGeometry, QgsPoint, QGis
 from qgis.gui import QgsMapCanvas, QgsMapCanvasLayer, QgsMapToolPan, QgsRubberBand, QgsVertexMarker
 from qgis.utils import iface
 
-from AcATaMa.core.dockwidget import update_layers_list, get_current_layer_in, load_layer_in_qgis
+from AcATaMa.core.dockwidget import update_layers_list, get_current_layer_in, load_and_select_filepath_in
 from AcATaMa.core.utils import block_signals_to
 
 
@@ -198,10 +198,7 @@ class ClassificationViewWidget(QtGui.QWidget, FORM_CLASS):
         file_path = QtGui.QFileDialog.getOpenFileName(self, dialog_title, "", dialog_types)
         if file_path != '' and os.path.isfile(file_path):
             # load to qgis and update combobox list
-            filename = load_layer_in_qgis(file_path, layer_type)
-            update_layers_list(combo_box, layer_type, ignore_layers=[self.sampling_layer])
-            selected_index = combo_box.findText(filename, Qt.MatchFixedString)
-            combo_box.setCurrentIndex(selected_index)
+            load_and_select_filepath_in(combo_box, file_path, layer_type)
 
             self.render_widget.canvas.setExtent(get_current_layer_in(combo_box).extent())
             self.render_widget.canvas.refresh()
