@@ -74,6 +74,20 @@ def get_current_layer_in(combo_box, show_message=True):
         return None
 
 
+def load_and_or_select_filepath_in(combo_box, file_path, layer_type="any", geometry_type="any"):
+    filename = os.path.splitext(os.path.basename(file_path))[0]
+    layer = get_layer_by_name(filename)
+    if not layer:
+        # load to qgis and update combobox list
+        load_layer_in_qgis(file_path, layer_type)
+        update_layers_list(combo_box, layer_type, geometry_type)
+    # select the sampling file in combobox
+    selected_index = combo_box.findText(filename, Qt.MatchFixedString)
+    combo_box.setCurrentIndex(selected_index)
+
+    return get_layer_by_name(filename)
+
+
 def load_layer_in_qgis(file_path, layer_type):
     # create layer
     filename = os.path.splitext(os.path.basename(file_path))[0]
