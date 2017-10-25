@@ -36,7 +36,7 @@ class Classification:
         self.buttons_config = None
         # get all points from the layer
         # [ClassificationPoint, ClassificationPoint, ...]
-        self.points = self.getPoints()
+        self.points = self.get_points_from_shapefile()
         # save and init the current sample index
         self.current_sample_idx = 0
         # grid config
@@ -55,7 +55,7 @@ class Classification:
         # save instance
         Classification.instances[sampling_layer] = self
 
-    def getPoints(self):
+    def get_points_from_shapefile(self):
         points = []
         for feature_id, qgs_feature in enumerate(self.sampling_layer.getFeatures()):
             geom = qgs_feature.geometry()

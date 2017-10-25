@@ -283,7 +283,6 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                      "scale_factor": view_widget.current_scale_factor}
 
         self.classification.view_widgets_config = view_widgets_config
-        print view_widgets_config
 
         ClassificationDialog.is_opened = False
         # restore the states for some objects in the dockwidget
