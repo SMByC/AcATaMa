@@ -130,6 +130,15 @@ class Classification:
                 self.points[idx].is_classified = True
         # update the total classified progress bar
         total_classified = sum(sample.is_classified for sample in self.points)
+        total_not_classified = sum(not sample.is_classified for sample in self.points)
         AcATaMa.dockwidget.ClassificationStatusPB.setValue(total_classified)
+        # check is the classification is completed and update in dockwidget status
+        if total_not_classified == 0:
+            self.is_completed = True
+            AcATaMa.dockwidget.ClassificationStatusLabel.setText("Classification completed")
+            AcATaMa.dockwidget.ClassificationStatusLabel.setStyleSheet('QLabel {color: green;}')
+        else:
+            AcATaMa.dockwidget.ClassificationStatusLabel.setText("Classification not completed")
+            AcATaMa.dockwidget.ClassificationStatusLabel.setStyleSheet('QLabel {color: orange;}')
 
 

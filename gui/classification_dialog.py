@@ -170,9 +170,14 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.totalNotClassified.setText(str(total_not_classified))
         # update in dockwidget status
         self.acatama_dockwidget.ClassificationStatusPB.setValue(total_classified)
-        # check is the classification is completed
+        # check is the classification is completed and update in dockwidget status
         if total_not_classified == 0:
             self.classification.is_completed = True
+            self.acatama_dockwidget.ClassificationStatusLabel.setText("Classification completed")
+            self.acatama_dockwidget.ClassificationStatusLabel.setStyleSheet('QLabel {color: green;}')
+        else:
+            self.acatama_dockwidget.ClassificationStatusLabel.setText("Classification not completed")
+            self.acatama_dockwidget.ClassificationStatusLabel.setStyleSheet('QLabel {color: orange;}')
 
     def show_and_go_to_current_sample(self, highlight=True):
         for view_widget in ClassificationDialog.view_widgets:

@@ -316,6 +316,13 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 self.ClassificationStatusPB.setMaximum(count_samples)
                 self.ClassificationStatusPB.setValue(0)
             self.ClassificationStatusPB.setTextVisible(True)
+            # check is the classification is completed and update in dockwidget status
+            if sampling_layer in Classification.instances and Classification.instances[sampling_layer].is_completed:
+                self.ClassificationStatusLabel.setText("Classification completed")
+                self.ClassificationStatusLabel.setStyleSheet('QLabel {color: green;}')
+            else:
+                self.ClassificationStatusLabel.setText("Classification not completed")
+                self.ClassificationStatusLabel.setStyleSheet('QLabel {color: orange;}')
             # grid settings
             if sampling_layer in Classification.instances:
                 classification = Classification.instances[sampling_layer]
