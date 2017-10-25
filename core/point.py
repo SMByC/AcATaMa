@@ -28,9 +28,9 @@ from AcATaMa.core.utils import block_signals_to
 class Point(object):
 
     def __init__(self, x, y):
-        self.setQgsPnt(x, y)
+        self.set_qgis_pnt(x, y)
 
-    def setQgsPnt(self, x, y):
+    def set_qgis_pnt(self, x, y):
         self.QgsPnt = QgsPoint(x, y)
         self.QgsGeom = QgsGeometry.fromPoint(self.QgsPnt)
 
@@ -43,7 +43,7 @@ class RandomPoint(Point):
         # generate the random x and y between boundaries
         rx = xMin + (xMax - xMin) * random.random()
         ry = yMin + (yMax - yMin) * random.random()
-        self.setQgsPnt(rx, ry)
+        self.set_qgis_pnt(rx, ry)
 
     def in_valid_data(self, ThematicR):
         """Check if the point is in valid data in thematic raster
