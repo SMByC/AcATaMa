@@ -919,7 +919,10 @@
               <layout class="QVBoxLayout" name="verticalLayout_27">
                <item>
                 <widget class="QWidget" name="widget_4" native="true">
-                 <layout class="QHBoxLayout" name="horizontalLayout_5">
+                 <layout class="QVBoxLayout" name="verticalLayout_8">
+                  <property name="spacing">
+                   <number>0</number>
+                  </property>
                   <property name="leftMargin">
                    <number>0</number>
                   </property>
@@ -948,6 +951,19 @@
                     </property>
                     <property name="format">
                      <string>%v/%m samples classified</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="ClassificationStatusLabel">
+                    <property name="styleSheet">
+                     <string notr="true">color: &quot;gray&quot;;</string>
+                    </property>
+                    <property name="text">
+                     <string>No sampling file selected</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignHCenter|Qt::AlignTop</set>
                     </property>
                    </widget>
                   </item>
