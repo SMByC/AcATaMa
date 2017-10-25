@@ -64,12 +64,14 @@ def get_current_file_path_in(combo_box, show_message=True):
         return None
 
 
-def get_current_layer_in(combo_box):
+def get_current_layer_in(combo_box, show_message=True):
     try:
         return get_layer_by_name(combo_box.currentText())
     except:
-        iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file",
-                                       level=QgsMessageBar.WARNING)
+        if show_message:
+            iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file",
+                                           level=QgsMessageBar.WARNING)
+        return None
 
 
 def load_layer_in_qgis(file_path, layer_type):
