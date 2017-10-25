@@ -127,9 +127,11 @@ class RandomPoint(Point):
 
 class ClassificationPoint(Point):
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, feature_id=None):
         super(ClassificationPoint, self).__init__(x, y)
-        # init param
+        # feature id of the shape file
+        self.feature_id = feature_id
+        # classification button id
         self.btn_id = None
         self.is_classified = False
 

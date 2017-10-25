@@ -24,14 +24,15 @@ import tempfile
 import ConfigParser
 
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSignal, Qt, pyqtSlot
+from PyQt4.QtCore import pyqtSignal, pyqtSlot
 from qgis.core import QgsMapLayerRegistry, QgsVectorFileWriter
 from qgis.gui import QgsMessageBar
 
 from AcATaMa.core.classification import Classification
 from AcATaMa.core.sampling import do_random_sampling, do_stratified_random_sampling, Sampling
-from AcATaMa.core.dockwidget import get_current_file_path_in, load_layer_in_qgis, update_layers_list, unload_layer_in_qgis, get_current_layer_in, \
-    fill_stratified_sampling_table, valid_file_selected_in, update_stratified_sampling_table
+from AcATaMa.core.dockwidget import get_current_file_path_in, update_layers_list, \
+    unload_layer_in_qgis, get_current_layer_in, fill_stratified_sampling_table, valid_file_selected_in, \
+    update_stratified_sampling_table, load_and_select_filepath_in
 from AcATaMa.core.utils import wait_process, error_handler, block_signals_to
 from AcATaMa.core.raster import do_clipping_with_shape, get_nodata_value
 from AcATaMa.gui.about_dialog import AboutDialog
@@ -194,6 +195,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             dialog_types=self.tr(u"Shape files (*.shp);;All files (*.*)"),
             layer_type="vector"))
         # call to load and save classification config
+        self.loadClassificationConfig.clicked.connect(self.fileDialog_loadClassificationConfig)
         self.saveClassificationConfig.clicked.connect(self.fileDialog_saveClassificationConfig)
         # change grid config
         self.grid_columns.valueChanged.connect(lambda: self.set_grid_setting("column"))
@@ -207,10 +209,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         file_path = QtGui.QFileDialog.getOpenFileName(self, dialog_title, "", dialog_types)
         if file_path != '' and os.path.isfile(file_path):
             # load to qgis and update combobox list
-            filename = load_layer_in_qgis(file_path, layer_type)
-            update_layers_list(combo_box, layer_type)
-            selected_index = combo_box.findText(filename, Qt.MatchFixedString)
-            combo_box.setCurrentIndex(selected_index)
+            load_and_select_filepath_in(combo_box, file_path, layer_type)
 
     @pyqtSlot()
     def set_nodata_value_thematic_raster(self):
@@ -258,10 +257,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # unload old thematic file
         unload_layer_in_qgis(get_current_file_path_in(self.selectThematicRaster))
         # load to qgis and update combobox list
-        filename = load_layer_in_qgis(clip_file, "raster")
-        update_layers_list(self.selectThematicRaster, "raster")
-        selected_index = self.selectThematicRaster.findText(filename, Qt.MatchFixedString)
-        self.selectThematicRaster.setCurrentIndex(selected_index)
+        load_and_select_filepath_in(self.selectThematicRaster, clip_file, "raster")
 
         self.iface.messageBar().pushMessage("AcATaMa", "Clipping the thematic raster with shape, completed",
                                             level=QgsMessageBar.SUCCESS)
@@ -340,6 +336,34 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 classification.grid_columns = self.grid_columns.value()
             if item == "row":
                 classification.grid_rows = self.grid_rows.value()
+
+    @pyqtSlot()
+    def fileDialog_loadClassificationConfig(self):
+        file_path = QtGui.QFileDialog.getOpenFileName(self, self.tr(u"Save settings and classification status"),
+                                                     "", self.tr(u"Yaml (*.yaml *.yml);;All files (*.*)"))
+
+        if file_path != '' and os.path.isfile(file_path):
+            # load classification status from yaml file
+            import yaml
+            with open(file_path, 'r') as yaml_file:
+                try:
+                    yaml_config = yaml.load(yaml_file)
+                except yaml.YAMLError as err:
+                    self.iface.messageBar().pushMessage("AcATaMa","Error while read the yaml file classification config",
+                                                        level=QgsMessageBar.CRITICAL)
+                    return
+            # load the sampling file save in yaml config
+            sampling_filepath = yaml_config["sampling_layer"]
+            if not os.path.isfile(sampling_filepath):
+                self.iface.messageBar().pushMessage("AcATaMa", "Error the sampling file saved in this config file, not exists",
+                                                    level=QgsMessageBar.CRITICAL)
+                # TODO: ask for new location of the sampling file
+                return
+
+            sampling_layer = load_and_select_filepath_in(self.selectSamplingFile, sampling_filepath, "vector", "points")
+
+            classification = Classification(sampling_layer)
+            classification.load_config(yaml_config)
 
     @pyqtSlot()
     def fileDialog_saveClassificationConfig(self):
