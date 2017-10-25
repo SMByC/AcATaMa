@@ -25,8 +25,8 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QTableWidgetItem, QSplitter, QColor, QColorDialog
 
 from AcATaMa.core.classification import Classification
-from AcATaMa.core.dockwidget import valid_file_selected_in, get_current_file_path_in, load_layer_in_qgis, \
-    update_layers_list
+from AcATaMa.core.dockwidget import valid_file_selected_in, get_current_file_path_in, \
+    load_and_select_filepath_in
 from AcATaMa.core.raster import get_color_table
 from AcATaMa.gui.classification_view_widget import ClassificationViewWidget
 
@@ -98,10 +98,8 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                         view_widget.selectRenderFile.setCurrentIndex(file_index)
                     elif os.path.isfile(view_config["render_file"]):
                         # load file and select in view if this exists and not load in Qgis
-                        file_name = load_layer_in_qgis(view_config["render_file"], "any")
-                        update_layers_list(view_widget.selectRenderFile, "any", ignore_layers=[view_widget.sampling_layer])
-                        file_index = view_widget.selectRenderFile.findText(file_name, Qt.MatchFixedString)
-                        view_widget.selectRenderFile.setCurrentIndex(file_index)
+                        load_and_select_filepath_in(view_widget.selectRenderFile, view_config["render_file"],
+                                                    "any", ignore_layers=[view_widget.sampling_layer])
                     # restore others config in view widget
                     view_widget.view_name.setText(view_config["name"])
                     view_widget.scaleFactor.setValue(view_config["scale_factor"])
