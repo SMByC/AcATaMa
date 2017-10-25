@@ -105,8 +105,8 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                     view_widget.scaleFactor.setValue(view_config["scale_factor"])
 
         # set classification buttons
-        self.classification_btns_config = ClassificationButtonsConfig(self.classification.btns_config)
-        self.create_classification_buttons(btns_config=self.classification.btns_config)
+        self.classification_btns_config = ClassificationButtonsConfig(self.classification.buttons_config)
+        self.create_classification_buttons(buttons_config=self.classification.buttons_config)
         self.SetClassification.clicked.connect(self.open_set_classification_dialog)
 
         # set radius fit to sample
@@ -156,10 +156,10 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
 
     def display_sample_status(self):
         if self.current_sample.is_classified:
-            class_name = self.classification.btns_config[self.current_sample.btn_id]["name"]
+            class_name = self.classification.buttons_config[self.current_sample.btn_id]["name"]
             self.statusCurrentSample.setText(class_name)
             self.statusCurrentSample.setStyleSheet(
-                'QLabel {color: '+self.classification.btns_config[self.current_sample.btn_id]["color"]+';}')
+                'QLabel {color: ' + self.classification.buttons_config[self.current_sample.btn_id]["color"] + ';}')
         else:
             self.statusCurrentSample.setText("not classified")
             self.statusCurrentSample.setStyleSheet('QLabel {color: gray;}')
@@ -220,8 +220,8 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         if self.classification_btns_config.exec_():
             self.create_classification_buttons(tableBtnsConfig=self.classification_btns_config.tableBtnsConfig)
 
-    def create_classification_buttons(self, tableBtnsConfig=None, btns_config=None):
-            if not tableBtnsConfig and not btns_config:
+    def create_classification_buttons(self, tableBtnsConfig=None, buttons_config=None):
+            if not tableBtnsConfig and not buttons_config:
                 return
             # clear layout
             for i in range(self.gridButtonsClassification.count()):
@@ -250,12 +250,12 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                     if item_name != "":
                         create_button(item_num, item_name, item_color, item_thematic_class)
                 # save btns config
-                self.classification.btns_config = buttons
-            # from btns_config
-            if btns_config:
-                for row in sorted(btns_config.keys()):
-                    create_button(row, btns_config[row]["name"], btns_config[row]["color"],
-                                  btns_config[row]["thematic_class"])
+                self.classification.buttons_config = buttons
+            # from buttons_config
+            if buttons_config:
+                for row in sorted(buttons_config.keys()):
+                    create_button(row, buttons_config[row]["name"], buttons_config[row]["color"],
+                                  buttons_config[row]["thematic_class"])
 
     def closeEvent(self, event):
         self.closing()
@@ -298,10 +298,10 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 
 class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, btns_config):
+    def __init__(self, buttons_config):
         QtGui.QDialog.__init__(self)
         self.setupUi(self)
-        self.btns_config = btns_config if btns_config is not None else {}
+        self.buttons_config = buttons_config if buttons_config is not None else {}
         # init with empty table
         self.table_buttons = dict(zip(range(1,31), [""]*30))
         self.create_table()
@@ -327,8 +327,8 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
                     self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "Classification Name":
                 for m, item in enumerate(self.table_buttons.values()):
-                    if m+1 in self.btns_config:
-                        item_table = QTableWidgetItem(self.btns_config[m+1]["name"])
+                    if m+1 in self.buttons_config:
+                        item_table = QTableWidgetItem(self.buttons_config[m + 1]["name"])
                     else:
                         item_table = QTableWidgetItem(str(item))
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
@@ -336,16 +336,16 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
             if h == "Color":
                 for m, item in enumerate(self.table_buttons.values()):
                     item_table = QTableWidgetItem()
-                    if m+1 in self.btns_config:
-                        item_table.setBackground(QColor(self.btns_config[m+1]["color"]))
+                    if m+1 in self.buttons_config:
+                        item_table.setBackground(QColor(self.buttons_config[m + 1]["color"]))
                     item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
                     self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "Thematic raster class":
                 for m, item in enumerate(self.table_buttons.values()):
                     if valid_file_selected_in(AcATaMa.dockwidget.selectThematicRaster):
-                        if m+1 in self.btns_config and self.btns_config[m+1]["thematic_class"] is not None:
-                            item_table = QTableWidgetItem(self.btns_config[m+1]["thematic_class"])
+                        if m+1 in self.buttons_config and self.buttons_config[m+1]["thematic_class"] is not None:
+                            item_table = QTableWidgetItem(self.buttons_config[m + 1]["thematic_class"])
                         else:
                             item_table = QTableWidgetItem(str(item))
                     else:
