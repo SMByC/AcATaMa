@@ -157,6 +157,9 @@ def update_layers_list(combo_box, layer_type="any", geometry_type="any", ignore_
 
         selected_index = combo_box.findText(save_selected, Qt.MatchFixedString)
         combo_box.setCurrentIndex(selected_index)
+    # emit event when the layer selected was delete
+    if selected_index == -1:
+        combo_box.currentIndexChanged.emit(selected_index)
 
 
 @wait_process()
