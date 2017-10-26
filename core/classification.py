@@ -45,7 +45,7 @@ class Classification:
         # radius to sample
         self.fit_to_sample = 120
         # save views widget config
-        # {N: {"name", "render_file", "scale_factor"}, ...}
+        # {N: {"name", "render_file", "render_activated", "scale_factor"}, ...}
         self.view_widgets_config = {}
         # classification dialog size
         self.dialog_size = None
