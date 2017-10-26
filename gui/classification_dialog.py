@@ -60,6 +60,9 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
 
         # set dialog title
         self.setWindowTitle("Classification of samples for " + sampling_layer.name())
+        # resize the classification dialog
+        if self.classification.dialog_size:
+            self.resize(*self.classification.dialog_size)
 
         # create dynamic size of the view render widgets windows
         # inside the grid with columns x rows divide by splitters
@@ -283,6 +286,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                      "scale_factor": view_widget.current_scale_factor}
 
         self.classification.view_widgets_config = view_widgets_config
+        self.classification.dialog_size = (self.size().width(), self.size().height())
 
         ClassificationDialog.is_opened = False
         # restore the states for some objects in the dockwidget
