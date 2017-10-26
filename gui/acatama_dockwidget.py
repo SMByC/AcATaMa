@@ -333,6 +333,14 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 with block_signals_to(self.groupBox_grid_settings):
                     self.grid_columns.setValue(3)
                     self.grid_rows.setValue(2)
+        else:
+            # return to default values
+            self.ClassificationStatusPB.setTextVisible(False)
+            self.ClassificationStatusPB.setValue(0)
+            self.ClassificationStatusLabel.setText("No sampling file selected")
+            self.ClassificationStatusLabel.setStyleSheet('QLabel {color: gray;}')
+            self.grid_columns.setValue(3)
+            self.grid_rows.setValue(2)
 
     @pyqtSlot()
     def set_grid_setting(self, item):
