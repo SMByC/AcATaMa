@@ -18,11 +18,11 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
-      <widget class="QWidget" name="tab_load">
+      <widget class="QWidget" name="tab_thematic">
        <attribute name="title">
-        <string>Load</string>
+        <string>Thematic</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout">
         <property name="spacing">
@@ -32,7 +32,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QScrollArea" name="scrollArea_L">
+         <widget class="QScrollArea" name="scrollArea_T">
           <property name="frameShape">
            <enum>QFrame::NoFrame</enum>
           </property>
@@ -42,7 +42,7 @@
           <property name="widgetResizable">
            <bool>true</bool>
           </property>
-          <widget class="QWidget" name="scrollAreaWidgetContents_L">
+          <widget class="QWidget" name="scrollAreaWidgetContents_T">
            <property name="geometry">
             <rect>
              <x>0</x>
