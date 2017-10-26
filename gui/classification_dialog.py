@@ -104,6 +104,9 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                         load_and_select_filepath_in(view_widget.selectRenderFile, view_config["render_file"],
                                                     "any", ignore_layers=[view_widget.sampling_layer])
                     # restore others config in view widget
+                    view_widget.OnOff_RenderView.setChecked(view_config["render_activated"])
+                    # TODO: restore size by view widget
+                    #view_widget.resize(*view_config["view_size"])
                     view_widget.view_name.setText(view_config["name"])
                     view_widget.scaleFactor.setValue(view_config["scale_factor"])
 
@@ -279,10 +282,12 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         view_widgets_config = {}
         for view_widget in ClassificationDialog.view_widgets:
             if view_widget.is_active:
-                # {N: {"name", "render_file", "scale_factor"}, ...}
+                # {N: {"name", "render_file", "render_activated", "scale_factor"}, ...}
                 view_widgets_config[view_widget.id] = \
                     {"name": view_widget.view_name.text(),
                      "render_file":  get_current_file_path_in(view_widget.selectRenderFile),
+                     "render_activated": view_widget.OnOff_RenderView.isChecked(),
+                     #"view_size": (view_widget.size().width(), view_widget.size().height()),
                      "scale_factor": view_widget.current_scale_factor}
 
         self.classification.view_widgets_config = view_widgets_config
