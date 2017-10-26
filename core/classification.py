@@ -47,6 +47,8 @@ class Classification:
         # save views widget config
         # {N: {"name", "render_file", "scale_factor"}, ...}
         self.view_widgets_config = {}
+        # classification dialog size
+        self.dialog_size = None
         # when all points are classified
         self.is_completed = False
 
@@ -80,10 +82,11 @@ class Classification:
             {"path": get_current_file_path_in(AcATaMa.dockwidget.selectThematicRaster, show_message=False),
              "nodata": AcATaMa.dockwidget.nodata_ThematicRaster.value()}
         data["sampling_layer"] = get_file_path_of_layer(self.sampling_layer)
-        data["fit_to_sample"] = self.fit_to_sample
-        data["current_sample_idx"] = self.current_sample_idx
-        data["is_completed"] = self.is_completed
+        data["dialog_size"] = self.dialog_size
         data["grid_view_widgets"] = {"columns": self.grid_columns, "rows": self.grid_rows}
+        data["current_sample_idx"] = self.current_sample_idx
+        data["fit_to_sample"] = self.fit_to_sample
+        data["is_completed"] = self.is_completed
         data["view_widgets_config"] = self.view_widgets_config
         data["classification_buttons"] = self.buttons_config
 
@@ -109,6 +112,7 @@ class Classification:
         # restore the classification settings
         AcATaMa.dockwidget.grid_columns.setValue(yaml_config["grid_view_widgets"]["columns"])
         AcATaMa.dockwidget.grid_rows.setValue(yaml_config["grid_view_widgets"]["rows"])
+        self.dialog_size = yaml_config["dialog_size"]
         self.grid_columns = yaml_config["grid_view_widgets"]["columns"]
         self.grid_rows = yaml_config["grid_view_widgets"]["rows"]
         self.current_sample_idx = yaml_config["current_sample_idx"]
