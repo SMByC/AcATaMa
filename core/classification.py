@@ -37,7 +37,7 @@ class Classification:
     def __init__(self, sampling_layer):
         self.sampling_layer = sampling_layer
         # for store the classification buttons properties
-        # {btn_id: {"name", "color", "thematic_class"}}
+        # {classif_id: {"name", "color", "thematic_class"}}
         self.buttons_config = None
         # get all points from the layer
         # [ClassificationPoint, ClassificationPoint, ...]
@@ -64,10 +64,10 @@ class Classification:
 
     def get_points_from_shapefile(self):
         points = []
-        for feature_id, qgs_feature in enumerate(self.sampling_layer.getFeatures()):
+        for shape_id, qgs_feature in enumerate(self.sampling_layer.getFeatures()):
             geom = qgs_feature.geometry()
             x, y = geom.asPoint()
-            points.append(ClassificationPoint(x, y, feature_id+1))
+            points.append(ClassificationPoint(x, y, shape_id+1))
         return points
 
     @wait_process()
@@ -100,10 +100,10 @@ class Classification:
         points_config = {}
         for pnt_idx, point in enumerate(self.points):
             if point.is_classified:
-                points_config[pnt_idx] = {"btn_id": point.btn_id, "feature_id": point.feature_id}
+                points_config[pnt_idx] = {"classif_id": point.classif_id, "shape_id": point.shape_id}
         data["points"] = points_config
         # save the samples order
-        data["points_order"] = [p.feature_id for p in self.points]
+        data["points_order"] = [p.shape_id for p in self.points]
 
         with open(file_out, 'w') as yaml_file:
             yaml.dump(data, yaml_file)
@@ -131,13 +131,13 @@ class Classification:
         self.view_widgets_config = yaml_config["view_widgets_config"]
         # restore the samples order
         points_ordered = []
-        for feature_id in yaml_config["points_order"]:
-            points_ordered.append([p for p in self.points if p.feature_id == feature_id][0])
+        for shape_id in yaml_config["points_order"]:
+            points_ordered.append([p for p in self.points if p.shape_id == shape_id][0])
         self.points = points_ordered
         # restore point status classification
         for idx, status in yaml_config["points"].items():
-            self.points[idx].btn_id = status["btn_id"]
-            if self.points[idx].btn_id is not None:
+            self.points[idx].classif_id = status["classif_id"]
+            if self.points[idx].classif_id is not None:
                 self.points[idx].is_classified = True
         # update the total classified progress bar
         total_classified = sum(sample.is_classified for sample in self.points)
@@ -165,14 +165,14 @@ class Classification:
                           QgsField("ThematicID", QVariant.Int)])
         vlayer.updateFields()  # tell the vector layer to fetch changes from the provider
 
-        points_ordered = sorted(self.points, key=lambda p: p.feature_id)
+        points_ordered = sorted(self.points, key=lambda p: p.shape_id)
         for point in points_ordered:
             # add a feature
             feature = QgsFeature()
             feature.setGeometry(point.QgsGeom)
-            name = self.buttons_config[point.btn_id]["name"] if point.btn_id else None
-            thematic_class = self.buttons_config[point.btn_id]["thematic_class"] if point.btn_id else None
-            feature.setAttributes([point.feature_id, point.btn_id,
+            name = self.buttons_config[point.classif_id]["name"] if point.classif_id else None
+            thematic_class = self.buttons_config[point.classif_id]["thematic_class"] if point.classif_id else None
+            feature.setAttributes([point.shape_id, point.classif_id,
                                    name if name is not None else NULL,
                                    thematic_class if thematic_class is not None else NULL])
             pr.addFeatures([feature])
