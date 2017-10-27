@@ -21,8 +21,13 @@
 from collections import OrderedDict
 from random import shuffle
 
+from PyQt4.QtCore import QVariant
+from qgis.PyQt.QtCore import NULL
+from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsVectorFileWriter
+
 from AcATaMa.core.dockwidget import get_current_file_path_in, get_file_path_of_layer, load_and_select_filepath_in
 from AcATaMa.core.point import ClassificationPoint
+from AcATaMa.core.utils import wait_process
 
 
 class Classification:
@@ -145,4 +150,31 @@ class Classification:
             AcATaMa.dockwidget.ClassificationStatusLabel.setText("Classification not completed")
             AcATaMa.dockwidget.ClassificationStatusLabel.setStyleSheet('QLabel {color: orange;}')
 
+    def save_sampling_classification(self, file_out):
+        crs = self.sampling_layer.crs().toWkt()
+        # create layer
+        vlayer = QgsVectorLayer("Point?crs=" + crs, "temporary_points", "memory")
+        pr = vlayer.dataProvider()
+        # add fields
+        pr.addAttributes([QgsField("ID", QVariant.Int),
+                          QgsField("ClassID", QVariant.Int),
+                          QgsField("ClassName", QVariant.String),
+                          QgsField("ThematicID", QVariant.Int)])
+        vlayer.updateFields()  # tell the vector layer to fetch changes from the provider
 
+        points_ordered = sorted(self.points, key=lambda p: p.feature_id)
+        for point in points_ordered:
+            # add a feature
+            feature = QgsFeature()
+            feature.setGeometry(point.QgsGeom)
+            name = self.buttons_config[point.btn_id]["name"] if point.btn_id else None
+            thematic_class = self.buttons_config[point.btn_id]["thematic_class"] if point.btn_id else None
+            feature.setAttributes([point.feature_id, point.btn_id,
+                                   name if name is not None else NULL,
+                                   thematic_class if thematic_class is not None else NULL])
+            pr.addFeatures([feature])
+
+        vlayer.commitChanges()
+        vlayer.updateExtents()
+
+        QgsVectorFileWriter.writeAsVectorFormat(vlayer, file_out, "utf-8", self.sampling_layer.crs(), "ESRI Shapefile")
