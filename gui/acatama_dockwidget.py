@@ -288,6 +288,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         if file_out != '':
             layer = get_current_layer_in(combo_box)
             QgsVectorFileWriter.writeAsVectorFormat(layer, file_out, "utf-8", layer.crs(), "ESRI Shapefile")
+            self.iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=QgsMessageBar.SUCCESS)
 
     @pyqtSlot()
     def fileDialog_saveSamplingConf(self, combo_box):
@@ -303,6 +304,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                                                      self.tr(u"Ini files (*.ini);;All files (*.*)"))
         if file_out != '':
             sampling_selected.save_config(file_out)
+            self.iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=QgsMessageBar.SUCCESS)
 
     @pyqtSlot()
     def set_classification_file_settings(self):
@@ -382,6 +384,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
             classification = Classification(sampling_layer)
             classification.load_config(yaml_config)
+            self.iface.messageBar().pushMessage("AcATaMa", "File loaded successfully", level=QgsMessageBar.SUCCESS)
 
     @pyqtSlot()
     def fileDialog_saveClassificationConfig(self):
@@ -402,6 +405,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             sampling_layer = get_current_layer_in(self.selectSamplingFile)
             if sampling_layer in Classification.instances:
                 Classification.instances[sampling_layer].save_config(file_out)
+                self.iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=QgsMessageBar.SUCCESS)
             else:
                 self.iface.messageBar().pushMessage("AcATaMa",
                                                     "Failed to save, there isn't any configuration to save",
@@ -410,7 +414,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
     @pyqtSlot()
     def fileDialog_saveSamplingClassification(self):
         if not valid_file_selected_in(self.selectSamplingFile):
-            self.iface.messageBar().pushMessage("AcATaMa","Error, please first select a sampling file",
+            self.iface.messageBar().pushMessage("AcATaMa", "Error, please first select a sampling file",
                                                 level=QgsMessageBar.WARNING)
             return
         # get instance
@@ -439,7 +443,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                                                      self.tr(u"Shape files (*.shp);;All files (*.*)"))
         if file_out != '':
             classification.save_sampling_classification(file_out)
-            self.iface.messageBar().pushMessage("AcATaMa", "Sampling file saved successfully", level=QgsMessageBar.SUCCESS)
+            self.iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=QgsMessageBar.SUCCESS)
 
     @pyqtSlot()
     def open_classification_dialog(self):
