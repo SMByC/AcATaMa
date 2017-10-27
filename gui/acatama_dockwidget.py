@@ -25,6 +25,7 @@ import ConfigParser
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSignal, pyqtSlot
+from PyQt4.QtGui import QMessageBox
 from qgis.core import QgsMapLayerRegistry, QgsVectorFileWriter
 from qgis.gui import QgsMessageBar
 
@@ -197,6 +198,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # call to load and save classification config
         self.loadClassificationConfig.clicked.connect(self.fileDialog_loadClassificationConfig)
         self.saveClassificationConfig.clicked.connect(self.fileDialog_saveClassificationConfig)
+        # save sampling + classification
+        self.saveSamplingClassification.clicked.connect(self.fileDialog_saveSamplingClassification)
         # change grid config
         self.grid_columns.valueChanged.connect(lambda: self.set_grid_setting("column"))
         self.grid_rows.valueChanged.connect(lambda: self.set_grid_setting("row"))
@@ -403,6 +406,40 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 self.iface.messageBar().pushMessage("AcATaMa",
                                                     "Failed to save, there isn't any configuration to save",
                                                     level=QgsMessageBar.WARNING)
+
+    @pyqtSlot()
+    def fileDialog_saveSamplingClassification(self):
+        if not valid_file_selected_in(self.selectSamplingFile):
+            self.iface.messageBar().pushMessage("AcATaMa","Error, please first select a sampling file",
+                                                level=QgsMessageBar.WARNING)
+            return
+        # get instance
+        sampling_layer = get_current_layer_in(self.selectSamplingFile)
+        if sampling_layer in Classification.instances:
+            classification = Classification.instances[sampling_layer]
+            if not classification.is_completed:
+                quit_msg = "The classification for this sampling file is not completed, " \
+                            "do you want to continue anyway?"
+                reply = QMessageBox.question(self, 'The classification is not completed',
+                                             quit_msg,QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+                if reply == QMessageBox.No:
+                    return
+        else:
+            self.iface.messageBar().pushMessage("AcATaMa",
+                                                "Error, the classification for the sampling selected has not been initiated",
+                                                level=QgsMessageBar.WARNING)
+            return
+        # get file path to suggest to save but not in tmp directory
+        path, filename = os.path.split(get_current_file_path_in(self.selectSamplingFile))
+        if self.tmp_dir in path:
+            path = os.path.split(get_current_file_path_in(self.selectThematicRaster))[0]
+        suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_classified.shp"
+        file_out = QtGui.QFileDialog.getSaveFileName(self, self.tr(u"Save sampling file with the classification"),
+                                                     suggested_filename,
+                                                     self.tr(u"Shape files (*.shp);;All files (*.*)"))
+        if file_out != '':
+            classification.save_sampling_classification(file_out)
+            self.iface.messageBar().pushMessage("AcATaMa", "Sampling file saved successfully", level=QgsMessageBar.SUCCESS)
 
     @pyqtSlot()
     def open_classification_dialog(self):

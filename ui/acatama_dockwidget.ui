@@ -1071,7 +1071,7 @@
                    </spacer>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="pushButton_3">
+                   <widget class="QPushButton" name="saveSamplingClassification">
                     <property name="text">
                      <string>Save sampling+classification</string>
                     </property>
