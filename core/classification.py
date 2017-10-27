@@ -70,6 +70,7 @@ class Classification:
             points.append(ClassificationPoint(x, y, feature_id+1))
         return points
 
+    @wait_process()
     def save_config(self, file_out):
         import yaml
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
@@ -107,6 +108,7 @@ class Classification:
         with open(file_out, 'w') as yaml_file:
             yaml.dump(data, yaml_file)
 
+    @wait_process()
     def load_config(self, yaml_config):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         # restore the thematic raster
@@ -150,6 +152,7 @@ class Classification:
             AcATaMa.dockwidget.ClassificationStatusLabel.setText("Classification not completed")
             AcATaMa.dockwidget.ClassificationStatusLabel.setStyleSheet('QLabel {color: orange;}')
 
+    @wait_process()
     def save_sampling_classification(self, file_out):
         crs = self.sampling_layer.crs().toWkt()
         # create layer
