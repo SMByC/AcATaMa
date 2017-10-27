@@ -127,12 +127,13 @@ class RandomPoint(Point):
 
 class ClassificationPoint(Point):
 
-    def __init__(self, x, y, feature_id=None):
+    def __init__(self, x, y, shape_id=None):
         super(ClassificationPoint, self).__init__(x, y)
-        # feature id of the shape file
-        self.feature_id = feature_id
+        # shape id is the order of the points inside the shapefile
+        self.shape_id = shape_id
         # classification button id
-        self.btn_id = None
+        self.classif_id = None
+        # status for this point
         self.is_classified = False
 
     def fit_to(self, view_widget, radius):
