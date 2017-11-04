@@ -977,67 +977,94 @@
                 </widget>
                </item>
                <item>
-                <widget class="Line" name="line">
+                <spacer name="verticalSpacer_6">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Vertical</enum>
                  </property>
-                </widget>
+                 <property name="sizeType">
+                  <enum>QSizePolicy::Fixed</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>6</height>
+                  </size>
+                 </property>
+                </spacer>
                </item>
                <item>
-                <widget class="QLabel" name="label_3">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
+                <widget class="QGroupBox" name="groupBox_3">
+                 <property name="title">
+                  <string>Load/Save</string>
                  </property>
-                 <property name="text">
-                  <string>Restore/Save the settings and classification status:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QWidget" name="widget_9" native="true">
-                 <layout class="QHBoxLayout" name="horizontalLayout_9">
-                  <property name="margin">
-                   <number>0</number>
-                  </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_29">
                   <item>
-                   <spacer name="horizontalSpacer_6">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
+                   <widget class="QLabel" name="label_3">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
                     </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="QPBtn_loadClassificationConfig">
                     <property name="text">
-                     <string>Load</string>
+                     <string>Restore/Save the settings and classification status:</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+                    </property>
+                    <property name="wordWrap">
+                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="QPBtn_saveClassificationConfig">
-                    <property name="text">
-                     <string>Save</string>
-                    </property>
+                   <widget class="QWidget" name="widget_9" native="true">
+                    <layout class="QHBoxLayout" name="horizontalLayout_9">
+                     <property name="margin">
+                      <number>0</number>
+                     </property>
+                     <item>
+                      <spacer name="horizontalSpacer_6">
+                       <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>40</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="QPBtn_loadClassificationConfig">
+                       <property name="text">
+                        <string>Load state</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="QPBtn_saveClassificationConfig">
+                       <property name="text">
+                        <string>Save state</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
                    </widget>
                   </item>
                  </layout>
                 </widget>
                </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="QGBox_saveSamplingClassified">
+              <property name="title">
+               <string>Save Sampling Classified</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_30">
                <item>
                 <widget class="QLabel" name="label_4">
                  <property name="sizePolicy">
@@ -1047,7 +1074,7 @@
                   </sizepolicy>
                  </property>
                  <property name="text">
-                  <string>Save the sampling file with the classification:</string>
+                  <string>Save the sampling file with the classification made:</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignJustify|Qt::AlignVCenter</set>

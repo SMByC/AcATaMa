@@ -300,6 +300,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.acatama_dockwidget.QGBox_SamplingFile.setEnabled(True)
         self.acatama_dockwidget.QGBox_grid_settings.setEnabled(True)
         self.acatama_dockwidget.QGBox_ClassificationStatus.setEnabled(True)
+        self.acatama_dockwidget.QGBox_saveSamplingClassified.setEnabled(True)
         self.acatama_dockwidget.QPBtn_OpenClassificationDialog.setText(u"Classify the sampling file")
         self.reject(is_ok_to_close=True)
 
