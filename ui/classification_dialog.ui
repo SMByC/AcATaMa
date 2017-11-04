@@ -214,7 +214,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QProgressBar" name="progressClassification">
+          <widget class="QProgressBar" name="QPBar_SamplesNavigation">
            <property name="font">
             <font>
              <pointsize>8</pointsize>
@@ -398,7 +398,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="SetClassification">
+          <widget class="QPushButton" name="QPBtn_SetClassification">
            <property name="font">
             <font>
              <pointsize>8</pointsize>

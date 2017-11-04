@@ -219,10 +219,10 @@ def get_num_samples_by_keeping_total_samples(srs_table, new_num_samples):
 
 @wait_process()
 def update_srs_table_content(dockwidget, srs_table):
-    with block_signals_to(dockwidget.TableWidget_SRS):
+    with block_signals_to(dockwidget.QTableW_SRS):
         # init table
-        dockwidget.TableWidget_SRS.setRowCount(srs_table["row_count"])
-        dockwidget.TableWidget_SRS.setColumnCount(srs_table["column_count"])
+        dockwidget.QTableW_SRS.setRowCount(srs_table["row_count"])
+        dockwidget.QTableW_SRS.setColumnCount(srs_table["column_count"])
 
         # enter data onto Table
         for n, key in enumerate(srs_table["header"]):
@@ -231,7 +231,7 @@ def update_srs_table_content(dockwidget, srs_table):
                     item_table = QTableWidgetItem(str(item))
                     item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                    dockwidget.TableWidget_SRS.setItem(m, n, item_table)
+                    dockwidget.QTableW_SRS.setItem(m, n, item_table)
             if key == "Color":
                 for m in range(srs_table["row_count"]):
                     item_table = QTableWidgetItem()
@@ -240,7 +240,7 @@ def update_srs_table_content(dockwidget, srs_table):
                                                     srs_table["color_table"]["Green"][m],
                                                     srs_table["color_table"]["Blue"][m],
                                                     srs_table["color_table"]["Alpha"][m]))
-                    dockwidget.TableWidget_SRS.setItem(m, n, item_table)
+                    dockwidget.QTableW_SRS.setItem(m, n, item_table)
             if key == "Num Samples":
                 for m in range(srs_table["row_count"]):
                     item_table = QTableWidgetItem(srs_table["num_samples"][m])
@@ -248,7 +248,7 @@ def update_srs_table_content(dockwidget, srs_table):
                     if not srs_table["On"][m]:
                         item_table.setForeground(QColor("lightGrey"))
                         item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-                    dockwidget.TableWidget_SRS.setItem(m, n, item_table)
+                    dockwidget.QTableW_SRS.setItem(m, n, item_table)
             if key == "Std Error":
                 for m in range(srs_table["row_count"]):
                     item_table = QTableWidgetItem(srs_table["std_error"][m])
@@ -256,7 +256,7 @@ def update_srs_table_content(dockwidget, srs_table):
                     if not srs_table["On"][m]:
                         item_table.setForeground(QColor("lightGrey"))
                         item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-                    dockwidget.TableWidget_SRS.setItem(m, n, item_table)
+                    dockwidget.QTableW_SRS.setItem(m, n, item_table)
             if key == "On":
                 for m in range(srs_table["row_count"]):
                     item_table = QTableWidgetItem()
@@ -266,57 +266,57 @@ def update_srs_table_content(dockwidget, srs_table):
                         item_table.setCheckState(Qt.Checked)
                     else:
                         item_table.setCheckState(Qt.Unchecked)
-                    dockwidget.TableWidget_SRS.setItem(m, n, item_table)
+                    dockwidget.QTableW_SRS.setItem(m, n, item_table)
 
         # hidden row labels
-        dockwidget.TableWidget_SRS.verticalHeader().setVisible(False)
+        dockwidget.QTableW_SRS.verticalHeader().setVisible(False)
         # add Header
-        dockwidget.TableWidget_SRS.setHorizontalHeaderLabels(srs_table["header"])
+        dockwidget.QTableW_SRS.setHorizontalHeaderLabels(srs_table["header"])
         # adjust size of Table
-        dockwidget.TableWidget_SRS.resizeColumnsToContents()
-        dockwidget.TableWidget_SRS.resizeRowsToContents()
+        dockwidget.QTableW_SRS.resizeColumnsToContents()
+        dockwidget.QTableW_SRS.resizeRowsToContents()
         # set label total samples
         total_num_samples = sum([int(x) for x in mask(srs_table["num_samples"], srs_table["On"])])
         dockwidget.TotalNumSamples.setText(str(total_num_samples))
         # set maximum and reset the value in progress bar status
-        dockwidget.widget_generate_SRS.progressGenerateSampling.setValue(0)
-        dockwidget.widget_generate_SRS.progressGenerateSampling.setMaximum(total_num_samples)
+        dockwidget.widget_generate_SRS.QPBar_GenerateSampling.setValue(0)
+        dockwidget.widget_generate_SRS.QPBar_GenerateSampling.setMaximum(total_num_samples)
 
 
 def fill_stratified_sampling_table(dockwidget):
     try:
         # check the current selected file
-        get_layer_by_name(dockwidget.selectCategRaster_SRS.currentText()).dataProvider()
+        get_layer_by_name(dockwidget.QCBox_CategRaster_SRS.currentText()).dataProvider()
         # check sampling method selected
-        if not dockwidget.StratifieSamplingMethod.currentText():
+        if not dockwidget.QCBox_SRS_Method.currentText():
             raise
     except:
         # clear table
-        dockwidget.TableWidget_SRS.setRowCount(0)
-        dockwidget.TableWidget_SRS.setColumnCount(0)
+        dockwidget.QTableW_SRS.setRowCount(0)
+        dockwidget.QTableW_SRS.setColumnCount(0)
         return
 
-    if dockwidget.StratifieSamplingMethod.currentText().startswith("Fixed values"):
+    if dockwidget.QCBox_SRS_Method.currentText().startswith("Fixed values"):
         srs_method = "fixed values"
         dockwidget.widget_TotalExpectedSE.setHidden(True)
-    if dockwidget.StratifieSamplingMethod.currentText().startswith("Area based proportion"):
+    if dockwidget.QCBox_SRS_Method.currentText().startswith("Area based proportion"):
         srs_method = "area based proportion"
         dockwidget.widget_TotalExpectedSE.setVisible(True)
 
-    if dockwidget.selectCategRaster_SRS.currentText() in dockwidget.srs_tables.keys() and \
-        srs_method in dockwidget.srs_tables[dockwidget.selectCategRaster_SRS.currentText()].keys():
+    if dockwidget.QCBox_CategRaster_SRS.currentText() in dockwidget.srs_tables.keys() and \
+        srs_method in dockwidget.srs_tables[dockwidget.QCBox_CategRaster_SRS.currentText()].keys():
         # restore values saved for number of samples configured for selected categorical file
-        srs_table = dockwidget.srs_tables[dockwidget.selectCategRaster_SRS.currentText()][srs_method]
+        srs_table = dockwidget.srs_tables[dockwidget.QCBox_CategRaster_SRS.currentText()][srs_method]
     else:
         # init a new stratified random sampling table
         nodata = int(dockwidget.nodata_CategRaster_SRS.value())
         srs_table = {"color_table": get_color_table(
-            get_current_file_path_in(dockwidget.selectCategRaster_SRS), band_number=1, nodata=nodata)}
+            get_current_file_path_in(dockwidget.QCBox_CategRaster_SRS), band_number=1, nodata=nodata)}
 
         if not srs_table["color_table"]:
             # clear table
-            dockwidget.TableWidget_SRS.setRowCount(0)
-            dockwidget.TableWidget_SRS.setColumnCount(0)
+            dockwidget.QTableW_SRS.setRowCount(0)
+            dockwidget.QTableW_SRS.setColumnCount(0)
             return
         srs_table["row_count"] = len(srs_table["color_table"].values()[0])
 
@@ -331,26 +331,26 @@ def fill_stratified_sampling_table(dockwidget):
             srs_table["column_count"] = len(srs_table["header"])
             srs_table["std_error"] = [str(0.01)]*srs_table["row_count"]
             srs_table["pixel_count"] = \
-                get_pixel_count_by_category(srs_table, get_current_file_path_in(dockwidget.selectCategRaster_SRS))
+                get_pixel_count_by_category(srs_table, get_current_file_path_in(dockwidget.QCBox_CategRaster_SRS))
             total_std_error = dockwidget.TotalExpectedSE.value()
             srs_table["On"] = [True] * srs_table["row_count"]
             srs_table["num_samples"] = get_num_samples_by_area_based_proportion(srs_table, total_std_error)
 
         # save srs table
-        if dockwidget.selectCategRaster_SRS.currentText() not in dockwidget.srs_tables.keys():
-            dockwidget.srs_tables[dockwidget.selectCategRaster_SRS.currentText()] = {}
-        dockwidget.srs_tables[dockwidget.selectCategRaster_SRS.currentText()][srs_method] = srs_table
+        if dockwidget.QCBox_CategRaster_SRS.currentText() not in dockwidget.srs_tables.keys():
+            dockwidget.srs_tables[dockwidget.QCBox_CategRaster_SRS.currentText()] = {}
+        dockwidget.srs_tables[dockwidget.QCBox_CategRaster_SRS.currentText()][srs_method] = srs_table
 
     # update content
     update_srs_table_content(dockwidget, srs_table)
 
 
 def update_stratified_sampling_table(dockwidget, changes_from):
-    if dockwidget.StratifieSamplingMethod.currentText().startswith("Fixed values"):
+    if dockwidget.QCBox_SRS_Method.currentText().startswith("Fixed values"):
         srs_method = "fixed values"
-    if dockwidget.StratifieSamplingMethod.currentText().startswith("Area based proportion"):
+    if dockwidget.QCBox_SRS_Method.currentText().startswith("Area based proportion"):
         srs_method = "area based proportion"
-    srs_table = dockwidget.srs_tables[dockwidget.selectCategRaster_SRS.currentText()][srs_method]
+    srs_table = dockwidget.srs_tables[dockwidget.QCBox_CategRaster_SRS.currentText()][srs_method]
 
     if changes_from == "TotalExpectedSE":
         srs_table["num_samples"] = \
@@ -361,13 +361,13 @@ def update_stratified_sampling_table(dockwidget, changes_from):
         std_error = []
         on = []
         try:
-            for row in range(dockwidget.TableWidget_SRS.rowCount()):
-                num_samples.append(dockwidget.TableWidget_SRS.item(row, 2).text())
+            for row in range(dockwidget.QTableW_SRS.rowCount()):
+                num_samples.append(dockwidget.QTableW_SRS.item(row, 2).text())
                 if srs_method == "area based proportion":
-                    std_error.append(dockwidget.TableWidget_SRS.item(row, 3).text())
-                    if dockwidget.TableWidget_SRS.item(row, 4).checkState() == 2:
+                    std_error.append(dockwidget.QTableW_SRS.item(row, 3).text())
+                    if dockwidget.QTableW_SRS.item(row, 4).checkState() == 2:
                         on.append(True)
-                    if dockwidget.TableWidget_SRS.item(row, 4).checkState() == 0:
+                    if dockwidget.QTableW_SRS.item(row, 4).checkState() == 0:
                         on.append(False)
         except:
             return
@@ -386,5 +386,5 @@ def update_stratified_sampling_table(dockwidget, changes_from):
     # update content
     update_srs_table_content(dockwidget, srs_table)
     # save srs table
-    dockwidget.srs_tables[dockwidget.selectCategRaster_SRS.currentText()][srs_method] = srs_table
+    dockwidget.srs_tables[dockwidget.QCBox_CategRaster_SRS.currentText()][srs_method] = srs_table
 

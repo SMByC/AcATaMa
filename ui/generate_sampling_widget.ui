@@ -18,7 +18,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QGroupBox" name="groupBox_neighbour_aggregation">
+    <widget class="QGroupBox" name="QGBox_neighbour_aggregation">
      <property name="title">
       <string>With neighbors aggregation (optional)</string>
      </property>
@@ -55,7 +55,7 @@
              <number>0</number>
             </property>
             <item row="0" column="1">
-             <widget class="QComboBox" name="number_of_neighbors">
+             <widget class="QComboBox" name="QCBox_NumberOfNeighbors">
               <item>
                <property name="text">
                 <string>8</string>
@@ -88,7 +88,7 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QComboBox" name="same_class_of_neighbors"/>
+             <widget class="QComboBox" name="QCBox_SameClassOfNeighbors"/>
             </item>
            </layout>
           </widget>
@@ -106,7 +106,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_7">
       <item>
-       <widget class="QGroupBox" name="groupBox_generate_sampling_options">
+       <widget class="QGroupBox" name="QGBox_generate_sampling_options">
         <property name="title">
          <string>Generate sampling options</string>
         </property>
@@ -167,7 +167,7 @@ impossible complete the sampling set configured.</string>
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="groupBox_save_sampling">
+       <widget class="QGroupBox" name="QGBox_save_sampling">
         <property name="title">
          <string>Save sampling (optional)</string>
         </property>
@@ -195,7 +195,7 @@ impossible complete the sampling set configured.</string>
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="selectSamplingToSave">
+             <widget class="QComboBox" name="QCBox_SamplingToSave">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -224,14 +224,14 @@ impossible complete the sampling set configured.</string>
                 </spacer>
                </item>
                <item>
-                <widget class="QPushButton" name="buttonSaveSampling">
+                <widget class="QPushButton" name="QPBtn_SaveSampling">
                  <property name="text">
                   <string>Save Sampling</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="buttonSaveSamplingConf">
+                <widget class="QPushButton" name="QPBtn_SaveSamplingConf">
                  <property name="text">
                   <string>Save Config</string>
                  </property>
@@ -253,14 +253,14 @@ impossible complete the sampling set configured.</string>
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="buttonGenerateSampling">
+          <widget class="QPushButton" name="QPBtn_GenerateSampling">
            <property name="text">
             <string>Generate sampling</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QProgressBar" name="progressGenerateSampling">
+          <widget class="QProgressBar" name="QPBar_GenerateSampling">
            <property name="enabled">
             <bool>true</bool>
            </property>
@@ -295,7 +295,7 @@ impossible complete the sampling set configured.</string>
  <resources/>
  <connections>
   <connection>
-   <sender>groupBox_neighbour_aggregation</sender>
+   <sender>QGBox_neighbour_aggregation</sender>
    <signal>clicked(bool)</signal>
    <receiver>widget_neighbour_aggregation</receiver>
    <slot>setVisible(bool)</slot>
@@ -311,7 +311,7 @@ impossible complete the sampling set configured.</string>
    </hints>
   </connection>
   <connection>
-   <sender>groupBox_generate_sampling_options</sender>
+   <sender>QGBox_generate_sampling_options</sender>
    <signal>clicked(bool)</signal>
    <receiver>generate_sampling_widget_options</receiver>
    <slot>setVisible(bool)</slot>
@@ -327,7 +327,7 @@ impossible complete the sampling set configured.</string>
    </hints>
   </connection>
   <connection>
-   <sender>groupBox_save_sampling</sender>
+   <sender>QGBox_save_sampling</sender>
    <signal>clicked(bool)</signal>
    <receiver>widget_save_sampling</receiver>
    <slot>setVisible(bool)</slot>

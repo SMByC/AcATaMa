@@ -87,7 +87,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         for idx, view_widget in enumerate(ClassificationDialog.view_widgets): view_widget.id = idx
         # set the label names for each view
         for num_view, view_widget in enumerate(ClassificationDialog.view_widgets):
-            view_widget.view_label_name.setText("View {}:".format(num_view+1))
+            view_widget.QLabel_ViewName.setText("View {}:".format(num_view+1))
         # restore view widgets status
         for config_id, view_config in self.classification.view_widgets_config.items():
             for view_widget in ClassificationDialog.view_widgets:
@@ -95,13 +95,13 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                     view_widget = ClassificationDialog.view_widgets[config_id]
                     # load file for this view widget if exists
                     file_name = os.path.splitext(os.path.basename(view_config["render_file"]))[0]
-                    file_index = view_widget.selectRenderFile.findText(file_name, Qt.MatchFixedString)
+                    file_index = view_widget.QCBox_RenderFile.findText(file_name, Qt.MatchFixedString)
                     if file_index != -1:
                         # select layer if exists in Qgis
-                        view_widget.selectRenderFile.setCurrentIndex(file_index)
+                        view_widget.QCBox_RenderFile.setCurrentIndex(file_index)
                     elif os.path.isfile(view_config["render_file"]):
                         # load file and select in view if this exists and not load in Qgis
-                        load_and_select_filepath_in(view_widget.selectRenderFile, view_config["render_file"],
+                        load_and_select_filepath_in(view_widget.QCBox_RenderFile, view_config["render_file"],
                                                     "any", ignore_layers=[view_widget.sampling_layer])
                     # restore others config in view widget
                     view_widget.OnOff_RenderView.setChecked(view_config["render_activated"])
@@ -113,13 +113,13 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         # set classification buttons
         self.classification_btns_config = ClassificationButtonsConfig(self.classification.buttons_config)
         self.create_classification_buttons(buttons_config=self.classification.buttons_config)
-        self.SetClassification.clicked.connect(self.open_set_classification_dialog)
+        self.QPBtn_SetClassification.clicked.connect(self.open_set_classification_dialog)
 
         # set radius fit to sample
         self.radiusFitToSample.setValue(self.classification.fit_to_sample)
 
         # set total samples
-        self.progressClassification.setMaximum(len(self.classification.points))
+        self.QPBar_SamplesNavigation.setMaximum(len(self.classification.points))
 
         # actions for fit and go to current sample
         self.radiusFitToSample.valueChanged.connect(lambda: self.show_and_go_to_current_sample(highlight=False))
@@ -145,7 +145,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         ClassificationDialog.current_sample = self.current_sample
         self.classification.current_sample_idx = self.current_sample_idx
         # update progress bar
-        self.progressClassification.setValue(self.current_sample_idx + 1)
+        self.QPBar_SamplesNavigation.setValue(self.current_sample_idx + 1)
         # show the class assigned
         self.display_sample_status()
         # show and go to marker
@@ -175,15 +175,15 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.totalClassified.setText(str(total_classified))
         self.totalNotClassified.setText(str(total_not_classified))
         # update in dockwidget status
-        self.acatama_dockwidget.ClassificationStatusPB.setValue(total_classified)
+        self.acatama_dockwidget.QPBar_ClassificationStatus.setValue(total_classified)
         # check is the classification is completed and update in dockwidget status
         if total_not_classified == 0:
             self.classification.is_completed = True
-            self.acatama_dockwidget.ClassificationStatusLabel.setText("Classification completed")
-            self.acatama_dockwidget.ClassificationStatusLabel.setStyleSheet('QLabel {color: green;}')
+            self.acatama_dockwidget.QLabel_ClassificationStatus.setText("Classification completed")
+            self.acatama_dockwidget.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: green;}')
         else:
-            self.acatama_dockwidget.ClassificationStatusLabel.setText("Classification not completed")
-            self.acatama_dockwidget.ClassificationStatusLabel.setStyleSheet('QLabel {color: orange;}')
+            self.acatama_dockwidget.QLabel_ClassificationStatus.setText("Classification not completed")
+            self.acatama_dockwidget.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: orange;}')
 
     def show_and_go_to_current_sample(self, highlight=True):
         for view_widget in ClassificationDialog.view_widgets:
@@ -285,7 +285,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                 # {N: {"name", "render_file", "render_activated", "scale_factor"}, ...}
                 view_widgets_config[view_widget.id] = \
                     {"name": view_widget.view_name.text(),
-                     "render_file":  get_current_file_path_in(view_widget.selectRenderFile),
+                     "render_file":  get_current_file_path_in(view_widget.QCBox_RenderFile),
                      "render_activated": view_widget.OnOff_RenderView.isChecked(),
                      #"view_size": (view_widget.size().width(), view_widget.size().height()),
                      "scale_factor": view_widget.current_scale_factor}
@@ -295,10 +295,10 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
 
         ClassificationDialog.is_opened = False
         # restore the states for some objects in the dockwidget
-        self.acatama_dockwidget.groupBox_SamplingFile.setEnabled(True)
-        self.acatama_dockwidget.groupBox_grid_settings.setEnabled(True)
-        self.acatama_dockwidget.groupBox_ClassificationStatus.setEnabled(True)
-        self.acatama_dockwidget.buttonOpenClassificationDialog.setText(u"Classify the sampling file")
+        self.acatama_dockwidget.QGBox_SamplingFile.setEnabled(True)
+        self.acatama_dockwidget.QGBox_grid_settings.setEnabled(True)
+        self.acatama_dockwidget.QGBox_ClassificationStatus.setEnabled(True)
+        self.acatama_dockwidget.QPBtn_OpenClassificationDialog.setText(u"Classify the sampling file")
         self.reject(is_ok_to_close=True)
 
     def reject(self, is_ok_to_close=False):
@@ -356,7 +356,7 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
                     self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "Thematic raster class":
                 for m, item in enumerate(self.table_buttons.values()):
-                    if valid_file_selected_in(AcATaMa.dockwidget.selectThematicRaster):
+                    if valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicRaster):
                         if m+1 in self.buttons_config and self.buttons_config[m+1]["thematic_class"] is not None:
                             item_table = QTableWidgetItem(self.buttons_config[m + 1]["thematic_class"])
                         else:
@@ -419,7 +419,7 @@ class ThematicRasterClasses(QtGui.QDialog, FORM_CLASS):
         # get color table from raster
         nodata = int(AcATaMa.dockwidget.nodata_ThematicRaster.value())
         thematic_table = {"color_table": get_color_table(
-            get_current_file_path_in(AcATaMa.dockwidget.selectThematicRaster), band_number=1, nodata=nodata)}
+            get_current_file_path_in(AcATaMa.dockwidget.QCBox_ThematicRaster), band_number=1, nodata=nodata)}
 
         if not thematic_table["color_table"]:
             # clear table

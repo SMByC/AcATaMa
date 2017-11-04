@@ -24,7 +24,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="view_label_name">
+       <widget class="QLabel" name="QLabel_view_name">
         <property name="font">
          <font>
           <pointsize>8</pointsize>
@@ -75,7 +75,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QComboBox" name="selectRenderFile">
+       <widget class="QComboBox" name="QCBox_RenderFile">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
           <horstretch>0</horstretch>
@@ -96,7 +96,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="browseRenderFile">
+       <widget class="QPushButton" name="QCBox_browseRenderFile">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>0</horstretch>
