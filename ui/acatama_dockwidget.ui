@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tab_thematic">
        <attribute name="title">
@@ -1264,15 +1264,15 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_11">
             <item>
-             <widget class="QGroupBox" name="QGBox_5">
+             <widget class="QGroupBox" name="groupBox_2">
               <property name="title">
-               <string>Classification Accuracy Assessment</string>
+               <string>Sampling File Classified</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_28">
+              <layout class="QVBoxLayout" name="verticalLayout_25">
                <item>
                 <widget class="QLabel" name="label_23">
                  <property name="text">
-                  <string>Classified sampling file for the classification accuracy assessment (select it from the classification tab):</string>
+                  <string>Classified sampling file for the classification accuracy assessment (it needs to have been classified totally or partially):</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -1283,20 +1283,32 @@
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="QCBox_SamplingFile_AA">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="editable">
-                  <bool>false</bool>
-                 </property>
+                <widget class="QWidget" name="widget_14" native="true">
+                 <layout class="QHBoxLayout" name="horizontalLayout_12">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="QComboBox" name="QCBox_SamplingFile_AA">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="editable">
+                     <bool>false</bool>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="SamplingFileStatus_AA">
+                <widget class="QLabel" name="QLabel_SamplingFileStatus_AA">
                  <property name="styleSheet">
                   <string notr="true">color: &quot;gray&quot;;</string>
                  </property>
@@ -1308,59 +1320,78 @@
                  </property>
                 </widget>
                </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="QGBox_AccuracyAssessment">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="title">
+               <string>Classification Accuracy Assessment</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_28">
                <item>
-                <widget class="QWidget" name="widgetGroup_results_AA" native="true">
-                 <layout class="QVBoxLayout" name="verticalLayout_29">
-                  <property name="spacing">
-                   <number>0</number>
-                  </property>
+                <widget class="QLabel" name="label_24">
+                 <property name="text">
+                  <string>Computes a confusion matrix of errors of omission and commission with extra statistics for the current sampling file classified:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QWidget" name="widget_13" native="true">
+                 <layout class="QHBoxLayout" name="horizontalLayout_10">
                   <property name="leftMargin">
                    <number>0</number>
                   </property>
                   <property name="rightMargin">
                    <number>0</number>
                   </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
                   <item>
                    <widget class="QPushButton" name="QPBtn_ComputeAccurasyAssessment">
                     <property name="text">
-                     <string>Compute for the current sampling file</string>
+                     <string>Compute the accuracy assessment</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QWidget" name="widget_12" native="true">
+                 <layout class="QHBoxLayout" name="horizontalLayout_5">
+                  <item>
+                   <spacer name="horizontalSpacer_8">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="QPBtn_viewAA_results">
+                    <property name="text">
+                     <string>View results</string>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QWidget" name="widget_12" native="true">
-                    <layout class="QHBoxLayout" name="horizontalLayout_5">
-                     <item>
-                      <spacer name="horizontalSpacer_8">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>40</width>
-                         <height>20</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                     <item>
-                      <widget class="QPushButton" name="QPBtn_viewAA_results">
-                       <property name="text">
-                        <string>View results</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QPushButton" name="QPBtn_saveAA_results">
-                       <property name="text">
-                        <string>Save results</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                   <widget class="QPushButton" name="QPBtn_saveAA_results">
+                    <property name="text">
+                     <string>Save results</string>
+                    </property>
                    </widget>
                   </item>
                  </layout>

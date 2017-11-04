@@ -207,6 +207,13 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # connect the action to the run method
         self.QPBtn_OpenClassificationDialog.clicked.connect(self.open_classification_dialog)
 
+        # ######### Accuracy Assessment tab ######### #
+        update_layers_list(self.QCBox_SamplingFile_AA, "vector", "points")
+        # handle connect when the list of layers changed
+        self.canvas.layersChanged.connect(lambda: update_layers_list(self.QCBox_SamplingFile_AA, "vector", "points"))
+        # show the classification file status in AA
+        self.QCBox_SamplingFile_AA.currentIndexChanged.connect(self.set_sampling_file_accuracy_assessment)
+
     @pyqtSlot()
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
         file_path = QtGui.QFileDialog.getOpenFileName(self, dialog_title, "", dialog_types)
@@ -324,10 +331,10 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             # check is the classification is completed and update in dockwidget status
             if sampling_layer in Classification.instances and Classification.instances[sampling_layer].is_completed:
                 self.QLabel_ClassificationStatus.setText("Classification completed")
-                self.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: green;}')
+                self.QLabel_ClassificationStatus.setStyleSheet("QLabel {color: green;}")
             else:
                 self.QLabel_ClassificationStatus.setText("Classification not completed")
-                self.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: orange;}')
+                self.QLabel_ClassificationStatus.setStyleSheet("QLabel {color: orange;}")
             # grid settings
             if sampling_layer in Classification.instances:
                 classification = Classification.instances[sampling_layer]
@@ -343,9 +350,12 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             self.QPBar_ClassificationStatus.setTextVisible(False)
             self.QPBar_ClassificationStatus.setValue(0)
             self.QLabel_ClassificationStatus.setText("No sampling file selected")
-            self.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: gray;}')
+            self.QLabel_ClassificationStatus.setStyleSheet("QLabel {color: gray;}")
             self.grid_columns.setValue(3)
             self.grid_rows.setValue(2)
+
+        # updated state of sampling file selected for accuracy assessment tab
+        self.set_sampling_file_accuracy_assessment()
 
     @pyqtSlot()
     def set_grid_setting(self, item):
@@ -466,3 +476,31 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # open dialog
         self.classification_dialog.show()
 
+    @pyqtSlot()
+    def set_sampling_file_accuracy_assessment(self):
+        sampling_layer = get_current_layer_in(self.QCBox_SamplingFile_AA)
+        if sampling_layer:
+            # sampling file valid
+            if sampling_layer in Classification.instances:
+                # classification exists for this file
+                classification = Classification.instances[sampling_layer]
+                total_classified = sum(sample.is_classified for sample in classification.points)
+                # check is the classification is completed and update in dockwidget status
+                if classification.is_completed:
+                    self.QLabel_SamplingFileStatus_AA.setText("Classification completed ({}/{})".
+                                                              format(total_classified, len(classification.points)))
+                    self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: green;}")
+                else:
+                    self.QLabel_SamplingFileStatus_AA.setText("Classification not completed ({}/{})".
+                                                              format(total_classified, len(classification.points)))
+                    self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: orange;}")
+                self.QGBox_AccuracyAssessment.setEnabled(True)
+            else:
+                self.QLabel_SamplingFileStatus_AA.setText("Sampling file not classified")
+                self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: red;}")
+                self.QGBox_AccuracyAssessment.setDisabled(True)
+        else:
+            # not select sampling file
+            self.QLabel_SamplingFileStatus_AA.setText("No sampling file selected")
+            self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: gray;}")
+            self.QGBox_AccuracyAssessment.setDisabled(True)

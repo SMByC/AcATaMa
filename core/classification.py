@@ -153,6 +153,8 @@ class Classification:
         else:
             AcATaMa.dockwidget.QLabel_ClassificationStatus.setText("Classification not completed")
             AcATaMa.dockwidget.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: orange;}')
+        # updated state of sampling file selected for accuracy assessment tab
+        AcATaMa.dockwidget.set_sampling_file_accuracy_assessment()
 
     @wait_process()
     def save_sampling_classification(self, file_out):

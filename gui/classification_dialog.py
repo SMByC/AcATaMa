@@ -184,6 +184,8 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         else:
             self.acatama_dockwidget.QLabel_ClassificationStatus.setText("Classification not completed")
             self.acatama_dockwidget.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: orange;}')
+        # updated state of sampling file selected for accuracy assessment tab
+        self.acatama_dockwidget.set_sampling_file_accuracy_assessment()
 
     def show_and_go_to_current_sample(self, highlight=True):
         for view_widget in ClassificationDialog.view_widgets:
