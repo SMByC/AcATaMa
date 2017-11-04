@@ -83,31 +83,31 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.button_about.clicked.connect(self.about_dialog.show)
 
         # ######### load thematic raster image ######### #
-        update_layers_list(self.selectThematicRaster, "raster")
+        update_layers_list(self.QCBox_ThematicRaster, "raster")
         # handle connect when the list of layers changed
-        self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectThematicRaster, "raster"))
+        self.canvas.layersChanged.connect(lambda: update_layers_list(self.QCBox_ThematicRaster, "raster"))
         # call to browse the thematic raster file
-        self.browseThematicRaster.clicked.connect(lambda: self.fileDialog_browse(
-            self.selectThematicRaster,
+        self.QPBtn_browseThematicRaster.clicked.connect(lambda: self.fileDialog_browse(
+            self.QCBox_ThematicRaster,
             dialog_title=self.tr(u"Select the thematic raster image to evaluate"),
             dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
         # set the nodata value of the thematic raster
-        self.selectThematicRaster.currentIndexChanged.connect(self.set_nodata_value_thematic_raster)
+        self.QCBox_ThematicRaster.currentIndexChanged.connect(self.set_nodata_value_thematic_raster)
 
-        # ######### shape study area ######### #
-        self.widget_ShapeArea.setHidden(True)
-        update_layers_list(self.selectShapeArea, "vector")
+        # ######### shape area of interest ######### #
+        self.widget_AreaOfInterest.setHidden(True)
+        update_layers_list(self.QCBox_AreaOfInterest, "vector")
         # handle connect when the list of layers changed
-        self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectShapeArea, "vector"))
+        self.canvas.layersChanged.connect(lambda: update_layers_list(self.QCBox_AreaOfInterest, "vector"))
         # call to browse the shape area
-        self.browseShapeArea.clicked.connect(lambda: self.fileDialog_browse(
-            self.selectShapeArea,
+        self.QPBtn_browseAreaOfInterest.clicked.connect(lambda: self.fileDialog_browse(
+            self.QCBox_AreaOfInterest,
             dialog_title=self.tr(u"Select the shape file"),
             dialog_types=self.tr(u"Shape files (*.shp);;All files (*.*)"),
             layer_type="vector"))
         # do clip
-        self.buttonClipping.clicked.connect(self.clipping_thematic_raster)
+        self.QPBtn_ClippingThematic.clicked.connect(self.clipping_thematic_raster)
 
         # ######### create categorical  ######### # TODO
         #self.widget_CategRaster.setHidden(True)
@@ -123,41 +123,41 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         # ######### random sampling ######### #
         self.widget_RSwithCR.setHidden(True)
-        update_layers_list(self.selectCategRaster_RS, "raster")
+        update_layers_list(self.QCBox_CategRaster_RS, "raster")
         # handle connect when the list of layers changed
-        self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectCategRaster_RS, "raster"))
+        self.canvas.layersChanged.connect(lambda: update_layers_list(self.QCBox_CategRaster_RS, "raster"))
         # call to browse the categorical raster
-        self.browseCategRaster_RS.clicked.connect(lambda: self.fileDialog_browse(
-            self.selectCategRaster_RS,
+        self.QPBtn_browseCategRaster_RS.clicked.connect(lambda: self.fileDialog_browse(
+            self.QCBox_CategRaster_RS,
             dialog_title=self.tr(u"Select the categorical raster file"),
             dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
         # set the nodata value of the categorical raster
-        self.selectCategRaster_SRS.currentIndexChanged.connect(self.set_nodata_value_categorical_raster)
+        self.QCBox_CategRaster_SRS.currentIndexChanged.connect(self.set_nodata_value_categorical_raster)
         self.nodata_CategRaster_SRS.valueChanged.connect(self.reset_nodata_to_categorical_raster)
         # generate sampling options
         self.widget_generate_RS.generate_sampling_widget_options.setHidden(True)
         # save config
         self.widget_generate_RS.widget_save_sampling.setHidden(True)
         self.canvas.layersChanged.connect(
-            lambda: self.update_generated_sampling_list_in(self.widget_generate_RS.selectSamplingToSave))
-        self.widget_generate_RS.buttonSaveSampling.clicked.connect(
-            lambda: self.fileDialog_saveSampling(self.widget_generate_RS.selectSamplingToSave))
-        self.widget_generate_RS.buttonSaveSamplingConf.clicked.connect(
-            lambda: self.fileDialog_saveSamplingConf(self.widget_generate_RS.selectSamplingToSave))
+            lambda: self.update_generated_sampling_list_in(self.widget_generate_RS.QCBox_SamplingToSave))
+        self.widget_generate_RS.QPBtn_SaveSampling.clicked.connect(
+            lambda: self.fileDialog_saveSampling(self.widget_generate_RS.QCBox_SamplingToSave))
+        self.widget_generate_RS.QPBtn_SaveSamplingConf.clicked.connect(
+            lambda: self.fileDialog_saveSamplingConf(self.widget_generate_RS.QCBox_SamplingToSave))
         # generate sampling
-        self.widget_generate_RS.buttonGenerateSampling.clicked.connect(lambda: do_random_sampling(self))
+        self.widget_generate_RS.QPBtn_GenerateSampling.clicked.connect(lambda: do_random_sampling(self))
         # update progress bar limits
-        self.numberOfSamples_RS.valueChanged.connect(lambda: self.widget_generate_RS.progressGenerateSampling.setValue(0))
-        self.numberOfSamples_RS.valueChanged.connect(self.widget_generate_RS.progressGenerateSampling.setMaximum)
+        self.numberOfSamples_RS.valueChanged.connect(lambda: self.widget_generate_RS.QPBar_GenerateSampling.setValue(0))
+        self.numberOfSamples_RS.valueChanged.connect(self.widget_generate_RS.QPBar_GenerateSampling.setMaximum)
 
         # ######### stratified random sampling ######### #
-        update_layers_list(self.selectCategRaster_SRS, "raster")
+        update_layers_list(self.QCBox_CategRaster_SRS, "raster")
         # handle connect when the list of layers changed
-        self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectCategRaster_SRS, "raster"))
+        self.canvas.layersChanged.connect(lambda: update_layers_list(self.QCBox_CategRaster_SRS, "raster"))
         # call to browse the categorical raster
-        self.browseCategRaster_SRS.clicked.connect(lambda: self.fileDialog_browse(
-            self.selectCategRaster_SRS,
+        self.QPBtn_browseCategRaster_SRS.clicked.connect(lambda: self.fileDialog_browse(
+            self.QCBox_CategRaster_SRS,
             dialog_title=self.tr(u"Select the categorical raster file"),
             dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
@@ -165,47 +165,47 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.srs_tables = {}
         # fill table of categorical raster
         self.widget_TotalExpectedSE.setHidden(True)
-        self.selectCategRaster_SRS.currentIndexChanged.connect(lambda: fill_stratified_sampling_table(self))
-        self.StratifieSamplingMethod.currentIndexChanged.connect(lambda: fill_stratified_sampling_table(self))
+        self.QCBox_CategRaster_SRS.currentIndexChanged.connect(lambda: fill_stratified_sampling_table(self))
+        self.QCBox_SRS_Method.currentIndexChanged.connect(lambda: fill_stratified_sampling_table(self))
         # for each item changed in table, save and update it
         self.TotalExpectedSE.valueChanged.connect(lambda: update_stratified_sampling_table(self, "TotalExpectedSE"))
-        self.TableWidget_SRS.itemChanged.connect(lambda: update_stratified_sampling_table(self, "TableContent"))
+        self.QTableW_SRS.itemChanged.connect(lambda: update_stratified_sampling_table(self, "TableContent"))
         # generate sampling options
         self.widget_generate_SRS.generate_sampling_widget_options.setHidden(True)
         # save config
         self.widget_generate_SRS.widget_save_sampling.setHidden(True)
         self.canvas.layersChanged.connect(
-            lambda: self.update_generated_sampling_list_in(self.widget_generate_SRS.selectSamplingToSave))
-        self.widget_generate_SRS.buttonSaveSampling.clicked.connect(
-            lambda: self.fileDialog_saveSampling(self.widget_generate_SRS.selectSamplingToSave))
-        self.widget_generate_SRS.buttonSaveSamplingConf.clicked.connect(
-            lambda: self.fileDialog_saveSamplingConf(self.widget_generate_SRS.selectSamplingToSave))
+            lambda: self.update_generated_sampling_list_in(self.widget_generate_SRS.QCBox_SamplingToSave))
+        self.widget_generate_SRS.QPBtn_SaveSampling.clicked.connect(
+            lambda: self.fileDialog_saveSampling(self.widget_generate_SRS.QCBox_SamplingToSave))
+        self.widget_generate_SRS.QPBtn_SaveSamplingConf.clicked.connect(
+            lambda: self.fileDialog_saveSamplingConf(self.widget_generate_SRS.QCBox_SamplingToSave))
         # generate sampling
-        self.widget_generate_SRS.buttonGenerateSampling.clicked.connect(lambda: do_stratified_random_sampling(self))
+        self.widget_generate_SRS.QPBtn_GenerateSampling.clicked.connect(lambda: do_stratified_random_sampling(self))
 
         # ######### Classification sampling tab ######### #
-        update_layers_list(self.selectSamplingFile, "vector", "points")
+        update_layers_list(self.QCBox_SamplingFile, "vector", "points")
         # handle connect when the list of layers changed
-        self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectSamplingFile, "vector", "points"))
+        self.canvas.layersChanged.connect(lambda: update_layers_list(self.QCBox_SamplingFile, "vector", "points"))
         # show the classification file settings in plugin when it is selected
-        self.selectSamplingFile.currentIndexChanged.connect(self.set_classification_file_settings)
+        self.QCBox_SamplingFile.currentIndexChanged.connect(self.set_classification_file_settings)
         # call to browse the sampling file
-        self.browseSamplingFile.clicked.connect(lambda: self.fileDialog_browse(
-            self.selectSamplingFile,
+        self.QPBtn_browseSamplingFile.clicked.connect(lambda: self.fileDialog_browse(
+            self.QCBox_SamplingFile,
             dialog_title=self.tr(u"Select the Sampling points file to classify"),
             dialog_types=self.tr(u"Shape files (*.shp);;All files (*.*)"),
             layer_type="vector"))
         # call to load and save classification config
-        self.loadClassificationConfig.clicked.connect(self.fileDialog_loadClassificationConfig)
-        self.saveClassificationConfig.clicked.connect(self.fileDialog_saveClassificationConfig)
+        self.QPBtn_loadClassificationConfig.clicked.connect(self.fileDialog_loadClassificationConfig)
+        self.QPBtn_saveClassificationConfig.clicked.connect(self.fileDialog_saveClassificationConfig)
         # save sampling + classification
-        self.saveSamplingClassification.clicked.connect(self.fileDialog_saveSamplingClassification)
+        self.QPBtn_saveSamplingClassification.clicked.connect(self.fileDialog_saveSamplingClassification)
         # change grid config
         self.grid_columns.valueChanged.connect(lambda: self.set_grid_setting("column"))
         self.grid_rows.valueChanged.connect(lambda: self.set_grid_setting("row"))
 
         # connect the action to the run method
-        self.buttonOpenClassificationDialog.clicked.connect(self.open_classification_dialog)
+        self.QPBtn_OpenClassificationDialog.clicked.connect(self.open_classification_dialog)
 
     @pyqtSlot()
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
@@ -216,7 +216,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     def set_nodata_value_thematic_raster(self):
-        current_layer = get_current_layer_in(self.selectThematicRaster)
+        current_layer = get_current_layer_in(self.QCBox_ThematicRaster)
         if not current_layer:
             return
 
@@ -224,11 +224,11 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     def set_nodata_value_categorical_raster(self):
-        current_layer = get_current_layer_in(self.selectCategRaster_SRS)
+        current_layer = get_current_layer_in(self.QCBox_CategRaster_SRS)
         if not current_layer:
             return
         # set the same nodata value if select the thematic raster
-        if current_layer == get_current_layer_in(self.selectThematicRaster):
+        if current_layer == get_current_layer_in(self.QCBox_ThematicRaster):
             self.nodata_CategRaster_SRS.setValue(self.nodata_ThematicRaster.value())
             return
 
@@ -239,28 +239,28 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # reinit variable for save tables content
         self.srs_tables = {}
         # clear table
-        self.TableWidget_SRS.setRowCount(0)
-        self.TableWidget_SRS.setColumnCount(0)
+        self.QTableW_SRS.setRowCount(0)
+        self.QTableW_SRS.setColumnCount(0)
         # clear select
-        self.StratifieSamplingMethod.setCurrentIndex(-1)
+        self.QCBox_SRS_Method.setCurrentIndex(-1)
 
     @pyqtSlot()
     @error_handler()
-    @wait_process("buttonClipping")
+    @wait_process("QPBtn_ClippingThematic")
     def clipping_thematic_raster(self):
         # first check input files requirements
-        if not valid_file_selected_in(self.selectThematicRaster, "thematic raster"):
+        if not valid_file_selected_in(self.QCBox_ThematicRaster, "thematic raster"):
             return
-        if not valid_file_selected_in(self.selectShapeArea, "shape study area"):
+        if not valid_file_selected_in(self.QCBox_AreaOfInterest, "area of interest shape"):
             return
 
         clip_file = do_clipping_with_shape(
-            get_current_file_path_in(self.selectThematicRaster),
-            get_current_file_path_in(self.selectShapeArea), self.tmp_dir)
+            get_current_file_path_in(self.QCBox_ThematicRaster),
+            get_current_file_path_in(self.QCBox_AreaOfInterest), self.tmp_dir)
         # unload old thematic file
-        unload_layer_in_qgis(get_current_file_path_in(self.selectThematicRaster))
+        unload_layer_in_qgis(get_current_file_path_in(self.QCBox_ThematicRaster))
         # load to qgis and update combobox list
-        load_and_select_filepath_in(self.selectThematicRaster, clip_file, "raster")
+        load_and_select_filepath_in(self.QCBox_ThematicRaster, clip_file, "raster")
 
         self.iface.messageBar().pushMessage("AcATaMa", "Clipping the thematic raster with shape, completed",
                                             level=QgsMessageBar.SUCCESS)
@@ -308,48 +308,48 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     def set_classification_file_settings(self):
-        sampling_layer = get_current_layer_in(self.selectSamplingFile)
+        sampling_layer = get_current_layer_in(self.QCBox_SamplingFile)
         if sampling_layer:
             # classification status
             if sampling_layer in Classification.instances:
                 classification = Classification.instances[sampling_layer]
                 total_classified = sum(sample.is_classified for sample in classification.points)
-                self.ClassificationStatusPB.setMaximum(len(classification.points))
-                self.ClassificationStatusPB.setValue(total_classified)
+                self.QPBar_ClassificationStatus.setMaximum(len(classification.points))
+                self.QPBar_ClassificationStatus.setValue(total_classified)
             else:
                 count_samples = len(list(sampling_layer.getFeatures()))
-                self.ClassificationStatusPB.setMaximum(count_samples)
-                self.ClassificationStatusPB.setValue(0)
-            self.ClassificationStatusPB.setTextVisible(True)
+                self.QPBar_ClassificationStatus.setMaximum(count_samples)
+                self.QPBar_ClassificationStatus.setValue(0)
+            self.QPBar_ClassificationStatus.setTextVisible(True)
             # check is the classification is completed and update in dockwidget status
             if sampling_layer in Classification.instances and Classification.instances[sampling_layer].is_completed:
-                self.ClassificationStatusLabel.setText("Classification completed")
-                self.ClassificationStatusLabel.setStyleSheet('QLabel {color: green;}')
+                self.QLabel_ClassificationStatus.setText("Classification completed")
+                self.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: green;}')
             else:
-                self.ClassificationStatusLabel.setText("Classification not completed")
-                self.ClassificationStatusLabel.setStyleSheet('QLabel {color: orange;}')
+                self.QLabel_ClassificationStatus.setText("Classification not completed")
+                self.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: orange;}')
             # grid settings
             if sampling_layer in Classification.instances:
                 classification = Classification.instances[sampling_layer]
-                with block_signals_to(self.groupBox_grid_settings):
+                with block_signals_to(self.QGBox_grid_settings):
                     self.grid_columns.setValue(classification.grid_columns)
                     self.grid_rows.setValue(classification.grid_rows)
             else:
-                with block_signals_to(self.groupBox_grid_settings):
+                with block_signals_to(self.QGBox_grid_settings):
                     self.grid_columns.setValue(3)
                     self.grid_rows.setValue(2)
         else:
             # return to default values
-            self.ClassificationStatusPB.setTextVisible(False)
-            self.ClassificationStatusPB.setValue(0)
-            self.ClassificationStatusLabel.setText("No sampling file selected")
-            self.ClassificationStatusLabel.setStyleSheet('QLabel {color: gray;}')
+            self.QPBar_ClassificationStatus.setTextVisible(False)
+            self.QPBar_ClassificationStatus.setValue(0)
+            self.QLabel_ClassificationStatus.setText("No sampling file selected")
+            self.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: gray;}')
             self.grid_columns.setValue(3)
             self.grid_rows.setValue(2)
 
     @pyqtSlot()
     def set_grid_setting(self, item):
-        sampling_layer = get_current_layer_in(self.selectSamplingFile)
+        sampling_layer = get_current_layer_in(self.QCBox_SamplingFile)
         if sampling_layer in Classification.instances:
             classification = Classification.instances[sampling_layer]
             if item == "column":
@@ -380,7 +380,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 # TODO: ask for new location of the sampling file
                 return
 
-            sampling_layer = load_and_select_filepath_in(self.selectSamplingFile, sampling_filepath, "vector", "points")
+            sampling_layer = load_and_select_filepath_in(self.QCBox_SamplingFile, sampling_filepath, "vector", "points")
 
             classification = Classification(sampling_layer)
             classification.load_config(yaml_config)
@@ -388,21 +388,21 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     def fileDialog_saveClassificationConfig(self):
-        if not valid_file_selected_in(self.selectSamplingFile):
+        if not valid_file_selected_in(self.QCBox_SamplingFile):
             self.iface.messageBar().pushMessage("AcATaMa",
                                                 "Error, please select a sampling file to save configuration",
                                                 level=QgsMessageBar.WARNING)
             return
         # get file path to suggest to save but not in tmp directory
-        path, filename = os.path.split(get_current_file_path_in(self.selectSamplingFile))
+        path, filename = os.path.split(get_current_file_path_in(self.QCBox_SamplingFile))
         if self.tmp_dir in path:
-            path = os.path.split(get_current_file_path_in(self.selectThematicRaster))[0]
+            path = os.path.split(get_current_file_path_in(self.QCBox_ThematicRaster))[0]
         suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_config.yml"
 
         file_out = QtGui.QFileDialog.getSaveFileName(self, self.tr(u"Save settings and classification status"),
                                                      suggested_filename, self.tr(u"Yaml (*.yaml *.yml);;All files (*.*)"))
         if file_out != '':
-            sampling_layer = get_current_layer_in(self.selectSamplingFile)
+            sampling_layer = get_current_layer_in(self.QCBox_SamplingFile)
             if sampling_layer in Classification.instances:
                 Classification.instances[sampling_layer].save_config(file_out)
                 self.iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=QgsMessageBar.SUCCESS)
@@ -413,12 +413,12 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     def fileDialog_saveSamplingClassification(self):
-        if not valid_file_selected_in(self.selectSamplingFile):
+        if not valid_file_selected_in(self.QCBox_SamplingFile):
             self.iface.messageBar().pushMessage("AcATaMa", "Error, please first select a sampling file",
                                                 level=QgsMessageBar.WARNING)
             return
         # get instance
-        sampling_layer = get_current_layer_in(self.selectSamplingFile)
+        sampling_layer = get_current_layer_in(self.QCBox_SamplingFile)
         if sampling_layer in Classification.instances:
             classification = Classification.instances[sampling_layer]
             if not classification.is_completed:
@@ -434,9 +434,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                                                 level=QgsMessageBar.WARNING)
             return
         # get file path to suggest to save but not in tmp directory
-        path, filename = os.path.split(get_current_file_path_in(self.selectSamplingFile))
+        path, filename = os.path.split(get_current_file_path_in(self.QCBox_SamplingFile))
         if self.tmp_dir in path:
-            path = os.path.split(get_current_file_path_in(self.selectThematicRaster))[0]
+            path = os.path.split(get_current_file_path_in(self.QCBox_ThematicRaster))[0]
         suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_classified.shp"
         file_out = QtGui.QFileDialog.getSaveFileName(self, self.tr(u"Save sampling file with the classification"),
                                                      suggested_filename,
@@ -450,7 +450,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         if ClassificationDialog.is_opened:
             self.classification_dialog.activateWindow()
             return
-        sampling_layer = get_current_layer_in(self.selectSamplingFile)
+        sampling_layer = get_current_layer_in(self.QCBox_SamplingFile)
         if not sampling_layer:
             self.iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid sampling file to classify",
                                                 level=QgsMessageBar.WARNING)
@@ -459,10 +459,10 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.classification_dialog = \
             ClassificationDialog(self, sampling_layer, self.grid_columns.value(), self.grid_rows.value())
         # adjust some objects in the dockwidget while is classifying
-        self.groupBox_SamplingFile.setDisabled(True)
-        self.groupBox_grid_settings.setDisabled(True)
-        self.groupBox_ClassificationStatus.setDisabled(True)
-        self.buttonOpenClassificationDialog.setText(u"Classification in progress, click to show")
+        self.QGBox_SamplingFile.setDisabled(True)
+        self.QGBox_grid_settings.setDisabled(True)
+        self.QGBox_ClassificationStatus.setDisabled(True)
+        self.QPBtn_OpenClassificationDialog.setText(u"Classification in progress, click to show")
         # open dialog
         self.classification_dialog.show()
 

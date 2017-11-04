@@ -36,24 +36,24 @@ from AcATaMa.core.utils import wait_process, error_handler
 
 
 @error_handler()
-@wait_process('widget_generate_RS.buttonGenerateSampling')
+@wait_process('widget_generate_RS.QPBtn_GenerateSampling')
 def do_random_sampling(dockwidget):
     # first check input files requirements
-    if not valid_file_selected_in(dockwidget.selectThematicRaster, "thematic raster"):
+    if not valid_file_selected_in(dockwidget.QCBox_ThematicRaster, "thematic raster"):
         return
-    if dockwidget.groupBox_RSwithCR.isChecked():
-        if not valid_file_selected_in(dockwidget.selectCategRaster_RS, "categorical raster"):
+    if dockwidget.QGBox_RSwithCR.isChecked():
+        if not valid_file_selected_in(dockwidget.QCBox_CategRaster_RS, "categorical raster"):
             return
     # get and define some variables
     number_of_samples = int(dockwidget.numberOfSamples_RS.value())
     min_distance = int(dockwidget.minDistance_RS.value())
 
-    ThematicR = Raster(file_selected_combo_box=dockwidget.selectThematicRaster,
+    ThematicR = Raster(file_selected_combo_box=dockwidget.QCBox_ThematicRaster,
                        nodata=int(dockwidget.nodata_ThematicRaster.value()))
 
     # random sampling in categorical raster
-    if dockwidget.groupBox_RSwithCR.isChecked():
-        CategoricalR = Raster(file_selected_combo_box=dockwidget.selectCategRaster_RS)
+    if dockwidget.QGBox_RSwithCR.isChecked():
+        CategoricalR = Raster(file_selected_combo_box=dockwidget.QCBox_CategRaster_RS)
         try:
             pixel_values = [int(p) for p in dockwidget.pixelsValuesCategRaster.text().split(",")]
         except:
@@ -65,9 +65,9 @@ def do_random_sampling(dockwidget):
         pixel_values = None
 
     # check neighbors aggregation
-    if dockwidget.widget_generate_RS.groupBox_neighbour_aggregation.isChecked():
-        number_of_neighbors = int(dockwidget.widget_generate_RS.number_of_neighbors.currentText())
-        same_class_of_neighbors = int(dockwidget.widget_generate_RS.same_class_of_neighbors.currentText())
+    if dockwidget.widget_generate_RS.QGBox_neighbour_aggregation.isChecked():
+        number_of_neighbors = int(dockwidget.widget_generate_RS.QCBox_NumberOfNeighbors.currentText())
+        same_class_of_neighbors = int(dockwidget.widget_generate_RS.QCBox_SameClassOfNeighbors.currentText())
         neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
     else:
         neighbor_aggregation = None
@@ -82,7 +82,7 @@ def do_random_sampling(dockwidget):
     sampling = Sampling("RS", ThematicR, CategoricalR, out_dir=dockwidget.tmp_dir)
     sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
                                       neighbor_aggregation, attempts_by_sampling,
-                                      dockwidget.widget_generate_RS.progressGenerateSampling)
+                                      dockwidget.widget_generate_RS.QPBar_GenerateSampling)
 
     # success
     if sampling.total_of_samples == number_of_samples:
@@ -104,26 +104,26 @@ def do_random_sampling(dockwidget):
 
 
 @error_handler()
-@wait_process('widget_generate_SRS.buttonGenerateSampling')
+@wait_process('widget_generate_SRS.QPBtn_GenerateSampling')
 def do_stratified_random_sampling(dockwidget):
     # first check input files requirements
-    if not valid_file_selected_in(dockwidget.selectThematicRaster, "thematic raster"):
+    if not valid_file_selected_in(dockwidget.QCBox_ThematicRaster, "thematic raster"):
         return
-    if not valid_file_selected_in(dockwidget.selectCategRaster_SRS, "categorical raster"):
+    if not valid_file_selected_in(dockwidget.QCBox_CategRaster_SRS, "categorical raster"):
         return
     # get and define some variables
     min_distance = int(dockwidget.minDistance_SRS.value())
-    ThematicR = Raster(file_selected_combo_box=dockwidget.selectThematicRaster,
+    ThematicR = Raster(file_selected_combo_box=dockwidget.QCBox_ThematicRaster,
                        nodata=int(dockwidget.nodata_ThematicRaster.value()))
-    CategoricalR = Raster(file_selected_combo_box=dockwidget.selectCategRaster_SRS,
+    CategoricalR = Raster(file_selected_combo_box=dockwidget.QCBox_CategRaster_SRS,
                           nodata=int(dockwidget.nodata_CategRaster_SRS.value()))
 
     # get values from category table  #########
     pixel_values = []
     number_of_samples = []
-    for row in range(dockwidget.TableWidget_SRS.rowCount()):
-        pixel_values.append(int(dockwidget.TableWidget_SRS.item(row, 0).text()))
-        number_of_samples.append(dockwidget.TableWidget_SRS.item(row, 2).text())
+    for row in range(dockwidget.QTableW_SRS.rowCount()):
+        pixel_values.append(int(dockwidget.QTableW_SRS.item(row, 0).text()))
+        number_of_samples.append(dockwidget.QTableW_SRS.item(row, 2).text())
     # convert and check if number of samples only positive integers
     try:
         number_of_samples = [int(ns) for ns in number_of_samples]
@@ -140,9 +140,9 @@ def do_stratified_random_sampling(dockwidget):
         return
 
     # check neighbors aggregation
-    if dockwidget.widget_generate_SRS.groupBox_neighbour_aggregation.isChecked():
-        number_of_neighbors = int(dockwidget.widget_generate_SRS.number_of_neighbors.currentText())
-        same_class_of_neighbors = int(dockwidget.widget_generate_SRS.same_class_of_neighbors.currentText())
+    if dockwidget.widget_generate_SRS.QGBox_neighbour_aggregation.isChecked():
+        number_of_neighbors = int(dockwidget.widget_generate_SRS.QCBox_NumberOfNeighbors.currentText())
+        same_class_of_neighbors = int(dockwidget.widget_generate_SRS.QCBox_SameClassOfNeighbors.currentText())
         neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
     else:
         neighbor_aggregation = None
@@ -154,25 +154,25 @@ def do_stratified_random_sampling(dockwidget):
         attempts_by_sampling = None
 
     # set the method of stratified sampling and save SRS config
-    if dockwidget.StratifieSamplingMethod.currentText().startswith("Fixed values"):
+    if dockwidget.QCBox_SRS_Method.currentText().startswith("Fixed values"):
         sampling_method = "fixed values"
         srs_config = None
-    if dockwidget.StratifieSamplingMethod.currentText().startswith("Area based proportion"):
+    if dockwidget.QCBox_SRS_Method.currentText().startswith("Area based proportion"):
         sampling_method = "area based proportion"
         srs_config = {}
         # save total expected std error
         srs_config["total_std_error"] = dockwidget.TotalExpectedSE.value()
         # get std_error from table
         srs_config["std_error"] = []
-        for row in range(dockwidget.TableWidget_SRS.rowCount()):
-            srs_config["std_error"].append(float(dockwidget.TableWidget_SRS.item(row, 3).text()))
+        for row in range(dockwidget.QTableW_SRS.rowCount()):
+            srs_config["std_error"].append(float(dockwidget.QTableW_SRS.item(row, 3).text()))
 
     # process
     sampling = Sampling("SRS", ThematicR, CategoricalR, sampling_method,
                         srs_config=srs_config, out_dir=dockwidget.tmp_dir)
     sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
                                       neighbor_aggregation, attempts_by_sampling,
-                                      dockwidget.widget_generate_SRS.progressGenerateSampling)
+                                      dockwidget.widget_generate_SRS.QPBar_GenerateSampling)
 
     # success
     if sampling.total_of_samples == total_of_samples:

@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_thematic">
        <attribute name="title">
@@ -53,7 +53,7 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
-             <widget class="QGroupBox" name="groupBox_ThematicRaster">
+             <widget class="QGroupBox" name="QGBox_ThematicRaster">
               <property name="title">
                <string>Thematic Raster</string>
               </property>
@@ -75,7 +75,7 @@
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QComboBox" name="selectThematicRaster">
+                   <widget class="QComboBox" name="QCBox_ThematicRaster">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                       <horstretch>0</horstretch>
@@ -88,7 +88,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="browseThematicRaster">
+                   <widget class="QPushButton" name="QPBtn_browseThematicRaster">
                     <property name="text">
                      <string>Browse</string>
                     </property>
@@ -136,7 +136,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_ShapeArea">
+             <widget class="QGroupBox" name="QGBox_AreaOfInterest">
               <property name="title">
                <string>Working alone in an area of interest (optional)</string>
               </property>
@@ -148,7 +148,7 @@
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_7">
                <item>
-                <widget class="QWidget" name="widget_ShapeArea" native="true">
+                <widget class="QWidget" name="widget_AreaOfInterest" native="true">
                  <layout class="QVBoxLayout" name="verticalLayout_12">
                   <property name="margin">
                    <number>0</number>
@@ -178,7 +178,7 @@
                       <number>0</number>
                      </property>
                      <item>
-                      <widget class="QComboBox" name="selectShapeArea">
+                      <widget class="QComboBox" name="QCBox_AreaOfInterest">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                          <horstretch>0</horstretch>
@@ -188,7 +188,7 @@
                       </widget>
                      </item>
                      <item>
-                      <widget class="QPushButton" name="browseShapeArea">
+                      <widget class="QPushButton" name="QPBtn_browseAreaOfInterest">
                        <property name="text">
                         <string>Browse</string>
                        </property>
@@ -220,7 +220,7 @@
                       </spacer>
                      </item>
                      <item>
-                      <widget class="QPushButton" name="buttonClipping">
+                      <widget class="QPushButton" name="QPBtn_ClippingThematic">
                        <property name="text">
                         <string>Clipping</string>
                        </property>
@@ -340,7 +340,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QGroupBox" name="groupBox_4">
+                    <widget class="QGroupBox" name="QGBox_4">
                      <property name="title">
                       <string>Sampling Options</string>
                      </property>
@@ -411,7 +411,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QGroupBox" name="groupBox_RSwithCR">
+                    <widget class="QGroupBox" name="QGBox_RSwithCR">
                      <property name="title">
                       <string>Sampling in categorical raster (optional)</string>
                      </property>
@@ -448,7 +448,7 @@
                              <number>0</number>
                             </property>
                             <item>
-                             <widget class="QComboBox" name="selectCategRaster_RS">
+                             <widget class="QComboBox" name="QCBox_CategRaster_RS">
                               <property name="sizePolicy">
                                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                                 <horstretch>0</horstretch>
@@ -461,7 +461,7 @@
                              </widget>
                             </item>
                             <item>
-                             <widget class="QPushButton" name="browseCategRaster_RS">
+                             <widget class="QPushButton" name="QPBtn_browseCategRaster_RS">
                               <property name="text">
                                <string>Browse</string>
                               </property>
@@ -563,7 +563,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QGroupBox" name="groupBox_2">
+                    <widget class="QGroupBox" name="QGBox_2">
                      <property name="title">
                       <string>Categorical Raster</string>
                      </property>
@@ -588,7 +588,7 @@
                           <number>0</number>
                          </property>
                          <item>
-                          <widget class="QComboBox" name="selectCategRaster_SRS">
+                          <widget class="QComboBox" name="QCBox_CategRaster_SRS">
                            <property name="sizePolicy">
                             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                              <horstretch>0</horstretch>
@@ -601,7 +601,7 @@
                           </widget>
                          </item>
                          <item>
-                          <widget class="QPushButton" name="browseCategRaster_SRS">
+                          <widget class="QPushButton" name="QPBtn_browseCategRaster_SRS">
                            <property name="text">
                             <string>Browse</string>
                            </property>
@@ -651,7 +651,7 @@
                    <item>
                     <widget class="QGroupBox" name="groupBox">
                      <property name="title">
-                      <string>Stratified Sampling Method</string>
+                      <string>Stratified Random Sampling Method</string>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_17">
                       <item>
@@ -662,7 +662,7 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QComboBox" name="StratifieSamplingMethod">
+                       <widget class="QComboBox" name="QCBox_SRS_Method">
                         <property name="currentIndex">
                          <number>-1</number>
                         </property>
@@ -711,7 +711,7 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QTableWidget" name="TableWidget_SRS">
+                       <widget class="QTableWidget" name="QTableW_SRS">
                         <property name="minimumSize">
                          <size>
                           <width>0</width>
@@ -763,7 +763,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QGroupBox" name="groupBox_3">
+                 <widget class="QGroupBox" name="QGBox_3">
                   <property name="title">
                    <string>Sampling Options</string>
                   </property>
@@ -824,7 +824,7 @@
                <zorder>widget_generate_SRS</zorder>
                <zorder>widget_StratifiedSampling</zorder>
                <zorder>verticalSpacer_4</zorder>
-               <zorder>groupBox_3</zorder>
+               <zorder>QGBox_3</zorder>
               </widget>
              </widget>
             </item>
@@ -867,7 +867,7 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_24">
             <item>
-             <widget class="QGroupBox" name="groupBox_SamplingFile">
+             <widget class="QGroupBox" name="QGBox_SamplingFile">
               <property name="title">
                <string>Sampling File</string>
               </property>
@@ -892,7 +892,7 @@
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QComboBox" name="selectSamplingFile">
+                   <widget class="QComboBox" name="QCBox_SamplingFile">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                       <horstretch>0</horstretch>
@@ -905,7 +905,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="browseSamplingFile">
+                   <widget class="QPushButton" name="QPBtn_browseSamplingFile">
                     <property name="text">
                      <string>Browse</string>
                     </property>
@@ -918,7 +918,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_ClassificationStatus">
+             <widget class="QGroupBox" name="QGBox_ClassificationStatus">
               <property name="title">
                <string>Classification Status</string>
               </property>
@@ -936,7 +936,7 @@
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QProgressBar" name="ClassificationStatusPB">
+                   <widget class="QProgressBar" name="QPBar_ClassificationStatus">
                     <property name="enabled">
                      <bool>true</bool>
                     </property>
@@ -961,7 +961,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLabel" name="ClassificationStatusLabel">
+                   <widget class="QLabel" name="QLabel_ClassificationStatus">
                     <property name="styleSheet">
                      <string notr="true">color: &quot;gray&quot;;</string>
                     </property>
@@ -1022,14 +1022,14 @@
                    </spacer>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="loadClassificationConfig">
+                   <widget class="QPushButton" name="QPBtn_loadClassificationConfig">
                     <property name="text">
                      <string>Load</string>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="saveClassificationConfig">
+                   <widget class="QPushButton" name="QPBtn_saveClassificationConfig">
                     <property name="text">
                      <string>Save</string>
                     </property>
@@ -1077,7 +1077,7 @@
                    </spacer>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="saveSamplingClassification">
+                   <widget class="QPushButton" name="QPBtn_saveSamplingClassification">
                     <property name="text">
                      <string>Save sampling+classification</string>
                     </property>
@@ -1090,7 +1090,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_grid_settings">
+             <widget class="QGroupBox" name="QGBox_grid_settings">
               <property name="title">
                <string>Grid Settings</string>
               </property>
@@ -1206,7 +1206,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="buttonOpenClassificationDialog">
+             <widget class="QPushButton" name="QPBtn_OpenClassificationDialog">
               <property name="text">
                <string>Classify the sampling file</string>
               </property>
@@ -1264,7 +1264,7 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_11">
             <item>
-             <widget class="QGroupBox" name="groupBox_5">
+             <widget class="QGroupBox" name="QGBox_5">
               <property name="title">
                <string>Classification Accuracy Assessment</string>
               </property>
@@ -1272,7 +1272,7 @@
                <item>
                 <widget class="QLabel" name="label_23">
                  <property name="text">
-                  <string>Classified sampling file for the classification accuracy assessment (change it from the classification tab):</string>
+                  <string>Classified sampling file for the classification accuracy assessment (select it from the classification tab):</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -1283,7 +1283,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="selectSamplingFile_AA">
+                <widget class="QComboBox" name="QCBox_SamplingFile_AA">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1324,7 +1324,7 @@
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QPushButton" name="btn_ComputeAccurasyAssessment">
+                   <widget class="QPushButton" name="QPBtn_ComputeAccurasyAssessment">
                     <property name="text">
                      <string>Compute for the current sampling file</string>
                     </property>
@@ -1347,14 +1347,14 @@
                       </spacer>
                      </item>
                      <item>
-                      <widget class="QPushButton" name="btn_view_AA_results">
+                      <widget class="QPushButton" name="QPBtn_viewAA_results">
                        <property name="text">
                         <string>View results</string>
                        </property>
                       </widget>
                      </item>
                      <item>
-                      <widget class="QPushButton" name="btn_save_AA_results">
+                      <widget class="QPushButton" name="QPBtn_saveAA_results">
                        <property name="text">
                         <string>Save results</string>
                        </property>
@@ -1465,9 +1465,9 @@
  <resources/>
  <connections>
   <connection>
-   <sender>groupBox_ShapeArea</sender>
+   <sender>QGBox_AreaOfInterest</sender>
    <signal>clicked(bool)</signal>
-   <receiver>widget_ShapeArea</receiver>
+   <receiver>widget_AreaOfInterest</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1481,7 +1481,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>groupBox_RSwithCR</sender>
+   <sender>QGBox_RSwithCR</sender>
    <signal>clicked(bool)</signal>
    <receiver>widget_RSwithCR</receiver>
    <slot>setVisible(bool)</slot>

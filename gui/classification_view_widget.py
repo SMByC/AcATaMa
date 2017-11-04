@@ -174,15 +174,15 @@ class ClassificationViewWidget(QtGui.QWidget, FORM_CLASS):
     def setup_view_widget(self, sampling_layer):
         self.sampling_layer = sampling_layer
         # render layer actions
-        update_layers_list(self.selectRenderFile, "any", ignore_layers=[self.sampling_layer])
+        update_layers_list(self.QCBox_RenderFile, "any", ignore_layers=[self.sampling_layer])
         # handle connect when the list of layers changed
         self.qgs_main_canvas.layersChanged.connect(
-            lambda: update_layers_list(self.selectRenderFile, "any", ignore_layers=[self.sampling_layer]))
-        self.selectRenderFile.currentIndexChanged.connect(
-            lambda: self.render_widget.render_layer(get_current_layer_in(self.selectRenderFile)))
+            lambda: update_layers_list(self.QCBox_RenderFile, "any", ignore_layers=[self.sampling_layer]))
+        self.QCBox_RenderFile.currentIndexChanged.connect(
+            lambda: self.render_widget.render_layer(get_current_layer_in(self.QCBox_RenderFile)))
         # call to browse the render file
-        self.browseRenderFile.clicked.connect(lambda: self.fileDialog_browse(
-            self.selectRenderFile,
+        self.QCBox_browseRenderFile.clicked.connect(lambda: self.fileDialog_browse(
+            self.QCBox_RenderFile,
             dialog_title=self.tr(u"Select the file for this view"),
             dialog_types=self.tr(u"Raster or vector files (*.tif *.img *.shp);;All files (*.*)"),
             layer_type="any"))

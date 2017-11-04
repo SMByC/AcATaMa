@@ -56,6 +56,8 @@ class Classification:
         self.dialog_size = None
         # when all points are classified
         self.is_completed = False
+        # instance of accuracy assessment result
+        self.accuracy_assessment = None
 
         # shuffle the list items
         shuffle(self.points)
@@ -85,7 +87,7 @@ class Classification:
 
         data = OrderedDict()
         data["thematic_raster"] = \
-            {"path": get_current_file_path_in(AcATaMa.dockwidget.selectThematicRaster, show_message=False),
+            {"path": get_current_file_path_in(AcATaMa.dockwidget.QCBox_ThematicRaster, show_message=False),
              "nodata": AcATaMa.dockwidget.nodata_ThematicRaster.value()}
         data["sampling_layer"] = get_file_path_of_layer(self.sampling_layer)
         data["dialog_size"] = self.dialog_size
@@ -113,7 +115,7 @@ class Classification:
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         # restore the thematic raster
         if yaml_config["thematic_raster"]["path"]:
-            load_and_select_filepath_in(AcATaMa.dockwidget.selectThematicRaster,
+            load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_ThematicRaster,
                                         yaml_config["thematic_raster"]["path"], "raster")
             AcATaMa.dockwidget.nodata_ThematicRaster.setValue(yaml_config["thematic_raster"]["nodata"])
         # restore the classification settings
@@ -142,15 +144,15 @@ class Classification:
         # update the total classified progress bar
         total_classified = sum(sample.is_classified for sample in self.points)
         total_not_classified = sum(not sample.is_classified for sample in self.points)
-        AcATaMa.dockwidget.ClassificationStatusPB.setValue(total_classified)
+        AcATaMa.dockwidget.QPBar_ClassificationStatus.setValue(total_classified)
         # check is the classification is completed and update in dockwidget status
         if total_not_classified == 0:
             self.is_completed = True
-            AcATaMa.dockwidget.ClassificationStatusLabel.setText("Classification completed")
-            AcATaMa.dockwidget.ClassificationStatusLabel.setStyleSheet('QLabel {color: green;}')
+            AcATaMa.dockwidget.QLabel_ClassificationStatus.setText("Classification completed")
+            AcATaMa.dockwidget.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: green;}')
         else:
-            AcATaMa.dockwidget.ClassificationStatusLabel.setText("Classification not completed")
-            AcATaMa.dockwidget.ClassificationStatusLabel.setStyleSheet('QLabel {color: orange;}')
+            AcATaMa.dockwidget.QLabel_ClassificationStatus.setText("Classification not completed")
+            AcATaMa.dockwidget.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: orange;}')
 
     @wait_process()
     def save_sampling_classification(self, file_out):
