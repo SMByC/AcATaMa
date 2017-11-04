@@ -87,7 +87,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         for idx, view_widget in enumerate(ClassificationDialog.view_widgets): view_widget.id = idx
         # set the label names for each view
         for num_view, view_widget in enumerate(ClassificationDialog.view_widgets):
-            view_widget.QLabel_ViewName.setText("View {}:".format(num_view+1))
+            view_widget.QLabel_ViewID.setText("View {}:".format(num_view+1))
         # restore view widgets status
         for config_id, view_config in self.classification.view_widgets_config.items():
             for view_widget in ClassificationDialog.view_widgets:
@@ -107,7 +107,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                     view_widget.OnOff_RenderView.setChecked(view_config["render_activated"])
                     # TODO: restore size by view widget
                     #view_widget.resize(*view_config["view_size"])
-                    view_widget.view_name.setText(view_config["name"])
+                    view_widget.QLabel_ViewName.setText(view_config["name"])
                     view_widget.scaleFactor.setValue(view_config["scale_factor"])
 
         # set classification buttons
@@ -286,7 +286,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
             if view_widget.is_active:
                 # {N: {"name", "render_file", "render_activated", "scale_factor"}, ...}
                 view_widgets_config[view_widget.id] = \
-                    {"name": view_widget.view_name.text(),
+                    {"name": view_widget.QLabel_ViewName.text(),
                      "render_file":  get_current_file_path_in(view_widget.QCBox_RenderFile),
                      "render_activated": view_widget.OnOff_RenderView.isChecked(),
                      #"view_size": (view_widget.size().width(), view_widget.size().height()),
