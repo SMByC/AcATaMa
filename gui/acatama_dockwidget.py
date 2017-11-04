@@ -472,6 +472,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.QGBox_SamplingFile.setDisabled(True)
         self.QGBox_grid_settings.setDisabled(True)
         self.QGBox_ClassificationStatus.setDisabled(True)
+        self.QGBox_saveSamplingClassified.setDisabled(True)
         self.QPBtn_OpenClassificationDialog.setText(u"Classification in progress, click to show")
         # open dialog
         self.classification_dialog.show()
