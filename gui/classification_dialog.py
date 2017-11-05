@@ -298,10 +298,10 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         ClassificationDialog.is_opened = False
         # restore the states for some objects in the dockwidget
         self.acatama_dockwidget.QGBox_SamplingFile.setEnabled(True)
-        self.acatama_dockwidget.QGBox_grid_settings.setEnabled(True)
+        self.acatama_dockwidget.QGBox_GridSettings.setEnabled(True)
         self.acatama_dockwidget.QGBox_ClassificationStatus.setEnabled(True)
         self.acatama_dockwidget.QGBox_saveSamplingClassified.setEnabled(True)
-        self.acatama_dockwidget.QPBtn_OpenClassificationDialog.setText(u"Classify the sampling file")
+        self.acatama_dockwidget.QPBtn_OpenClassificationDialog.setText(u"Open the classification dialog")
         self.reject(is_ok_to_close=True)
 
     def reject(self, is_ok_to_close=False):

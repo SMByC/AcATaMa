@@ -29,6 +29,7 @@ from PyQt4.QtGui import QMessageBox
 from qgis.core import QgsMapLayerRegistry, QgsVectorFileWriter
 from qgis.gui import QgsMessageBar
 
+from AcATaMa.core.accuracy_assessment import AccuracyAssessment
 from AcATaMa.core.classification import Classification
 from AcATaMa.core.sampling import do_random_sampling, do_stratified_random_sampling, Sampling
 from AcATaMa.core.dockwidget import get_current_file_path_in, update_layers_list, \
@@ -211,7 +212,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         update_layers_list(self.QCBox_SamplingFile_AA, "vector", "points")
         # handle connect when the list of layers changed
         self.canvas.layersChanged.connect(lambda: update_layers_list(self.QCBox_SamplingFile_AA, "vector", "points"))
-        # show the classification file status in AA
+        # set and show the classification file status in AA
         self.QCBox_SamplingFile_AA.currentIndexChanged.connect(self.set_sampling_file_accuracy_assessment)
 
     @pyqtSlot()
@@ -338,11 +339,11 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             # grid settings
             if sampling_layer in Classification.instances:
                 classification = Classification.instances[sampling_layer]
-                with block_signals_to(self.QGBox_grid_settings):
+                with block_signals_to(self.QGBox_GridSettings):
                     self.grid_columns.setValue(classification.grid_columns)
                     self.grid_rows.setValue(classification.grid_rows)
             else:
-                with block_signals_to(self.QGBox_grid_settings):
+                with block_signals_to(self.QGBox_GridSettings):
                     self.grid_columns.setValue(3)
                     self.grid_rows.setValue(2)
         else:
@@ -470,7 +471,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             ClassificationDialog(self, sampling_layer, self.grid_columns.value(), self.grid_rows.value())
         # adjust some objects in the dockwidget while is classifying
         self.QGBox_SamplingFile.setDisabled(True)
-        self.QGBox_grid_settings.setDisabled(True)
+        self.QGBox_GridSettings.setDisabled(True)
         self.QGBox_ClassificationStatus.setDisabled(True)
         self.QGBox_saveSamplingClassified.setDisabled(True)
         self.QPBtn_OpenClassificationDialog.setText(u"Classification in progress, click to show")
