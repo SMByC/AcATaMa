@@ -56,7 +56,7 @@ class Classification:
         self.dialog_size = None
         # when all points are classified
         self.is_completed = False
-        # instance of accuracy assessment result
+        # for store the instance of the accuracy assessment results
         self.accuracy_assessment = None
 
         # shuffle the list items
