@@ -214,6 +214,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.canvas.layersChanged.connect(lambda: update_layers_list(self.QCBox_SamplingFile_AA, "vector", "points"))
         # set and show the classification file status in AA
         self.QCBox_SamplingFile_AA.currentIndexChanged.connect(self.set_sampling_file_accuracy_assessment)
+        # compute the AA and open the result dialog
+        self.QPBtn_ComputeViewAccurasyAssessment.clicked.connect(self.compute_accuracy_assessment)
 
     @pyqtSlot()
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
@@ -506,3 +508,18 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             self.QLabel_SamplingFileStatus_AA.setText("No sampling file selected")
             self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: gray;}")
             self.QGBox_AccuracyAssessment.setDisabled(True)
+
+    @pyqtSlot()
+    def compute_accuracy_assessment(self):
+        sampling_layer = get_current_layer_in(self.QCBox_SamplingFile_AA)
+        if sampling_layer:
+            # sampling file valid
+            if sampling_layer in Classification.instances:
+                # classification exists for this file
+                classification = Classification.instances[sampling_layer]
+                accuracy_assessment = AccuracyAssessment(classification)
+                accuracy_assessment.compute()
+                # save instance
+                classification.accuracy_assessment = accuracy_assessment
+
+
