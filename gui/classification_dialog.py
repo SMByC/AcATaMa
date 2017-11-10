@@ -41,11 +41,10 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
     view_widgets = []
     current_sample = None
 
-    def __init__(self, acatama_dockwidget, sampling_layer, columns, rows):
+    def __init__(self, sampling_layer, columns, rows):
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         QtGui.QDialog.__init__(self)
-        self.acatama_dockwidget = acatama_dockwidget
-        self.iface = acatama_dockwidget.iface
-        ClassificationDialog.is_opened = True
+        self.iface = AcATaMa.dockwidget.iface
         self.setupUi(self)
 
         # get classification or init new instance
@@ -139,6 +138,18 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.current_sample = None
         self.set_current_sample()
 
+    def show(self):
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        ClassificationDialog.is_opened = True
+        # adjust some objects in the dockwidget while is classifying
+        AcATaMa.dockwidget.QGBox_SamplingFile.setDisabled(True)
+        AcATaMa.dockwidget.QGBox_GridSettings.setDisabled(True)
+        AcATaMa.dockwidget.QGBox_ClassificationStatus.setDisabled(True)
+        AcATaMa.dockwidget.QGBox_saveSamplingClassified.setDisabled(True)
+        AcATaMa.dockwidget.QPBtn_OpenClassificationDialog.setText(u"Classification in progress, click to show")
+
+        super(ClassificationDialog, self).show()
+
     def set_current_sample(self):
         """Set the current sample"""
         self.current_sample = self.classification.points[self.current_sample_idx]
@@ -161,6 +172,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                 self.next_sample()
 
     def display_sample_status(self):
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         if self.current_sample.is_classified:
             class_name = self.classification.buttons_config[self.current_sample.classif_id]["name"]
             self.statusCurrentSample.setText(class_name)
@@ -175,17 +187,17 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.totalClassified.setText(str(total_classified))
         self.totalNotClassified.setText(str(total_not_classified))
         # update in dockwidget status
-        self.acatama_dockwidget.QPBar_ClassificationStatus.setValue(total_classified)
+        AcATaMa.dockwidget.QPBar_ClassificationStatus.setValue(total_classified)
         # check is the classification is completed and update in dockwidget status
         if total_not_classified == 0:
             self.classification.is_completed = True
-            self.acatama_dockwidget.QLabel_ClassificationStatus.setText("Classification completed")
-            self.acatama_dockwidget.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: green;}')
+            AcATaMa.dockwidget.QLabel_ClassificationStatus.setText("Classification completed")
+            AcATaMa.dockwidget.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: green;}')
         else:
-            self.acatama_dockwidget.QLabel_ClassificationStatus.setText("Classification not completed")
-            self.acatama_dockwidget.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: orange;}')
+            AcATaMa.dockwidget.QLabel_ClassificationStatus.setText("Classification not completed")
+            AcATaMa.dockwidget.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: orange;}')
         # updated state of sampling file selected for accuracy assessment tab
-        self.acatama_dockwidget.set_sampling_file_accuracy_assessment()
+        AcATaMa.dockwidget.set_sampling_file_accuracy_assessment()
 
     def show_and_go_to_current_sample(self, highlight=True):
         for view_widget in ClassificationDialog.view_widgets:
@@ -278,6 +290,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         """
         Do this before close the classification dialog
         """
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         # save some config of classification dialog for this sampling file
         self.classification.fit_to_sample = self.radiusFitToSample.value()
         # save view widgets status
@@ -297,11 +310,11 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
 
         ClassificationDialog.is_opened = False
         # restore the states for some objects in the dockwidget
-        self.acatama_dockwidget.QGBox_SamplingFile.setEnabled(True)
-        self.acatama_dockwidget.QGBox_GridSettings.setEnabled(True)
-        self.acatama_dockwidget.QGBox_ClassificationStatus.setEnabled(True)
-        self.acatama_dockwidget.QGBox_saveSamplingClassified.setEnabled(True)
-        self.acatama_dockwidget.QPBtn_OpenClassificationDialog.setText(u"Open the classification dialog")
+        AcATaMa.dockwidget.QGBox_SamplingFile.setEnabled(True)
+        AcATaMa.dockwidget.QGBox_GridSettings.setEnabled(True)
+        AcATaMa.dockwidget.QGBox_ClassificationStatus.setEnabled(True)
+        AcATaMa.dockwidget.QGBox_saveSamplingClassified.setEnabled(True)
+        AcATaMa.dockwidget.QPBtn_OpenClassificationDialog.setText(u"Open the classification dialog")
         self.reject(is_ok_to_close=True)
 
     def reject(self, is_ok_to_close=False):
@@ -397,8 +410,7 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
                 self.tableBtnsConfig.clearSelection()
         # set the thematic raster class
         if tableItem.column() == 3:
-            from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-            thematic_raster_class = ThematicRasterClasses(AcATaMa.dockwidget)
+            thematic_raster_class = ThematicRasterClasses()
             if thematic_raster_class.exec_():
                 tableItem.setText(thematic_raster_class.pix_value)
                 self.tableBtnsConfig.item(tableItem.row(), 2).setBackground(thematic_raster_class.color)
@@ -409,7 +421,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 
 class ThematicRasterClasses(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, acatama_dockwidget):
+    def __init__(self):
         QtGui.QDialog.__init__(self)
         self.setupUi(self)
         # init with empty table
