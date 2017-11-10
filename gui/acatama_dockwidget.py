@@ -277,12 +277,15 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     def update_generated_sampling_list_in(self, combo_box):
-        combo_box.clear()
-        layers = QgsMapLayerRegistry.instance().mapLayers().values()
+        try:
+            combo_box.clear()
+            layers = QgsMapLayerRegistry.instance().mapLayers().values()
 
-        for layer in layers:
-            if layer.name() in Sampling.samplings.keys():
-                combo_box.addItem(layer.name())
+            for layer in layers:
+                if layer.name() in Sampling.samplings.keys():
+                    combo_box.addItem(layer.name())
+        except:
+            pass
 
     @pyqtSlot()
     def fileDialog_saveSampling(self, combo_box):
