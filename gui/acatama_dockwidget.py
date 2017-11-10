@@ -29,7 +29,7 @@ from PyQt4.QtGui import QMessageBox
 from qgis.core import QgsMapLayerRegistry, QgsVectorFileWriter
 from qgis.gui import QgsMessageBar
 
-from AcATaMa.core.accuracy_assessment import AccuracyAssessment
+from AcATaMa.core.accuracy_assessment import AccuracyAssessment, AccuracyAssessmentDialog
 from AcATaMa.core.classification import Classification
 from AcATaMa.core.sampling import do_random_sampling, do_stratified_random_sampling, Sampling
 from AcATaMa.core.dockwidget import get_current_file_path_in, update_layers_list, \
@@ -511,15 +511,26 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     def compute_accuracy_assessment(self):
+        if AccuracyAssessmentDialog.is_opened:
+            self.accuracy_assessment_dialog.activateWindow()
+            return
+
         sampling_layer = get_current_layer_in(self.QCBox_SamplingFile_AA)
         if sampling_layer:
             # sampling file valid
             if sampling_layer in Classification.instances:
                 # classification exists for this file
                 classification = Classification.instances[sampling_layer]
-                accuracy_assessment = AccuracyAssessment(classification)
-                accuracy_assessment.compute()
+                if classification.accuracy_assessment:
+                    accuracy_assessment = classification.accuracy_assessment
+                else:
+                    accuracy_assessment = AccuracyAssessment(classification)
+                #accuracy_assessment.compute()
+                # open dialog
+                accuracy_assessment.results_dialog.show()
+
                 # save instance
+                self.accuracy_assessment_dialog = accuracy_assessment.results_dialog
                 classification.accuracy_assessment = accuracy_assessment
 
 

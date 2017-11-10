@@ -1406,7 +1406,7 @@
                   <item>
                    <widget class="QPushButton" name="QPBtn_ComputeViewAccurasyAssessment">
                     <property name="text">
-                     <string>Compute and view the accuracy assessment</string>
+                     <string>Open the accuracy assessment results</string>
                     </property>
                    </widget>
                   </item>
