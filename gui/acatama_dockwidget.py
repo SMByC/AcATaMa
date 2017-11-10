@@ -470,13 +470,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             return
 
         self.classification_dialog = \
-            ClassificationDialog(self, sampling_layer, self.grid_columns.value(), self.grid_rows.value())
-        # adjust some objects in the dockwidget while is classifying
-        self.QGBox_SamplingFile.setDisabled(True)
-        self.QGBox_GridSettings.setDisabled(True)
-        self.QGBox_ClassificationStatus.setDisabled(True)
-        self.QGBox_saveSamplingClassified.setDisabled(True)
-        self.QPBtn_OpenClassificationDialog.setText(u"Classification in progress, click to show")
+            ClassificationDialog(sampling_layer, self.grid_columns.value(), self.grid_rows.value())
         # open dialog
         self.classification_dialog.show()
 
