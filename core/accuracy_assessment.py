@@ -18,6 +18,9 @@
  *                                                                         *
  ***************************************************************************/
 """
+import os
+from PyQt4 import QtGui, uic
+
 from AcATaMa.core.raster import Raster
 from AcATaMa.core.utils import wait_process
 
@@ -30,6 +33,7 @@ class AccuracyAssessment:
         self.classification = classification
         self.ThematicR = Raster(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicRaster,
                                 nodata=int(AcATaMa.dockwidget.nodata_ThematicRaster.value()))
+        self.results_dialog = AccuracyAssessmentDialog()
 
     @wait_process
     def compute(self):
@@ -69,3 +73,43 @@ class AccuracyAssessment:
         error_matrix = [[0 for column in values] for row in values]
         for thematic, classified in zip(thematic_map_values, classified_values):
             error_matrix[indices[thematic]][indices[classified]] += 1
+
+
+# plugin path
+plugin_folder = os.path.dirname(os.path.dirname(__file__))
+FORM_CLASS, _ = uic.loadUiType(os.path.join(
+    plugin_folder, 'ui', 'accuracy_assessment_dialog.ui'))
+
+
+class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
+    is_opened = False
+
+    def __init__(self):
+        QtGui.QDialog.__init__(self)
+        self.setupUi(self)
+        # dialog buttons box
+        self.closeButton.rejected.connect(self.closing)
+
+    def show(self):
+        AccuracyAssessmentDialog.is_opened = True
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText(u"Accuracy assessment is opened, click to show")
+
+        super(AccuracyAssessmentDialog, self).show()
+
+    def closeEvent(self, event):
+        self.closing()
+        event.ignore()
+
+    def closing(self):
+        """
+        Do this before close the classification dialog
+        """
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        AccuracyAssessmentDialog.is_opened = False
+        AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText(u"Open the accuracy assessment results")
+        self.reject(is_ok_to_close=True)
+
+    def reject(self, is_ok_to_close=False):
+        if is_ok_to_close:
+            super(AccuracyAssessmentDialog, self).reject()
