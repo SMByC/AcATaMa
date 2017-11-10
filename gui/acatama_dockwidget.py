@@ -215,7 +215,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # set and show the classification file status in AA
         self.QCBox_SamplingFile_AA.currentIndexChanged.connect(self.set_sampling_file_accuracy_assessment)
         # compute the AA and open the result dialog
-        self.QPBtn_ComputeViewAccurasyAssessment.clicked.connect(self.compute_accuracy_assessment)
+        self.QPBtn_ComputeViewAccurasyAssessment.clicked.connect(self.open_accuracy_assessment_results)
 
     @pyqtSlot()
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
@@ -510,27 +510,13 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             self.QGBox_AccuracyAssessment.setDisabled(True)
 
     @pyqtSlot()
-    def compute_accuracy_assessment(self):
+    def open_accuracy_assessment_results(self):
         if AccuracyAssessmentDialog.is_opened:
             self.accuracy_assessment_dialog.activateWindow()
             return
 
-        sampling_layer = get_current_layer_in(self.QCBox_SamplingFile_AA)
-        if sampling_layer:
-            # sampling file valid
-            if sampling_layer in Classification.instances:
-                # classification exists for this file
-                classification = Classification.instances[sampling_layer]
-                if classification.accuracy_assessment:
-                    accuracy_assessment = classification.accuracy_assessment
-                else:
-                    accuracy_assessment = AccuracyAssessment(classification)
-                #accuracy_assessment.compute()
-                # open dialog
-                accuracy_assessment.results_dialog.show()
-
-                # save instance
-                self.accuracy_assessment_dialog = accuracy_assessment.results_dialog
-                classification.accuracy_assessment = accuracy_assessment
+        self.accuracy_assessment_dialog = AccuracyAssessmentDialog()
+        # open dialog
+        self.accuracy_assessment_dialog.show()
 
 

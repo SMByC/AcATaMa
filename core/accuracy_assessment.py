@@ -21,6 +21,8 @@
 import os
 from PyQt4 import QtGui, uic
 
+from AcATaMa.core.classification import Classification
+from AcATaMa.core.dockwidget import get_current_layer_in
 from AcATaMa.core.raster import Raster
 from AcATaMa.core.utils import wait_process
 
@@ -33,10 +35,11 @@ class AccuracyAssessment:
         self.classification = classification
         self.ThematicR = Raster(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicRaster,
                                 nodata=int(AcATaMa.dockwidget.nodata_ThematicRaster.value()))
-        self.results_dialog = AccuracyAssessmentDialog()
 
     @wait_process
     def compute(self):
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText(u"Processing, please wait ...")
 
         # get labels from classification buttons
         labels = {}
@@ -88,7 +91,22 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
         QtGui.QDialog.__init__(self)
         self.setupUi(self)
         # dialog buttons box
-        self.closeButton.rejected.connect(self.closing)
+        self.DialogButtons.rejected.connect(self.closing)
+        self.DialogButtons.button(QtGui.QDialogButtonBox.Save).setText("Export to CSV")
+        self.DialogButtons.button(QtGui.QDialogButtonBox.Save).clicked.connect(self.export_to_csv)
+
+        # get AccuracyAssessment or init new instance
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        sampling_layer = get_current_layer_in(AcATaMa.dockwidget.QCBox_SamplingFile_AA)
+        if sampling_layer:
+            # sampling file valid
+            if sampling_layer in Classification.instances:
+                # classification exists for this file
+                classification = Classification.instances[sampling_layer]
+                if classification.accuracy_assessment:
+                    self.accuracy_assessment = classification.accuracy_assessment
+                else:
+                    self.accuracy_assessment = AccuracyAssessment(classification)
 
     def show(self):
         AccuracyAssessmentDialog.is_opened = True
@@ -96,6 +114,9 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
         AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText(u"Accuracy assessment is opened, click to show")
 
         super(AccuracyAssessmentDialog, self).show()
+
+    def export_to_csv(self):
+        print "exporting...."
 
     def closeEvent(self, event):
         self.closing()
