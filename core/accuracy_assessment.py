@@ -20,6 +20,7 @@
 """
 import os
 from PyQt4 import QtGui, uic
+from PyQt4.QtGui import QApplication
 
 from AcATaMa.core.classification import Classification
 from AcATaMa.core.dockwidget import get_current_layer_in
@@ -36,11 +37,13 @@ class AccuracyAssessment:
         self.classification = classification
         self.ThematicR = Raster(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicRaster,
                                 nodata=int(AcATaMa.dockwidget.nodata_ThematicRaster.value()))
+        self.thematic_pixels_count = {}
 
     @wait_process()
     def compute(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText(u"Processing, please wait ...")
+        QApplication.processEvents()
 
         # get labels from classification buttons
         labels = {}
@@ -79,6 +82,12 @@ class AccuracyAssessment:
         for thematic, classified in zip(thematic_map_values, classified_values):
             error_matrix[indices[thematic]][indices[classified]] += 1
 
+        # calculate the total number of pixel in the thematic raster
+        # by each thematic raster class used in the classification buttons
+        for thematic_map_value in sorted(set(thematic_map_values)):
+            if thematic_map_value not in self.thematic_pixels_count:
+                self.thematic_pixels_count[thematic_map_value] = self.ThematicR.get_total_pixels_by_value(thematic_map_value)
+
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -109,6 +118,7 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
                     self.accuracy_assessment = classification.accuracy_assessment
                 else:
                     self.accuracy_assessment = AccuracyAssessment(classification)
+                    classification.accuracy_assessment = self.accuracy_assessment
 
     def show(self):
         AccuracyAssessmentDialog.is_opened = True
