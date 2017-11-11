@@ -22,6 +22,7 @@ import os
 from osgeo import gdal
 from subprocess import call
 from numpy.core.umath import isnan
+from osgeo import gdalnumeric
 
 from qgis.core import QgsRaster, QgsPoint
 from qgis.utils import iface
@@ -109,3 +110,7 @@ class Raster():
 
     def get_pixel_value_from_pnt(self, point, band=1):
         return self.qgs_layer.dataProvider().identify(point, QgsRaster.IdentifyFormatValue).results()[band]
+
+    def get_total_pixels_by_value(self, pixel_value):
+        raster_numpy = gdalnumeric.LoadFile(self.file_path)
+        return (raster_numpy == int(pixel_value)).sum()
