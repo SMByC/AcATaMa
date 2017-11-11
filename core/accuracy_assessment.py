@@ -36,7 +36,7 @@ class AccuracyAssessment:
         self.ThematicR = Raster(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicRaster,
                                 nodata=int(AcATaMa.dockwidget.nodata_ThematicRaster.value()))
 
-    @wait_process
+    @wait_process()
     def compute(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText(u"Processing, please wait ...")
@@ -49,7 +49,8 @@ class AccuracyAssessment:
         # get the classified and thematic map values
         thematic_map_values = []
         classified_values = []
-        points_ordered = sorted(self.classification.points, key=lambda p: p.shape_id)
+        classification_points = [point for point in self.classification.points if point.is_classified]
+        points_ordered = sorted(classification_points, key=lambda p: p.shape_id)
         for point in points_ordered:
             # classification from the pixel values in the thematic map
             thematic_map_value = self.ThematicR.get_pixel_value_from_pnt(point.QgsPnt)
@@ -111,6 +112,9 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
     def show(self):
         AccuracyAssessmentDialog.is_opened = True
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        # first compute the accuracy assessment
+        self.accuracy_assessment.compute()
+
         AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText(u"Accuracy assessment is opened, click to show")
 
         super(AccuracyAssessmentDialog, self).show()
