@@ -25,6 +25,7 @@ from AcATaMa.core.classification import Classification
 from AcATaMa.core.dockwidget import get_current_layer_in
 from AcATaMa.core.raster import Raster
 from AcATaMa.core.utils import wait_process
+from AcATaMa.gui import accuracy_assessment_results
 
 
 class AccuracyAssessment:
@@ -114,9 +115,10 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         # first compute the accuracy assessment
         self.accuracy_assessment.compute()
+        # set content results in HTML
+        self.ResultsHTML.setHtml(accuracy_assessment_results.get_html(self.accuracy_assessment))
 
         AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText(u"Accuracy assessment is opened, click to show")
-
         super(AccuracyAssessmentDialog, self).show()
 
     def export_to_csv(self):
