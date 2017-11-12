@@ -21,9 +21,10 @@
 import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtGui import QApplication
+from qgis.gui import QgsMessageBar
 
 from AcATaMa.core.classification import Classification
-from AcATaMa.core.dockwidget import get_current_layer_in
+from AcATaMa.core.dockwidget import get_current_layer_in, get_current_file_path_in
 from AcATaMa.core.raster import Raster
 from AcATaMa.core.utils import wait_process
 from AcATaMa.gui import accuracy_assessment_results
@@ -141,7 +142,24 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
         super(AccuracyAssessmentDialog, self).show()
 
     def export_to_csv(self):
-        print "exporting...."
+        # get file path to suggest to save but not in tmp directory
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        path, filename = os.path.split(get_current_file_path_in(AcATaMa.dockwidget.QCBox_SamplingFile_AA))
+        if AcATaMa.dockwidget.tmp_dir in path:
+            path = os.path.split(get_current_file_path_in(AcATaMa.dockwidget.QCBox_ThematicRaster))[0]
+        suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_results.csv"
+
+        file_out = QtGui.QFileDialog.getSaveFileName(self, self.tr(u"Export accuracy assessment results to csv"),
+                                                     suggested_filename,
+                                                     self.tr(u"CSV files (*.csv);;All files (*.*)"))
+        if file_out != '':
+            try:
+                accuracy_assessment_results.export_to_csv(self.accuracy_assessment, file_out)
+                AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa", "File saved successfully",
+                                                                  level=QgsMessageBar.SUCCESS)
+            except:
+                AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa", "Failed export results in csv file",
+                                                                  level=QgsMessageBar.WARNING)
 
     def closeEvent(self, event):
         self.closing()
