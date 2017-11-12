@@ -84,12 +84,20 @@ class AccuracyAssessment:
 
         # calculate the total number of pixel in the thematic raster
         # by each thematic raster class used in the classification buttons
-        for thematic_map_value in sorted(set(thematic_map_values)):
+        for thematic_map_value in values:
             if thematic_map_value not in self.thematic_pixels_count:
                 self.thematic_pixels_count[thematic_map_value] = self.ThematicR.get_total_pixels_by_value(thematic_map_value)
 
+        # values necessary for results
+        self.values = values
+        self.labels = labels
+        self.error_matrix = error_matrix
+        # set area by pixel
+        self.pixel_area = self.ThematicR.qgs_layer.rasterUnitsPerPixelX() * self.ThematicR.qgs_layer.rasterUnitsPerPixelY()
+        self.pixel_area_ha = self.pixel_area / 10000.0  # hectare
 
-# plugin path
+
+    # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     plugin_folder, 'ui', 'accuracy_assessment_dialog.ui'))
@@ -127,6 +135,7 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
         self.accuracy_assessment.compute()
         # set content results in HTML
         self.ResultsHTML.setHtml(accuracy_assessment_results.get_html(self.accuracy_assessment))
+        self.ResultsHTML.zoomOut()
 
         AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText(u"Accuracy assessment is opened, click to show")
         super(AccuracyAssessmentDialog, self).show()
