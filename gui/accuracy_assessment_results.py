@@ -194,9 +194,9 @@ def get_html(accu_asse):
         '''
     error_matrix_area_prop = copy.deepcopy(accu_asse.error_matrix)
     for idx_row, row in enumerate(accu_asse.error_matrix):
+        wi = accu_asse.thematic_pixels_count[accu_asse.values[idx_row]] / \
+             sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values])
         for idx_col, col in enumerate(row):
-            wi = accu_asse.thematic_pixels_count[accu_asse.values[idx_row]] / \
-                 sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values])
             error_matrix_area_prop[idx_row][idx_col] = (col / sum(row)) * wi if sum(row) > 0 else 0
 
     for idx_row, value in enumerate(accu_asse.values):
@@ -229,7 +229,55 @@ def get_html(accu_asse):
         </table>
         '''
 
+    ###########################################################################
+    html += "<p style='font-size:2px'><br/></p>"
+    html += "<h3>3) Quadratic error matrix of estimated area proportion:</h3>"
+    html += '''
+        <table>
+        <tbody>
+        <tr>
+        <td class="empty"></td>
+        <td class="empty"></td>
+         <th colspan="{table_size}">Classified values (User)</th>
+            <td class="empty"></td>
+            <td class="empty"></td>
+            <td class="empty"></td>
+            <td class="empty"></td>
+        </tr>
+        <tr>
+        <td class="empty"></td>
+        <td class="empty"></td>
+        '''.format(table_size=len(accu_asse.values))
+    labels = ["{} ({})".format(i, accu_asse.labels[str(i)]) if str(i) in accu_asse.labels else i
+              for i in accu_asse.values]
+    html += "".join([
+        "<th >"+str(i)+"</th>" for i in labels])
+    html += '''
+        </tr>
+        '''
+    quadratic_error_matrix = copy.deepcopy(accu_asse.error_matrix)
+    for idx_row, row in enumerate(accu_asse.error_matrix):
+        wi = accu_asse.thematic_pixels_count[accu_asse.values[idx_row]] / \
+             sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values])
+        for idx_col, col in enumerate(row):
+            quadratic_error_matrix[idx_row][idx_col] = \
+                (wi**2*((col/sum(row))*(1-(col/sum(row)))/(sum(row)-1))) if sum(row) > 0 else 0
 
+    for idx_row, value in enumerate(accu_asse.values):
+        html += "<tr>"
+        if idx_row == 0:
+            html += '''
+                <th  class="th-rows" rowspan="{table_size}">Thematic raster<br />classes (Producer)</th>
+                '''.format(table_size=len(accu_asse.values))
+
+        html += "<th>{value}</th>".format(value=value)
+        html += "".join(['''
+            <td class="field-values">{table_field}</td>
+            '''.format(table_field=(rf(t, 5)) if t > 0 else "-") for t in quadratic_error_matrix[idx_row]])
+    html += '''
+        </tbody>
+        </table>
+        '''
     html += '''
         </body>
         '''
