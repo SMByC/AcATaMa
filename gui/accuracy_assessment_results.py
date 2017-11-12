@@ -19,6 +19,8 @@
  ***************************************************************************/
 """
 from __future__ import division
+
+import csv
 import os
 import copy
 
@@ -365,3 +367,51 @@ def get_html(accu_asse):
         '''
 
     return html
+
+
+def export_to_csv(accu_asse, file_out):
+    csv_rows = []
+    csv_rows.append(["Classification accuracy assessment results"])
+    csv_rows.append([])
+    # csv_rows.append(["Thematic raster:", os.path.basename(accu_asse.ThematicR.file_path)])
+    # csv_rows.append(["Sampling file:", os.path.basename(get_file_path_of_layer(accu_asse.classification.sampling_layer))])
+    # total_classified = sum(sample.is_classified for sample in accu_asse.classification.points)
+    # csv_rows.append(["Classification status:", "{}/{} samples classified".format(total_classified, len(accu_asse.classification.points))])
+
+    ###########################################################################
+    csv_rows.append([])
+    csv_rows.append([])
+    csv_rows.append(["1) Error matrix (confusion matrix):"])
+    csv_rows.append(["", "", "Classified values (User)"])
+    labels = ["{} ({})".format(i, accu_asse.labels[str(i)]) if str(i) in accu_asse.labels else i
+              for i in accu_asse.values]
+    csv_rows.append(["", ""] + labels + ["Total", "U. Accuracy", "Total class area (ha)", "Wi"])
+
+    for idx_row, value in enumerate(accu_asse.values):
+        r = []
+        if idx_row == 0:
+            r.append("Thematic raster classes (Producer)")
+        else:
+            r.append("")
+        r.append(value)
+        r += accu_asse.error_matrix[idx_row]
+        r.append(sum(accu_asse.error_matrix[idx_row]))
+        r.append(rf(accu_asse.error_matrix[idx_row][idx_row]/sum(accu_asse.error_matrix[idx_row]))
+                 if sum(accu_asse.error_matrix[idx_row]) > 0 else "-")
+        r.append(accu_asse.thematic_pixels_count[value] * accu_asse.pixel_area_ha)
+        r.append(rf(accu_asse.thematic_pixels_count[value] /
+                 sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values])))
+        csv_rows.append(r)
+
+    csv_rows.append(["", "total"] + [sum(t) for t in zip(*accu_asse.error_matrix)] + [sum([sum(r) for r in accu_asse.error_matrix])] +
+                    [""] + [sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_ha])
+    csv_rows.append(["", "P. Accuracy"] +
+                    [rf(col[idx_col] / sum(col)) if sum(col) > 0 else "-" for idx_col, col in enumerate(zip(*accu_asse.error_matrix))] +
+                    [""] + [rf(sum([col[idx_col] for idx_col, col in enumerate(zip(*accu_asse.error_matrix))]) /
+                            sum([sum(r) for r in accu_asse.error_matrix]))])
+
+
+    with open(file_out, 'wb') as csvfile:
+        csv_w = csv.writer(csvfile)
+        csv_w.writerows(csv_rows)
+
