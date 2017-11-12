@@ -25,6 +25,7 @@ from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
 from PyQt4.QtGui import QAction, QIcon
 
 # Import the code for the DockWidget
+from AcATaMa.core.accuracy_assessment import AccuracyAssessmentDialog
 from AcATaMa.core.dockwidget import unload_layer_in_qgis
 from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget
 from AcATaMa.gui.about_dialog import AboutDialog
@@ -121,6 +122,10 @@ class AcATaMa:
         if ClassificationDialog.is_opened:
             self.dockwidget.classification_dialog.closing()
             self.dockwidget.classification_dialog.reject(is_ok_to_close=True)
+
+        if AccuracyAssessmentDialog.is_opened:
+            self.dockwidget.accuracy_assessment_dialog.closing()
+            self.dockwidget.accuracy_assessment_dialog.reject(is_ok_to_close=True)
 
         self.clear_all()
 

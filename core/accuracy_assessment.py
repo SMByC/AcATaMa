@@ -97,7 +97,7 @@ class AccuracyAssessment:
         self.pixel_area_ha = self.pixel_area / 10000.0  # hectare
 
 
-    # plugin path
+# plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     plugin_folder, 'ui', 'accuracy_assessment_dialog.ui'))
