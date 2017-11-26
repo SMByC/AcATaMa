@@ -340,8 +340,8 @@ def get_html(accu_asse):
     html += '''
         </tr>
         '''
-    producer_accuracy_matrix = copy.deepcopy(accu_asse.error_matrix)
-    for idx_col, col in enumerate(zip(*accu_asse.error_matrix)):
+    producer_accuracy_matrix = copy.deepcopy(error_matrix_area_prop)
+    for idx_col, col in enumerate(zip(*error_matrix_area_prop)):
         for idx_row, value in enumerate(col):
             producer_accuracy_matrix[idx_row][idx_col] = value/sum(col) if sum(col) > 0 else 0
 
@@ -372,14 +372,13 @@ def get_html(accu_asse):
 def export_to_csv(accu_asse, file_out):
     csv_rows = []
     csv_rows.append(["Classification accuracy assessment results"])
-    csv_rows.append([])
+    # csv_rows.append([])
     # csv_rows.append(["Thematic raster:", os.path.basename(accu_asse.ThematicR.file_path)])
     # csv_rows.append(["Sampling file:", os.path.basename(get_file_path_of_layer(accu_asse.classification.sampling_layer))])
     # total_classified = sum(sample.is_classified for sample in accu_asse.classification.points)
     # csv_rows.append(["Classification status:", "{}/{} samples classified".format(total_classified, len(accu_asse.classification.points))])
 
     ###########################################################################
-    csv_rows.append([])
     csv_rows.append([])
     csv_rows.append(["1) Error matrix (confusion matrix):"])
     csv_rows.append(["", "", "Classified values (User)"])
