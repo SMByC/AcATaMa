@@ -114,7 +114,10 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
         self.DialogButtons.rejected.connect(self.closing)
         self.DialogButtons.button(QtGui.QDialogButtonBox.Save).setText("Export to CSV")
         self.DialogButtons.button(QtGui.QDialogButtonBox.Save).clicked.connect(self.export_to_csv)
+
         self.reloadButton.clicked.connect(self.reload)
+        self.AdjustedVarsGroup.setVisible(False)
+        self.z_score.valueChanged.connect(self.reload)
 
         # get AccuracyAssessment or init new instance
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
@@ -133,6 +136,8 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
     def show(self):
         AccuracyAssessmentDialog.is_opened = True
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        # set adjust variables from dialog
+        self.accuracy_assessment.z_score = self.z_score.value()
         # first compute the accuracy assessment
         self.accuracy_assessment.compute()
         # set content results in HTML
@@ -144,6 +149,8 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
 
     def reload(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        # set adjust variables from dialog
+        self.accuracy_assessment.z_score = self.z_score.value()
         # first compute the accuracy assessment
         self.accuracy_assessment.compute()
         # set content results in HTML

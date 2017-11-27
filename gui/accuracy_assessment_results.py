@@ -247,9 +247,8 @@ def get_html(accu_asse):
               for i in accu_asse.values]
     html += "".join([
         "<th >"+str(i)+"</th>" for i in labels])
-    html += '''
-        </tr>
-        '''
+    html += "</tr>"
+    
     quadratic_error_matrix = copy.deepcopy(accu_asse.error_matrix)
     for idx_row, row in enumerate(accu_asse.error_matrix):
         wi = accu_asse.thematic_pixels_count[accu_asse.values[idx_row]] / \
@@ -269,6 +268,7 @@ def get_html(accu_asse):
         html += "".join(['''
             <td class="field-values">{table_field}</td>
             '''.format(table_field=(rf(t, 5)) if t > 0 else "-") for t in quadratic_error_matrix[idx_row]])
+        html += "</tr>"
     html += '''
         </tbody>
         </table>
@@ -295,9 +295,8 @@ def get_html(accu_asse):
               for i in accu_asse.values]
     html += "".join([
         "<th >"+str(i)+"</th>" for i in labels])
-    html += '''
-        </tr>
-        '''
+    html += "</tr>"
+    
     user_accuracy_matrix = copy.deepcopy(accu_asse.error_matrix)
     for idx_row, row in enumerate(accu_asse.error_matrix):
         for idx_col, value in enumerate(row):
@@ -315,6 +314,7 @@ def get_html(accu_asse):
         html += "".join(['''
             <td class="field-values">{table_field}</td>
             '''.format(table_field=(rf(t, 5)) if t > 0 else "-") for t in user_accuracy_matrix[idx_row]])
+        html += "</tr>"
     html += '''
         </tbody>
         </table>
@@ -337,9 +337,8 @@ def get_html(accu_asse):
               for i in accu_asse.values]
     html += "".join([
         "<th >"+str(i)+"</th>" for i in labels])
-    html += '''
-        </tr>
-        '''
+    html += "</tr>"
+    
     producer_accuracy_matrix = copy.deepcopy(error_matrix_area_prop)
     for idx_col, col in enumerate(zip(*error_matrix_area_prop)):
         for idx_row, value in enumerate(col):
@@ -356,11 +355,63 @@ def get_html(accu_asse):
         html += "".join(['''
             <td class="field-values">{table_field}</td>
             '''.format(table_field=(rf(t, 5)) if t > 0 else "-") for t in producer_accuracy_matrix[idx_row]])
+        html += "</tr>"
+        
     html += '''
         </tbody>
         </table>
         '''
 
+    ###################################
+    html += "<p style='font-size:2px'><br/></p>"
+    html += "<h3>5) Class area adjusted table:</h3>"
+    html += '''
+        <table>
+        <tbody>
+        <tr>
+        <td class="empty"></td>
+        '''.format(table_size=len(accu_asse.values))
+    headers = ["Area", "Error", "Lower limit", "Upper limit"]
+    html += "".join([
+        "<th >" + str(h) + "</th>" for h in headers])
+    html += "</tr>"
+
+    total_area = 0
+
+    for idx_row, value in enumerate(accu_asse.values):
+        html += "<tr>"
+
+        html += "<th >{} ({})</th>".format(value, accu_asse.labels[str(value)])
+        # area
+        area = sum(zip(*error_matrix_area_prop)[idx_row]) * \
+               sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_ha
+        html += '''<td>{area}</th>'''.format(area=rf(area))
+        total_area += area
+        # error
+        error = sum(zip(*quadratic_error_matrix)[idx_row]) * \
+                sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_ha
+        html += '''<td>{error}</th>'''.format(error=rf(error))
+        # lower limit
+        html += '''<td>{lower_limit}</th>'''.format(lower_limit=rf(area - accu_asse.z_score*error))
+        # upper limit
+        html += '''<td>{upper_limit}</th>'''.format(upper_limit=rf(area + accu_asse.z_score * error))
+        html += "</tr>"
+
+    html += '''    
+        <tr>
+          <th>total</th>
+        '''
+    html += '''<td>{total_area}</th>'''.format(total_area=rf(total_area))
+    html += '''
+        <td class="empty"></td>
+        <td class="empty"></td>
+        <td class="empty"></td>
+        </tr>'''
+
+    html += '''
+        </tbody>
+        </table>
+        '''
 
     html += '''
         </body>
