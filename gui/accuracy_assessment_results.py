@@ -397,7 +397,7 @@ def export_to_csv(accu_asse, file_out):
         r.append(sum(accu_asse.error_matrix[idx_row]))
         r.append(rf(accu_asse.error_matrix[idx_row][idx_row]/sum(accu_asse.error_matrix[idx_row]))
                  if sum(accu_asse.error_matrix[idx_row]) > 0 else "-")
-        r.append(accu_asse.thematic_pixels_count[value] * accu_asse.pixel_area_ha)
+        r.append(rf(accu_asse.thematic_pixels_count[value] * accu_asse.pixel_area_ha))
         r.append(rf(accu_asse.thematic_pixels_count[value] /
                  sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values])))
         csv_rows.append(r)
