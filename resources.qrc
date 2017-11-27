@@ -10,5 +10,6 @@
         <file>icons/previous_nc.svg</file>
         <file>icons/zoom-in.svg</file>
         <file>icons/zoom-out.svg</file>
+        <file>icons/reload.svg</file>
     </qresource>
 </RCC>

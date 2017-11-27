@@ -114,6 +114,7 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
         self.DialogButtons.rejected.connect(self.closing)
         self.DialogButtons.button(QtGui.QDialogButtonBox.Save).setText("Export to CSV")
         self.DialogButtons.button(QtGui.QDialogButtonBox.Save).clicked.connect(self.export_to_csv)
+        self.reloadButton.clicked.connect(self.reload)
 
         # get AccuracyAssessment or init new instance
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
@@ -140,6 +141,14 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
 
         AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText(u"Accuracy assessment is opened, click to show")
         super(AccuracyAssessmentDialog, self).show()
+
+    def reload(self):
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        # first compute the accuracy assessment
+        self.accuracy_assessment.compute()
+        # set content results in HTML
+        self.ResultsHTML.setHtml(accuracy_assessment_results.get_html(self.accuracy_assessment))
+        AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText(u"Accuracy assessment is opened, click to show")
 
     def export_to_csv(self):
         # get file path to suggest to save but not in tmp directory
