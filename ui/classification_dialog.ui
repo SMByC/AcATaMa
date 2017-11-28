@@ -424,7 +424,7 @@
                </font>
               </property>
               <property name="toolTip">
-               <string>The sample ID is the number of identification from the original sampling file order</string>
+               <string>The sample ID is the number of identification of the points order in the sampling file.</string>
               </property>
               <property name="text">
                <string>Sample ID:</string>
@@ -461,6 +461,9 @@
                <font>
                 <pointsize>8</pointsize>
                </font>
+              </property>
+              <property name="toolTip">
+               <string>The sample ID is the number of identification of the points order in the sampling file.</string>
               </property>
               <property name="text">
                <string>Go to ID:</string>

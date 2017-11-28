@@ -27,6 +27,7 @@ from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsVectorFileWriter
 
 from AcATaMa.core.dockwidget import get_current_file_path_in, get_file_path_of_layer, load_and_select_filepath_in
 from AcATaMa.core.point import ClassificationPoint
+from AcATaMa.core.raster import Raster
 from AcATaMa.core.utils import wait_process
 
 
@@ -54,6 +55,8 @@ class Classification:
         self.view_widgets_config = {}
         # classification dialog size
         self.dialog_size = None
+        # if this classification was make with thematic classes
+        self.with_thematic_classes = False
         # when all points are classified
         self.is_completed = False
         # for store the instance of the accuracy assessment results
@@ -163,22 +166,35 @@ class Classification:
         vlayer = QgsVectorLayer("Point?crs=" + crs, "temporary_points", "memory")
         pr = vlayer.dataProvider()
         # add fields
-        pr.addAttributes([QgsField("ID", QVariant.Int),
-                          QgsField("ClassID", QVariant.Int),
-                          QgsField("ClassName", QVariant.String),
-                          QgsField("ThematicID", QVariant.Int)])
+        if self.with_thematic_classes:
+            pr.addAttributes([QgsField("ID", QVariant.Int),
+                              QgsField("Class Name", QVariant.String),
+                              QgsField("Classified", QVariant.Int),
+                              QgsField("Thematic", QVariant.Int),
+                              QgsField("Match", QVariant.String)])
+        else:
+            pr.addAttributes([QgsField("ID", QVariant.Int),
+                              QgsField("Class Name", QVariant.String),
+                              QgsField("Classif ID", QVariant.Int)])
         vlayer.updateFields()  # tell the vector layer to fetch changes from the provider
+
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        ThematicR = Raster(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicRaster,
+                           nodata=int(AcATaMa.dockwidget.nodata_ThematicRaster.value()))
 
         points_ordered = sorted(self.points, key=lambda p: p.shape_id)
         for point in points_ordered:
             # add a feature
             feature = QgsFeature()
             feature.setGeometry(point.QgsGeom)
-            name = self.buttons_config[point.classif_id]["name"] if point.classif_id else None
-            thematic_class = self.buttons_config[point.classif_id]["thematic_class"] if point.classif_id else None
-            feature.setAttributes([point.shape_id, point.classif_id,
-                                   name if name is not None else NULL,
-                                   thematic_class if thematic_class is not None else NULL])
+            name = self.buttons_config[point.classif_id]["name"] if point.is_classified else NULL
+            if self.with_thematic_classes:
+                classified = int(self.buttons_config[point.classif_id]["thematic_class"]) if point.is_classified else NULL
+                thematic = int(ThematicR.get_pixel_value_from_pnt(point.QgsPnt)) if point.is_classified else NULL
+                match = ('Yes' if thematic == classified else 'No') if point.is_classified else NULL
+                feature.setAttributes([point.shape_id, name, classified, thematic, match])
+            else:
+                feature.setAttributes([point.shape_id, name, point.classif_id])
             pr.addFeatures([feature])
 
         vlayer.commitChanges()
