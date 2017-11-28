@@ -92,7 +92,7 @@ def get_html(accu_asse):
         <td class="empty"></td>
         <td class="empty"></td>
         '''.format(table_size=len(accu_asse.values))
-    labels = ["{} ({})".format(i, accu_asse.labels[str(i)]) if str(i) in accu_asse.labels else i
+    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
     html += "".join([
         "<th >"+str(i)+"</th>" for i in labels])
@@ -183,7 +183,7 @@ def get_html(accu_asse):
         <td class="empty"></td>
         <td class="empty"></td>
         '''.format(table_size=len(accu_asse.values))
-    labels = ["{} ({})".format(i, accu_asse.labels[str(i)]) if str(i) in accu_asse.labels else i
+    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
     html += "".join([
         "<th >"+str(i)+"</th>" for i in labels])
@@ -243,7 +243,7 @@ def get_html(accu_asse):
         <td class="empty"></td>
         <td class="empty"></td>
         '''.format(table_size=len(accu_asse.values))
-    labels = ["{} ({})".format(i, accu_asse.labels[str(i)]) if str(i) in accu_asse.labels else i
+    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
     html += "".join([
         "<th >"+str(i)+"</th>" for i in labels])
@@ -255,7 +255,7 @@ def get_html(accu_asse):
              sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values])
         for idx_col, value in enumerate(row):
             quadratic_error_matrix[idx_row][idx_col] = \
-                (wi**2*((value/sum(row))*(1-(value/sum(row)))/(sum(row)-1))) if sum(row) > 0 else 0
+                (wi**2*((value/sum(row))*(1-(value/sum(row)))/(sum(row)-1))) if sum(row) > 1 else 0
 
     for idx_row, value in enumerate(accu_asse.values):
         html += "<tr>"
@@ -291,7 +291,7 @@ def get_html(accu_asse):
         <td class="empty"></td>
         <td class="empty"></td>
         '''.format(table_size=len(accu_asse.values))
-    labels = ["{} ({})".format(i, accu_asse.labels[str(i)]) if str(i) in accu_asse.labels else i
+    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
     html += "".join([
         "<th >"+str(i)+"</th>" for i in labels])
@@ -333,7 +333,7 @@ def get_html(accu_asse):
         <td class="empty"></td>
         <td class="empty"></td>
         '''.format(table_size=len(accu_asse.values))
-    labels = ["{} ({})".format(i, accu_asse.labels[str(i)]) if str(i) in accu_asse.labels else i
+    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
     html += "".join([
         "<th >"+str(i)+"</th>" for i in labels])
@@ -381,7 +381,7 @@ def get_html(accu_asse):
     for idx_row, value in enumerate(accu_asse.values):
         html += "<tr>"
 
-        html += "<th >{} ({})</th>".format(value, accu_asse.labels[str(value)])
+        html += "<th >{} ({})</th>".format(value, accu_asse.labels[str(value)] if str(value) in accu_asse.labels else "-")
         # area
         area = sum(zip(*error_matrix_area_prop)[idx_row]) * \
                sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_ha
@@ -433,7 +433,7 @@ def export_to_csv(accu_asse, file_out):
     csv_rows.append([])
     csv_rows.append(["1) Error matrix (confusion matrix):"])
     csv_rows.append(["", "", "Classified values (User)"])
-    labels = ["{} ({})".format(i, accu_asse.labels[str(i)]) if str(i) in accu_asse.labels else i
+    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
     csv_rows.append(["", ""] + labels + ["Total", "U. Accuracy", "Total class area (ha)", "Wi"])
 
