@@ -193,6 +193,8 @@ class ClassificationViewWidget(QtGui.QWidget, FORM_CLASS):
         self.layerProperties.clicked.connect(self.render_widget.layer_properties)
         # action for synchronize all view extent
         self.render_widget.canvas.extentsChanged.connect(self.extent_changed)
+        # disable enter action
+        self.QCBox_browseRenderFile.setAutoDefault(False)
 
     @pyqtSlot()
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):

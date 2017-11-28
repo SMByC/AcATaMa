@@ -11,5 +11,6 @@
         <file>icons/zoom-in.svg</file>
         <file>icons/zoom-out.svg</file>
         <file>icons/reload.svg</file>
+        <file>icons/go.svg</file>
     </qresource>
 </RCC>

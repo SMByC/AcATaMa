@@ -113,6 +113,13 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.classification_btns_config = ClassificationButtonsConfig(self.classification.buttons_config)
         self.create_classification_buttons(buttons_config=self.classification.buttons_config)
         self.QPBtn_SetClassification.clicked.connect(self.open_set_classification_dialog)
+        # disable enter action
+        self.QPBtn_SetClassification.setAutoDefault(False)
+
+        # go to sample ID action
+        self.GoTo_ID_Button.clicked.connect(self.go_to_sample_id)
+        self.GoTo_ID.returnPressed.connect(self.go_to_sample_id)
+        self.GoTo_ID.textChanged.connect(lambda: self.GoTo_ID.setStyleSheet(""))
 
         # set radius fit to sample
         self.radiusFitToSample.setValue(self.classification.fit_to_sample)
@@ -132,6 +139,8 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
 
         # dialog buttons box
         self.closeButton.rejected.connect(self.closing)
+        # disable enter action
+        self.closeButton.button(QtGui.QDialogButtonBox.Close).setAutoDefault(False)
 
         # init current point
         self.current_sample_idx = self.classification.current_sample_idx
@@ -157,10 +166,23 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.classification.current_sample_idx = self.current_sample_idx
         # update progress bar
         self.QPBar_SamplesNavigation.setValue(self.current_sample_idx + 1)
+        # show the sample ID
+        self.Sample_ID.setText(str(self.current_sample.shape_id))
         # show the class assigned
         self.display_sample_status()
         # show and go to marker
         self.show_and_go_to_current_sample()
+
+    def go_to_sample_id(self):
+        try:
+            shape_id = int(self.GoTo_ID.text())
+            # find the sample point with ID
+            sample_point = next((x for x in self.classification.points if x.shape_id == shape_id), None)
+            # go to sample
+            self.current_sample_idx = self.classification.points.index(sample_point)
+            self.set_current_sample()
+        except:
+            self.GoTo_ID.setStyleSheet("color: red")
 
     def classify_sample(self, classif_id):
         if classif_id:
@@ -262,6 +284,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                 QPButton = QtGui.QPushButton(item_name)
                 QPButton.setStyleSheet('QPushButton {color: '+item_color+'}')
                 QPButton.clicked.connect(lambda state, classif_id=item_num: self.classify_sample(classif_id))
+                QPButton.setAutoDefault(False)
                 self.gridButtonsClassification.addWidget(QPButton, len(buttons)-1, 0)
 
             # from tableBtnsConfig
