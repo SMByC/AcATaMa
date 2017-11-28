@@ -297,13 +297,20 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                     item_thematic_class = None if item_thematic_class == "No thematic raster" else item_thematic_class
                     if item_name != "":
                         create_button(item_num, item_name, item_color, item_thematic_class)
+                    # define if this classification was make with thematic classes
+                    if item_thematic_class is not None:
+                        self.classification.with_thematic_classes = True
                 # save btns config
                 self.classification.buttons_config = buttons
+
             # from buttons_config
             if buttons_config:
                 for row in sorted(buttons_config.keys()):
                     create_button(row, buttons_config[row]["name"], buttons_config[row]["color"],
                                   buttons_config[row]["thematic_class"])
+                    # define if this classification was make with thematic classes
+                    if buttons_config[row]["thematic_class"] is not None:
+                        self.classification.with_thematic_classes = True
 
     def closeEvent(self, event):
         self.closing()
