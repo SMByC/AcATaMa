@@ -55,7 +55,7 @@ class Classification:
         self.view_widgets_config = {}
         # classification dialog size
         self.dialog_size = None
-        # if this classification was make with thematic classes
+        # if this classification was made with thematic classes
         self.with_thematic_classes = False
         # when all points are classified
         self.is_completed = False
