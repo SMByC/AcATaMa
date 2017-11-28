@@ -486,6 +486,12 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 # classification exists for this file
                 classification = Classification.instances[sampling_layer]
                 total_classified = sum(sample.is_classified for sample in classification.points)
+                # define if this classification was made with thematic classes
+                if not classification.with_thematic_classes:
+                    self.QLabel_SamplingFileStatus_AA.setText("Classification was not made with thematic classes")
+                    self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: red;}")
+                    self.QGBox_AccuracyAssessment.setDisabled(True)
+                    return
                 # check is the classification is completed and update in dockwidget status
                 if classification.is_completed:
                     self.QLabel_SamplingFileStatus_AA.setText("Classification completed ({}/{})".
