@@ -402,6 +402,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             classification.load_config(yaml_config)
             self.iface.messageBar().pushMessage("AcATaMa", "File loaded successfully", level=QgsMessageBar.SUCCESS)
 
+            # reload sampling file status in accuracy assessment
+            self.set_sampling_file_accuracy_assessment()
+
     @pyqtSlot()
     def fileDialog_saveClassificationConfig(self):
         if not valid_file_selected_in(self.QCBox_SamplingFile):
