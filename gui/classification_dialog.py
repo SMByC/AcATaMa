@@ -298,7 +298,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                 if item_name != "":
                     create_button(item_num, item_name, item_color, item_thematic_class)
                 # define if this classification was made with thematic classes
-                if item_thematic_class is not None:
+                if item_thematic_class is not None and item_thematic_class != "":
                     self.classification.with_thematic_classes = True
             # save btns config
             self.classification.buttons_config = buttons
@@ -309,7 +309,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                 create_button(row, buttons_config[row]["name"], buttons_config[row]["color"],
                               buttons_config[row]["thematic_class"])
                 # define if this classification was made with thematic classes
-                if buttons_config[row]["thematic_class"] is not None:
+                if buttons_config[row]["thematic_class"] is not None and buttons_config[row]["thematic_class"] != "":
                     self.classification.with_thematic_classes = True
 
         # reload sampling file status in accuracy assessment
