@@ -312,6 +312,10 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                 if buttons_config[row]["thematic_class"] is not None:
                     self.classification.with_thematic_classes = True
 
+        # reload sampling file status in accuracy assessment
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        AcATaMa.dockwidget.set_sampling_file_accuracy_assessment()
+
     def closeEvent(self, event):
         self.closing()
         event.ignore()
