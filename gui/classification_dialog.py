@@ -268,49 +268,49 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
             self.create_classification_buttons(tableBtnsConfig=self.classification_btns_config.tableBtnsConfig)
 
     def create_classification_buttons(self, tableBtnsConfig=None, buttons_config=None):
-            if not tableBtnsConfig and not buttons_config:
-                return
-            # clear layout
-            for i in range(self.gridButtonsClassification.count()):
-                self.gridButtonsClassification.itemAt(i).widget().close()
+        if not tableBtnsConfig and not buttons_config:
+            return
+        # clear layout
+        for i in range(self.gridButtonsClassification.count()):
+            self.gridButtonsClassification.itemAt(i).widget().close()
 
-            buttons = {}
+        buttons = {}
 
-            def create_button(item_num, item_name, item_color, item_thematic_class):
-                # save button config
-                buttons[int(item_num)] = {"name": item_name, "color": item_color,
-                                          "thematic_class": item_thematic_class}
-                # create button
-                QPButton = QtGui.QPushButton(item_name)
-                QPButton.setStyleSheet('QPushButton {color: '+item_color+'}')
-                QPButton.clicked.connect(lambda state, classif_id=item_num: self.classify_sample(classif_id))
-                QPButton.setAutoDefault(False)
-                self.gridButtonsClassification.addWidget(QPButton, len(buttons)-1, 0)
+        def create_button(item_num, item_name, item_color, item_thematic_class):
+            # save button config
+            buttons[int(item_num)] = {"name": item_name, "color": item_color,
+                                      "thematic_class": item_thematic_class}
+            # create button
+            QPButton = QtGui.QPushButton(item_name)
+            QPButton.setStyleSheet('QPushButton {color: '+item_color+'}')
+            QPButton.clicked.connect(lambda state, classif_id=item_num: self.classify_sample(classif_id))
+            QPButton.setAutoDefault(False)
+            self.gridButtonsClassification.addWidget(QPButton, len(buttons)-1, 0)
 
-            # from tableBtnsConfig
-            if tableBtnsConfig:
-                for row in range(self.classification_btns_config.tableBtnsConfig.rowCount()):
-                    item_num = self.classification_btns_config.tableBtnsConfig.item(row, 0).text()
-                    item_name = self.classification_btns_config.tableBtnsConfig.item(row, 1).text()
-                    item_color = self.classification_btns_config.tableBtnsConfig.item(row, 2).backgroundColor().name()
-                    item_thematic_class = self.classification_btns_config.tableBtnsConfig.item(row, 3).text()
-                    item_thematic_class = None if item_thematic_class == "No thematic raster" else item_thematic_class
-                    if item_name != "":
-                        create_button(item_num, item_name, item_color, item_thematic_class)
-                    # define if this classification was made with thematic classes
-                    if item_thematic_class is not None:
-                        self.classification.with_thematic_classes = True
-                # save btns config
-                self.classification.buttons_config = buttons
+        # from tableBtnsConfig
+        if tableBtnsConfig:
+            for row in range(self.classification_btns_config.tableBtnsConfig.rowCount()):
+                item_num = self.classification_btns_config.tableBtnsConfig.item(row, 0).text()
+                item_name = self.classification_btns_config.tableBtnsConfig.item(row, 1).text()
+                item_color = self.classification_btns_config.tableBtnsConfig.item(row, 2).backgroundColor().name()
+                item_thematic_class = self.classification_btns_config.tableBtnsConfig.item(row, 3).text()
+                item_thematic_class = None if item_thematic_class == "No thematic raster" else item_thematic_class
+                if item_name != "":
+                    create_button(item_num, item_name, item_color, item_thematic_class)
+                # define if this classification was made with thematic classes
+                if item_thematic_class is not None:
+                    self.classification.with_thematic_classes = True
+            # save btns config
+            self.classification.buttons_config = buttons
 
-            # from buttons_config
-            if buttons_config:
-                for row in sorted(buttons_config.keys()):
-                    create_button(row, buttons_config[row]["name"], buttons_config[row]["color"],
-                                  buttons_config[row]["thematic_class"])
-                    # define if this classification was made with thematic classes
-                    if buttons_config[row]["thematic_class"] is not None:
-                        self.classification.with_thematic_classes = True
+        # from buttons_config
+        if buttons_config:
+            for row in sorted(buttons_config.keys()):
+                create_button(row, buttons_config[row]["name"], buttons_config[row]["color"],
+                              buttons_config[row]["thematic_class"])
+                # define if this classification was made with thematic classes
+                if buttons_config[row]["thematic_class"] is not None:
+                    self.classification.with_thematic_classes = True
 
     def closeEvent(self, event):
         self.closing()
