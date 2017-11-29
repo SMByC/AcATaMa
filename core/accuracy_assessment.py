@@ -134,8 +134,16 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
                     classification.accuracy_assessment = self.accuracy_assessment
 
     def show(self):
-        AccuracyAssessmentDialog.is_opened = True
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        # first check
+        classification_points = [point for point in self.accuracy_assessment.classification.points if point.is_classified]
+        if len(classification_points) == 0:
+            AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa",
+                  "The accuracy assessment needs at least one sample classified",
+                  level=QgsMessageBar.WARNING)
+            return
+
+        AccuracyAssessmentDialog.is_opened = True
         # set adjust variables from dialog
         self.accuracy_assessment.z_score = self.z_score.value()
         # first compute the accuracy assessment
