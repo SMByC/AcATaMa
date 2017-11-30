@@ -116,7 +116,7 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
         self.DialogButtons.button(QtGui.QDialogButtonBox.Save).clicked.connect(self.export_to_csv)
 
         self.reloadButton.clicked.connect(self.reload)
-        self.AdjustedVarsGroup.setVisible(False)
+        self.SettingsGroupBox.setVisible(False)
         self.z_score.valueChanged.connect(self.reload)
 
         # get AccuracyAssessment or init new instance
@@ -178,7 +178,10 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
                                                      self.tr(u"CSV files (*.csv);;All files (*.*)"))
         if file_out != '':
             try:
-                accuracy_assessment_results.export_to_csv(self.accuracy_assessment, file_out)
+                csv_separator = self.CSV_separator.text()
+                csv_decimal_separator = self.CSV_decimal_sep.text()
+                accuracy_assessment_results.export_to_csv(self.accuracy_assessment, file_out,
+                                                          csv_separator, csv_decimal_separator)
                 AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa", "File saved successfully",
                                                                   level=QgsMessageBar.SUCCESS)
             except:

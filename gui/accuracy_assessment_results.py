@@ -420,7 +420,7 @@ def get_html(accu_asse):
     return html
 
 
-def export_to_csv(accu_asse, file_out):
+def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows = []
     csv_rows.append(["Classification accuracy assessment results"])
     # csv_rows.append([])
@@ -462,6 +462,11 @@ def export_to_csv(accu_asse, file_out):
 
 
     with open(file_out, 'wb') as csvfile:
-        csv_w = csv.writer(csvfile)
+        csv_w = csv.writer(csvfile, delimiter=str(csv_separator))
+        # replace with the user define decimal separator
+        if csv_decimal_separator != ".":
+            for idx, row in enumerate(csv_rows):
+                csv_rows[idx] = [str(item).replace('.', csv_decimal_separator) if isinstance(item, float) else item for item in row]
+
         csv_w.writerows(csv_rows)
 
