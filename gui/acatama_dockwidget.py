@@ -256,7 +256,6 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     @error_handler()
-    @wait_process("QPBtn_ClippingThematic")
     def clipping_thematic_raster(self):
         # first check input files requirements
         if not valid_file_selected_in(self.QCBox_ThematicRaster, "thematic raster"):
@@ -264,9 +263,21 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         if not valid_file_selected_in(self.QCBox_AreaOfInterest, "area of interest shape"):
             return
 
+        # first select the target dir for save the clipping file
+        filename, ext = os.path.splitext(get_current_file_path_in(self.QCBox_ThematicRaster))
+        ext = ext if ext in [".tif", ".TIF", ".img", ".IMG"] else ".tif"
+        suggested_filename = filename + "_clip" + ext
+
+        file_out = QtGui.QFileDialog.getSaveFileName(self, self.tr(u"Select the output file to save the clipping file"),
+                                                     suggested_filename,
+                                                     self.tr(u"Tiff files (*.tif);;Img files (*.img);;All files (*.*)"))
+        if file_out == '':
+            return
+
+        # clipping
         clip_file = do_clipping_with_shape(
             get_current_file_path_in(self.QCBox_ThematicRaster),
-            get_current_file_path_in(self.QCBox_AreaOfInterest), self.tmp_dir)
+            get_current_file_path_in(self.QCBox_AreaOfInterest), file_out)
         # unload old thematic file
         unload_layer_in_qgis(get_current_file_path_in(self.QCBox_ThematicRaster))
         # load to qgis and update combobox list

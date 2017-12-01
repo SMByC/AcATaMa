@@ -28,10 +28,16 @@ from qgis.core import QgsRaster, QgsPoint
 from qgis.utils import iface
 from qgis.gui import QgsMessageBar
 
+from AcATaMa.core.utils import wait_process
 
+
+@wait_process()
 def do_clipping_with_shape(target_file, shape, out_path):
-    filename, ext = os.path.splitext(os.path.basename(target_file))
-    out_file = os.path.join(out_path, filename + "_clip" + ext)
+    if out_path.endswith((".tif", ".TIF", ".img", ".IMG")):
+        out_file = out_path
+    else:
+        filename, ext = os.path.splitext(os.path.basename(target_file))
+        out_file = os.path.join(out_path, filename + "_clip" + ext)
 
     return_code = call('gdalwarp --config GDALWARP_IGNORE_BAD_CUTLINE YES -cutline "{}" -dstnodata 0 "{}" "{}"'
                        .format(shape, target_file, out_file), shell=True)
