@@ -82,7 +82,7 @@ def get_html(accu_asse):
         <tr>
         <td class="empty"></td>
         <td class="empty"></td>
-         <th colspan="{table_size}">Classified values (User)</th>
+         <th colspan="{table_size}">Classified values</th>
             <td class="empty"></td>
             <td class="empty"></td>
             <td class="empty"></td>
@@ -98,7 +98,7 @@ def get_html(accu_asse):
         "<th >"+str(i)+"</th>" for i in labels])
     html += '''
         <th>Total</th>
-        <th>U. Accuracy</th>
+        <th>User accuracy</th>
         <th>Total class area (ha)</th>
         <th>Wi</th>
         </tr>
@@ -107,7 +107,7 @@ def get_html(accu_asse):
         html += "<tr>"
         if idx_row == 0:
             html += '''
-                <th  class="th-rows" rowspan="{table_size}">Thematic raster<br />classes (Producer)</th>
+                <th  class="th-rows" rowspan="{table_size}">Thematic raster<br />classes</th>
                 '''.format(table_size=len(accu_asse.values))
 
         html += "<th>{value}</th>".format(value=value)
@@ -148,7 +148,7 @@ def get_html(accu_asse):
         </tr>
         <tr>
         <td class="empty"></td>
-          <th>P. Accuracy</th>
+          <th>Producer accuracy</th>
         '''
     for idx_col, col in enumerate(zip(*accu_asse.error_matrix)):
         html += '''
@@ -176,7 +176,7 @@ def get_html(accu_asse):
         <tr>
         <td class="empty"></td>
         <td class="empty"></td>
-         <th colspan="{table_size}">Classified values (User)</th>
+         <th colspan="{table_size}">Classified values</th>
             <td class="empty"></td>
         </tr>
         <tr>
@@ -202,7 +202,7 @@ def get_html(accu_asse):
         html += "<tr>"
         if idx_row == 0:
             html += '''
-                <th  class="th-rows" rowspan="{table_size}">Thematic raster<br />classes (Producer)</th>
+                <th  class="th-rows" rowspan="{table_size}">Thematic raster<br />classes</th>
                 '''.format(table_size=len(accu_asse.values))
 
         html += "<th>{value}</th>".format(value=value)
@@ -237,7 +237,7 @@ def get_html(accu_asse):
         <tr>
         <td class="empty"></td>
         <td class="empty"></td>
-         <th colspan="{table_size}">Classified values (User)</th>
+         <th colspan="{table_size}">Classified values</th>
         </tr>
         <tr>
         <td class="empty"></td>
@@ -261,7 +261,7 @@ def get_html(accu_asse):
         html += "<tr>"
         if idx_row == 0:
             html += '''
-                <th  class="th-rows" rowspan="{table_size}">Thematic raster<br />classes (Producer)</th>
+                <th  class="th-rows" rowspan="{table_size}">Thematic raster<br />classes</th>
                 '''.format(table_size=len(accu_asse.values))
 
         html += "<th>{value}</th>".format(value=value)
@@ -278,14 +278,14 @@ def get_html(accu_asse):
     html += "<p style='font-size:2px'><br/></p>"
     html += "<h3>4) Overall matrix accuracy:</h3>"
     ###################################
-    html += "<h4>User's accuracy matrix:</h4>"
+    html += "<h4>User's accuracy matrix of estimated area proportion:</h4>"
     html += '''
         <table>
         <tbody>
         <tr>
         <td class="empty"></td>
         <td class="empty"></td>
-         <th colspan="{table_size}">Classified values (User)</th>
+         <th colspan="{table_size}">Classified values</th>
         </tr>
         <tr>
         <td class="empty"></td>
@@ -307,7 +307,7 @@ def get_html(accu_asse):
         html += "<tr>"
         if idx_row == 0:
             html += '''
-                <th  class="th-rows" rowspan="{table_size}">Thematic raster<br />classes (Producer)</th>
+                <th  class="th-rows" rowspan="{table_size}">Thematic raster<br />classes</th>
                 '''.format(table_size=len(accu_asse.values))
 
         html += "<th>{value}</th>".format(value=value)
@@ -320,14 +320,14 @@ def get_html(accu_asse):
         </table>
         '''
     ###################################
-    html += "<h4>Producer's accuracy matrix:</h4>"
+    html += "<h4>Producer's accuracy matrix of estimated area proportion:</h4>"
     html += '''
         <table>
         <tbody>
         <tr>
         <td class="empty"></td>
         <td class="empty"></td>
-         <th colspan="{table_size}">Classified values (User)</th>
+         <th colspan="{table_size}">Classified values</th>
         </tr>
         <tr>
         <td class="empty"></td>
@@ -348,7 +348,7 @@ def get_html(accu_asse):
         html += "<tr>"
         if idx_row == 0:
             html += '''
-                <th  class="th-rows" rowspan="{table_size}">Thematic raster<br />classes (Producer)</th>
+                <th  class="th-rows" rowspan="{table_size}">Thematic raster<br />classes</th>
                 '''.format(table_size=len(accu_asse.values))
 
         html += "<th>{value}</th>".format(value=value)
@@ -371,7 +371,7 @@ def get_html(accu_asse):
         <tr>
         <td class="empty"></td>
         '''.format(table_size=len(accu_asse.values))
-    headers = ["Area", "Error", "Lower limit", "Upper limit"]
+    headers = ["Area (ha)", "Error", "Lower limit", "Upper limit"]
     html += "".join([
         "<th >" + str(h) + "</th>" for h in headers])
     html += "</tr>"
@@ -432,15 +432,15 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     ###########################################################################
     csv_rows.append([])
     csv_rows.append(["1) Error matrix (confusion matrix):"])
-    csv_rows.append(["", "", "Classified values (User)"])
+    csv_rows.append(["", "", "Classified values"])
     labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
-    csv_rows.append(["", ""] + labels + ["Total", "U. Accuracy", "Total class area (ha)", "Wi"])
+    csv_rows.append(["", ""] + labels + ["Total", "User accuracy", "Total class area (ha)", "Wi"])
 
     for idx_row, value in enumerate(accu_asse.values):
         r = []
         if idx_row == 0:
-            r.append("Thematic raster classes (Producer)")
+            r.append("Thematic raster classes")
         else:
             r.append("")
         r.append(value)
@@ -455,7 +455,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
 
     csv_rows.append(["", "total"] + [sum(t) for t in zip(*accu_asse.error_matrix)] + [sum([sum(r) for r in accu_asse.error_matrix])] +
                     [""] + [sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_ha])
-    csv_rows.append(["", "P. Accuracy"] +
+    csv_rows.append(["", "Producer accuracy"] +
                     [rf(col[idx_col] / sum(col)) if sum(col) > 0 else "-" for idx_col, col in enumerate(zip(*accu_asse.error_matrix))] +
                     [""] + [rf(sum([col[idx_col] for idx_col, col in enumerate(zip(*accu_asse.error_matrix))]) /
                             sum([sum(r) for r in accu_asse.error_matrix]))])
