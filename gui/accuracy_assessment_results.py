@@ -401,7 +401,7 @@ def get_html(accu_asse):
         html += '''<td>{area}</th>'''.format(area=rf(area))
         total_area += area
         # error
-        error = sum(zip(*quadratic_error_matrix)[idx_row]) * \
+        error = (sum(zip(*quadratic_error_matrix)[idx_row])**0.5) * \
                 sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_ha
         html += '''<td>{error}</th>'''.format(error=rf(error))
         # lower limit
