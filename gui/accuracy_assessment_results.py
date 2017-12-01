@@ -361,6 +361,19 @@ def get_html(accu_asse):
         </tbody>
         </table>
         '''
+    ###################################
+    html += "<h4>Overall Accuracy: </h4>"
+    overall_accuracy = sum([row[idx_row] for idx_row, row in enumerate(error_matrix_area_prop)])
+    html += '''
+            <table>
+            <tbody>
+            <tr>
+            <td>{}</td>
+            </tr>'''.format(rf(overall_accuracy, 5))
+    html += '''
+            </tbody>
+            </table>
+            '''
 
     ###################################
     html += "<p style='font-size:2px'><br/></p>"
