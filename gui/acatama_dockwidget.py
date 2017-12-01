@@ -139,11 +139,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # generate sampling options
         self.widget_generate_RS.generate_sampling_widget_options.setHidden(True)
         # save config
-        self.widget_generate_RS.widget_save_sampling.setHidden(True)
+        self.widget_generate_RS.widget_save_sampling_config.setHidden(True)
         self.canvas.layersChanged.connect(
             lambda: self.update_generated_sampling_list_in(self.widget_generate_RS.QCBox_SamplingToSave))
-        self.widget_generate_RS.QPBtn_SaveSampling.clicked.connect(
-            lambda: self.fileDialog_saveSampling(self.widget_generate_RS.QCBox_SamplingToSave))
         self.widget_generate_RS.QPBtn_SaveSamplingConf.clicked.connect(
             lambda: self.fileDialog_saveSamplingConf(self.widget_generate_RS.QCBox_SamplingToSave))
         # generate sampling
@@ -174,11 +172,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # generate sampling options
         self.widget_generate_SRS.generate_sampling_widget_options.setHidden(True)
         # save config
-        self.widget_generate_SRS.widget_save_sampling.setHidden(True)
+        self.widget_generate_SRS.widget_save_sampling_config.setHidden(True)
         self.canvas.layersChanged.connect(
             lambda: self.update_generated_sampling_list_in(self.widget_generate_SRS.QCBox_SamplingToSave))
-        self.widget_generate_SRS.QPBtn_SaveSampling.clicked.connect(
-            lambda: self.fileDialog_saveSampling(self.widget_generate_SRS.QCBox_SamplingToSave))
         self.widget_generate_SRS.QPBtn_SaveSamplingConf.clicked.connect(
             lambda: self.fileDialog_saveSamplingConf(self.widget_generate_SRS.QCBox_SamplingToSave))
         # generate sampling

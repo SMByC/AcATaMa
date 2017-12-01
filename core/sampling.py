@@ -20,8 +20,8 @@
 """
 import os
 import ConfigParser
-from datetime import datetime
 
+from PyQt4 import QtGui
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QVariant
@@ -36,7 +36,6 @@ from AcATaMa.core.utils import wait_process, error_handler
 
 
 @error_handler()
-@wait_process('widget_generate_RS.QPBtn_GenerateSampling')
 def do_random_sampling(dockwidget):
     # first check input files requirements
     if not valid_file_selected_in(dockwidget.QCBox_ThematicRaster, "thematic raster"):
@@ -78,20 +77,29 @@ def do_random_sampling(dockwidget):
     else:
         attempts_by_sampling = None
 
+    # first select the target dir for save the sampling file
+    suggested_filename = os.path.join(os.path.dirname(ThematicR.file_path), "random_sampling.shp")
+    output_file = QtGui.QFileDialog.getSaveFileName(dockwidget,
+                                                 dockwidget.tr(u"Select the output file to save the sampling"),
+                                                 suggested_filename,
+                                                 dockwidget.tr(u"Shape files (*.shp);;All files (*.*)"))
+    if output_file == '':
+        return
+
     # process
-    sampling = Sampling("RS", ThematicR, CategoricalR, out_dir=dockwidget.tmp_dir)
+    sampling = Sampling("RS", ThematicR, CategoricalR, output_file=output_file)
     sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
                                       neighbor_aggregation, attempts_by_sampling,
                                       dockwidget.widget_generate_RS.QPBar_GenerateSampling)
 
     # success
     if sampling.total_of_samples == number_of_samples:
-        load_layer_in_qgis(sampling.output_file + ".shp", "vector")
+        load_layer_in_qgis(sampling.output_file, "vector")
         iface.messageBar().pushMessage("AcATaMa", "Generate the random sampling, completed",
                                        level=QgsMessageBar.SUCCESS)
     # success but not completed
     if sampling.total_of_samples < number_of_samples and sampling.total_of_samples > 0:
-        load_layer_in_qgis(sampling.output_file + ".shp", "vector")
+        load_layer_in_qgis(sampling.output_file, "vector")
         iface.messageBar().pushMessage("AcATaMa", "Generated the random sampling, but can not generate requested number of "
                                                   "random points {}/{}, attempts exceeded".format(sampling.total_of_samples, number_of_samples),
                                        level=QgsMessageBar.INFO, duration=10)
@@ -104,7 +112,6 @@ def do_random_sampling(dockwidget):
 
 
 @error_handler()
-@wait_process('widget_generate_SRS.QPBtn_GenerateSampling')
 def do_stratified_random_sampling(dockwidget):
     # first check input files requirements
     if not valid_file_selected_in(dockwidget.QCBox_ThematicRaster, "thematic raster"):
@@ -167,21 +174,30 @@ def do_stratified_random_sampling(dockwidget):
         for row in range(dockwidget.QTableW_SRS.rowCount()):
             srs_config["std_error"].append(float(dockwidget.QTableW_SRS.item(row, 3).text()))
 
+    # first select the target dir for save the sampling file
+    suggested_filename = os.path.join(os.path.dirname(ThematicR.file_path), "stratified_random_sampling.shp")
+    output_file = QtGui.QFileDialog.getSaveFileName(dockwidget,
+                                                 dockwidget.tr(u"Select the output file to save the sampling"),
+                                                 suggested_filename,
+                                                 dockwidget.tr(u"Shape files (*.shp);;All files (*.*)"))
+    if output_file == '':
+        return
+
     # process
     sampling = Sampling("SRS", ThematicR, CategoricalR, sampling_method,
-                        srs_config=srs_config, out_dir=dockwidget.tmp_dir)
+                        srs_config=srs_config, output_file=output_file)
     sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
                                       neighbor_aggregation, attempts_by_sampling,
                                       dockwidget.widget_generate_SRS.QPBar_GenerateSampling)
 
     # success
     if sampling.total_of_samples == total_of_samples:
-        load_layer_in_qgis(sampling.output_file + ".shp", "vector")
+        load_layer_in_qgis(sampling.output_file, "vector")
         iface.messageBar().pushMessage("AcATaMa", "Generate the stratified random sampling, completed",
                                        level=QgsMessageBar.SUCCESS)
     # success but not completed
     if sampling.total_of_samples < total_of_samples and sampling.total_of_samples > 0:
-        load_layer_in_qgis(sampling.output_file + ".shp", "vector")
+        load_layer_in_qgis(sampling.output_file, "vector")
         iface.messageBar().pushMessage("AcATaMa", "Generated the stratified random sampling, but can not generate requested number of "
                                                   "random points {}/{}, attempts exceeded".format(sampling.total_of_samples, total_of_samples),
                                        level=QgsMessageBar.INFO, duration=10)
@@ -197,31 +213,26 @@ class Sampling:
     # for save all instances
     samplings = dict()  # {name_in_qgis: class instance}
 
-    def __init__(self, sampling_type, ThematicR, CategoricalR, sampling_method=None, srs_config=None, out_dir=None):
+    def __init__(self, sampling_type, ThematicR, CategoricalR, sampling_method=None, srs_config=None, output_file=None):
         # set and init variables
         # sampling_type => "RS" (random sampling),
         #                  "SRS" (stratified random sampling)
         self.sampling_type = sampling_type
         self.ThematicR = ThematicR
         self.CategoricalR = CategoricalR
-        # set the name and output file
-        if self.sampling_type == "RS":
-            self.sampling_name = "random_sampling_{}".format(datetime.now().strftime('%H-%M-%S'))
-        if self.sampling_type == "SRS":
-            self.sampling_name = "stratified_random_sampling_{}".format(datetime.now().strftime('%H-%M-%S'))
         # for stratified sampling
         self.sampling_method = sampling_method
         # save some SRS sampling configuration
         self.srs_config = srs_config
         # set the output dir for save sampling
-        if out_dir is None:
-            out_dir = os.path.dirname(ThematicR.file_path)
-        self.output_file = os.path.join(out_dir, self.sampling_name)
+        self.output_file = output_file
         # save instance
-        Sampling.samplings[self.sampling_name] = self
+        filename = os.path.splitext(os.path.basename(output_file))[0]  # without extension
+        Sampling.samplings[filename] = self
         # for save all sampling points
         self.points = dict()
 
+    @wait_process()
     def generate_sampling_points(self, pixel_values, number_of_samples, min_distance,
                                  neighbor_aggregation, attempts_by_sampling, progress_bar):
         """Some code base from (by Alexander Bruy):
