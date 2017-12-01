@@ -269,7 +269,16 @@ def get_html(accu_asse):
             <td class="field-values">{table_field}</td>
             '''.format(table_field=(rf(t, 5)) if t > 0 else "-") for t in quadratic_error_matrix[idx_row]])
         html += "</tr>"
+    html += '''    
+        <tr>
+        <td class="empty"></td>
+          <th>total</th>
+        '''
+    html += "".join(['''
+                    <td>{total_col}</td>
+                    '''.format(total_col=rf(sum(t)**0.5, 5)) for t in zip(*quadratic_error_matrix)])
     html += '''
+        </tr>
         </tbody>
         </table>
         '''
