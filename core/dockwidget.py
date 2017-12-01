@@ -89,6 +89,8 @@ def load_and_select_filepath_in(combo_box, file_path, layer_type="any", geometry
 
 
 def load_layer_in_qgis(file_path, layer_type):
+    # first unload layer from qgis if exists
+    unload_layer_in_qgis(file_path)
     # create layer
     filename = os.path.splitext(os.path.basename(file_path))[0]
     if layer_type == "raster":
