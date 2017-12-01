@@ -167,9 +167,9 @@ impossible complete the sampling set configured.</string>
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="QGBox_save_sampling">
+       <widget class="QGroupBox" name="QGBox_save_sampling_config">
         <property name="title">
-         <string>Save sampling (optional)</string>
+         <string>Save sampling config (optional)</string>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -179,12 +179,12 @@ impossible complete the sampling set configured.</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <item>
-          <widget class="QWidget" name="widget_save_sampling" native="true">
+          <widget class="QWidget" name="widget_save_sampling_config" native="true">
            <layout class="QVBoxLayout" name="verticalLayout_6">
             <item>
              <widget class="QLabel" name="label_3">
               <property name="text">
-               <string>Select the sampling points generated for or save it and/or save all configuration with which the sampling was generated:</string>
+               <string>Save all configuration with which the sampling was generated:</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -222,13 +222,6 @@ impossible complete the sampling set configured.</string>
                   </size>
                  </property>
                 </spacer>
-               </item>
-               <item>
-                <widget class="QPushButton" name="QPBtn_SaveSampling">
-                 <property name="text">
-                  <string>Save Sampling</string>
-                 </property>
-                </widget>
                </item>
                <item>
                 <widget class="QPushButton" name="QPBtn_SaveSamplingConf">
@@ -327,9 +320,9 @@ impossible complete the sampling set configured.</string>
    </hints>
   </connection>
   <connection>
-   <sender>QGBox_save_sampling</sender>
+   <sender>QGBox_save_sampling_config</sender>
    <signal>clicked(bool)</signal>
-   <receiver>widget_save_sampling</receiver>
+   <receiver>widget_save_sampling_config</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
