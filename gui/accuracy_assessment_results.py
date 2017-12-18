@@ -414,7 +414,7 @@ def get_html(accu_asse):
                 sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_ha
         html += '''<td>{error}</th>'''.format(error=rf(error))
         # lower limit
-        html += '''<td>{lower_limit}</th>'''.format(lower_limit=rf(area - accu_asse.z_score*error))
+        html += '''<td>{lower_limit}</th>'''.format(lower_limit=rf(area - accu_asse.z_score * error))
         # upper limit
         html += '''<td>{upper_limit}</th>'''.format(upper_limit=rf(area + accu_asse.z_score * error))
         html += "</tr>"
@@ -445,11 +445,16 @@ def get_html(accu_asse):
 def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows = []
     csv_rows.append(["Classification accuracy assessment results"])
-    # csv_rows.append([])
-    # csv_rows.append(["Thematic raster:", os.path.basename(accu_asse.ThematicR.file_path)])
-    # csv_rows.append(["Sampling file:", os.path.basename(get_file_path_of_layer(accu_asse.classification.sampling_layer))])
-    # total_classified = sum(sample.is_classified for sample in accu_asse.classification.points)
-    # csv_rows.append(["Classification status:", "{}/{} samples classified".format(total_classified, len(accu_asse.classification.points))])
+    csv_rows.append([])
+    csv_rows.append(["Thematic raster:"])
+    csv_rows.append([os.path.basename(accu_asse.ThematicR.file_path)])
+    csv_rows.append([])
+    csv_rows.append(["Sampling file:"])
+    csv_rows.append([os.path.basename(get_file_path_of_layer(accu_asse.classification.sampling_layer))])
+    csv_rows.append([])
+    total_classified = sum(sample.is_classified for sample in accu_asse.classification.points)
+    csv_rows.append(["Classification status:"])
+    csv_rows.append(["{}/{} samples classified".format(total_classified, len(accu_asse.classification.points))])
 
     ###########################################################################
     csv_rows.append([])
@@ -482,7 +487,144 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
                     [""] + [rf(sum([col[idx_col] for idx_col, col in enumerate(zip(*accu_asse.error_matrix))]) /
                             sum([sum(r) for r in accu_asse.error_matrix]))])
 
+    ###########################################################################
+    csv_rows.append([])
+    csv_rows.append(["2) Error matrix of estimated area proportion:"])
+    csv_rows.append(["", "", "Classified values"])
+    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
+              for i in accu_asse.values]
+    csv_rows.append(["", ""] + labels + ["Wi"])
 
+    error_matrix_area_prop = copy.deepcopy(accu_asse.error_matrix)
+    for idx_row, row in enumerate(accu_asse.error_matrix):
+        wi = accu_asse.thematic_pixels_count[accu_asse.values[idx_row]] / \
+             sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values])
+        for idx_col, value in enumerate(row):
+            error_matrix_area_prop[idx_row][idx_col] = (value / sum(row)) * wi if sum(row) > 0 else 0
+
+    for idx_row, value in enumerate(accu_asse.values):
+        r = []
+        if idx_row == 0:
+            r.append("Thematic raster classes")
+        else:
+            r.append("")
+        r.append(value)
+        r += [rf(t, 5) if t > 0 else "-" for t in error_matrix_area_prop[idx_row]]
+        r.append(rf(sum(error_matrix_area_prop[idx_row])) if sum(error_matrix_area_prop[idx_row]) > 0 else "-")
+        csv_rows.append(r)
+
+    csv_rows.append(["", "total"] + [rf(sum(t), 5) for t in zip(*error_matrix_area_prop)])
+
+    ###########################################################################
+    csv_rows.append([])
+    csv_rows.append(["3) Quadratic error matrix of estimated area proportion:"])
+    csv_rows.append(["", "", "Classified values"])
+    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
+              for i in accu_asse.values]
+    csv_rows.append(["", ""] + labels)
+
+    quadratic_error_matrix = copy.deepcopy(accu_asse.error_matrix)
+    for idx_row, row in enumerate(accu_asse.error_matrix):
+        wi = accu_asse.thematic_pixels_count[accu_asse.values[idx_row]] / \
+             sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values])
+        for idx_col, value in enumerate(row):
+            quadratic_error_matrix[idx_row][idx_col] = \
+                (wi ** 2 * ((value / sum(row)) * (1 - (value / sum(row))) / (sum(row) - 1))) if sum(row) > 1 else 0
+
+    for idx_row, value in enumerate(accu_asse.values):
+        r = []
+        if idx_row == 0:
+            r.append("Thematic raster classes")
+        else:
+            r.append("")
+        r.append(value)
+        r += [rf(t, 5) if t > 0 else "-" for t in quadratic_error_matrix[idx_row]]
+        csv_rows.append(r)
+
+    csv_rows.append(["", "total"] + [rf(sum(t)**0.5, 5) for t in zip(*quadratic_error_matrix)])
+
+    ###########################################################################
+    csv_rows.append([])
+    csv_rows.append(["4) Overall matrix accuracy:"])
+    csv_rows.append([])
+    csv_rows.append(["User's accuracy matrix of estimated area proportion:"])
+    csv_rows.append(["", "", "Classified values"])
+    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
+              for i in accu_asse.values]
+    csv_rows.append(["", ""] + labels)
+
+    user_accuracy_matrix = copy.deepcopy(accu_asse.error_matrix)
+    for idx_row, row in enumerate(accu_asse.error_matrix):
+        for idx_col, value in enumerate(row):
+            user_accuracy_matrix[idx_row][idx_col] = \
+                value / sum(row) if sum(row) > 0 else 0
+
+    for idx_row, value in enumerate(accu_asse.values):
+        r = []
+        if idx_row == 0:
+            r.append("Thematic raster classes")
+        else:
+            r.append("")
+        r.append(value)
+        r += [rf(t, 5) if t > 0 else "-" for t in user_accuracy_matrix[idx_row]]
+        csv_rows.append(r)
+
+    csv_rows.append([])
+    csv_rows.append(["Producer's accuracy matrix of estimated area proportion:"])
+    csv_rows.append(["", "", "Classified values"])
+    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
+              for i in accu_asse.values]
+    csv_rows.append(["", ""] + labels)
+
+    producer_accuracy_matrix = copy.deepcopy(error_matrix_area_prop)
+    for idx_col, col in enumerate(zip(*error_matrix_area_prop)):
+        for idx_row, value in enumerate(col):
+            producer_accuracy_matrix[idx_row][idx_col] = value / sum(col) if sum(col) > 0 else 0
+
+    for idx_row, value in enumerate(accu_asse.values):
+        r = []
+        if idx_row == 0:
+            r.append("Thematic raster classes")
+        else:
+            r.append("")
+        r.append(value)
+        r += [rf(t, 5) if t > 0 else "-" for t in producer_accuracy_matrix[idx_row]]
+        csv_rows.append(r)
+
+    csv_rows.append([])
+    csv_rows.append(["Overall Accuracy:"])
+    overall_accuracy = sum([row[idx_row] for idx_row, row in enumerate(error_matrix_area_prop)])
+    csv_rows.append([rf(overall_accuracy, 5)])
+
+    ###########################################################################
+    csv_rows.append([])
+    csv_rows.append(["5) Class area adjusted table:"])
+    csv_rows.append(["", "Area (ha)", "Error", "Lower limit", "Upper limit"])
+
+    total_area = 0
+
+    for idx_row, value in enumerate(accu_asse.values):
+        r = []
+        r.append("{} ({})".format(value, accu_asse.labels[str(value)] if str(value) in accu_asse.labels else "-"))
+
+        # area
+        area = sum(zip(*error_matrix_area_prop)[idx_row]) * \
+               sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_ha
+        r.append(rf(area))
+        total_area += area
+        # error
+        error = (sum(zip(*quadratic_error_matrix)[idx_row]) ** 0.5) * \
+                sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_ha
+        r.append(rf(error))
+        # lower limit
+        r.append(rf(area - accu_asse.z_score * error))
+        # upper limit
+        r.append(rf(area + accu_asse.z_score * error))
+        csv_rows.append(r)
+
+    csv_rows.append(["total"] + [rf(total_area)])
+
+    # write CSV file
     with open(file_out, 'wb') as csvfile:
         csv_w = csv.writer(csvfile, delimiter=str(csv_separator))
         # replace with the user define decimal separator
