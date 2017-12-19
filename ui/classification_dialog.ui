@@ -669,7 +669,7 @@
            <x>0</x>
            <y>0</y>
            <width>254</width>
-           <height>496</height>
+           <height>607</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -715,6 +715,19 @@
          </size>
         </property>
        </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="QPBtn_unclassifySampleButton">
+        <property name="styleSheet">
+         <string notr="true">color: &quot;gray&quot;;</string>
+        </property>
+        <property name="text">
+         <string>unclassify sample</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QWidget" name="widget" native="true">
