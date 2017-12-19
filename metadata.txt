@@ -10,7 +10,7 @@
 name=AcATaMa
 description=AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
 about=AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
-version=17.12.1
+version=17.12.19
 qgisMinimumVersion=2.14
 
 author=Xavier Corredor Llano, SMBYC
