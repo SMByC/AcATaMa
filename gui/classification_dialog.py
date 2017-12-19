@@ -113,6 +113,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.classification_btns_config = ClassificationButtonsConfig(self.classification.buttons_config)
         self.create_classification_buttons(buttons_config=self.classification.buttons_config)
         self.QPBtn_SetClassification.clicked.connect(self.open_set_classification_dialog)
+        self.QPBtn_unclassifySampleButton.clicked.connect(self.unclassify_sample)
         # disable enter action
         self.QPBtn_SetClassification.setAutoDefault(False)
 
@@ -192,6 +193,14 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
             if self.autoNextSample.isChecked():
                 # automatically follows the next sample
                 self.next_sample()
+
+    def unclassify_sample(self):
+        self.current_sample.is_classified = False
+        self.current_sample.classif_id = None
+        self.display_sample_status()
+        if self.autoNextSample.isChecked():
+            # automatically follows the next sample
+            self.next_sample()
 
     def display_sample_status(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
