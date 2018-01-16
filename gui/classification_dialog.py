@@ -116,6 +116,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.QPBtn_unclassifySampleButton.clicked.connect(self.unclassify_sample)
         # disable enter action
         self.QPBtn_SetClassification.setAutoDefault(False)
+        self.QPBtn_unclassifySampleButton.setAutoDefault(False)
 
         # go to sample ID action
         self.GoTo_ID_Button.clicked.connect(self.go_to_sample_id)
