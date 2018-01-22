@@ -69,10 +69,14 @@ class Classification:
 
     def get_points_from_shapefile(self):
         points = []
-        for shape_id, qgs_feature in enumerate(self.sampling_layer.getFeatures()):
+        for qgs_feature in self.sampling_layer.getFeatures():
             geom = qgs_feature.geometry()
+            # get the id from shape file
+            idx = self.sampling_layer.fieldNameIndex('id')
+            shape_id = qgs_feature.attributes()[idx]
+
             x, y = geom.asPoint()
-            points.append(ClassificationPoint(x, y, shape_id+1))
+            points.append(ClassificationPoint(x, y, shape_id))
         return points
 
     @wait_process()
