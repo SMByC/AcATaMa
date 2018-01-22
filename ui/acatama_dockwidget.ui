@@ -75,9 +75,9 @@
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QComboBox" name="QCBox_ThematicRaster">
+                   <widget class="QgsMapLayerComboBox" name="QCBox_ThematicRaster">
                     <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
@@ -89,6 +89,12 @@
                   </item>
                   <item>
                    <widget class="QPushButton" name="QPBtn_browseThematicRaster">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="text">
                      <string>Browse</string>
                     </property>
@@ -178,9 +184,9 @@
                       <number>0</number>
                      </property>
                      <item>
-                      <widget class="QComboBox" name="QCBox_AreaOfInterest">
+                      <widget class="QgsMapLayerComboBox" name="QCBox_AreaOfInterest">
                        <property name="sizePolicy">
-                        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                        <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
                          <horstretch>0</horstretch>
                          <verstretch>0</verstretch>
                         </sizepolicy>
@@ -189,6 +195,12 @@
                      </item>
                      <item>
                       <widget class="QPushButton" name="QPBtn_browseAreaOfInterest">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="text">
                         <string>Browse</string>
                        </property>
@@ -448,9 +460,9 @@
                              <number>0</number>
                             </property>
                             <item>
-                             <widget class="QComboBox" name="QCBox_CategRaster_RS">
+                             <widget class="QgsMapLayerComboBox" name="QCBox_CategRaster_RS">
                               <property name="sizePolicy">
-                               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                               <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
                                 <horstretch>0</horstretch>
                                 <verstretch>0</verstretch>
                                </sizepolicy>
@@ -462,6 +474,12 @@
                             </item>
                             <item>
                              <widget class="QPushButton" name="QPBtn_browseCategRaster_RS">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
                               <property name="text">
                                <string>Browse</string>
                               </property>
@@ -588,9 +606,9 @@
                           <number>0</number>
                          </property>
                          <item>
-                          <widget class="QComboBox" name="QCBox_CategRaster_SRS">
+                          <widget class="QgsMapLayerComboBox" name="QCBox_CategRaster_SRS">
                            <property name="sizePolicy">
-                            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                            <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
                              <horstretch>0</horstretch>
                              <verstretch>0</verstretch>
                             </sizepolicy>
@@ -602,6 +620,12 @@
                          </item>
                          <item>
                           <widget class="QPushButton" name="QPBtn_browseCategRaster_SRS">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
                            <property name="text">
                             <string>Browse</string>
                            </property>
@@ -663,6 +687,12 @@
                       </item>
                       <item>
                        <widget class="QComboBox" name="QCBox_SRS_Method">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
                         <property name="currentIndex">
                          <number>-1</number>
                         </property>
@@ -892,9 +922,9 @@
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QComboBox" name="QCBox_SamplingFile">
+                   <widget class="QgsMapLayerComboBox" name="QCBox_SamplingFile">
                     <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
@@ -906,6 +936,12 @@
                   </item>
                   <item>
                    <widget class="QPushButton" name="QPBtn_browseSamplingFile">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="text">
                      <string>Browse</string>
                     </property>
@@ -1341,9 +1377,9 @@
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QComboBox" name="QCBox_SamplingFile_AA">
+                   <widget class="QgsMapLayerComboBox" name="QCBox_SamplingFile_AA">
                     <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
@@ -1507,6 +1543,11 @@
    <extends>QWidget</extends>
    <header>AcATaMa.gui.generate_sampling_widget</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QgsMapLayerComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qgis.gui</header>
   </customwidget>
  </customwidgets>
  <resources/>

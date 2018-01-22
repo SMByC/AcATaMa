@@ -75,9 +75,9 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QComboBox" name="QCBox_RenderFile">
+       <widget class="QgsMapLayerComboBox" name="QCBox_RenderFile">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+         <sizepolicy hsizetype="Ignored" vsizetype="Maximum">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -98,7 +98,7 @@
       <item>
        <widget class="QPushButton" name="QCBox_browseRenderFile">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -252,6 +252,11 @@
    <extends>QWidget</extends>
    <header>AcATaMa.gui.classification_view_widget</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QgsMapLayerComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qgis.gui</header>
   </customwidget>
  </customwidgets>
  <resources/>

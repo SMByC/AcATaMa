@@ -74,13 +74,12 @@ def get_current_layer_in(combo_box, show_message=True):
         return None
 
 
-def load_and_select_filepath_in(combo_box, file_path, layer_type="any", geometry_type="any", ignore_layers=[]):
+def load_and_select_filepath_in(combo_box, file_path, layer_type="any"):
     filename = os.path.splitext(os.path.basename(file_path))[0]
     layer = get_layer_by_name(filename)
     if not layer:
         # load to qgis and update combobox list
         load_layer_in_qgis(file_path, layer_type)
-        update_layers_list(combo_box, layer_type, geometry_type, ignore_layers)
     # select the sampling file in combobox
     selected_index = combo_box.findText(filename, Qt.MatchFixedString)
     combo_box.setCurrentIndex(selected_index)
@@ -116,52 +115,6 @@ def unload_layer_in_qgis(layer_path):
     for layer_loaded in layers_loaded:
         if layer_path == layer_loaded.dataProvider().dataSourceUri().split('|layerid')[0]:
             QgsMapLayerRegistry.instance().removeMapLayer(layer_loaded)
-
-
-def update_layers_list(combo_box, layer_type="any", geometry_type="any", ignore_layers=[]):
-    """
-    Args:
-        combo_box: combo box instance
-        layer_type: "any", "raster", "vector"
-        geometry_type: Only for vector layer type: "any", "points", "lines", "polygons"
-
-    Returns:
-        None: Refill the combo_box instance
-    """
-    if not QgsMapLayerRegistry:
-        return
-
-    with block_signals_to(combo_box):
-        save_selected = combo_box.currentText()
-        combo_box.clear()
-
-        # list of layers loaded in qgis filter by type
-        if layer_type == "raster":
-            layers = [layer for layer in QgsMapLayerRegistry.instance().mapLayers().values()
-                      if layer.type() == QgsMapLayer.RasterLayer]
-        if layer_type == "vector":
-            layers = [layer for layer in QgsMapLayerRegistry.instance().mapLayers().values()
-                      if layer.type() == QgsMapLayer.VectorLayer]
-        if layer_type == "any":
-            layers = QgsMapLayerRegistry.instance().mapLayers().values()
-
-        if ignore_layers:
-            layers = [layer for layer in layers if layer not in ignore_layers]
-
-        # filter by geometry type
-        if geometry_type in ["points", "lines", "polygons"]:
-            geometry_type = {"points": 0, "lines": 1, "polygons": 2}[geometry_type]
-            layers = [layer for layer in layers if layer.geometryType() == geometry_type]
-
-        # added list to combobox
-        if layers:
-            [combo_box.addItem(layer.name()) for layer in layers]
-
-        selected_index = combo_box.findText(save_selected, Qt.MatchFixedString)
-        combo_box.setCurrentIndex(selected_index)
-    # emit event when the layer selected was delete
-    if selected_index == -1:
-        combo_box.currentIndexChanged.emit(selected_index)
 
 
 @wait_process()
