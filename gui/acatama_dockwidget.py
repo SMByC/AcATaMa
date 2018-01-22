@@ -27,15 +27,15 @@ from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSignal, pyqtSlot
 from PyQt4.QtGui import QMessageBox
 from qgis.core import QgsMapLayerRegistry, QgsVectorFileWriter
-from qgis.gui import QgsMessageBar
+from qgis.gui import QgsMessageBar, QgsMapLayerProxyModel
 
-from AcATaMa.core.accuracy_assessment import AccuracyAssessment, AccuracyAssessmentDialog
+from AcATaMa.core.accuracy_assessment import AccuracyAssessmentDialog
 from AcATaMa.core.classification import Classification
 from AcATaMa.core.sampling import do_random_sampling, do_stratified_random_sampling, Sampling
-from AcATaMa.core.dockwidget import get_current_file_path_in, update_layers_list, \
+from AcATaMa.core.dockwidget import get_current_file_path_in, \
     unload_layer_in_qgis, get_current_layer_in, fill_stratified_sampling_table, valid_file_selected_in, \
     update_stratified_sampling_table, load_and_select_filepath_in
-from AcATaMa.core.utils import wait_process, error_handler, block_signals_to
+from AcATaMa.core.utils import error_handler, block_signals_to
 from AcATaMa.core.raster import do_clipping_with_shape, get_nodata_value
 from AcATaMa.gui.about_dialog import AboutDialog
 from AcATaMa.gui.classification_dialog import ClassificationDialog
@@ -84,9 +84,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.button_about.clicked.connect(self.about_dialog.show)
 
         # ######### load thematic raster image ######### #
-        update_layers_list(self.QCBox_ThematicRaster, "raster")
-        # handle connect when the list of layers changed
-        self.canvas.layersChanged.connect(lambda: update_layers_list(self.QCBox_ThematicRaster, "raster"))
+        # set properties to QgsMapLayerComboBox
+        self.QCBox_ThematicRaster.setCurrentIndex(-1)
+        self.QCBox_ThematicRaster.setFilters(QgsMapLayerProxyModel.RasterLayer)
         # call to browse the thematic raster file
         self.QPBtn_browseThematicRaster.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_ThematicRaster,
@@ -94,13 +94,13 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
         # set the nodata value of the thematic raster
-        self.QCBox_ThematicRaster.currentIndexChanged.connect(self.set_nodata_value_thematic_raster)
+        self.QCBox_ThematicRaster.layerChanged.connect(self.set_nodata_value_thematic_raster)
 
         # ######### shape area of interest ######### #
         self.widget_AreaOfInterest.setHidden(True)
-        update_layers_list(self.QCBox_AreaOfInterest, "vector")
-        # handle connect when the list of layers changed
-        self.canvas.layersChanged.connect(lambda: update_layers_list(self.QCBox_AreaOfInterest, "vector"))
+        # set properties to QgsMapLayerComboBox
+        self.QCBox_AreaOfInterest.setCurrentIndex(-1)
+        self.QCBox_AreaOfInterest.setFilters(QgsMapLayerProxyModel.VectorLayer)
         # call to browse the shape area
         self.QPBtn_browseAreaOfInterest.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_AreaOfInterest,
@@ -112,9 +112,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         # ######### create categorical  ######### # TODO
         #self.widget_CategRaster.setHidden(True)
-        # update_layers_list(self.selectCategRaster, "raster")
         # # handle connect when the list of layers changed
-        # self.canvas.layersChanged.connect(lambda: update_layers_list(self.selectCategRaster, "raster"))
         # # call to browse the categorical raster
         # self.browseCategRaster.clicked.connect(lambda: self.fileDialog_browse(
         #     self.selectCategRaster,
@@ -124,18 +122,15 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         # ######### random sampling ######### #
         self.widget_RSwithCR.setHidden(True)
-        update_layers_list(self.QCBox_CategRaster_RS, "raster")
-        # handle connect when the list of layers changed
-        self.canvas.layersChanged.connect(lambda: update_layers_list(self.QCBox_CategRaster_RS, "raster"))
+        # set properties to QgsMapLayerComboBox
+        self.QCBox_CategRaster_RS.setCurrentIndex(-1)
+        self.QCBox_CategRaster_RS.setFilters(QgsMapLayerProxyModel.RasterLayer)
         # call to browse the categorical raster
         self.QPBtn_browseCategRaster_RS.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_CategRaster_RS,
             dialog_title=self.tr(u"Select the categorical raster file"),
             dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
-        # set the nodata value of the categorical raster
-        self.QCBox_CategRaster_SRS.currentIndexChanged.connect(self.set_nodata_value_categorical_raster)
-        self.nodata_CategRaster_SRS.valueChanged.connect(self.reset_nodata_to_categorical_raster)
         # generate sampling options
         self.widget_generate_RS.generate_sampling_widget_options.setHidden(True)
         # save config
@@ -151,20 +146,23 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.numberOfSamples_RS.valueChanged.connect(self.widget_generate_RS.QPBar_GenerateSampling.setMaximum)
 
         # ######### stratified random sampling ######### #
-        update_layers_list(self.QCBox_CategRaster_SRS, "raster")
-        # handle connect when the list of layers changed
-        self.canvas.layersChanged.connect(lambda: update_layers_list(self.QCBox_CategRaster_SRS, "raster"))
+        # set properties to QgsMapLayerComboBox
+        self.QCBox_CategRaster_SRS.setCurrentIndex(-1)
+        self.QCBox_CategRaster_SRS.setFilters(QgsMapLayerProxyModel.RasterLayer)
         # call to browse the categorical raster
         self.QPBtn_browseCategRaster_SRS.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_CategRaster_SRS,
             dialog_title=self.tr(u"Select the categorical raster file"),
             dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
+        # set the nodata value of the categorical raster
+        self.QCBox_CategRaster_SRS.layerChanged.connect(self.set_nodata_value_categorical_raster)
+        self.nodata_CategRaster_SRS.valueChanged.connect(self.reset_nodata_to_categorical_raster)
         # init variable for save tables content
         self.srs_tables = {}
         # fill table of categorical raster
         self.widget_TotalExpectedSE.setHidden(True)
-        self.QCBox_CategRaster_SRS.currentIndexChanged.connect(lambda: fill_stratified_sampling_table(self))
+        self.QCBox_CategRaster_SRS.layerChanged.connect(lambda: fill_stratified_sampling_table(self))
         self.QCBox_SRS_Method.currentIndexChanged.connect(lambda: fill_stratified_sampling_table(self))
         # for each item changed in table, save and update it
         self.TotalExpectedSE.valueChanged.connect(lambda: update_stratified_sampling_table(self, "TotalExpectedSE"))
@@ -181,11 +179,11 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.widget_generate_SRS.QPBtn_GenerateSampling.clicked.connect(lambda: do_stratified_random_sampling(self))
 
         # ######### Classification sampling tab ######### #
-        update_layers_list(self.QCBox_SamplingFile, "vector", "points")
-        # handle connect when the list of layers changed
-        self.canvas.layersChanged.connect(lambda: update_layers_list(self.QCBox_SamplingFile, "vector", "points"))
+        # set properties to QgsMapLayerComboBox
+        self.QCBox_SamplingFile.setCurrentIndex(-1)
+        self.QCBox_SamplingFile.setFilters(QgsMapLayerProxyModel.PointLayer)
         # show the classification file settings in plugin when it is selected
-        self.QCBox_SamplingFile.currentIndexChanged.connect(self.set_classification_file_settings)
+        self.QCBox_SamplingFile.layerChanged.connect(self.set_classification_file_settings)
         # call to browse the sampling file
         self.QPBtn_browseSamplingFile.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_SamplingFile,
@@ -205,11 +203,11 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.QPBtn_OpenClassificationDialog.clicked.connect(self.open_classification_dialog)
 
         # ######### Accuracy Assessment tab ######### #
-        update_layers_list(self.QCBox_SamplingFile_AA, "vector", "points")
-        # handle connect when the list of layers changed
-        self.canvas.layersChanged.connect(lambda: update_layers_list(self.QCBox_SamplingFile_AA, "vector", "points"))
+        # set properties to QgsMapLayerComboBox
+        self.QCBox_SamplingFile_AA.setCurrentIndex(-1)
+        self.QCBox_SamplingFile_AA.setFilters(QgsMapLayerProxyModel.PointLayer)
         # set and show the classification file status in AA
-        self.QCBox_SamplingFile_AA.currentIndexChanged.connect(self.set_sampling_file_accuracy_assessment)
+        self.QCBox_SamplingFile_AA.layerChanged.connect(self.set_sampling_file_accuracy_assessment)
         # compute the AA and open the result dialog
         self.QPBtn_ComputeViewAccurasyAssessment.clicked.connect(self.open_accuracy_assessment_results)
 
@@ -403,7 +401,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 # TODO: ask for new location of the sampling file
                 return
 
-            sampling_layer = load_and_select_filepath_in(self.QCBox_SamplingFile, sampling_filepath, "vector", "points")
+            sampling_layer = load_and_select_filepath_in(self.QCBox_SamplingFile, sampling_filepath, "vector")
 
             classification = Classification(sampling_layer)
             classification.load_config(yaml_config)

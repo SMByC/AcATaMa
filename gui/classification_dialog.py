@@ -100,10 +100,11 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                         view_widget.QCBox_RenderFile.setCurrentIndex(file_index)
                     elif os.path.isfile(view_config["render_file"]):
                         # load file and select in view if this exists and not load in Qgis
-                        load_and_select_filepath_in(view_widget.QCBox_RenderFile, view_config["render_file"],
-                                                    "any", ignore_layers=[view_widget.sampling_layer])
-                    # restore others config in view widget
+                        load_and_select_filepath_in(view_widget.QCBox_RenderFile, view_config["render_file"])
+                    # restore render activated
                     view_widget.OnOff_RenderView.setChecked(view_config["render_activated"])
+                    # active render layer in canvas
+                    view_widget.render_widget.render_layer(view_widget.QCBox_RenderFile.currentLayer())
                     # TODO: restore size by view widget
                     #view_widget.resize(*view_config["view_size"])
                     view_widget.QLabel_ViewName.setText(view_config["name"])

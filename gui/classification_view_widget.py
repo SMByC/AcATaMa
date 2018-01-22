@@ -23,10 +23,11 @@ import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import QSettings, Qt, pyqtSlot, QTimer
 from qgis.core import QgsGeometry, QgsPoint, QGis
-from qgis.gui import QgsMapCanvas, QgsMapCanvasLayer, QgsMapToolPan, QgsRubberBand, QgsVertexMarker
+from qgis.gui import QgsMapCanvas, QgsMapCanvasLayer, QgsMapToolPan, QgsRubberBand, QgsVertexMarker, \
+    QgsMapLayerProxyModel
 from qgis.utils import iface
 
-from AcATaMa.core.dockwidget import update_layers_list, get_current_layer_in, load_and_select_filepath_in
+from AcATaMa.core.dockwidget import get_current_layer_in, load_and_select_filepath_in
 from AcATaMa.core.utils import block_signals_to
 
 
@@ -173,13 +174,13 @@ class ClassificationViewWidget(QtGui.QWidget, FORM_CLASS):
 
     def setup_view_widget(self, sampling_layer):
         self.sampling_layer = sampling_layer
-        # render layer actions
-        update_layers_list(self.QCBox_RenderFile, "any", ignore_layers=[self.sampling_layer])
-        # handle connect when the list of layers changed
-        self.qgs_main_canvas.layersChanged.connect(
-            lambda: update_layers_list(self.QCBox_RenderFile, "any", ignore_layers=[self.sampling_layer]))
-        self.QCBox_RenderFile.currentIndexChanged.connect(
-            lambda: self.render_widget.render_layer(get_current_layer_in(self.QCBox_RenderFile)))
+        # set properties to QgsMapLayerComboBox
+        self.QCBox_RenderFile.setCurrentIndex(-1)
+        self.QCBox_RenderFile.setFilters(QgsMapLayerProxyModel.All)
+        # ignore and not show the sampling layer
+        self.QCBox_RenderFile.setExceptedLayerList([self.sampling_layer])
+        # handle connect layer selection with render canvas
+        self.QCBox_RenderFile.layerChanged.connect(self.render_widget.render_layer)
         # call to browse the render file
         self.QCBox_browseRenderFile.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_RenderFile,
