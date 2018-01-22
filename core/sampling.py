@@ -280,7 +280,7 @@ class Sampling:
             f = QgsFeature(nPoints)
             f.initAttributes(1)
             f.setFields(fields)
-            f.setAttribute('id', nPoints)
+            f.setAttribute('id', nPoints+1)
             f.setGeometry(random_sampling_point.QgsGeom)
             writer.addFeature(f)
             self.index.insertFeature(f)
