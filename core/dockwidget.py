@@ -42,9 +42,9 @@ def valid_file_selected_in(combo_box, combobox_name=False):
 
 
 def get_layer_by_name(layer_name):
-    for layer in QgsMapLayerRegistry.instance().mapLayers().values():
-        if layer.name() == layer_name:
-            return layer
+    layer = QgsMapLayerRegistry.instance().mapLayersByName(layer_name)
+    if layer:
+        return layer[0]
 
 
 def get_file_path_of_layer(layer):
