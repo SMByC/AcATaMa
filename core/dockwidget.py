@@ -244,7 +244,7 @@ def fill_stratified_sampling_table(dockwidget):
         get_layer_by_name(dockwidget.QCBox_CategRaster_SRS.currentText()).dataProvider()
         # check sampling method selected
         if not dockwidget.QCBox_SRS_Method.currentText():
-            raise
+            raise Exception
     except:
         # clear table
         dockwidget.QTableW_SRS.setRowCount(0)

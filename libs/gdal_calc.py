@@ -288,7 +288,7 @@ def doit(opts, args):
                     myResult = eval(opts.calc, global_namespace, local_namespace)
                 except:
                     print("evaluation of calculation %s failed" %(opts.calc))
-                    raise
+                    raise Exception
 
                 # Propagate nodata values (set nodata cells to zero
                 # then add nodata value to these cells).

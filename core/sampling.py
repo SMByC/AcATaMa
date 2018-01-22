@@ -135,7 +135,7 @@ def do_stratified_random_sampling(dockwidget):
     try:
         number_of_samples = [int(ns) for ns in number_of_samples]
         if True in [ns < 0 for ns in number_of_samples]:
-            raise
+            raise Exception
     except:
         iface.messageBar().pushMessage("AcATaMa", "Error, the number of samples should be only positive integers",
                                        level=QgsMessageBar.WARNING)
