@@ -100,7 +100,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.widget_AreaOfInterest.setHidden(True)
         # set properties to QgsMapLayerComboBox
         self.QCBox_AreaOfInterest.setCurrentIndex(-1)
-        self.QCBox_AreaOfInterest.setFilters(QgsMapLayerProxyModel.VectorLayer)
+        self.QCBox_AreaOfInterest.setFilters(QgsMapLayerProxyModel.PolygonLayer)
         # call to browse the shape area
         self.QPBtn_browseAreaOfInterest.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_AreaOfInterest,
