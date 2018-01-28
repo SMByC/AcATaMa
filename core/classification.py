@@ -141,17 +141,30 @@ class Classification:
         # restore the samples order
         points_ordered = []
         for shape_id in yaml_config["points_order"]:
-            points_ordered.append([p for p in self.points if p.shape_id == shape_id][0])
+            # point saved exist in shape file
+            if shape_id in [p.shape_id for p in self.points]:
+                points_ordered.append([p for p in self.points if p.shape_id == shape_id][0])
+        # added new point inside shape file that not exists in yaml config
+        for new_point_id in set([p.shape_id for p in self.points]) - set(yaml_config["points_order"]):
+            points_ordered.append([p for p in self.points if p.shape_id == new_point_id][0])
+        # reassign points loaded and ordered
         self.points = points_ordered
         # restore point status classification
-        for idx, status in yaml_config["points"].items():
-            self.points[idx].classif_id = status["classif_id"]
-            if self.points[idx].classif_id is not None:
-                self.points[idx].is_classified = True
+        for status in yaml_config["points"].values():
+            if status["shape_id"] in [p.shape_id for p in self.points]:
+                point_to_restore = [p for p in self.points if p.shape_id == status["shape_id"]][0]
+                point_to_restore.classif_id = status["classif_id"]
+                if point_to_restore.classif_id is not None:
+                    point_to_restore.is_classified = True
+        # check the current_sample_idx after reload the sampling file
+        if self.current_sample_idx >= len(self.points) - 1:
+            self.current_sample_idx = len(self.points) - 1
         # update the total classified progress bar
         total_classified = sum(sample.is_classified for sample in self.points)
         total_not_classified = sum(not sample.is_classified for sample in self.points)
+        AcATaMa.dockwidget.QPBar_ClassificationStatus.setMaximum(len(self.points))
         AcATaMa.dockwidget.QPBar_ClassificationStatus.setValue(total_classified)
+        AcATaMa.dockwidget.QPBar_ClassificationStatus.setTextVisible(True)
         # check is the classification is completed and update in dockwidget status
         if total_not_classified == 0:
             self.is_completed = True
