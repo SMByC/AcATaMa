@@ -24,6 +24,7 @@ from random import shuffle
 from PyQt4.QtCore import QVariant
 from qgis.PyQt.QtCore import NULL
 from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsVectorFileWriter
+from qgis.gui import QgsMessageBar
 
 from AcATaMa.core.dockwidget import get_current_file_path_in, get_file_path_of_layer, load_and_select_filepath_in
 from AcATaMa.core.point import ClassificationPoint
@@ -156,6 +157,44 @@ class Classification:
                 point_to_restore.classif_id = status["classif_id"]
                 if point_to_restore.classif_id is not None:
                     point_to_restore.is_classified = True
+        # update plugin
+        self.update_plugin_after_reload_sampling()
+        # update state of sampling file selected for accuracy assessment tab
+        AcATaMa.dockwidget.set_sampling_file_accuracy_assessment()
+        # define if this classification was made with thematic classes
+        if True in [bc["thematic_class"] is not None and bc["thematic_class"] != "" for bc in self.buttons_config.values()]:
+            self.with_thematic_classes = True
+
+    @wait_process()
+    def reload_sampling_file(self):
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        points_from_shapefile = self.get_points_from_shapefile()
+        # check if sampling has not changed
+        if set([p.shape_id for p in self.points]) == set([p.shape_id for p in points_from_shapefile]):
+            AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa", "The sampling file has not detected changes",
+                                                              level=QgsMessageBar.SUCCESS)
+            return
+        # restore point status classification
+        for point in self.points:
+            if point.shape_id in [p.shape_id for p in points_from_shapefile]:
+                point_to_restore = [p for p in points_from_shapefile if p.shape_id == point.shape_id][0]
+                point_to_restore.classif_id = point.classif_id
+                if point_to_restore.classif_id is not None:
+                    point_to_restore.is_classified = True
+        # detect changes
+        added = len(set([p.shape_id for p in points_from_shapefile]) - set([p.shape_id for p in self.points]))
+        removed = len(set([p.shape_id for p in self.points]) - set([p.shape_id for p in points_from_shapefile]))
+        # reassign points
+        self.points = points_from_shapefile
+        # update plugin
+        self.update_plugin_after_reload_sampling()
+        # notify
+        AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa", "Sampling file reloaded successfully: "
+                                                                     "{} added and {} removed".format(added, removed),
+                                                          level=QgsMessageBar.SUCCESS)
+
+    def update_plugin_after_reload_sampling(self):
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         # check the current_sample_idx after reload the sampling file
         if self.current_sample_idx >= len(self.points) - 1:
             self.current_sample_idx = len(self.points) - 1
@@ -173,11 +212,6 @@ class Classification:
         else:
             AcATaMa.dockwidget.QLabel_ClassificationStatus.setText("Classification not completed")
             AcATaMa.dockwidget.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: orange;}')
-        # updated state of sampling file selected for accuracy assessment tab
-        AcATaMa.dockwidget.set_sampling_file_accuracy_assessment()
-        # define if this classification was made with thematic classes
-        if True in [bc["thematic_class"] is not None and bc["thematic_class"] != "" for bc in self.buttons_config.values()]:
-            self.with_thematic_classes = True
 
     @wait_process()
     def save_sampling_classification(self, file_out):

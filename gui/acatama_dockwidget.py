@@ -190,6 +190,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             dialog_title=self.tr(u"Select the Sampling points file to classify"),
             dialog_types=self.tr(u"Shape files (*.shp);;All files (*.*)"),
             layer_type="vector"))
+        # call to reload sampling file
+        self.QPBtn_reloadSamplingFile.clicked.connect(self.reload_sampling_file)
         # call to load and save classification config
         self.QPBtn_loadClassificationConfig.clicked.connect(self.fileDialog_loadClassificationConfig)
         self.QPBtn_saveClassificationConfig.clicked.connect(self.fileDialog_saveClassificationConfig)
@@ -367,6 +369,21 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         # updated state of sampling file selected for accuracy assessment tab
         self.set_sampling_file_accuracy_assessment()
+
+    @pyqtSlot()
+    def reload_sampling_file(self):
+        sampling_layer = get_current_layer_in(self.QCBox_SamplingFile)
+        if sampling_layer:
+            # sampling file valid
+            if sampling_layer in Classification.instances:
+                classification = Classification.instances[sampling_layer]
+                classification.reload_sampling_file()
+            else:
+                classification = Classification(sampling_layer)
+                classification.reload_sampling_file()
+        else:
+            self.iface.messageBar().pushMessage("AcATaMa", "No sampling file selected",
+                                                level=QgsMessageBar.WARNING)
 
     @pyqtSlot()
     def set_grid_setting(self, item):
