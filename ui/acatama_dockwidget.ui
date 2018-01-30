@@ -936,12 +936,6 @@
                   </item>
                   <item>
                    <widget class="QToolButton" name="QPBtn_reloadSamplingFile">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
                     <property name="toolTip">
                      <string>Reload the sampling file if it has had changes (added/removed points)</string>
                     </property>
