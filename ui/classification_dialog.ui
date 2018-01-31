@@ -436,7 +436,7 @@
                <string>The sample ID is the number of identification of the points order in the sampling file.</string>
               </property>
               <property name="text">
-               <string>Sample ID:</string>
+               <string>Sample ID: </string>
               </property>
              </widget>
             </item>
@@ -449,6 +449,28 @@
               </property>
               <property name="text">
                <string>ID</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="QPBtn_OpenInGE">
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>Open the current point in Google Earth (KML)</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset>
+                <normaloff>:/plugins/AcATaMa/icons/open_in_ge.svg</normaloff>:/plugins/AcATaMa/icons/open_in_ge.svg</iconset>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -471,11 +493,8 @@
                 <pointsize>8</pointsize>
                </font>
               </property>
-              <property name="toolTip">
-               <string>The sample ID is the number of identification of the points order in the sampling file.</string>
-              </property>
               <property name="text">
-               <string>Go to ID:</string>
+               <string>Go to ID: </string>
               </property>
              </widget>
             </item>
@@ -498,6 +517,9 @@
                 <pointsize>8</pointsize>
                </font>
               </property>
+              <property name="toolTip">
+               <string>Enter the sample ID, it is the number of identification of the points order in the sampling file.</string>
+              </property>
               <property name="maxLength">
                <number>10</number>
               </property>
@@ -512,6 +534,9 @@
                <font>
                 <pointsize>8</pointsize>
                </font>
+              </property>
+              <property name="toolTip">
+               <string>Go to ID set in the box</string>
               </property>
               <property name="text">
                <string/>
@@ -669,7 +694,7 @@
            <x>0</x>
            <y>0</y>
            <width>254</width>
-           <height>607</height>
+           <height>438</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
