@@ -20,14 +20,18 @@
 """
 
 import os
+import tempfile
+
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QTableWidgetItem, QSplitter, QColor, QColorDialog
+from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform
 
 from AcATaMa.core.classification import Classification
 from AcATaMa.core.dockwidget import valid_file_selected_in, get_current_file_path_in, \
     load_and_select_filepath_in
 from AcATaMa.core.raster import get_color_table
+from AcATaMa.core.utils import open_file
 from AcATaMa.gui.classification_view_widget import ClassificationViewWidget
 
 # plugin path
@@ -44,6 +48,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
     def __init__(self, sampling_layer, columns, rows):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         QtGui.QDialog.__init__(self)
+        self.sampling_layer = sampling_layer
         self.iface = AcATaMa.dockwidget.iface
         self.setupUi(self)
 
@@ -124,6 +129,9 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.GoTo_ID.returnPressed.connect(self.go_to_sample_id)
         self.GoTo_ID.textChanged.connect(lambda: self.GoTo_ID.setStyleSheet(""))
 
+        # open in Google Earth
+        self.QPBtn_OpenInGE.clicked.connect(self.open_current_point_in_google_engine)
+
         # set radius fit to sample
         self.radiusFitToSample.setValue(self.classification.fit_to_sample)
 
@@ -186,6 +194,41 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
             self.set_current_sample()
         except:
             self.GoTo_ID.setStyleSheet("color: red")
+
+    def open_current_point_in_google_engine(self):
+        # create temp file
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        kml_file = tempfile.mktemp(prefix="point_id_{}_{}_".format(self.current_sample.shape_id, self.sampling_layer.name()),
+                                   suffix=".kml", dir=AcATaMa.dockwidget.tmp_dir)
+        # convert coordinates
+        crsSrc = QgsCoordinateReferenceSystem(self.sampling_layer.crs())
+        crsDest = QgsCoordinateReferenceSystem(4326)  # WGS84
+        xform = QgsCoordinateTransform(crsSrc, crsDest)
+        # forward transformation: src -> dest
+        point = xform.transform(self.current_sample.QgsPnt)
+
+        # make file and save
+        description = "Classified as: <font color='{color}'><b> {class_name}</b></font><br/>" \
+                      "Samp. file: <em> {samp_file}.shp</em><br/>AcATaMa Qgis-plugin".format(
+            color=self.classification.buttons_config[self.current_sample.classif_id]["color"] if self.current_sample.classif_id else "gray",
+            class_name=self.classification.buttons_config[self.current_sample.classif_id]["name"] if self.current_sample.classif_id else "not classified",
+            samp_file=self.sampling_layer.name())
+        kml_raw = """<?xml version="1.0" encoding="UTF-8"?>
+            <kml xmlns="http://www.opengis.net/kml/2.2">
+              <Placemark>
+                <name>{name}</name>
+                <description>{desc}</description>
+                <Point>
+                  <coordinates>{lon},{lat}</coordinates>
+                </Point>
+              </Placemark>
+            </kml>""".format(name="Sampling Point ID {}".format(self.current_sample.shape_id),
+                             desc=description, lon=point.x(), lat=point.y())
+        outfile = open(kml_file, "w")
+        outfile.writelines(kml_raw)
+        outfile.close()
+
+        open_file(kml_file)
 
     def classify_sample(self, classif_id):
         if classif_id:
