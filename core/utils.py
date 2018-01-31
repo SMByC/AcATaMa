@@ -19,8 +19,7 @@
  ***************************************************************************/
 """
 import traceback
-
-import sys
+import os, sys, subprocess
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QApplication, QCursor
 from qgis.core import QgsMessageLog
@@ -95,6 +94,21 @@ def mask(input_list, boolean_mask):
         ['A', 'C']
     """
     return [i for i, b in zip(input_list, boolean_mask) if b]
+
+
+def open_file(filename):
+    """Open a file with the standard application"""
+    filename = os.path.abspath(filename)
+
+    if sys.platform == "linux" or sys.platform == "linux2":
+        # Linux
+        subprocess.call(["xdg-open", filename])
+    elif sys.platform == "darwin":
+        # OS X
+        subprocess.call(["open", filename])
+    elif sys.platform == "win32":
+        # Windows
+        os.startfile(filename)
 
 
 class block_signals_to:
