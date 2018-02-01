@@ -172,7 +172,7 @@ class Classification:
         # update state of sampling file selected for accuracy assessment tab
         AcATaMa.dockwidget.set_sampling_file_accuracy_assessment()
         # define if this classification was made with thematic classes
-        if True in [bc["thematic_class"] is not None and bc["thematic_class"] != "" for bc in self.buttons_config.values()]:
+        if self.buttons_config and True in [bc["thematic_class"] is not None and bc["thematic_class"] != "" for bc in self.buttons_config.values()]:
             self.with_thematic_classes = True
 
     @wait_process()
