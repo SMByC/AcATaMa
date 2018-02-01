@@ -26,10 +26,11 @@ from PyQt4 import QtGui, uic
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QTableWidgetItem, QSplitter, QColor, QColorDialog
 from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform
+from qgis.gui import QgsMessageBar
 
 from AcATaMa.core.classification import Classification
 from AcATaMa.core.dockwidget import valid_file_selected_in, get_current_file_path_in, \
-    load_and_select_filepath_in
+    load_and_select_filepath_in, get_current_layer_in
 from AcATaMa.core.raster import get_color_table
 from AcATaMa.core.utils import open_file
 from AcATaMa.gui.classification_view_widget import ClassificationViewWidget
@@ -98,21 +99,30 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                 if config_id == view_widget.id:
                     view_widget = ClassificationDialog.view_widgets[config_id]
                     # load file for this view widget if exists
-                    file_name = os.path.splitext(os.path.basename(view_config["render_file"]))[0]
-                    file_index = view_widget.QCBox_RenderFile.findText(file_name, Qt.MatchFixedString)
+                    if view_config["render_file_path"] and os.path.isfile(view_config["render_file_path"]):
+                        # if render file in view has a real path
+                        layer_name = os.path.splitext(os.path.basename(view_config["render_file_path"]))[0]
+                    else:  # external layer, e.g. google maps
+                        layer_name = view_config["layer_name"]
+                    file_index = view_widget.QCBox_RenderFile.findText(layer_name, Qt.MatchFixedString)
+
                     if file_index != -1:
                         # select layer if exists in Qgis
                         view_widget.QCBox_RenderFile.setCurrentIndex(file_index)
-                    elif os.path.isfile(view_config["render_file"]):
+                    elif view_config["render_file_path"] and os.path.isfile(view_config["render_file_path"]):
                         # load file and select in view if this exists and not load in Qgis
-                        load_and_select_filepath_in(view_widget.QCBox_RenderFile, view_config["render_file"])
+                        load_and_select_filepath_in(view_widget.QCBox_RenderFile, view_config["render_file_path"])
+                    else:
+                        AcATaMa.dockwidget.iface.messageBar().pushMessage(
+                            "AcATaMa", "Impossible load '{}' in View No. {}"
+                                .format(layer_name, view_widget.id+1), level=QgsMessageBar.WARNING)
                     # restore render activated
                     view_widget.OnOff_RenderView.setChecked(view_config["render_activated"])
                     # active render layer in canvas
                     view_widget.render_widget.render_layer(view_widget.QCBox_RenderFile.currentLayer())
                     # TODO: restore size by view widget
                     #view_widget.resize(*view_config["view_size"])
-                    view_widget.QLabel_ViewName.setText(view_config["name"])
+                    view_widget.QLabel_ViewName.setText(view_config["view_name"])
                     view_widget.scaleFactor.setValue(view_config["scale_factor"])
 
         # set classification buttons
@@ -385,10 +395,11 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         view_widgets_config = {}
         for view_widget in ClassificationDialog.view_widgets:
             if view_widget.is_active:
-                # {N: {"name", "render_file", "render_activated", "scale_factor"}, ...}
+                # {N: {"view_name", "layer_name", "render_file_path", "render_activated", "scale_factor"}, ...}
                 view_widgets_config[view_widget.id] = \
-                    {"name": view_widget.QLabel_ViewName.text(),
-                     "render_file":  get_current_file_path_in(view_widget.QCBox_RenderFile),
+                    {"view_name": view_widget.QLabel_ViewName.text(),
+                     "layer_name": get_current_layer_in(view_widget.QCBox_RenderFile, show_message=False).name(),
+                     "render_file_path": get_current_file_path_in(view_widget.QCBox_RenderFile, show_message=False),
                      "render_activated": view_widget.OnOff_RenderView.isChecked(),
                      #"view_size": (view_widget.size().width(), view_widget.size().height()),
                      "scale_factor": view_widget.current_scale_factor}
