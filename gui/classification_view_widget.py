@@ -21,7 +21,7 @@
 
 import os
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import QSettings, Qt, pyqtSlot, QTimer
+from PyQt4.QtCore import QSettings, pyqtSlot, QTimer
 from qgis.core import QgsGeometry, QgsPoint, QGis
 from qgis.gui import QgsMapCanvas, QgsMapCanvasLayer, QgsMapToolPan, QgsRubberBand, QgsVertexMarker, \
     QgsMapLayerProxyModel
@@ -133,10 +133,7 @@ class RenderWidget(QtGui.QWidget):
             self.parent().is_active = True
 
     def update_crs(self):
-        renderer = iface.mapCanvas().mapRenderer()
-        self.canvas.mapRenderer().setDestinationCrs(renderer.destinationCrs())
-        self.canvas.mapRenderer().setMapUnits(renderer.mapUnits())
-        # transform enable
+        self.canvas.mapRenderer().setDestinationCrs(self.parent().sampling_layer.crs())
         self.canvas.mapRenderer().setProjectionsEnabled(True)
 
     def set_extents_and_scalefactor(self, extent):

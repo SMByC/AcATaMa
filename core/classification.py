@@ -52,7 +52,7 @@ class Classification:
         # radius to sample
         self.fit_to_sample = 120
         # save views widget config
-        # {N: {"name", "render_file", "render_activated", "scale_factor"}, ...}
+        # {N: {"view_name", "layer_name", "render_file_path", "render_activated", "scale_factor"}, ...}
         self.view_widgets_config = {}
         # classification dialog size
         self.dialog_size = None
@@ -139,6 +139,16 @@ class Classification:
         self.buttons_config = yaml_config["classification_buttons"]
         # restore the view widget config
         self.view_widgets_config = yaml_config["view_widgets_config"]
+
+        # support load the old format of config file TODO: delete
+        for x in self.view_widgets_config.values():
+            if "render_file" in x:
+                x["render_file_path"] = x["render_file"]
+                del x["render_file"]
+            if "name" in x:
+                x["view_name"] = x["name"]
+                del x["name"]
+
         # restore the samples order
         points_ordered = []
         for shape_id in yaml_config["points_order"]:

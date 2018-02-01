@@ -56,12 +56,14 @@ def get_file_path_of_layer(layer):
 
 def get_current_file_path_in(combo_box, show_message=True):
     try:
-        return unicode(get_layer_by_name(combo_box.currentText()).dataProvider().dataSourceUri().split('|layerid')[0])
+        file_path = unicode(get_layer_by_name(combo_box.currentText()).dataProvider().dataSourceUri().split('|layerid')[0])
+        if os.path.isfile(file_path):
+            return file_path
     except:
         if show_message:
             iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file",
                                            level=QgsMessageBar.WARNING)
-        return None
+    return None
 
 
 def get_current_layer_in(combo_box, show_message=True):
@@ -113,8 +115,9 @@ def load_layer_in_qgis(file_path, layer_type):
 def unload_layer_in_qgis(layer_path):
     layers_loaded = QgsMapLayerRegistry.instance().mapLayers().values()
     for layer_loaded in layers_loaded:
-        if layer_path == layer_loaded.dataProvider().dataSourceUri().split('|layerid')[0]:
-            QgsMapLayerRegistry.instance().removeMapLayer(layer_loaded)
+        if hasattr(layer_loaded, "dataProvider"):
+            if layer_path == layer_loaded.dataProvider().dataSourceUri().split('|layerid')[0]:
+                QgsMapLayerRegistry.instance().removeMapLayer(layer_loaded)
 
 
 @wait_process()
