@@ -464,7 +464,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             classification = Classification.instances[sampling_layer]
             if not classification.is_completed:
                 quit_msg = "The classification for this sampling file is not completed, " \
-                            "do you want to continue anyway?"
+                           "the result will have all sampling partially classified." \
+                           "\nDo you want to continue?"
                 reply = QMessageBox.question(self, 'The classification is not completed',
                                              quit_msg,QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
                 if reply == QMessageBox.No:
