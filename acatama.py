@@ -114,48 +114,6 @@ class AcATaMa:
 
     #--------------------------------------------------------------------------
 
-    def onClosePlugin(self):
-        """Cleanup necessary items here when plugin dockwidget is closed"""
-
-        print "** CLOSING AcATaMa"
-
-        if ClassificationDialog.is_opened:
-            self.dockwidget.classification_dialog.closing()
-            self.dockwidget.classification_dialog.reject(is_ok_to_close=True)
-
-        if AccuracyAssessmentDialog.is_opened:
-            self.dockwidget.accuracy_assessment_dialog.closing()
-            self.dockwidget.accuracy_assessment_dialog.reject(is_ok_to_close=True)
-
-        self.clear_all()
-
-        # disconnects
-        self.dockwidget.closingPlugin.disconnect(self.onClosePlugin)
-
-        # remove this statement if dockwidget is to remain
-        # for reuse if plugin is reopened
-        # Commented next statement since it causes QGIS crashe
-        # when closing the docked window:
-        # self.dockwidget = None
-        self.dockwidget.deleteLater()
-        self.dockwidget = None
-
-        self.pluginIsActive = False
-
-
-    def unload(self):
-        """Removes the plugin menu item and icon from QGIS GUI."""
-
-        print "** UNLOAD AcATaMa"
-        self.clear_all()
-
-        # Remove the plugin menu item and icon
-        self.iface.removePluginMenu(self.menu_name_plugin, self.dockable_action)
-        self.iface.removePluginMenu(self.menu_name_plugin, self.about_action)
-        self.iface.removeToolBarIcon(self.dockable_action)
-
-    #--------------------------------------------------------------------------
-
     def run(self):
         """Run method that loads and starts the plugin"""
 
@@ -179,7 +137,50 @@ class AcATaMa:
             self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
 
-    def clear_all(self):
+    #--------------------------------------------------------------------------
+
+    def onClosePlugin(self):
+        """Cleanup necessary items here when plugin dockwidget is closed"""
+        print "** CLOSING AcATaMa"
+        if ClassificationDialog.is_opened:
+            self.dockwidget.classification_dialog.closing()
+            self.dockwidget.classification_dialog.reject(is_ok_to_close=True)
+
+        if AccuracyAssessmentDialog.is_opened:
+            self.dockwidget.accuracy_assessment_dialog.closing()
+            self.dockwidget.accuracy_assessment_dialog.reject(is_ok_to_close=True)
+
+        self.removes_temporary_files()
+
+        # disconnects
+        self.dockwidget.closingPlugin.disconnect(self.onClosePlugin)
+
+        # remove this statement if dockwidget is to remain
+        # for reuse if plugin is reopened
+        # Commented next statement since it causes QGIS crashe
+        # when closing the docked window:
+        # self.dockwidget = None
+        self.dockwidget.deleteLater()
+        self.dockwidget = None
+
+        self.pluginIsActive = False
+
+        from qgis.utils import reloadPlugin
+        reloadPlugin("AcATaMa")
+
+    def unload(self):
+        """Removes the plugin menu item and icon from QGIS GUI."""
+        print "** UNLOAD AcATaMa"
+        self.removes_temporary_files()
+        # Remove the plugin menu item and icon
+        self.iface.removePluginMenu(self.menu_name_plugin, self.dockable_action)
+        self.iface.removePluginMenu(self.menu_name_plugin, self.about_action)
+        self.iface.removeToolBarIcon(self.dockable_action)
+
+        if self.dockwidget:
+            self.iface.removeDockWidget(self.dockwidget)
+
+    def removes_temporary_files(self):
         if not self.dockwidget:
             return
         # unload all layers instances from Qgis saved in tmp dir
