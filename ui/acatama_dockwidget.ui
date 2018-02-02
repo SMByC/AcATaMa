@@ -1497,6 +1497,46 @@
         <number>0</number>
        </property>
        <item>
+        <widget class="QPushButton" name="QPBtn_PluginDocs">
+         <property name="cursor">
+          <cursorShape>WhatsThisCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>Open the documentation for AcATaMa</string>
+         </property>
+         <property name="text">
+          <string>Docs</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>:/plugins/AcATaMa/icons/about.svg</normaloff>:/plugins/AcATaMa/icons/about.svg</iconset>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="QPBtn_PluginClearReload">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>Clear all and reload the AcATaMa plugin.</string>
+         </property>
+         <property name="text">
+          <string>Clear/Reload</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>:/plugins/AcATaMa/icons/reload.svg</normaloff>:/plugins/AcATaMa/icons/reload.svg</iconset>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="horizontalSpacer_10">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -1510,43 +1550,24 @@
         </spacer>
        </item>
        <item>
-        <widget class="QLabel" name="plugin_version">
-         <property name="text">
-          <string>Version</string>
-         </property>
-         <property name="scaledContents">
-          <bool>false</bool>
-         </property>
-         <property name="margin">
-          <number>6</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="button_about">
+        <widget class="QPushButton" name="QPBtn_PluginInfo">
          <property name="cursor">
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
-         <property name="text">
+         <property name="toolTip">
           <string>About</string>
+         </property>
+         <property name="text">
+          <string>AcATaMa version</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>:/plugins/AcATaMa/icons/acatama.svg</normaloff>:/plugins/AcATaMa/icons/acatama.svg</iconset>
          </property>
          <property name="flat">
           <bool>true</bool>
          </property>
         </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_12">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>

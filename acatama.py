@@ -65,7 +65,7 @@ class AcATaMa:
 
         print "** INITIALIZING AcATaMa"
 
-        self.menu_name_plugin = self.tr(u"&Accuracy Assessment of Thematic Maps")
+        self.menu_name_plugin = self.tr("Accuracy Assessment of Thematic Maps")
         self.pluginIsActive = False
         self.dockwidget = None
 
@@ -87,20 +87,20 @@ class AcATaMa:
         :rtype: QString
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('AcATaMa', message)
+        return QCoreApplication.translate("AcATaMa", message)
 
     def initGui(self):
         ### Main dockwidget menu
         # Create action that will start plugin configuration
         icon_path = ':/plugins/AcATaMa/icons/acatama.svg'
-        self.dockable_action = QAction(QIcon(icon_path), self.tr(u'&AcATaMa'), self.iface.mainWindow())
+        self.dockable_action = QAction(QIcon(icon_path), "AcATaMa", self.iface.mainWindow())
         # connect the action to the run method
         self.dockable_action.triggered.connect(self.run)
         # Add toolbar button and menu item
         self.iface.addToolBarIcon(self.dockable_action)
         self.iface.addPluginToMenu(self.menu_name_plugin, self.dockable_action)
 
-        ### About dialog menu
+        # Plugin info
         # Create action that will start plugin configuration
         icon_path = ':/plugins/AcATaMa/icons/about.svg'
         self.about_action = QAction(QIcon(icon_path), self.tr(u'About'), self.iface.mainWindow())
@@ -131,6 +131,8 @@ class AcATaMa:
 
             # connect to provide cleanup on closing of dockwidget
             self.dockwidget.closingPlugin.connect(self.onClosePlugin)
+            # reload
+            self.dockwidget.QPBtn_PluginClearReload.clicked.connect(self.clear_reload_plugin)
 
             # show the dockwidget
             # TODO: fix to allow choice of dock location
@@ -179,6 +181,11 @@ class AcATaMa:
 
         if self.dockwidget:
             self.iface.removeDockWidget(self.dockwidget)
+
+    def clear_reload_plugin(self):
+        self.onClosePlugin()
+        from qgis.utils import plugins
+        plugins["AcATaMa"].run()
 
     def removes_temporary_files(self):
         if not self.dockwidget:
