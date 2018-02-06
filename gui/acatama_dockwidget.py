@@ -80,10 +80,10 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     def setup_gui(self):
         # ######### plugin info ######### #
-        self.QPBtn_PluginDocs.clicked.connect(lambda: webbrowser.open("https://smbyc.bitbucket.io/qgisplugins/acatama"))
         self.about_dialog = AboutDialog()
         self.QPBtn_PluginInfo.setText("AcATaMa v{}".format(VERSION))
         self.QPBtn_PluginInfo.clicked.connect(self.about_dialog.show)
+        self.QPBtn_PluginDocs.clicked.connect(lambda: webbrowser.open("https://smbyc.bitbucket.io/qgisplugins/acatama"))
 
         # ######### load thematic raster image ######### #
         # set properties to QgsMapLayerComboBox
