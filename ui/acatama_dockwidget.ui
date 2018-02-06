@@ -1502,7 +1502,7 @@
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>Open the documentation for AcATaMa</string>
+          <string>Open the AcATaMa documentation</string>
          </property>
          <property name="text">
           <string>Docs</string>
