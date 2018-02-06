@@ -25,5 +25,5 @@ Issues, ideas and enhancements: [https://bitbucket.org/smbyc/qgisplugin-acatama/
 ***
 
 Copyright (C) Xavier Corredor Llano <xcorredorl@ideam.gov.co>  
-Sistema de Monitoreo de Bosques y Carbono SMByC and FAO  
+Sistema de Monitoreo de Bosques y Carbono (SMByC) and FAO  
 General Public License - GPLv3
