@@ -24,13 +24,13 @@ repository=https://bitbucket.org/smbyc/qgisplugin-acatama
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=accuracy assessment,thematic map
+tags=accuracy,accuracy assessment,thematic map,classification,sample,sampling design,points,remote sensing
 
 
 category=Plugins
 icon=icons/acatama.svg
 # experimental flag
-experimental=True
+experimental=False
 
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
