@@ -48,7 +48,7 @@
              <x>0</x>
              <y>0</y>
              <width>736</width>
-             <height>1092</height>
+             <height>1095</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -293,8 +293,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>716</width>
-             <height>1338</height>
+             <width>680</width>
+             <height>1374</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -891,8 +891,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>736</width>
-             <height>1092</height>
+             <width>486</width>
+             <height>1236</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_24">
@@ -1360,8 +1360,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>736</width>
-             <height>1092</height>
+             <width>520</width>
+             <height>652</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -1498,6 +1498,11 @@
        </property>
        <item>
         <widget class="QPushButton" name="QPBtn_PluginDocs">
+         <property name="font">
+          <font>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
          <property name="cursor">
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
@@ -1518,6 +1523,11 @@
        </item>
        <item>
         <widget class="QPushButton" name="QPBtn_PluginClearReload">
+         <property name="font">
+          <font>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
          <property name="cursor">
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
@@ -1551,6 +1561,11 @@
        </item>
        <item>
         <widget class="QPushButton" name="QPBtn_PluginInfo">
+         <property name="font">
+          <font>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
          <property name="cursor">
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
