@@ -22,7 +22,7 @@ import os.path
 import shutil
 
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
-from PyQt4.QtGui import QAction, QIcon
+from PyQt4.QtGui import QAction, QIcon, QMessageBox
 
 # Import the code for the DockWidget
 from AcATaMa.core.accuracy_assessment import AccuracyAssessmentDialog
@@ -183,6 +183,14 @@ class AcATaMa:
             self.iface.removeDockWidget(self.dockwidget)
 
     def clear_reload_plugin(self):
+        # first prompt
+        quit_msg = "Are you sure you want to: clean tmp files, delete unsaved classification, " \
+                   "clean all fields and reload plugin?"
+        reply = QMessageBox.question(self.dockwidget, 'Clear all and reload the AcATaMa plugin.',
+                                     quit_msg, QMessageBox.Yes, QMessageBox.No)
+        if reply == QMessageBox.No:
+            return
+
         self.onClosePlugin()
         from qgis.utils import plugins
         plugins["AcATaMa"].run()
