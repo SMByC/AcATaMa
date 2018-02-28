@@ -48,7 +48,7 @@
              <x>0</x>
              <y>0</y>
              <width>736</width>
-             <height>1095</height>
+             <height>1132</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -167,7 +167,7 @@
                      </font>
                     </property>
                     <property name="text">
-                     <string>Select/browse the shape file to define an area of interest for make the sampling only inside the shape area:</string>
+                     <string>Select/browse the polygon or multipolygon vector file to define an area of interest for make the sampling only inside it (and adjust the area by classes):</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -293,8 +293,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>680</width>
-             <height>1374</height>
+             <width>736</width>
+             <height>1132</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -891,8 +891,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>486</width>
-             <height>1236</height>
+             <width>736</width>
+             <height>1132</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_24">
@@ -1360,8 +1360,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>520</width>
-             <height>652</height>
+             <width>736</width>
+             <height>1132</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_11">

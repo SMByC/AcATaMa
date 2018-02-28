@@ -106,8 +106,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # call to browse the shape area
         self.QPBtn_browseAreaOfInterest.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_AreaOfInterest,
-            dialog_title=self.tr(u"Select the shape file"),
-            dialog_types=self.tr(u"Shape files (*.shp);;All files (*.*)"),
+            dialog_title=self.tr(u"Select the vector file"),
+            dialog_types=self.tr(u"Shape files (*.shp);;GeoPackage (*.gpkg);;All files (*.*)"),
             layer_type="vector"))
         # do clip
         self.QPBtn_ClippingThematic.clicked.connect(self.clipping_thematic_raster)
