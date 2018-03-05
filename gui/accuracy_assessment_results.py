@@ -285,7 +285,7 @@ def get_html(accu_asse):
 
     ###########################################################################
     html += "<p style='font-size:2px'><br/></p>"
-    html += "<h3>4) Overall matrix accuracy:</h3>"
+    html += "<h3>4) Accuracy matrices:</h3>"
     ###################################
     html += "<h4>User's accuracy matrix of estimated area proportion:</h4>"
     html += '''
@@ -545,7 +545,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
 
     ###########################################################################
     csv_rows.append([])
-    csv_rows.append(["4) Overall matrix accuracy:"])
+    csv_rows.append(["4) Accuracy matrices:"])
     csv_rows.append([])
     csv_rows.append(["User's accuracy matrix of estimated area proportion:"])
     csv_rows.append(["", "", "Classified values"])
