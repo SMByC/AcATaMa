@@ -312,9 +312,9 @@
               <property name="currentIndex">
                <number>0</number>
               </property>
-              <widget class="QWidget" name="tab_RandomSampling">
+              <widget class="QWidget" name="tab_SimpleRandomSampling">
                <attribute name="title">
-                <string>Random Sampling</string>
+                <string>Simple Random Sampling</string>
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_4">
                 <property name="leftMargin">
@@ -329,7 +329,7 @@
                    <item>
                     <widget class="QLabel" name="label_10">
                      <property name="text">
-                      <string>Random Sampling
+                      <string>Simple Random Sampling
 </string>
                      </property>
                      <property name="alignment">
@@ -714,7 +714,7 @@
                          <item row="0" column="0">
                           <widget class="QLabel" name="label_19">
                            <property name="text">
-                            <string>Total expected standard error:</string>
+                            <string>Overall expected standard error:</string>
                            </property>
                           </widget>
                          </item>
