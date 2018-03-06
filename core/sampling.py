@@ -36,23 +36,23 @@ from AcATaMa.core.utils import wait_process, error_handler
 
 
 @error_handler()
-def do_random_sampling(dockwidget):
+def do_simple_random_sampling(dockwidget):
     # first check input files requirements
     if not valid_file_selected_in(dockwidget.QCBox_ThematicRaster, "thematic raster"):
         return
-    if dockwidget.QGBox_RSwithCR.isChecked():
-        if not valid_file_selected_in(dockwidget.QCBox_CategRaster_RS, "categorical raster"):
+    if dockwidget.QGBox_SimpRSwithCR.isChecked():
+        if not valid_file_selected_in(dockwidget.QCBox_CategRaster_SimpRS, "categorical raster"):
             return
     # get and define some variables
-    number_of_samples = int(dockwidget.numberOfSamples_RS.value())
-    min_distance = int(dockwidget.minDistance_RS.value())
+    number_of_samples = int(dockwidget.numberOfSamples_SimpRS.value())
+    min_distance = int(dockwidget.minDistance_SimpRS.value())
 
     ThematicR = Raster(file_selected_combo_box=dockwidget.QCBox_ThematicRaster,
                        nodata=int(dockwidget.nodata_ThematicRaster.value()))
 
-    # random sampling in categorical raster
-    if dockwidget.QGBox_RSwithCR.isChecked():
-        CategoricalR = Raster(file_selected_combo_box=dockwidget.QCBox_CategRaster_RS)
+    # simple random sampling in categorical raster
+    if dockwidget.QGBox_SimpRSwithCR.isChecked():
+        CategoricalR = Raster(file_selected_combo_box=dockwidget.QCBox_CategRaster_SimpRS)
         try:
             pixel_values = [int(p) for p in dockwidget.pixelsValuesCategRaster.text().split(",")]
         except:
@@ -64,16 +64,16 @@ def do_random_sampling(dockwidget):
         pixel_values = None
 
     # check neighbors aggregation
-    if dockwidget.widget_generate_RS.QGBox_neighbour_aggregation.isChecked():
-        number_of_neighbors = int(dockwidget.widget_generate_RS.QCBox_NumberOfNeighbors.currentText())
-        same_class_of_neighbors = int(dockwidget.widget_generate_RS.QCBox_SameClassOfNeighbors.currentText())
+    if dockwidget.widget_generate_SimpRS.QGBox_neighbour_aggregation.isChecked():
+        number_of_neighbors = int(dockwidget.widget_generate_SimpRS.QCBox_NumberOfNeighbors.currentText())
+        same_class_of_neighbors = int(dockwidget.widget_generate_SimpRS.QCBox_SameClassOfNeighbors.currentText())
         neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
     else:
         neighbor_aggregation = None
 
     # set the attempts_by_sampling
-    if dockwidget.widget_generate_RS.button_attempts_by_sampling.isChecked():
-        attempts_by_sampling = int(dockwidget.widget_generate_RS.attempts_by_sampling.value())
+    if dockwidget.widget_generate_SimpRS.button_attempts_by_sampling.isChecked():
+        attempts_by_sampling = int(dockwidget.widget_generate_SimpRS.attempts_by_sampling.value())
     else:
         attempts_by_sampling = None
 
@@ -87,20 +87,20 @@ def do_random_sampling(dockwidget):
         return
 
     # process
-    sampling = Sampling("RS", ThematicR, CategoricalR, output_file=output_file)
+    sampling = Sampling("simple", ThematicR, CategoricalR, output_file=output_file)
     sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
                                       neighbor_aggregation, attempts_by_sampling,
-                                      dockwidget.widget_generate_RS.QPBar_GenerateSampling)
+                                      dockwidget.widget_generate_SimpRS.QPBar_GenerateSampling)
 
     # success
     if sampling.total_of_samples == number_of_samples:
         load_layer_in_qgis(sampling.output_file, "vector")
-        iface.messageBar().pushMessage("AcATaMa", "Generate the random sampling, completed",
+        iface.messageBar().pushMessage("AcATaMa", "Generate the simple random sampling, completed",
                                        level=QgsMessageBar.SUCCESS)
     # success but not completed
     if sampling.total_of_samples < number_of_samples and sampling.total_of_samples > 0:
         load_layer_in_qgis(sampling.output_file, "vector")
-        iface.messageBar().pushMessage("AcATaMa", "Generated the random sampling, but can not generate requested number of "
+        iface.messageBar().pushMessage("AcATaMa", "Generated the simple random sampling, but can not generate requested number of "
                                                   "random points {}/{}, attempts exceeded".format(sampling.total_of_samples, number_of_samples),
                                        level=QgsMessageBar.INFO, duration=10)
     # zero points
@@ -116,21 +116,21 @@ def do_stratified_random_sampling(dockwidget):
     # first check input files requirements
     if not valid_file_selected_in(dockwidget.QCBox_ThematicRaster, "thematic raster"):
         return
-    if not valid_file_selected_in(dockwidget.QCBox_CategRaster_SRS, "categorical raster"):
+    if not valid_file_selected_in(dockwidget.QCBox_CategRaster_StraRS, "categorical raster"):
         return
     # get and define some variables
-    min_distance = int(dockwidget.minDistance_SRS.value())
+    min_distance = int(dockwidget.minDistance_StraRS.value())
     ThematicR = Raster(file_selected_combo_box=dockwidget.QCBox_ThematicRaster,
                        nodata=int(dockwidget.nodata_ThematicRaster.value()))
-    CategoricalR = Raster(file_selected_combo_box=dockwidget.QCBox_CategRaster_SRS,
-                          nodata=int(dockwidget.nodata_CategRaster_SRS.value()))
+    CategoricalR = Raster(file_selected_combo_box=dockwidget.QCBox_CategRaster_StraRS,
+                          nodata=int(dockwidget.nodata_CategRaster_StraRS.value()))
 
     # get values from category table  #########
     pixel_values = []
     number_of_samples = []
-    for row in range(dockwidget.QTableW_SRS.rowCount()):
-        pixel_values.append(int(dockwidget.QTableW_SRS.item(row, 0).text()))
-        number_of_samples.append(dockwidget.QTableW_SRS.item(row, 2).text())
+    for row in range(dockwidget.QTableW_StraRS.rowCount()):
+        pixel_values.append(int(dockwidget.QTableW_StraRS.item(row, 0).text()))
+        number_of_samples.append(dockwidget.QTableW_StraRS.item(row, 2).text())
     # convert and check if number of samples only positive integers
     try:
         number_of_samples = [int(ns) for ns in number_of_samples]
@@ -147,32 +147,32 @@ def do_stratified_random_sampling(dockwidget):
         return
 
     # check neighbors aggregation
-    if dockwidget.widget_generate_SRS.QGBox_neighbour_aggregation.isChecked():
-        number_of_neighbors = int(dockwidget.widget_generate_SRS.QCBox_NumberOfNeighbors.currentText())
-        same_class_of_neighbors = int(dockwidget.widget_generate_SRS.QCBox_SameClassOfNeighbors.currentText())
+    if dockwidget.widget_generate_StraRS.QGBox_neighbour_aggregation.isChecked():
+        number_of_neighbors = int(dockwidget.widget_generate_StraRS.QCBox_NumberOfNeighbors.currentText())
+        same_class_of_neighbors = int(dockwidget.widget_generate_StraRS.QCBox_SameClassOfNeighbors.currentText())
         neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
     else:
         neighbor_aggregation = None
 
     # set the attempts_by_sampling
-    if dockwidget.widget_generate_SRS.button_attempts_by_sampling.isChecked():
-        attempts_by_sampling = int(dockwidget.widget_generate_SRS.attempts_by_sampling.value())
+    if dockwidget.widget_generate_StraRS.button_attempts_by_sampling.isChecked():
+        attempts_by_sampling = int(dockwidget.widget_generate_StraRS.attempts_by_sampling.value())
     else:
         attempts_by_sampling = None
 
-    # set the method of stratified sampling and save SRS config
-    if dockwidget.QCBox_SRS_Method.currentText().startswith("Fixed values"):
+    # set the method of stratified sampling and save StraRS config
+    if dockwidget.QCBox_StraRS_Method.currentText().startswith("Fixed values"):
         sampling_method = "fixed values"
         srs_config = None
-    if dockwidget.QCBox_SRS_Method.currentText().startswith("Area based proportion"):
+    if dockwidget.QCBox_StraRS_Method.currentText().startswith("Area based proportion"):
         sampling_method = "area based proportion"
         srs_config = {}
         # save total expected std error
         srs_config["total_std_error"] = dockwidget.TotalExpectedSE.value()
         # get std_error from table
         srs_config["std_error"] = []
-        for row in range(dockwidget.QTableW_SRS.rowCount()):
-            srs_config["std_error"].append(float(dockwidget.QTableW_SRS.item(row, 3).text()))
+        for row in range(dockwidget.QTableW_StraRS.rowCount()):
+            srs_config["std_error"].append(float(dockwidget.QTableW_StraRS.item(row, 3).text()))
 
     # first select the target dir for save the sampling file
     suggested_filename = os.path.join(os.path.dirname(ThematicR.file_path), "stratified_random_sampling.shp")
@@ -184,11 +184,11 @@ def do_stratified_random_sampling(dockwidget):
         return
 
     # process
-    sampling = Sampling("SRS", ThematicR, CategoricalR, sampling_method,
+    sampling = Sampling("stratified", ThematicR, CategoricalR, sampling_method,
                         srs_config=srs_config, output_file=output_file)
     sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
                                       neighbor_aggregation, attempts_by_sampling,
-                                      dockwidget.widget_generate_SRS.QPBar_GenerateSampling)
+                                      dockwidget.widget_generate_StraRS.QPBar_GenerateSampling)
 
     # success
     if sampling.total_of_samples == total_of_samples:
@@ -215,14 +215,14 @@ class Sampling:
 
     def __init__(self, sampling_type, ThematicR, CategoricalR, sampling_method=None, srs_config=None, output_file=None):
         # set and init variables
-        # sampling_type => "RS" (random sampling),
-        #                  "SRS" (stratified random sampling)
+        # sampling_type => "simple" (simple random sampling),
+        #                  "stratified" (stratified random sampling)
         self.sampling_type = sampling_type
         self.ThematicR = ThematicR
         self.CategoricalR = CategoricalR
         # for stratified sampling
         self.sampling_method = sampling_method
-        # save some SRS sampling configuration
+        # save some stratified sampling configuration
         self.srs_config = srs_config
         # set the output dir for save sampling
         self.output_file = output_file
@@ -253,9 +253,9 @@ class Sampling:
         thematic_CRS = self.ThematicR.qgs_layer.crs()
         writer = vector.VectorWriter(self.output_file, None, fields, QGis.WKBPoint, thematic_CRS)
 
-        if self.sampling_type == "RS":
+        if self.sampling_type == "simple":
             total_of_samples = self.number_of_samples
-        if self.sampling_type == "SRS":
+        if self.sampling_type == "stratified":
             total_of_samples = sum(self.number_of_samples)
             self.samples_in_categories = [0] * len(self.number_of_samples)  # total generated by categories
 
@@ -287,7 +287,7 @@ class Sampling:
             self.points[nPoints] = random_sampling_point.QgsPnt
             nPoints += 1
             nIterations += 1
-            if self.sampling_type == "SRS":
+            if self.sampling_type == "stratified":
                 self.samples_in_categories[random_sampling_point.index_pixel_value] += 1
             # update progress bar
             progress_bar.setValue(int(nPoints))
@@ -307,11 +307,11 @@ class Sampling:
         if not sampling_point.in_mim_distance(self.index, self.min_distance, self.points):
             return False
 
-        if self.sampling_type == "RS":
-            if not sampling_point.in_categorical_raster_RS(self.pixel_values, self.CategoricalR):
+        if self.sampling_type == "simple":
+            if not sampling_point.in_categorical_raster_SimpRS(self.pixel_values, self.CategoricalR):
                 return False
-        if self.sampling_type == "SRS":
-            if not sampling_point.in_categorical_raster_SRS(self.pixel_values, self.number_of_samples,
+        if self.sampling_type == "stratified":
+            if not sampling_point.in_categorical_raster_StraRS(self.pixel_values, self.number_of_samples,
                                                             self.CategoricalR, self.samples_in_categories):
                 return False
 
@@ -325,10 +325,7 @@ class Sampling:
         config = ConfigParser.RawConfigParser()
 
         config.add_section('general')
-        if self.sampling_type == "RS":
-            config.set('general', 'sampling_type', 'random sampling')
-        if self.sampling_type == "SRS":
-            config.set('general', 'sampling_type', 'stratified random sampling')
+        config.set('general', 'sampling_type', '{} random sampling'.format(self.sampling_type))
         config.set('general', 'thematic_raster', self.ThematicR.file_path)
         config.set('general', 'thematic_raster_nodata', str(self.ThematicR.nodata))
         if isinstance(self.CategoricalR, Raster):
@@ -339,14 +336,14 @@ class Sampling:
             config.set('general', 'categorical_raster_nodata', 'None')
 
         config.add_section('sampling')
-        if self.sampling_type == "RS":
+        if self.sampling_type == "simple":
             config.set('sampling', 'total_of_samples', self.total_of_samples)
             config.set('sampling', 'min_distance', self.min_distance)
-            config.set('sampling', 'in_categorical_raster_RS',
+            config.set('sampling', 'in_categorical_raster_SimpRS',
                        ','.join(map(str, self.pixel_values)) if self.pixel_values is not None else 'None')
             config.set('sampling', 'with_neighbors_aggregation',
                        '{1}/{0}'.format(*self.neighbor_aggregation) if self.neighbor_aggregation is not None else 'None')
-        if self.sampling_type == "SRS":
+        if self.sampling_type == "stratified":
             config.set('sampling', 'sampling_method', self.sampling_method)
             config.set('sampling', 'total_of_samples', self.total_of_samples)
             config.set('sampling', 'min_distance', self.min_distance)

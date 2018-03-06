@@ -32,7 +32,7 @@ from qgis.gui import QgsMessageBar, QgsMapLayerProxyModel
 
 from AcATaMa.core.accuracy_assessment import AccuracyAssessmentDialog
 from AcATaMa.core.classification import Classification
-from AcATaMa.core.sampling import do_random_sampling, do_stratified_random_sampling, Sampling
+from AcATaMa.core.sampling import do_simple_random_sampling, do_stratified_random_sampling, Sampling
 from AcATaMa.core.dockwidget import get_current_file_path_in, \
     unload_layer_in_qgis, get_current_layer_in, fill_stratified_sampling_table, valid_file_selected_in, \
     update_stratified_sampling_table, load_and_select_filepath_in
@@ -122,63 +122,63 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         #     dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
         #     layer_type="raster"))
 
-        # ######### random sampling ######### #
-        self.widget_RSwithCR.setHidden(True)
+        # ######### simple random sampling ######### #
+        self.widget_SimpRSwithCR.setHidden(True)
         # set properties to QgsMapLayerComboBox
-        self.QCBox_CategRaster_RS.setCurrentIndex(-1)
-        self.QCBox_CategRaster_RS.setFilters(QgsMapLayerProxyModel.RasterLayer)
+        self.QCBox_CategRaster_SimpRS.setCurrentIndex(-1)
+        self.QCBox_CategRaster_SimpRS.setFilters(QgsMapLayerProxyModel.RasterLayer)
         # call to browse the categorical raster
-        self.QPBtn_browseCategRaster_RS.clicked.connect(lambda: self.fileDialog_browse(
-            self.QCBox_CategRaster_RS,
+        self.QPBtn_browseCategRaster_SimpRS.clicked.connect(lambda: self.fileDialog_browse(
+            self.QCBox_CategRaster_SimpRS,
             dialog_title=self.tr(u"Select the categorical raster file"),
             dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
         # generate sampling options
-        self.widget_generate_RS.generate_sampling_widget_options.setHidden(True)
+        self.widget_generate_SimpRS.generate_sampling_widget_options.setHidden(True)
         # save config
-        self.widget_generate_RS.widget_save_sampling_config.setHidden(True)
+        self.widget_generate_SimpRS.widget_save_sampling_config.setHidden(True)
         self.canvas.layersChanged.connect(
-            lambda: self.update_generated_sampling_list_in(self.widget_generate_RS.QCBox_SamplingToSave))
-        self.widget_generate_RS.QPBtn_SaveSamplingConf.clicked.connect(
-            lambda: self.fileDialog_saveSamplingConf(self.widget_generate_RS.QCBox_SamplingToSave))
+            lambda: self.update_generated_sampling_list_in(self.widget_generate_SimpRS.QCBox_SamplingToSave))
+        self.widget_generate_SimpRS.QPBtn_SaveSamplingConf.clicked.connect(
+            lambda: self.fileDialog_saveSamplingConf(self.widget_generate_SimpRS.QCBox_SamplingToSave))
         # generate sampling
-        self.widget_generate_RS.QPBtn_GenerateSampling.clicked.connect(lambda: do_random_sampling(self))
+        self.widget_generate_SimpRS.QPBtn_GenerateSampling.clicked.connect(lambda: do_simple_random_sampling(self))
         # update progress bar limits
-        self.numberOfSamples_RS.valueChanged.connect(lambda: self.widget_generate_RS.QPBar_GenerateSampling.setValue(0))
-        self.numberOfSamples_RS.valueChanged.connect(self.widget_generate_RS.QPBar_GenerateSampling.setMaximum)
+        self.numberOfSamples_SimpRS.valueChanged.connect(lambda: self.widget_generate_SimpRS.QPBar_GenerateSampling.setValue(0))
+        self.numberOfSamples_SimpRS.valueChanged.connect(self.widget_generate_SimpRS.QPBar_GenerateSampling.setMaximum)
 
         # ######### stratified random sampling ######### #
         # set properties to QgsMapLayerComboBox
-        self.QCBox_CategRaster_SRS.setCurrentIndex(-1)
-        self.QCBox_CategRaster_SRS.setFilters(QgsMapLayerProxyModel.RasterLayer)
+        self.QCBox_CategRaster_StraRS.setCurrentIndex(-1)
+        self.QCBox_CategRaster_StraRS.setFilters(QgsMapLayerProxyModel.RasterLayer)
         # call to browse the categorical raster
-        self.QPBtn_browseCategRaster_SRS.clicked.connect(lambda: self.fileDialog_browse(
-            self.QCBox_CategRaster_SRS,
+        self.QPBtn_browseCategRaster_StraRS.clicked.connect(lambda: self.fileDialog_browse(
+            self.QCBox_CategRaster_StraRS,
             dialog_title=self.tr(u"Select the categorical raster file"),
             dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
         # set the nodata value of the categorical raster
-        self.QCBox_CategRaster_SRS.layerChanged.connect(self.set_nodata_value_categorical_raster)
-        self.nodata_CategRaster_SRS.valueChanged.connect(self.reset_nodata_to_categorical_raster)
+        self.QCBox_CategRaster_StraRS.layerChanged.connect(self.set_nodata_value_categorical_raster)
+        self.nodata_CategRaster_StraRS.valueChanged.connect(self.reset_nodata_to_categorical_raster)
         # init variable for save tables content
         self.srs_tables = {}
         # fill table of categorical raster
         self.widget_TotalExpectedSE.setHidden(True)
-        self.QCBox_CategRaster_SRS.layerChanged.connect(lambda: fill_stratified_sampling_table(self))
-        self.QCBox_SRS_Method.currentIndexChanged.connect(lambda: fill_stratified_sampling_table(self))
+        self.QCBox_CategRaster_StraRS.layerChanged.connect(lambda: fill_stratified_sampling_table(self))
+        self.QCBox_StraRS_Method.currentIndexChanged.connect(lambda: fill_stratified_sampling_table(self))
         # for each item changed in table, save and update it
         self.TotalExpectedSE.valueChanged.connect(lambda: update_stratified_sampling_table(self, "TotalExpectedSE"))
-        self.QTableW_SRS.itemChanged.connect(lambda: update_stratified_sampling_table(self, "TableContent"))
+        self.QTableW_StraRS.itemChanged.connect(lambda: update_stratified_sampling_table(self, "TableContent"))
         # generate sampling options
-        self.widget_generate_SRS.generate_sampling_widget_options.setHidden(True)
+        self.widget_generate_StraRS.generate_sampling_widget_options.setHidden(True)
         # save config
-        self.widget_generate_SRS.widget_save_sampling_config.setHidden(True)
+        self.widget_generate_StraRS.widget_save_sampling_config.setHidden(True)
         self.canvas.layersChanged.connect(
-            lambda: self.update_generated_sampling_list_in(self.widget_generate_SRS.QCBox_SamplingToSave))
-        self.widget_generate_SRS.QPBtn_SaveSamplingConf.clicked.connect(
-            lambda: self.fileDialog_saveSamplingConf(self.widget_generate_SRS.QCBox_SamplingToSave))
+            lambda: self.update_generated_sampling_list_in(self.widget_generate_StraRS.QCBox_SamplingToSave))
+        self.widget_generate_StraRS.QPBtn_SaveSamplingConf.clicked.connect(
+            lambda: self.fileDialog_saveSamplingConf(self.widget_generate_StraRS.QCBox_SamplingToSave))
         # generate sampling
-        self.widget_generate_SRS.QPBtn_GenerateSampling.clicked.connect(lambda: do_stratified_random_sampling(self))
+        self.widget_generate_StraRS.QPBtn_GenerateSampling.clicked.connect(lambda: do_stratified_random_sampling(self))
 
         # ######### Classification sampling tab ######### #
         # set properties to QgsMapLayerComboBox
@@ -232,25 +232,25 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     def set_nodata_value_categorical_raster(self):
-        current_layer = get_current_layer_in(self.QCBox_CategRaster_SRS)
+        current_layer = get_current_layer_in(self.QCBox_CategRaster_StraRS)
         if not current_layer:
             return
         # set the same nodata value if select the thematic raster
         if current_layer == get_current_layer_in(self.QCBox_ThematicRaster):
-            self.nodata_CategRaster_SRS.setValue(self.nodata_ThematicRaster.value())
+            self.nodata_CategRaster_StraRS.setValue(self.nodata_ThematicRaster.value())
             return
 
-        self.nodata_CategRaster_SRS.setValue(get_nodata_value(current_layer))
+        self.nodata_CategRaster_StraRS.setValue(get_nodata_value(current_layer))
 
     @pyqtSlot()
     def reset_nodata_to_categorical_raster(self):
         # reinit variable for save tables content
         self.srs_tables = {}
         # clear table
-        self.QTableW_SRS.setRowCount(0)
-        self.QTableW_SRS.setColumnCount(0)
+        self.QTableW_StraRS.setRowCount(0)
+        self.QTableW_StraRS.setColumnCount(0)
         # clear select
-        self.QCBox_SRS_Method.setCurrentIndex(-1)
+        self.QCBox_StraRS_Method.setCurrentIndex(-1)
 
     @pyqtSlot()
     @error_handler()
