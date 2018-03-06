@@ -387,7 +387,7 @@
                           </widget>
                          </item>
                          <item row="0" column="1">
-                          <widget class="QSpinBox" name="numberOfSamples_RS">
+                          <widget class="QSpinBox" name="numberOfSamples_SimpRS">
                            <property name="minimum">
                             <number>1</number>
                            </property>
@@ -407,7 +407,7 @@
                           </widget>
                          </item>
                          <item row="1" column="1">
-                          <widget class="QSpinBox" name="minDistance_RS">
+                          <widget class="QSpinBox" name="minDistance_SimpRS">
                            <property name="suffix">
                             <string> meters</string>
                            </property>
@@ -423,7 +423,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QGroupBox" name="QGBox_RSwithCR">
+                    <widget class="QGroupBox" name="QGBox_SimpRSwithCR">
                      <property name="title">
                       <string>Sampling in categorical raster (optional)</string>
                      </property>
@@ -435,7 +435,7 @@
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_16">
                       <item>
-                       <widget class="QWidget" name="widget_RSwithCR" native="true">
+                       <widget class="QWidget" name="widget_SimpRSwithCR" native="true">
                         <layout class="QVBoxLayout" name="verticalLayout_15">
                          <property name="margin">
                           <number>0</number>
@@ -460,7 +460,7 @@
                              <number>0</number>
                             </property>
                             <item>
-                             <widget class="QgsMapLayerComboBox" name="QCBox_CategRaster_RS">
+                             <widget class="QgsMapLayerComboBox" name="QCBox_CategRaster_SimpRS">
                               <property name="sizePolicy">
                                <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
                                 <horstretch>0</horstretch>
@@ -473,7 +473,7 @@
                              </widget>
                             </item>
                             <item>
-                             <widget class="QPushButton" name="QPBtn_browseCategRaster_RS">
+                             <widget class="QPushButton" name="QPBtn_browseCategRaster_SimpRS">
                               <property name="sizePolicy">
                                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                 <horstretch>0</horstretch>
@@ -524,7 +524,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="GenerateSamplingWidget" name="widget_generate_RS" native="true"/>
+                 <widget class="GenerateSamplingWidget" name="widget_generate_SimpRS" native="true"/>
                 </item>
                 <item>
                  <spacer name="verticalSpacer_3">
@@ -606,7 +606,7 @@
                           <number>0</number>
                          </property>
                          <item>
-                          <widget class="QgsMapLayerComboBox" name="QCBox_CategRaster_SRS">
+                          <widget class="QgsMapLayerComboBox" name="QCBox_CategRaster_StraRS">
                            <property name="sizePolicy">
                             <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
                              <horstretch>0</horstretch>
@@ -619,7 +619,7 @@
                           </widget>
                          </item>
                          <item>
-                          <widget class="QPushButton" name="QPBtn_browseCategRaster_SRS">
+                          <widget class="QPushButton" name="QPBtn_browseCategRaster_StraRS">
                            <property name="sizePolicy">
                             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                              <horstretch>0</horstretch>
@@ -648,7 +648,7 @@
                           </widget>
                          </item>
                          <item>
-                          <widget class="QSpinBox" name="nodata_CategRaster_SRS">
+                          <widget class="QSpinBox" name="nodata_CategRaster_StraRS">
                            <property name="toolTip">
                             <string>The nodata value set automatically from image if this has the nodata value set</string>
                            </property>
@@ -686,7 +686,7 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QComboBox" name="QCBox_SRS_Method">
+                       <widget class="QComboBox" name="QCBox_StraRS_Method">
                         <property name="sizePolicy">
                          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                           <horstretch>0</horstretch>
@@ -741,7 +741,7 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QTableWidget" name="QTableW_SRS">
+                       <widget class="QTableWidget" name="QTableW_StraRS">
                         <property name="minimumSize">
                          <size>
                           <width>0</width>
@@ -819,7 +819,7 @@
                        </widget>
                       </item>
                       <item row="1" column="1">
-                       <widget class="QSpinBox" name="minDistance_SRS">
+                       <widget class="QSpinBox" name="minDistance_StraRS">
                         <property name="suffix">
                          <string> meters</string>
                         </property>
@@ -835,7 +835,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="GenerateSamplingWidget" name="widget_generate_SRS" native="true"/>
+                 <widget class="GenerateSamplingWidget" name="widget_generate_StraRS" native="true"/>
                 </item>
                 <item>
                  <spacer name="verticalSpacer_4">
@@ -851,7 +851,7 @@
                  </spacer>
                 </item>
                </layout>
-               <zorder>widget_generate_SRS</zorder>
+               <zorder>widget_generate_StraRS</zorder>
                <zorder>widget_StratifiedSampling</zorder>
                <zorder>verticalSpacer_4</zorder>
                <zorder>QGBox_3</zorder>
@@ -1622,9 +1622,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>QGBox_RSwithCR</sender>
+   <sender>QGBox_SimpRSwithCR</sender>
    <signal>clicked(bool)</signal>
-   <receiver>widget_RSwithCR</receiver>
+   <receiver>widget_SimpRSwithCR</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
