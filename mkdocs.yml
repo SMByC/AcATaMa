@@ -1,10 +1,11 @@
 site_name: AcATaMa - Qgis plugin
 site_description: AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
-site_author: Xavier Corredor Llano, SMBYC-IDEAM
-#site_favicon: favicon_whale.png
+site_author: Xavier Corredor Llano, SMByC-IDEAM
+site_favicon: favicon.png
 site_url: https://smbyc.bitbucket.io/qgisplugins/acatama
 repo_url: https://bitbucket.org/smbyc/qgisplugin-acatama
-theme: mkdocs
+theme:
+  name: mkdocs
 extra_css:
     - css/extra.css
 markdown_extensions:
@@ -12,9 +13,11 @@ markdown_extensions:
   - admonition
   - toc:
       permalink: true
+  - sane_lists
 pages:
-- Home: index.md
-#- Feature: features.md
-- Installation: installation.md
-- How to use: how_to_use.md
+  - Home: index.md
+  - About: about.md
+  - Installation: installation.md
+  - How to use: how_to_use.md
+  - Use cases: use_cases.md
 

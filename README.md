@@ -1,6 +1,6 @@
 # AcATaMa #
 
-AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps.
+The AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps. It was designed and implemented by the Group of Forest and Carbon Monitoring System (SMByC by its acronym in Spanish), operated by the Institute of Hydrology, Meteorology and Environmental Studies (IDEAM), Colombia.
 
 ## Documentation
 
@@ -8,13 +8,12 @@ Home page documentation: [https://smbyc.bitbucket.io/qgisplugins/acatama](https:
 
 ## Installation
 
-This plugin is not official in QGIS Plugin Repository yet, you need install manually it in Qgis:
+- The plugin can be installed using the QGIS Plugin Manager
+- Go into Qgis to `Plugins` menu and `Manage and install plugins`
+- In `All` section search for `AcATaMa` click and press Install plugin
+- The plugin will be available in the `Plugins` menu and `Plugins toolbar`
 
-- Download [AcATaMa.zip](https://drive.google.com/uc?export=download&id=19B0Sj8XpHmAyhj8C-wXnH6pji5YPYC61)
-- Unpack in plugins qgis user directory:
-    * windows: `C:\Users\<user>\.qgis2\python\plugins\` 
-    * linux/mac: `/home/<user>/.qgis2/python/plugins/`
-- Then restart Qgis and activate it in "Plugins" menu and "Manage and install plugins" in "Installed" items.
+(see more about [installation and upgrade](https://smbyc.bitbucket.io/qgisplugins/acatama/installation))
 
 ## Source code
 
@@ -33,5 +32,5 @@ Issues, ideas and enhancements: [https://bitbucket.org/smbyc/qgisplugin-acatama/
 ***
 
 Copyright (C) Xavier Corredor Llano <xcorredorl@ideam.gov.co>  
-Sistema de Monitoreo de Bosques y Carbono (SMByC) and FAO  
+Sistema de Monitoreo de Bosques y Carbono (SMByC)  
 General Public License - GPLv3

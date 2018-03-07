@@ -1,7 +1,7 @@
 
 
 body {
-    font-size: 15px;
+    font-size: 15.5px;
     font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
@@ -9,10 +9,23 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   color: #103D5A;
 }
 
+h1 {
+    font-size: 30px;
+}
+
+h2 {
+    font-size: 26px;
+}
+
+h3 {
+    font-size: 22px;
+}
+
 .navbar {
     background-image: none;
     border-bottom: 3px solid #1775B6;
     box-shadow: 0 1px 10px rgba(0,0,0,0.1);
+    min-height: 45px;
 }
 
 .navbar-default {
@@ -30,7 +43,13 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 }
 
 .navbar-brand {
-    font-size: 21px;
+    font-size: 17px;
+    padding: 11px 14px;
+    font-weight: bold;
+}
+
+.navbar-nav > li > a {
+    padding: 11px 14px;
 }
 
 .bs-sidebar {
@@ -50,5 +69,13 @@ pre code {
 }
 
 .admonition {
-    font-size: 14px;
+    font-size: 15px;
+}
+
+ul.nav > li > a[rel~="prev"], ul.nav > li > a[rel~="next"] {
+    display: none;
+}
+
+div.container div p img {
+    margin: 15px auto 18px auto;
 }
