@@ -32,7 +32,7 @@ Issues, ideas and enhancements: [https://bitbucket.org/smbyc/qgisplugin-acatama/
 
 The AcATaMa plugin is open source and you can help in different ways:
 
-* help with developing and/or improve the docs cloning the repository and doing the push request [[1]](https://confluence.atlassian.com/bitbucket/fork-a-teammate-s-repository-774243391.html).
+* help with developing and/or improve the docs cloning the repository and doing the push request ([howto](https://confluence.atlassian.com/bitbucket/fork-a-teammate-s-repository-774243391.html)).
 * or just test it, report issues, ideas and enhancements in the issue tracker.
 
 ***
