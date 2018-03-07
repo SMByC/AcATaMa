@@ -36,19 +36,19 @@ LOCALES =
 # translation
 SOURCES = \
 	__init__.py \
-	acatama.py acatama_dockwidget.py
+	acatama.py
 
 PLUGINNAME = AcATaMa
 
 PY_FILES = \
 	__init__.py \
-	acatama.py acatama_dockwidget.py
+	acatama.py
 
-UI_FILES = acatama_dockwidget.ui
+UI_FILES = 
 
-EXTRAS = metadata.txt icon.png
+EXTRAS = metadata.txt
 
-EXTRA_DIRS =
+EXTRA_DIRS = core gui libs ui icons
 
 COMPILED_RESOURCE_FILES = resources.py
 
@@ -59,7 +59,7 @@ PEP8EXCLUDE=pydev,resources.py,conf.py,third_party,ui
 # Normally you would not need to edit below here
 #################################################
 
-HELP = help/build/html
+HELP = README.md
 
 PLUGIN_UPLOAD = $(c)/plugin_upload.py
 
@@ -105,12 +105,13 @@ deploy: compile doc transcompile
 	# $HOME/$(QGISDIR)/python/plugins
 	mkdir -p $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 	cp -vf $(PY_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vf $(UI_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
+	# cp -vf $(UI_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 	cp -vf $(COMPILED_RESOURCE_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 	cp -vf $(EXTRAS) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 	cp -vfr i18n $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 	cp -vfr $(HELP) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/help
 	# Copy extra directories if any
+	cp -vfr $(EXTRA_DIRS) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
   # (temporarily removed)
 
 
@@ -198,7 +199,7 @@ doc:
 	@echo "------------------------------------"
 	@echo "Building documentation using sphinx."
 	@echo "------------------------------------"
-	cd help; make html
+# 	cd help; make html
 
 pylint:
 	@echo
