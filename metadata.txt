@@ -27,7 +27,6 @@ repository=https://bitbucket.org/smbyc/qgisplugin-acatama
 # Tags are comma separated with spaces allowed
 tags=accuracy,accuracy assessment,thematic map,classification,sample,sampling design,points,remote sensing
 
-
 category=Plugins
 icon=icons/acatama.svg
 # experimental flag
