@@ -1,6 +1,6 @@
 # AcATaMa #
 
-The AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps. It was designed and implemented by the Group of Forest and Carbon Monitoring System (SMByC by its acronym in Spanish), operated by the Institute of Hydrology, Meteorology and Environmental Studies (IDEAM), Colombia.
+The AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps. It was designed mainly for: to assess the accuracy of thematic maps, to estimate areas of the map classes, sampling design/classification and others.
 
 ## Documentation
 
