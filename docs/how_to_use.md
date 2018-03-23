@@ -1,10 +1,19 @@
 # How to use
 
-AcATaMa is divided and ordered by four tabs/sections: [Thematic](#1-thematic), [Sampling](#2-sampling), [Classification](#3-classification) and [Accuracy Assessment](#4-accuracy-assessment)
+AcATaMa is divided and ordered by four tabs/sections:
+
+1. [Thematic](#1-thematic-map)
+2. [Sampling](#2-sampling-desing)
+3. [Classification](#3-classification)
+4. [Accuracy Assessment](#4-accuracy-assessment)
 
 <img src="../img/dock_main.png" width="40%">
 
-At the bottom of the plugin there are 3 buttons: `Docs` for open the CloudMasking documentation online in a web-browser, `Clear/Reload` for clear all temporal and used files for process and reset all fields in the plugin, and `AcATaMa version` open the about dialog.
+At the bottom of the plugin there are 3 buttons:
+
+- `Docs` for open the CloudMasking documentation online in a web-browser
+- `Clear/Reload` for clear all temporal and used files for process and reset all fields in the plugin
+- `AcATaMa version` open the about dialog.
 
 ## 1. Thematic map
 
