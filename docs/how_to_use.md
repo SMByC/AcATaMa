@@ -30,7 +30,7 @@ Optionally you can clip the thematic raster selected in an area of interest. Aft
 
 The thematic map is the raster layer to which the accuracy assessment will be applied (for example a land cover map) and is the base to generate the random sampling. It must be a categorical thematic layer with an attribute and color table associated.
 
-<img src="../img/3b.png" width="40%">
+<img src="../img/color_table.png" width="50%">
 
 ## 2. Sampling desing
 
