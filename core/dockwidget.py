@@ -35,6 +35,7 @@ def valid_file_selected_in(combo_box, combobox_name=False):
         get_layer_by_name(combo_box.currentText()).dataProvider().dataSourceUri()
         return True
     except:
+        combo_box.setCurrentIndex(-1)
         if combobox_name:
             iface.messageBar().pushMessage("AcATaMa", "Error, please browse/select a valid file in "
                                            + combobox_name, level=QgsMessageBar.WARNING)
