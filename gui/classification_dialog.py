@@ -531,9 +531,10 @@ class ThematicRasterClasses(QtGui.QDialog, FORM_CLASS):
 
         header = ["Pix Val", "Color", "Select"]
         # get color table from raster
-        nodata = int(AcATaMa.dockwidget.nodata_ThematicRaster.value())
         thematic_table = {"color_table": get_color_table(
-            get_current_file_path_in(AcATaMa.dockwidget.QCBox_ThematicRaster), band_number=1, nodata=nodata)}
+            get_current_file_path_in(AcATaMa.dockwidget.QCBox_ThematicRaster),
+            band_number=int(AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText()),
+            nodata=int(AcATaMa.dockwidget.nodata_ThematicRaster.value()))}
 
         if not thematic_table["color_table"]:
             # clear table

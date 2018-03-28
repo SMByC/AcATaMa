@@ -49,7 +49,7 @@ class RandomPoint(Point):
         """Check if the point is in valid data in thematic raster
         """
         try:
-            point_value_in_thematic = int(ThematicR.get_pixel_value_from_pnt(self.QgsPnt, band=1))
+            point_value_in_thematic = int(ThematicR.get_pixel_value_from_pnt(self.QgsPnt))
         except:
             return False
         if point_value_in_thematic == ThematicR.nodata:
@@ -77,7 +77,7 @@ class RandomPoint(Point):
         """Check if point is at least in one pixel values set in the categorical raster
         """
         if pixel_values is not None:
-            point_value_in_categ_raster = int(CategoricalR.get_pixel_value_from_pnt(self.QgsPnt, band=1))
+            point_value_in_categ_raster = int(CategoricalR.get_pixel_value_from_pnt(self.QgsPnt))
             if point_value_in_categ_raster not in pixel_values:
                 return False
         return True
@@ -85,7 +85,7 @@ class RandomPoint(Point):
     def in_categorical_raster_StraRS(self, pixel_values, number_of_samples, CategoricalR, nPointsInCategories):
         """Check if point pass the number of samples in the category or is nodata
         """
-        pixel_value_in_categ_raster = int(CategoricalR.get_pixel_value_from_pnt(self.QgsPnt, band=1))
+        pixel_value_in_categ_raster = int(CategoricalR.get_pixel_value_from_pnt(self.QgsPnt))
         if pixel_value_in_categ_raster == CategoricalR.nodata:
             return False
         self.index_pixel_value = pixel_values.index(pixel_value_in_categ_raster)
@@ -97,7 +97,7 @@ class RandomPoint(Point):
         """Check if the pixel have at least the minimum the neighbors with the
         same class of the pixel
         """
-        pixel_class_value = int(ThematicR.get_pixel_value_from_pnt(self.QgsPnt, band=1))
+        pixel_class_value = int(ThematicR.get_pixel_value_from_pnt(self.QgsPnt))
 
         pixel_size_x = ThematicR.qgs_layer.rasterUnitsPerPixelX()
         pixel_size_y = ThematicR.qgs_layer.rasterUnitsPerPixelY()
@@ -115,7 +115,7 @@ class RandomPoint(Point):
         neighbors = []
         for x, y in ((_x, _y) for _x in x_list for _y in y_list):
             try:
-                neighbors.append(int(ThematicR.get_pixel_value_from_xy(x, y, band=1)))
+                neighbors.append(int(ThematicR.get_pixel_value_from_xy(x, y)))
             except:
                 continue
 

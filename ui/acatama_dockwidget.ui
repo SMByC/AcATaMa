@@ -48,7 +48,7 @@
              <x>0</x>
              <y>0</y>
              <width>736</width>
-             <height>1132</height>
+             <height>1096</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -105,14 +105,37 @@
                </item>
                <item>
                 <widget class="QWidget" name="widget_7" native="true">
-                 <layout class="QHBoxLayout" name="horizontalLayout_6">
+                 <layout class="QHBoxLayout" name="horizontalLayout_5">
                   <property name="margin">
                    <number>0</number>
                   </property>
                   <item>
+                   <spacer name="horizontalSpacer_8">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="label_26">
+                    <property name="text">
+                     <string>Band:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QComboBox" name="QCBox_band_ThematicRaster"/>
+                  </item>
+                  <item>
                    <widget class="QLabel" name="label_2">
                     <property name="text">
-                     <string>Nodata value for thematic raster:</string>
+                     <string>Nodata value:</string>
                     </property>
                    </widget>
                   </item>
@@ -134,6 +157,19 @@
                      <number>-1</number>
                     </property>
                    </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_9">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
                   </item>
                  </layout>
                 </widget>
@@ -293,8 +329,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>736</width>
-             <height>1132</height>
+             <width>716</width>
+             <height>1326</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -491,12 +527,19 @@
                          <item>
                           <widget class="QWidget" name="widget_6" native="true">
                            <layout class="QHBoxLayout" name="horizontalLayout_4">
-                            <property name="spacing">
-                             <number>0</number>
-                            </property>
                             <property name="margin">
                              <number>0</number>
                             </property>
+                            <item>
+                             <widget class="QLabel" name="label_27">
+                              <property name="text">
+                               <string>Band:</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QComboBox" name="QCBox_band_CategRaster_SimpRS"/>
+                            </item>
                             <item>
                              <widget class="QLabel" name="label_13">
                               <property name="text">
@@ -641,9 +684,32 @@
                           <number>0</number>
                          </property>
                          <item>
+                          <spacer name="horizontalSpacer_11">
+                           <property name="orientation">
+                            <enum>Qt::Horizontal</enum>
+                           </property>
+                           <property name="sizeHint" stdset="0">
+                            <size>
+                             <width>40</width>
+                             <height>20</height>
+                            </size>
+                           </property>
+                          </spacer>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="label_31">
+                           <property name="text">
+                            <string>Band:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QComboBox" name="QCBox_band_CategRaster_StraRS"/>
+                         </item>
+                         <item>
                           <widget class="QLabel" name="label_6">
                            <property name="text">
-                            <string>Nodata value for categorical raster:</string>
+                            <string>Nodata value:</string>
                            </property>
                           </widget>
                          </item>
@@ -665,6 +731,19 @@
                             <number>-1</number>
                            </property>
                           </widget>
+                         </item>
+                         <item>
+                          <spacer name="horizontalSpacer_12">
+                           <property name="orientation">
+                            <enum>Qt::Horizontal</enum>
+                           </property>
+                           <property name="sizeHint" stdset="0">
+                            <size>
+                             <width>40</width>
+                             <height>20</height>
+                            </size>
+                           </property>
+                          </spacer>
                          </item>
                         </layout>
                        </widget>
@@ -892,7 +971,7 @@
              <x>0</x>
              <y>0</y>
              <width>736</width>
-             <height>1132</height>
+             <height>1096</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_24">
@@ -1361,7 +1440,7 @@
              <x>0</x>
              <y>0</y>
              <width>736</width>
-             <height>1132</height>
+             <height>1096</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_11">

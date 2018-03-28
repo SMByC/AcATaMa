@@ -102,20 +102,21 @@ def get_color_table(raster_path, band_number=1, nodata=None):
 
 
 class Raster():
-    def __init__(self, file_selected_combo_box, nodata=None):
+    def __init__(self, file_selected_combo_box, band=1, nodata=None):
         from AcATaMa.core.dockwidget import get_current_file_path_in, get_current_layer_in
         self.file_path = get_current_file_path_in(file_selected_combo_box)
         self.qgs_layer = get_current_layer_in(file_selected_combo_box)
+        self.band = band
         self.nodata = nodata if nodata != -1 else None
 
     def extent(self):
         return get_extent(self.file_path)
 
-    def get_pixel_value_from_xy(self, x, y, band=1):
-        return self.qgs_layer.dataProvider().identify(QgsPoint(x, y), QgsRaster.IdentifyFormatValue).results()[band]
+    def get_pixel_value_from_xy(self, x, y):
+        return self.qgs_layer.dataProvider().identify(QgsPoint(x, y), QgsRaster.IdentifyFormatValue).results()[self.band]
 
-    def get_pixel_value_from_pnt(self, point, band=1):
-        return self.qgs_layer.dataProvider().identify(point, QgsRaster.IdentifyFormatValue).results()[band]
+    def get_pixel_value_from_pnt(self, point):
+        return self.qgs_layer.dataProvider().identify(point, QgsRaster.IdentifyFormatValue).results()[self.band]
 
     def get_total_pixels_by_value(self, pixel_value):
         raster_numpy = gdalnumeric.LoadFile(self.file_path)
