@@ -228,16 +228,21 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
     def select_thematic_raster(self):
         # first check
         if not valid_file_selected_in(self.QCBox_ThematicRaster, "thematic raster"):
+            self.QCBox_band_ThematicRaster.clear()
             self.nodata_ThematicRaster.setValue(-1)
             return
         current_layer = get_current_layer_in(self.QCBox_ThematicRaster)
         # check if thematic raster data type is integer or byte
         if current_layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
             self.QCBox_ThematicRaster.setCurrentIndex(-1)
+            self.QCBox_band_ThematicRaster.clear()
             self.nodata_ThematicRaster.setValue(-1)
             self.iface.messageBar().pushMessage("AcATaMa", "Error, thematic raster must be byte or integer as data type.",
                                                 level=QgsMessageBar.WARNING)
             return
+        # set band count
+        self.QCBox_band_ThematicRaster.clear()
+        self.QCBox_band_ThematicRaster.addItems([str(x) for x in range(1, current_layer.bandCount() + 1)])
         # set nodata value of thematic raster in nodata field
         self.nodata_ThematicRaster.setValue(get_nodata_value(current_layer))
 
@@ -245,30 +250,41 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
     def select_categorical_raster_SimpRS(self):
         # first check
         if not valid_file_selected_in(self.QCBox_CategRaster_SimpRS, "categorical raster"):
+            self.QCBox_band_CategRaster_SimpRS.clear()
             return
         current_layer = get_current_layer_in(self.QCBox_CategRaster_SimpRS)
         # check if categorical raster data type is integer or byte
         if current_layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
             self.QCBox_CategRaster_SimpRS.setCurrentIndex(-1)
+            self.QCBox_band_CategRaster_SimpRS.clear()
             self.iface.messageBar().pushMessage("AcATaMa",
                                                 "Error, categorical raster must be byte or integer as data type.",
                                                 level=QgsMessageBar.WARNING)
+            return
+        # set band count
+        self.QCBox_band_CategRaster_SimpRS.clear()
+        self.QCBox_band_CategRaster_SimpRS.addItems([str(x) for x in range(1, current_layer.bandCount() + 1)])
 
     @pyqtSlot()
     def select_categorical_raster_StraRS(self):
         # first check
         if not valid_file_selected_in(self.QCBox_CategRaster_StraRS, "categorical raster"):
+            self.QCBox_band_CategRaster_StraRS.clear()
             self.nodata_CategRaster_StraRS.setValue(-1)
             return
         current_layer = get_current_layer_in(self.QCBox_CategRaster_StraRS)
         # check if categorical raster data type is integer or byte
         if current_layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
             self.QCBox_CategRaster_StraRS.setCurrentIndex(-1)
+            self.QCBox_band_CategRaster_StraRS.clear()
             self.nodata_CategRaster_StraRS.setValue(-1)
             self.iface.messageBar().pushMessage("AcATaMa",
                                                 "Error, categorical raster must be byte or integer as data type.",
                                                 level=QgsMessageBar.WARNING)
             return
+        # set band count
+        self.QCBox_band_CategRaster_StraRS.clear()
+        self.QCBox_band_CategRaster_StraRS.addItems([str(x) for x in range(1, current_layer.bandCount() + 1)])
         # set the same nodata value if select the thematic raster
         if current_layer == get_current_layer_in(self.QCBox_ThematicRaster):
             self.nodata_CategRaster_StraRS.setValue(self.nodata_ThematicRaster.value())

@@ -48,11 +48,13 @@ def do_simple_random_sampling(dockwidget):
     min_distance = int(dockwidget.minDistance_SimpRS.value())
 
     ThematicR = Raster(file_selected_combo_box=dockwidget.QCBox_ThematicRaster,
+                       band=int(dockwidget.QCBox_band_ThematicRaster.currentText()),
                        nodata=int(dockwidget.nodata_ThematicRaster.value()))
 
     # simple random sampling in categorical raster
     if dockwidget.QGBox_SimpRSwithCR.isChecked():
-        CategoricalR = Raster(file_selected_combo_box=dockwidget.QCBox_CategRaster_SimpRS)
+        CategoricalR = Raster(file_selected_combo_box=dockwidget.QCBox_CategRaster_SimpRS,
+                              band=int(dockwidget.QCBox_band_CategRaster_SimpRS.currentText()))
         try:
             pixel_values = [int(p) for p in dockwidget.pixelsValuesCategRaster.text().split(",")]
         except:
@@ -121,8 +123,10 @@ def do_stratified_random_sampling(dockwidget):
     # get and define some variables
     min_distance = int(dockwidget.minDistance_StraRS.value())
     ThematicR = Raster(file_selected_combo_box=dockwidget.QCBox_ThematicRaster,
+                       band=int(dockwidget.QCBox_band_ThematicRaster.currentText()),
                        nodata=int(dockwidget.nodata_ThematicRaster.value()))
     CategoricalR = Raster(file_selected_combo_box=dockwidget.QCBox_CategRaster_StraRS,
+                          band=int(dockwidget.QCBox_band_CategRaster_StraRS.currentText()),
                           nodata=int(dockwidget.nodata_CategRaster_StraRS.value()))
 
     # get values from category table  #########

@@ -270,7 +270,8 @@ def fill_stratified_sampling_table(dockwidget):
         # init a new stratified random sampling table
         nodata = int(dockwidget.nodata_CategRaster_StraRS.value())
         srs_table = {"color_table": get_color_table(
-            get_current_file_path_in(dockwidget.QCBox_CategRaster_StraRS), band_number=1, nodata=nodata)}
+            get_current_file_path_in(dockwidget.QCBox_CategRaster_StraRS),
+            band_number=int(dockwidget.QCBox_band_CategRaster_StraRS.currentText()), nodata=nodata)}
 
         if not srs_table["color_table"]:
             # clear table
