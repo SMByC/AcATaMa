@@ -86,7 +86,7 @@ class RandomPoint(Point):
         """Check if point pass the number of samples in the category or is nodata
         """
         pixel_value_in_categ_raster = int(CategoricalR.get_pixel_value_from_pnt(self.QgsPnt))
-        if pixel_value_in_categ_raster == CategoricalR.nodata:
+        if pixel_value_in_categ_raster == CategoricalR.nodata or pixel_value_in_categ_raster not in pixel_values:
             return False
         self.index_pixel_value = pixel_values.index(pixel_value_in_categ_raster)
         if nPointsInCategories[self.index_pixel_value] >= number_of_samples[self.index_pixel_value]:
