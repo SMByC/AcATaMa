@@ -161,7 +161,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             layer_type="raster"))
         # select and check the categorical raster
         self.QCBox_CategRaster_StraRS.layerChanged.connect(self.select_categorical_raster_StraRS)
-        self.nodata_CategRaster_StraRS.valueChanged.connect(self.reset_nodata_to_categorical_raster)
+        self.QCBox_band_CategRaster_StraRS.currentIndexChanged.connect(self.reset_StraRS_method)
+        self.nodata_CategRaster_StraRS.valueChanged.connect(self.reset_StraRS_method)
         # init variable for save tables content
         self.srs_tables = {}
         # fill table of categorical raster
@@ -292,7 +293,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.nodata_CategRaster_StraRS.setValue(get_nodata_value(current_layer))
 
     @pyqtSlot()
-    def reset_nodata_to_categorical_raster(self):
+    def reset_StraRS_method(self):
         # reinit variable for save tables content
         self.srs_tables = {}
         # clear table
