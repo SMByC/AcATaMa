@@ -151,6 +151,7 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
         self.accuracy_assessment.compute()
         # set content results in HTML
         self.ResultsHTML.setHtml(accuracy_assessment_results.get_html(self.accuracy_assessment))
+        self.ResultsHTML.zoomOut()
 
         AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText(u"Accuracy assessment is opened, click to show")
         super(AccuracyAssessmentDialog, self).show()
