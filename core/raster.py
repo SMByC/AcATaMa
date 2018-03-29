@@ -115,10 +115,10 @@ def get_singleband_pseudocolor(layer, band_number, nodata=None):
     items = xml_style.findall('pipe/rasterrenderer[@band="{}"]/rastershader/colorrampshader/item'.format(band_number))
     # check if items is empty or any pixel value (in color table) not is integer
     if not items or False in [i.get("value").lstrip('+-').isdigit() for i in items]:
-        msg = "The layer \"{}\" selected doesn't have an appropiate color style for AcATaMa, " \
+        msg = "The layer selected \"{}\" {}doesn't have an appropiate color style for AcATaMa, " \
               "it must be singleband pseudocolor with integer values. " \
               "<a href='https://smbyc.bitbucket.io/qgisplugins/acatama/#types-of-thematic-rasters-accepted-in-acatama'>" \
-              "See more</a>.".format(layer.name())
+              "See more</a>.".format(layer.name(), "in the band {} ".format(band_number) if layer.bandCount() > 1 else "")
         QMessageBox.warning(None, 'Error reading the pixel color style...', msg)
         return False
 
