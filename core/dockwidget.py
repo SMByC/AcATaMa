@@ -26,7 +26,6 @@ from qgis.core import QgsMapLayerRegistry, QgsRasterLayer, QgsVectorLayer, QgsMa
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
-from AcATaMa.core.raster import get_color_table
 from AcATaMa.core.utils import wait_process, mask, block_signals_to
 
 
@@ -267,11 +266,12 @@ def fill_stratified_sampling_table(dockwidget):
         # restore values saved for number of samples configured for selected categorical file
         srs_table = dockwidget.srs_tables[dockwidget.QCBox_CategRaster_StraRS.currentText()][srs_method]
     else:
+        from AcATaMa.core.raster import get_current_colors_style
         # init a new stratified random sampling table
-        nodata = int(dockwidget.nodata_CategRaster_StraRS.value())
-        srs_table = {"color_table": get_color_table(
-            get_current_file_path_in(dockwidget.QCBox_CategRaster_StraRS),
-            band_number=int(dockwidget.QCBox_band_CategRaster_StraRS.currentText()), nodata=nodata)}
+        srs_table = {"color_table": get_current_colors_style(
+            get_current_layer_in(dockwidget.QCBox_CategRaster_StraRS),
+            band_number=int(dockwidget.QCBox_band_CategRaster_StraRS.currentText()),
+            nodata=int(dockwidget.nodata_CategRaster_StraRS.value()))}
 
         if not srs_table["color_table"]:
             # clear table
