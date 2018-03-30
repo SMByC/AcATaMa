@@ -108,7 +108,7 @@ def do_simple_random_sampling(dockwidget):
     # zero points
     if sampling.total_of_samples < number_of_samples and sampling.total_of_samples == 0:
         # delete instance where storage all sampling generated
-        Sampling.samplings.pop(sampling.sampling_name, None)
+        Sampling.samplings.pop(sampling.filename, None)
         iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any random points with this settings, "
                                                   "attempts exceeded", level=QgsMessageBar.WARNING, duration=10)
 
@@ -208,7 +208,7 @@ def do_stratified_random_sampling(dockwidget):
     # zero points
     if sampling.total_of_samples < total_of_samples and sampling.total_of_samples == 0:
         # delete instance where storage all sampling generated
-        Sampling.samplings.pop(sampling.sampling_name, None)
+        Sampling.samplings.pop(sampling.filename, None)
         iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any stratified random points with this settings, "
                                                   "attempts exceeded", level=QgsMessageBar.WARNING, duration=10)
 
@@ -231,8 +231,8 @@ class Sampling:
         # set the output dir for save sampling
         self.output_file = output_file
         # save instance
-        filename = os.path.splitext(os.path.basename(output_file))[0]  # without extension
-        Sampling.samplings[filename] = self
+        self.filename = os.path.splitext(os.path.basename(output_file))[0]  # without extension
+        Sampling.samplings[self.filename] = self
         # for save all sampling points
         self.points = dict()
 
