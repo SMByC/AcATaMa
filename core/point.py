@@ -22,7 +22,7 @@ import random
 from qgis.core import QgsGeometry, QgsPoint, QgsRectangle
 from processing.tools import vector
 
-from AcATaMa.core.utils import block_signals_to
+from AcATaMa.utils.system_utils import block_signals_to
 
 
 class Point(object):

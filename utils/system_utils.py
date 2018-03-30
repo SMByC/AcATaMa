@@ -82,20 +82,6 @@ def wait_process(disable_button=None):
     return decorate
 
 
-def mask(input_list, boolean_mask):
-    """Apply boolean mask to input list
-
-    Args:
-        input_list (list): Input list for apply mask
-        boolean_mask (list): The boolean mask list
-
-    Examples:
-        >>> mask(['A','B','C','D'], [1,0,1,0])
-        ['A', 'C']
-    """
-    return [i for i, b in zip(input_list, boolean_mask) if b]
-
-
 def open_file(filename):
     """Open a file with the standard application"""
     filename = os.path.abspath(filename)

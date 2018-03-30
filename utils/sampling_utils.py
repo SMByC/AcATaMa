@@ -21,8 +21,9 @@
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QTableWidgetItem, QColor
 
-from AcATaMa.core.dockwidget import get_layer_by_name, get_current_layer_in, get_current_file_path_in
-from AcATaMa.core.utils import wait_process, block_signals_to, mask
+from AcATaMa.utils.qgis_utils import get_layer_by_name, get_current_layer_in, get_current_file_path_in
+from AcATaMa.utils.system_utils import wait_process, block_signals_to
+from AcATaMa.utils.others_utils import mask
 
 
 @wait_process()

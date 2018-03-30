@@ -33,14 +33,14 @@ from qgis.gui import QgsMessageBar, QgsMapLayerProxyModel
 from AcATaMa.core.accuracy_assessment import AccuracyAssessmentDialog
 from AcATaMa.core.classification import Classification
 from AcATaMa.core.sampling import do_simple_random_sampling, do_stratified_random_sampling, Sampling
-from AcATaMa.core.dockwidget import get_current_file_path_in, \
-    unload_layer_in_qgis, get_current_layer_in, valid_file_selected_in, \
-    load_and_select_filepath_in
-from AcATaMa.core.sampling_utils import update_stratified_sampling_table, fill_stratified_sampling_table
-from AcATaMa.core.utils import error_handler, block_signals_to
 from AcATaMa.core.raster import do_clipping_with_shape, get_nodata_value
 from AcATaMa.gui.about_dialog import AboutDialog
 from AcATaMa.gui.classification_dialog import ClassificationDialog
+from AcATaMa.utils.qgis_utils import get_current_file_path_in, \
+    unload_layer_in_qgis, get_current_layer_in, valid_file_selected_in, \
+    load_and_select_filepath_in
+from AcATaMa.utils.sampling_utils import update_stratified_sampling_table, fill_stratified_sampling_table
+from AcATaMa.utils.system_utils import error_handler, block_signals_to
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))

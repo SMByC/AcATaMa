@@ -26,10 +26,10 @@ from PyQt4.QtGui import QAction, QIcon, QMessageBox
 
 # Import the code for the DockWidget
 from AcATaMa.core.accuracy_assessment import AccuracyAssessmentDialog
-from AcATaMa.core.dockwidget import unload_layer_in_qgis
 from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget
 from AcATaMa.gui.about_dialog import AboutDialog
 from AcATaMa.gui.classification_dialog import ClassificationDialog
+from AcATaMa.utils.qgis_utils import unload_layer_in_qgis
 
 # Initialize Qt resources from file resources.py
 import resources

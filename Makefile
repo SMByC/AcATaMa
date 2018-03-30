@@ -48,7 +48,7 @@ UI_FILES =
 
 EXTRAS = metadata.txt
 
-EXTRA_DIRS = core gui libs ui icons
+EXTRA_DIRS = core utils gui libs ui icons
 
 COMPILED_RESOURCE_FILES = resources.py
 

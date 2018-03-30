@@ -27,8 +27,8 @@ from qgis.gui import QgsMapCanvas, QgsMapCanvasLayer, QgsMapToolPan, QgsRubberBa
     QgsMapLayerProxyModel
 from qgis.utils import iface
 
-from AcATaMa.core.dockwidget import get_current_layer_in, load_and_select_filepath_in
-from AcATaMa.core.utils import block_signals_to
+from AcATaMa.utils.qgis_utils import get_current_layer_in, load_and_select_filepath_in
+from AcATaMa.utils.system_utils import block_signals_to
 
 
 class Marker():
