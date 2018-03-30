@@ -26,11 +26,30 @@ Optionally you can clip the thematic raster selected in an area of interest. Aft
 !!! warning "Important!"
     Clip the thematic map in an area of interest (or load the thematic map clipped) can be (or not) very important for the sampling design and the accuracy assessment result, because the area by classes changes and some parts of AcATaMa depend on the area by classes.
 
-### 1.1. What is a thematic map?
+### Types of thematic rasters accepted in AcATaMa
 
-The thematic map is the raster layer to which the accuracy assessment will be applied (for example a land cover map) and is the base to generate the random sampling. It must be a categorical thematic layer with an attribute and color table associated.
+It must be a categorical thematic layer **with byte or integer as data type** with a specific pixel-value/color associated. There are two types, respect to pixel-value/color associated, accepted in AcATaMa:
 
-<img src="../img/color_table.png" width="50%">
+1. **Raster with pseudocolor style**:
+
+    You can use any raster (of byte or integer as data type) with specific style so that AcATaMa acquire the categorical information from the raster. Go to `properties` of the raster, then go to `style`, select `singleband pseudocolor` and generate the desired pixel-value/color associated (manually or generated automatically using the several options that Qgis have to do this) with only one requirement: **the pixel-values associated must be integers**.
+
+    <img src="../img/1b.png" width="90%">
+
+    (Optional) After configure the style in Qgis for the raster is recommended save it in `.qml` Qgis style file, else Qgis save it in temporal file (or on the fly) and if you restart the Qgis and load the raster again you lost the pixel-value/color style associated. For save the style go to `Style` menu and click in `Save as default` Qgis save it in the same place and name of the raster with extension `.qml`.
+
+    <img src="../img/1c.png" width="65%">
+
+    (Optional) Alternative (or additional) to the above, you can save all layers style and config saving it in a Qgis project.
+
+2. **Raster with color table**:
+
+    You can use any raster (of byte or integer as data type) with pixel-values/color associated through a color table inside it as metadata. You can see it using `gdalinfo` or in `style` in layer `properties` this is shown as `paletted`.
+
+    <img src="../img/1d.png" width="65%">
+
+!!! note
+    The thematic map is the raster layer to which the accuracy assessment will be applied (for example a land cover map) and also is the base to generate the random sampling.
 
 ## 2. Sampling desing
 
@@ -57,11 +76,11 @@ In the basic case, each stratum could be a class or category of the thematic map
 
 The stratified random may be:
 
-- Stratified random sampling using a fixed number of sample: The sample size for each stratum is defined by the user. In the table selecting the option *"Fixed values by category (manually)"* in *"stratified random Sampling Method"*, you can write the number of points desired for each stratum. If you do not want set points in any stratum, you should write 0.
+- `Stratified random sampling using a fixed number of sample`: The sample size for each stratum is defined by the user. In the table selecting the option *"Fixed values by category (manually)"* in *"stratified random Sampling Method"*, you can write the number of points desired for each stratum. If you do not want set points in any stratum, you should write 0.
 
     <img src="../img/2b.png" width="70%">
 
-- Stratified random sampling using area based proportion: Designed to apply the proportional approaches sample allocations methodologies suggested by Olofsson et al. (2013, 2014), using the Cochran´s (1977) sample size formula for stratified random sampling in the option *"Area based proportion using std error"* in *"stratified random Sampling Method"*. The overall sample size and the number of point for each stratum is calculated according to:
+- `Stratified random sampling using area based proportion`: Designed to apply the proportional approaches sample allocations methodologies suggested by Olofsson et al. (2013, 2014), using the Cochran´s (1977) sample size formula for stratified random sampling in the option *"Area based proportion using std error"* in *"stratified random Sampling Method"*. The overall sample size and the number of point for each stratum is calculated according to:
 
     - The area proportion of each stratum in the map (Wi): This is automatically calculated by AcATaMa. You can see the Wi values in the table of accuracy assessment results
     - The standard error of the estimated overall accuracy that we would like to achieve. You write the value desired in the Field: "Overall expected standard error"
