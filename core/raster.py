@@ -31,8 +31,8 @@ from qgis.core import QgsRaster, QgsPoint
 from qgis.utils import iface
 from qgis.gui import QgsMessageBar
 
-from AcATaMa.core.dockwidget import get_file_path_of_layer
-from AcATaMa.core.utils import wait_process
+from AcATaMa.utils.qgis_utils import get_file_path_of_layer
+from AcATaMa.utils.system_utils import wait_process
 
 
 @wait_process()
@@ -151,7 +151,7 @@ def get_current_colors_style(layer, band_number=1, nodata=None):
 
 class Raster():
     def __init__(self, file_selected_combo_box, band=1, nodata=None):
-        from AcATaMa.core.dockwidget import get_current_file_path_in, get_current_layer_in
+        from AcATaMa.utils.qgis_utils import get_current_file_path_in, get_current_layer_in
         self.file_path = get_current_file_path_in(file_selected_combo_box)
         self.qgs_layer = get_current_layer_in(file_selected_combo_box)
         self.band = band

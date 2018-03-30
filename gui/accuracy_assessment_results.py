@@ -24,7 +24,7 @@ import csv
 import os
 import copy
 
-from AcATaMa.core.dockwidget import get_file_path_of_layer
+from AcATaMa.utils.qgis_utils import get_file_path_of_layer
 
 
 def rf(fv, r=4):

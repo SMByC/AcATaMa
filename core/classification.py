@@ -26,10 +26,10 @@ from qgis.PyQt.QtCore import NULL
 from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsVectorFileWriter
 from qgis.gui import QgsMessageBar
 
-from AcATaMa.core.dockwidget import get_current_file_path_in, get_file_path_of_layer, load_and_select_filepath_in
 from AcATaMa.core.point import ClassificationPoint
 from AcATaMa.core.raster import Raster
-from AcATaMa.core.utils import wait_process
+from AcATaMa.utils.qgis_utils import get_current_file_path_in, get_file_path_of_layer, load_and_select_filepath_in
+from AcATaMa.utils.system_utils import wait_process
 
 
 class Classification:

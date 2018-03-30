@@ -23,11 +23,11 @@ from PyQt4 import QtGui, uic
 from PyQt4.QtGui import QApplication
 from qgis.gui import QgsMessageBar
 
-from AcATaMa.core.classification import Classification
-from AcATaMa.core.dockwidget import get_current_layer_in, get_current_file_path_in
 from AcATaMa.core.raster import Raster
-from AcATaMa.core.utils import wait_process
+from AcATaMa.core.classification import Classification
 from AcATaMa.gui import accuracy_assessment_results
+from AcATaMa.utils.qgis_utils import get_current_layer_in, get_current_file_path_in
+from AcATaMa.utils.system_utils import wait_process
 
 
 class AccuracyAssessment:

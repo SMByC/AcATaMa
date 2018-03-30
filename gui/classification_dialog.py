@@ -29,10 +29,10 @@ from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform
 from qgis.gui import QgsMessageBar
 
 from AcATaMa.core.classification import Classification
-from AcATaMa.core.dockwidget import valid_file_selected_in, get_current_file_path_in, \
+from AcATaMa.utils.qgis_utils import valid_file_selected_in, get_current_file_path_in, \
     load_and_select_filepath_in, get_current_layer_in
 from AcATaMa.core.raster import get_current_colors_style
-from AcATaMa.core.utils import open_file
+from AcATaMa.utils.system_utils import open_file
 from AcATaMa.gui.classification_view_widget import ClassificationViewWidget
 
 # plugin path
