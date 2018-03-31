@@ -120,7 +120,7 @@ For the classification follow these steps:
 * Set the `Grid setting` it depends on the number of images to compare
 * Click in `Open the classification dialog`
 
-<img src="../img/3c.png" width="70%">
+<img src="../img/3a.png" width="70%">
 
 ### Classification dialog
 
@@ -131,7 +131,7 @@ For the classification follow these steps (in classification dialog):
 * Set all classification buttons in `Set Classification`
 * Now you can classified the samples with the buttons created
 
-<img src="../img/3a.png" width="100%">
+<img src="../img/3b.png" width="100%">
 
 !!! note "Nota: Samples order"
     For the classify the samples AcATaMa shuffles the list of samples for each file (the samples ID are not in order), this is to ensure randomization in the classification.
@@ -140,7 +140,13 @@ For the classification follow these steps (in classification dialog):
 
 The configuration buttons dialog you can set all buttons for classify the samples, you can set the name, the color and (optionally) the thematic raster class.
 
-<img src="../img/3b.png" width="40%">
+- `Without thematic raster classes`: You must define the classification name and the color (the color is not mandatory). This configuration is for some case of use like as sampling design and others that don't need the thematic raster.
+
+    <img src="../img/3c.png" width="40%">
+
+- `With thematic raster classes`: You must define the classification name, thematic raster class and the color, the color is auto filled when you pick the thematic raster class, after that you can change it if you want.
+
+    <img src="../img/3d.png" width="60%">
 
 !!! warning "Important!"
     The column `Thematic raster class` is available only if you set the thematic raster in [Thematic](#1-thematic) tab before open the dialog. You must configure the thematic raster class for all buttons if you want accuracy assessment result.
