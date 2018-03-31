@@ -194,7 +194,25 @@ AcATaMa calculated the accuracy assessment using the formulas included in Olofss
 
     <img src="../img/4h.png" width="35%">
 
-## References
+# Tips
+
+### 1. Save and restore classification status
+
+In some case when you have several samples to classified, you want save all status and configuration of AcATaMa and close Qgis, and after you want to load it again in new Qgis instance. For that we recommend to do:
+
+- Before save:
+    - First, load and configure all layer that you want to use (configure thematic/raster styles)
+    - Configure all classification buttons and views
+    - Classification the samples (partially)...
+- Save
+    - (optional) Save the Qgis project
+    - Save the setting and classification status in AcATaMa in [classification](#3-classification) tab.
+- Load/restore
+    - (optional) Open the Qgis project
+    - Restore the setting and classification status in AcATaMa in [classification](#3-classification) tab.
+    - Continue the classification of samples
+
+# References
 
 + *Cochran, W. G., 1977. Sampling techniques. John Wiley & Sons. New York.*
 + *FAO. 2016. Map accuracy assessment and area estimation. A practical guide. National forest monitoring assessment working paper No.46/E. Rome. [Link](http://www.fao.org/3/a-i5601e.pdf)*
