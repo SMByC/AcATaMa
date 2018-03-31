@@ -124,9 +124,13 @@ class Classification:
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         # restore the thematic raster
         if yaml_config["thematic_raster"]["path"]:
+            # thematic raster
             load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_ThematicRaster,
                                         yaml_config["thematic_raster"]["path"], "raster")
+            AcATaMa.dockwidget.select_thematic_raster()
+            # nodata
             AcATaMa.dockwidget.nodata_ThematicRaster.setValue(yaml_config["thematic_raster"]["nodata"])
+            # band number
             if "band" in yaml_config["thematic_raster"]:
                 AcATaMa.dockwidget.QCBox_band_ThematicRaster.setCurrentIndex(yaml_config["thematic_raster"]["band"]-1)
 
