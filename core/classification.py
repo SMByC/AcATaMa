@@ -96,6 +96,7 @@ class Classification:
         data = OrderedDict()
         data["thematic_raster"] = \
             {"path": get_current_file_path_in(AcATaMa.dockwidget.QCBox_ThematicRaster, show_message=False),
+             "band": int(AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText()),
              "nodata": AcATaMa.dockwidget.nodata_ThematicRaster.value()}
         data["sampling_layer"] = get_file_path_of_layer(self.sampling_layer)
         data["dialog_size"] = self.dialog_size
@@ -126,6 +127,9 @@ class Classification:
             load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_ThematicRaster,
                                         yaml_config["thematic_raster"]["path"], "raster")
             AcATaMa.dockwidget.nodata_ThematicRaster.setValue(yaml_config["thematic_raster"]["nodata"])
+            if "band" in yaml_config["thematic_raster"]:
+                AcATaMa.dockwidget.QCBox_band_ThematicRaster.setCurrentIndex(yaml_config["thematic_raster"]["band"]-1)
+
         # restore the classification settings
         AcATaMa.dockwidget.grid_columns.setValue(yaml_config["grid_view_widgets"]["columns"])
         AcATaMa.dockwidget.grid_rows.setValue(yaml_config["grid_view_widgets"]["rows"])
@@ -234,7 +238,7 @@ class Classification:
             pr.addAttributes([QgsField("ID", QVariant.Int),
                               QgsField("Class Name", QVariant.String),
                               QgsField("Classified", QVariant.Int),
-                              QgsField("Thematic", QVariant.Int),
+                              QgsField("thematic_raster", QVariant.Int),
                               QgsField("Match", QVariant.String)])
         else:
             pr.addAttributes([QgsField("ID", QVariant.Int),
