@@ -97,7 +97,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
         # select and check the thematic raster
-        self.QCBox_ThematicRaster.layerChanged.connect(self.select_thematic_raster)
+        self.QCBox_ThematicRaster.currentIndexChanged.connect(self.select_thematic_raster)
 
         # ######### shape area of interest ######### #
         self.widget_AreaOfInterest.setHidden(True)
