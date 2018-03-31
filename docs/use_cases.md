@@ -2,7 +2,8 @@
 # Use cases
 
 !!! warning
-    Under construction... please tell us what is you case of use using AcATaMa.
+    Under construction... please tell us what is you case of use using AcATaMa.  
+    Write us any comments and suggestions to: xcorredor (a) ideam.gov.co
 
 Here there are some examples of cases of use of AcATaMa:
 
