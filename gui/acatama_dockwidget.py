@@ -97,7 +97,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
         # select and check the thematic raster
-        self.QCBox_ThematicRaster.currentIndexChanged.connect(self.select_thematic_raster)
+        self.QCBox_ThematicRaster.layerChanged.connect(self.select_thematic_raster)
 
         # ######### shape area of interest ######### #
         self.widget_AreaOfInterest.setHidden(True)
@@ -259,8 +259,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         if current_layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
             self.QCBox_CategRaster_SimpRS.setCurrentIndex(-1)
             self.QCBox_band_CategRaster_SimpRS.clear()
-            self.iface.messageBar().pushMessage("AcATaMa",
-                                                "Error, categorical raster must be byte or integer as data type.",
+            self.iface.messageBar().pushMessage("AcATaMa","Error, categorical raster must be byte or integer as data type.",
                                                 level=QgsMessageBar.WARNING)
             return
         # set band count
