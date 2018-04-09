@@ -11,7 +11,7 @@ AcATaMa is divided and ordered by four tabs/sections:
 
 At the bottom of the plugin there are 3 buttons:
 
-- `Docs` for open the CloudMasking documentation online in a web-browser
+- `Docs` for open the online documentation in a web-browser
 - `Clear/Reload` for clear all temporal and used files for process and reset all fields in the plugin
 - `AcATaMa version` open the about dialog.
 
