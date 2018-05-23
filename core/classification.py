@@ -263,7 +263,8 @@ class Classification:
             name = self.buttons_config[point.classif_id]["name"] if point.is_classified else NULL
             if self.with_thematic_classes:
                 classified = int(self.buttons_config[point.classif_id]["thematic_class"]) if point.is_classified else NULL
-                thematic = int(ThematicR.get_pixel_value_from_pnt(point.QgsPnt)) if point.is_classified else NULL
+                thematic = int(ThematicR.get_pixel_value_from_pnt(point.QgsPnt)) \
+                    if point.is_classified and ThematicR.get_pixel_value_from_pnt(point.QgsPnt) else NULL
                 match = ('Yes' if thematic == classified else 'No') if point.is_classified else NULL
                 feature.setAttributes([point.shape_id, name, classified, thematic, match])
             else:
