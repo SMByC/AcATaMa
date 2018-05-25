@@ -73,6 +73,15 @@ def get_html(accu_asse):
     total_classified = sum(sample.is_classified for sample in accu_asse.classification.points)
     html += "<p><strong>Classification status:</strong> {}/{} samples classified</p>".format(total_classified, len(accu_asse.classification.points))
 
+    # warning block for samples outside the thematic raster area or inside the no data values
+    if accu_asse.samples_outside_the_thematic:
+        html += "<p style='color:white;background-color:#ac3f3f;white-space:pre;'>Warning:<br/>" \
+                "There are {} samples classified that are outside the thematic raster area or inside the no data values:<br/>".format(
+            len(accu_asse.samples_outside_the_thematic))
+        for idx, sample in enumerate(accu_asse.samples_outside_the_thematic):
+            html += "    {}) coordinate: {},{}<br/>".format(idx+1, int(sample.QgsPnt.x()), int(sample.QgsPnt.y()))
+        html += "These samples will be ignored for accuracy assessment results.</p>"
+
     ###########################################################################
     html += "<p style='font-size:2px'><br/></p>"
     html += "<h3>1) Error matrix (confusion matrix):</h3>"

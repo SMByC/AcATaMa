@@ -55,11 +55,15 @@ class AccuracyAssessment:
         # get the classified and thematic map values
         thematic_map_values = []
         classified_values = []
+        samples_outside_the_thematic = []
         classification_points = [point for point in self.classification.points if point.is_classified]
         points_ordered = sorted(classification_points, key=lambda p: p.shape_id)
         for point in points_ordered:
             # classification from the pixel values in the thematic map
             thematic_map_value = self.ThematicR.get_pixel_value_from_pnt(point.QgsPnt)
+            if not thematic_map_value:
+                samples_outside_the_thematic.append(point)
+                continue
             thematic_map_values.append(int(thematic_map_value))
             # classified value made/checked by user with classification buttons
             classified_value = self.classification.buttons_config[point.classif_id]["thematic_class"]
@@ -94,6 +98,7 @@ class AccuracyAssessment:
         self.values = values
         self.labels = labels
         self.error_matrix = error_matrix
+        self.samples_outside_the_thematic = samples_outside_the_thematic
         # set area by pixel
         self.pixel_area = self.ThematicR.qgs_layer.rasterUnitsPerPixelX() * self.ThematicR.qgs_layer.rasterUnitsPerPixelY()
         self.pixel_area_ha = self.pixel_area / 10000.0  # hectare
