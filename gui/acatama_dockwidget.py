@@ -433,6 +433,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             else:
                 classification = Classification(sampling_layer)
                 classification.reload_sampling_file()
+            # updated state of sampling file selected for accuracy assessment tab
+            self.set_sampling_file_accuracy_assessment()
         else:
             self.iface.messageBar().pushMessage("AcATaMa", "No sampling file selected",
                                                 level=QgsMessageBar.WARNING)
