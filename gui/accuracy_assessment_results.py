@@ -68,8 +68,8 @@ def get_html(accu_asse):
         <body>
         '''
     html += "<h2>Classification accuracy assessment results</h2>"
-    html += "<p><strong>Thematic raster:</strong> {}</p>".format(os.path.basename(accu_asse.ThematicR.file_path))
-    html += "<p><strong>Sampling file:</strong> {}</p>".format(os.path.basename(get_file_path_of_layer(accu_asse.classification.sampling_layer)))
+    html += "<p><strong>Thematic raster:</strong> {}</p>".format(os.path.basename((accu_asse.ThematicR.file_path).encode('utf-8')))
+    html += "<p><strong>Sampling file:</strong> {}</p>".format(os.path.basename((get_file_path_of_layer(accu_asse.classification.sampling_layer)).encode('utf-8')))
     total_classified = sum(sample.is_classified for sample in accu_asse.classification.points)
     html += "<p><strong>Classification status:</strong> {}/{} samples classified</p>".format(total_classified, len(accu_asse.classification.points))
 
@@ -456,10 +456,10 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows.append(["Classification accuracy assessment results"])
     csv_rows.append([])
     csv_rows.append(["Thematic raster:"])
-    csv_rows.append([os.path.basename(accu_asse.ThematicR.file_path)])
+    csv_rows.append([os.path.basename((accu_asse.ThematicR.file_path).encode('utf-8'))])
     csv_rows.append([])
     csv_rows.append(["Sampling file:"])
-    csv_rows.append([os.path.basename(get_file_path_of_layer(accu_asse.classification.sampling_layer))])
+    csv_rows.append([os.path.basename((get_file_path_of_layer(accu_asse.classification.sampling_layer)).encode('utf-8'))])
     csv_rows.append([])
     total_classified = sum(sample.is_classified for sample in accu_asse.classification.points)
     csv_rows.append(["Classification status:"])
