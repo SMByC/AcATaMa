@@ -186,29 +186,32 @@ class Classification:
     @wait_process()
     def reload_sampling_file(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        # update all points from file and restore its status classification
         points_from_shapefile = self.get_points_from_shapefile()
-        # check if sampling has not changed
-        if set([p.shape_id for p in self.points]) == set([p.shape_id for p in points_from_shapefile]):
-            AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa", "The sampling file has not detected changes",
-                                                              level=QgsMessageBar.SUCCESS)
-            return
-        # restore point status classification
+        modified = 0
         for point in self.points:
             if point.shape_id in [p.shape_id for p in points_from_shapefile]:
                 point_to_restore = [p for p in points_from_shapefile if p.shape_id == point.shape_id][0]
                 point_to_restore.classif_id = point.classif_id
                 if point_to_restore.classif_id is not None:
                     point_to_restore.is_classified = True
-        # detect changes
+                if point.QgsPnt != point_to_restore.QgsPnt:
+                    modified += 1
+        # calc added/removed changes
         added = len(set([p.shape_id for p in points_from_shapefile]) - set([p.shape_id for p in self.points]))
         removed = len(set([p.shape_id for p in self.points]) - set([p.shape_id for p in points_from_shapefile]))
         # reassign points
         self.points = points_from_shapefile
+        # check if sampling has not changed
+        if modified == 0 and added == 0 and removed == 0:
+            AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa", "The sampling file has not detected changes",
+                                                              level=QgsMessageBar.SUCCESS)
+            return
         # update plugin
         self.update_plugin_after_reload_sampling()
         # notify
-        AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa", "Sampling file reloaded successfully: "
-                                                                     "{} added and {} removed".format(added, removed),
+        AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa", "Sampling file reloaded successfully: {} modified,"
+                                                                     "{} added and {} removed".format(modified, added, removed),
                                                           level=QgsMessageBar.SUCCESS)
 
     def update_plugin_after_reload_sampling(self):
