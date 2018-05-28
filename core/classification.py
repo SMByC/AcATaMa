@@ -200,13 +200,13 @@ class Classification:
         # calc added/removed changes
         added = len(set([p.shape_id for p in points_from_shapefile]) - set([p.shape_id for p in self.points]))
         removed = len(set([p.shape_id for p in self.points]) - set([p.shape_id for p in points_from_shapefile]))
-        # reassign points
-        self.points = points_from_shapefile
         # check if sampling has not changed
         if modified == 0 and added == 0 and removed == 0:
             AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa", "The sampling file has not detected changes",
                                                               level=QgsMessageBar.SUCCESS)
             return
+        # reassign points
+        self.points = points_from_shapefile
         # update plugin
         self.update_plugin_after_reload_sampling()
         # notify
