@@ -167,7 +167,7 @@ def get_html(accu_asse):
         <td></td>
         <td>{u_p_accuracy}</td>
         '''.format(u_p_accuracy=rf(sum([col[idx_col] for idx_col, col in enumerate(zip(*accu_asse.error_matrix))]) /
-                                      sum([sum(r) for r in accu_asse.error_matrix])))
+                                      sum([sum(r) for r in accu_asse.error_matrix])) if sum([sum(r) for r in accu_asse.error_matrix]) != 0 else "-")
     html += '''
         <td></td>
         <td></td>
@@ -494,7 +494,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows.append(["", "Producer accuracy"] +
                     [rf(col[idx_col] / sum(col)) if sum(col) > 0 else "-" for idx_col, col in enumerate(zip(*accu_asse.error_matrix))] +
                     [""] + [rf(sum([col[idx_col] for idx_col, col in enumerate(zip(*accu_asse.error_matrix))]) /
-                            sum([sum(r) for r in accu_asse.error_matrix]))])
+                            sum([sum(r) for r in accu_asse.error_matrix])) if sum([sum(r) for r in accu_asse.error_matrix]) != 0 else "-"])
 
     ###########################################################################
     csv_rows.append([])
