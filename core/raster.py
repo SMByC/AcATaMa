@@ -76,7 +76,7 @@ def get_nodata_value(layer_file):
 
 def get_color_table(layer, band_number, nodata=None):
     try:
-        ds = gdal.Open(str(get_file_path_of_layer(layer)))
+        ds = gdal.Open(get_file_path_of_layer(layer))
     except:
         return False
     # set all negative values as None to nodata
