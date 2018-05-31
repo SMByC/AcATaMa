@@ -96,7 +96,8 @@ class Classification:
         data = OrderedDict()
         data["thematic_raster"] = \
             {"path": get_current_file_path_in(AcATaMa.dockwidget.QCBox_ThematicRaster, show_message=False),
-             "band": int(AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText()),
+             "band": int(AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText())
+                if AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText() else None,
              "nodata": AcATaMa.dockwidget.nodata_ThematicRaster.value()}
         data["sampling_layer"] = get_file_path_of_layer(self.sampling_layer)
         data["dialog_size"] = self.dialog_size
