@@ -22,7 +22,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Set the name, color (optional) and thematic class (optional but necessary for accuracy assessment) for the classification buttons of the samples:</string>
+      <string>Set the name (mandatory), color (optional) and thematic class (optional but necessary for accuracy assessment) for the classification buttons of the samples:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignJustify|Qt::AlignVCenter</set>
