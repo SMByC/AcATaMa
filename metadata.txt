@@ -5,9 +5,9 @@ about=The AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps.
     It was designed mainly for: to assess the accuracy of thematic maps, to
     estimate areas of the map classes, sampling design/classification and others.
 
-version=18.6.4
-qgisMinimumVersion=2.14
-qgisMaximumVersion=2.99
+version=18.x
+qgisMinimumVersion=3.0
+qgisMaximumVersion=3.99
 
 author=Xavier Corredor Llano, SMByC
 email=xcorredorl@ideam.gov.co
@@ -17,15 +17,9 @@ tracker=https://bitbucket.org/smbyc/qgisplugin-acatama/issues
 repository=https://bitbucket.org/smbyc/qgisplugin-acatama
 
 changelog=
-    18.6.4:
-    - Detect and reload the changes location of the sample points loaded respect the sampling file in the reload button
-    - Fixed bug when is saving the sampling classified if a point is outside the thematic raster
-    - Show a warning block in accuracy assessment dialog for samples outside the thematic raster area or inside the no data values
-    - Added a column in set the classification buttons for clear the row
-    - Fixed the cancel action in set the classification buttons for restore the old status
-    - Fixed encode in the filename and path for thematic raster
-    - Fixed zero division in accuracy assessment results
-    - Fixed error saving the classification status if there is not set the thematic raster
+    18.x:
+    - ...
+
     Previous versions:
     - All commits in: https://bitbucket.org/smbyc/qgisplugin-acatama/commits/all
 
