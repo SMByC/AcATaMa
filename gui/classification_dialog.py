@@ -329,7 +329,11 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
 
     def open_set_classification_dialog(self):
         if self.classification_btns_config.exec_():
+            # ok button -> accept the new buttons config
             self.create_classification_buttons(tableBtnsConfig=self.classification_btns_config.tableBtnsConfig)
+        else:
+            # cancel button -> restore the old button config
+            self.classification_btns_config = ClassificationButtonsConfig(self.classification.buttons_config)
 
     def create_classification_buttons(self, tableBtnsConfig=None, buttons_config=None):
         if not tableBtnsConfig and not buttons_config:
