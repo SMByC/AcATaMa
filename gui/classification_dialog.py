@@ -24,7 +24,7 @@ import tempfile
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QTableWidgetItem, QSplitter, QColor, QColorDialog
+from PyQt4.QtGui import QTableWidgetItem, QSplitter, QColor, QColorDialog, QIcon
 from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform
 from qgis.gui import QgsMessageBar
 
@@ -437,10 +437,10 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
     def create_table(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
 
-        header = ["No.", "Classification Name", "Color", "Thematic raster class"]
+        header = ["No.", "Classification Name", "Color", "Thematic raster class", ""]
         # init table
         self.tableBtnsConfig.setRowCount(len(self.table_buttons))
-        self.tableBtnsConfig.setColumnCount(4)
+        self.tableBtnsConfig.setColumnCount(5)
         # hidden row labels
         self.tableBtnsConfig.verticalHeader().setVisible(False)
         # add Header
@@ -486,7 +486,18 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
 
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
                     self.tableBtnsConfig.setItem(m, n, item_table)
+            if h == "":
+                for m, item in enumerate(self.table_buttons.values()):
+                    item_table = QTableWidgetItem()
+                    path = ':/plugins/AcATaMa/icons/trash.svg'
+                    icon = QIcon(path)
+                    item_table.setIcon(icon)
+                    item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    self.tableBtnsConfig.setItem(m, n, item_table)
 
+        # set the minimum width to 0 for headers
+        self.tableBtnsConfig.horizontalHeader().setMinimumSectionSize(0)
         # adjust size of Table
         self.tableBtnsConfig.resizeColumnsToContents()
         self.tableBtnsConfig.resizeRowsToContents()
@@ -513,6 +524,11 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
             if thematic_raster_class.exec_():
                 tableItem.setText(thematic_raster_class.pix_value)
                 self.tableBtnsConfig.item(tableItem.row(), 2).setBackground(thematic_raster_class.color)
+        # clean the current row clicked in the trash icon
+        if tableItem.column() == 4:
+            self.tableBtnsConfig.item(tableItem.row(), 1).setText("")
+            self.tableBtnsConfig.item(tableItem.row(), 2).setBackground(QColor(255, 255, 255, 0))
+            self.tableBtnsConfig.item(tableItem.row(), 3).setText("")
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(

@@ -13,5 +13,6 @@
         <file>icons/reload.svg</file>
         <file>icons/go.svg</file>
         <file>icons/open_in_ge.svg</file>
+        <file>icons/trash.svg</file>
     </qresource>
 </RCC>
