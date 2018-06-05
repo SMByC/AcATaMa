@@ -25,7 +25,7 @@ from numpy.core.umath import isnan
 from osgeo import gdalnumeric
 import xml.etree.ElementTree as ET
 
-from qgis.core import QgsRaster, QgsPoint
+from qgis.core import QgsRaster, QgsPointXY
 from qgis.utils import iface
 from qgis.gui import QgsMessageBar
 from qgis.PyQt.QtWidgets import QMessageBox
@@ -160,7 +160,7 @@ class Raster(object):
         return get_extent(self.file_path)
 
     def get_pixel_value_from_xy(self, x, y):
-        return self.qgs_layer.dataProvider().identify(QgsPoint(x, y), QgsRaster.IdentifyFormatValue).results()[self.band]
+        return self.qgs_layer.dataProvider().identify(QgsPointXY(x, y), QgsRaster.IdentifyFormatValue).results()[self.band]
 
     def get_pixel_value_from_pnt(self, point):
         return self.qgs_layer.dataProvider().identify(point, QgsRaster.IdentifyFormatValue).results()[self.band]

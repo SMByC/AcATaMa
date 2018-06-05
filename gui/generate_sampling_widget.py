@@ -20,7 +20,8 @@
 """
 import os
 
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import uic
+from qgis.PyQt.QtWidgets import QWidget
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -28,9 +29,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     plugin_folder, 'ui', 'generate_sampling_widget.ui'))
 
 
-class GenerateSamplingWidget(QtGui.QWidget, FORM_CLASS):
+class GenerateSamplingWidget(QWidget, FORM_CLASS):
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
         self.setupUi(self)
         ######
         self.widget_neighbour_aggregation.setHidden(True)

@@ -23,11 +23,11 @@ import tempfile
 import configparser
 import webbrowser
 
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot
-from qgis.PyQt.QtWidgets import QMessageBox
-from qgis.core import QgsMapLayerRegistry, QgsVectorFileWriter
-from qgis.gui import QgsMessageBar, QgsMapLayerProxyModel
+from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QDockWidget
+from qgis.core import QgsProject, QgsVectorFileWriter, QgsMapLayerProxyModel
+from qgis.gui import QgsMessageBar
 
 from AcATaMa.core.accuracy_assessment import AccuracyAssessmentDialog
 from AcATaMa.core.classification import Classification
@@ -52,7 +52,7 @@ VERSION = cfg.get('general', 'version')
 HOMEPAGE = cfg.get('general', 'homepage')
 
 
-class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
+class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
     closingPlugin = pyqtSignal()
     dockwidget = None
@@ -220,7 +220,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
-        file_path = QtGui.QFileDialog.getOpenFileName(self, dialog_title, "", dialog_types)
+        file_path = QFileDialog.getOpenFileName(self, dialog_title, "", dialog_types)
         if file_path != '' and os.path.isfile(file_path):
             # load to qgis and update combobox list
             load_and_select_filepath_in(combo_box, file_path, layer_type)
@@ -315,7 +315,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         ext = ext if ext in [".tif", ".TIF", ".img", ".IMG"] else ".tif"
         suggested_filename = filename + "_clip" + ext
 
-        file_out = QtGui.QFileDialog.getSaveFileName(self, self.tr(u"Select the output file to save the clipping file"),
+        file_out = QFileDialog.getSaveFileName(self, self.tr(u"Select the output file to save the clipping file"),
                                                      suggested_filename,
                                                      self.tr(u"Tiff files (*.tif);;Img files (*.img);;All files (*.*)"))
         if file_out == '':
@@ -337,7 +337,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
     def update_generated_sampling_list_in(self, combo_box):
         try:
             combo_box.clear()
-            layers = QgsMapLayerRegistry.instance().mapLayers().values()
+            layers = QgsProject.instance().mapLayers().values()
             for layer in layers:
                 if layer.name() in Sampling.samplings.keys():
                     combo_box.addItem(layer.name())
@@ -352,7 +352,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             return
         suggested_filename = os.path.splitext(Sampling.samplings[combo_box.currentText()].ThematicR.file_path)[0] \
                              + "_sampling.shp"
-        file_out = QtGui.QFileDialog.getSaveFileName(self, self.tr(u"Save sampling file"),
+        file_out = QFileDialog.getSaveFileName(self, self.tr(u"Save sampling file"),
                                                      suggested_filename,
                                                      self.tr(u"Shape files (*.shp);;All files (*.*)"))
         if file_out != '':
@@ -369,7 +369,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         sampling_selected = Sampling.samplings[combo_box.currentText()]
         suggested_filename = os.path.splitext(sampling_selected.ThematicR.file_path)[0] \
                              + "_sampling.ini"
-        file_out = QtGui.QFileDialog.getSaveFileName(self, self.tr(u"Save sampling configuration"),
+        file_out = QFileDialog.getSaveFileName(self, self.tr(u"Save sampling configuration"),
                                                      suggested_filename,
                                                      self.tr(u"Ini files (*.ini);;All files (*.*)"))
         if file_out != '':
@@ -449,7 +449,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     def fileDialog_loadClassificationConfig(self):
-        file_path = QtGui.QFileDialog.getOpenFileName(self, self.tr(u"Save settings and classification status"),
+        file_path = QFileDialog.getOpenFileName(self, self.tr(u"Save settings and classification status"),
                                                      "", self.tr(u"Yaml (*.yaml *.yml);;All files (*.*)"))
 
         if file_path != '' and os.path.isfile(file_path):
@@ -492,7 +492,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             path = os.path.split(get_current_file_path_in(self.QCBox_ThematicRaster))[0]
         suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_config.yml"
 
-        file_out = QtGui.QFileDialog.getSaveFileName(self, self.tr(u"Save settings and classification status"),
+        file_out = QFileDialog.getSaveFileName(self, self.tr(u"Save settings and classification status"),
                                                      suggested_filename, self.tr(u"Yaml (*.yaml *.yml);;All files (*.*)"))
         if file_out != '':
             sampling_layer = get_current_layer_in(self.QCBox_SamplingFile)
@@ -532,7 +532,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         if self.tmp_dir in path:
             path = os.path.split(get_current_file_path_in(self.QCBox_ThematicRaster))[0]
         suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_classified.shp"
-        file_out = QtGui.QFileDialog.getSaveFileName(self, self.tr(u"Save sampling file with the classification"),
+        file_out = QFileDialog.getSaveFileName(self, self.tr(u"Save sampling file with the classification"),
                                                      suggested_filename,
                                                      self.tr(u"Shape files (*.shp);;All files (*.*)"))
         if file_out != '':

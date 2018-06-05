@@ -19,7 +19,7 @@
  ***************************************************************************/
 """
 import random
-from qgis.core import QgsGeometry, QgsPoint, QgsRectangle
+from qgis.core import QgsGeometry, QgsPointXY, QgsRectangle
 from processing.tools import vector
 
 from AcATaMa.utils.system_utils import block_signals_to
@@ -31,8 +31,8 @@ class Point(object):
         self.set_qgis_pnt(x, y)
 
     def set_qgis_pnt(self, x, y):
-        self.QgsPnt = QgsPoint(x, y)
-        self.QgsGeom = QgsGeometry.fromPoint(self.QgsPnt)
+        self.QgsPnt = QgsPointXY(x, y)
+        self.QgsGeom = QgsGeometry.fromPointXY(self.QgsPnt)
 
 
 class RandomPoint(Point):

@@ -20,7 +20,8 @@
 """
 
 import os
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import uic
+from qgis.PyQt.QtWidgets import QDialog
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -28,9 +29,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     plugin_folder, 'ui', 'about_dialog.ui'))
 
 
-class AboutDialog(QtGui.QDialog, FORM_CLASS):
+class AboutDialog(QDialog, FORM_CLASS):
     def __init__(self):
-        QtGui.QDialog.__init__(self)
+        QDialog.__init__(self)
         self.setupUi(self)
         about_file = os.path.join(plugin_folder, 'gui', 'about.html')
         html_text = open(about_file).read()
