@@ -18,15 +18,14 @@
  *                                                                         *
  ***************************************************************************/
 """
-
 import os
 import tempfile
-import ConfigParser
+import configparser
 import webbrowser
 
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSignal, pyqtSlot
-from PyQt4.QtGui import QMessageBox
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot
+from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.core import QgsMapLayerRegistry, QgsVectorFileWriter
 from qgis.gui import QgsMessageBar, QgsMapLayerProxyModel
 
@@ -47,7 +46,7 @@ plugin_folder = os.path.dirname(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     plugin_folder, 'ui', 'acatama_dockwidget.ui'))
 
-cfg = ConfigParser.SafeConfigParser()
+cfg = configparser.ConfigParser()
 cfg.read(os.path.join(plugin_folder, 'metadata.txt'))
 VERSION = cfg.get('general', 'version')
 HOMEPAGE = cfg.get('general', 'homepage')
@@ -339,7 +338,6 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         try:
             combo_box.clear()
             layers = QgsMapLayerRegistry.instance().mapLayers().values()
-
             for layer in layers:
                 if layer.name() in Sampling.samplings.keys():
                     combo_box.addItem(layer.name())

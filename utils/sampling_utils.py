@@ -18,8 +18,9 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QTableWidgetItem, QColor
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QTableWidgetItem
+from qgis.PyQt.QtGui import QColor
 
 from AcATaMa.utils.qgis_utils import get_layer_by_name, get_current_layer_in, get_current_file_path_in
 from AcATaMa.utils.system_utils import wait_process, block_signals_to

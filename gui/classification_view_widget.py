@@ -18,10 +18,10 @@
  *                                                                         *
  ***************************************************************************/
 """
-
 import os
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import QSettings, pyqtSlot, QTimer
+
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import QSettings, pyqtSlot, QTimer
 from qgis.core import QgsGeometry, QgsPoint, QGis
 from qgis.gui import QgsMapCanvas, QgsMapCanvasLayer, QgsMapToolPan, QgsRubberBand, QgsVertexMarker, \
     QgsMapLayerProxyModel
@@ -31,7 +31,7 @@ from AcATaMa.utils.qgis_utils import get_current_layer_in, load_and_select_filep
 from AcATaMa.utils.system_utils import block_signals_to
 
 
-class Marker():
+class Marker(object):
     def __init__(self, canvas):
         self.marker = None
         self.canvas = canvas

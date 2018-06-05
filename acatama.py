@@ -21,8 +21,9 @@
 import os.path
 import shutil
 
-from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
-from PyQt4.QtGui import QAction, QIcon, QMessageBox
+from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
+from qgis.PyQt.QtWidgets import QAction, QMessageBox
+from qgis.PyQt.QtGui import QIcon
 
 # Import the code for the DockWidget
 from AcATaMa.core.accuracy_assessment import AccuracyAssessmentDialog
@@ -32,10 +33,10 @@ from AcATaMa.gui.classification_dialog import ClassificationDialog
 from AcATaMa.utils.qgis_utils import unload_layer_in_qgis
 
 # Initialize Qt resources from file resources.py
-import resources
+from . import resources
 
 
-class AcATaMa:
+class AcATaMa(object):
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):
@@ -63,7 +64,7 @@ class AcATaMa:
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
 
-        print "** INITIALIZING AcATaMa"
+        print("** INITIALIZING AcATaMa")
 
         self.menu_name_plugin = self.tr("Accuracy Assessment of Thematic Maps")
         self.pluginIsActive = False
@@ -143,7 +144,7 @@ class AcATaMa:
 
     def onClosePlugin(self):
         """Cleanup necessary items here when plugin dockwidget is closed"""
-        print "** CLOSING AcATaMa"
+        print("** CLOSING AcATaMa")
         if ClassificationDialog.is_opened:
             self.dockwidget.classification_dialog.closing()
             self.dockwidget.classification_dialog.reject(is_ok_to_close=True)
@@ -172,7 +173,7 @@ class AcATaMa:
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
-        print "** UNLOAD AcATaMa"
+        print("** UNLOAD AcATaMa")
         self.removes_temporary_files()
         # Remove the plugin menu item and icon
         self.iface.removePluginMenu(self.menu_name_plugin, self.dockable_action)

@@ -19,9 +19,9 @@
  ***************************************************************************/
 """
 import os
-import ConfigParser
+import configparser
 
-from PyQt4 import QtGui
+from qgis.PyQt import QtGui
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QVariant
@@ -213,7 +213,7 @@ def do_stratified_random_sampling(dockwidget):
                                                   "attempts exceeded", level=QgsMessageBar.WARNING, duration=10)
 
 
-class Sampling:
+class Sampling(object):
     # for save all instances
     samplings = dict()  # {name_in_qgis: class instance}
 
@@ -326,7 +326,7 @@ class Sampling:
         return True
 
     def save_config(self, file_out):
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
 
         config.add_section('general')
         config.set('general', 'sampling_type', '{} random sampling'.format(self.sampling_type))

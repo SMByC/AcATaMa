@@ -19,8 +19,8 @@
  ***************************************************************************/
 """
 import os
-from PyQt4 import QtGui, uic
-from PyQt4.QtGui import QApplication
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtWidgets import QApplication
 from qgis.gui import QgsMessageBar
 
 from AcATaMa.core.raster import Raster
@@ -30,7 +30,7 @@ from AcATaMa.utils.qgis_utils import get_current_layer_in, get_current_file_path
 from AcATaMa.utils.system_utils import wait_process
 
 
-class AccuracyAssessment:
+class AccuracyAssessment(object):
 
     def __init__(self, classification):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
