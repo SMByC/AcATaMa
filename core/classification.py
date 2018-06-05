@@ -21,7 +21,7 @@
 from collections import OrderedDict
 from random import shuffle
 
-from PyQt4.QtCore import QVariant
+from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.QtCore import NULL
 from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsVectorFileWriter
 from qgis.gui import QgsMessageBar
@@ -32,7 +32,7 @@ from AcATaMa.utils.qgis_utils import get_current_file_path_in, get_file_path_of_
 from AcATaMa.utils.system_utils import wait_process
 
 
-class Classification:
+class Classification(object):
     # save instances for each sampling layer
     instances = {}
 
@@ -89,7 +89,7 @@ class Classification:
             """
             Keep dump ordered with orderedDict
             """
-            represent_dict_order = lambda self, data: self.represent_mapping('tag:yaml.org,2002:map', data.items())
+            represent_dict_order = lambda self, data: self.represent_mapping('tag:yaml.org,2002:map', list(data.items()))
             yaml.add_representer(OrderedDict, represent_dict_order)
         setup_yaml()
 

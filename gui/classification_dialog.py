@@ -18,13 +18,13 @@
  *                                                                         *
  ***************************************************************************/
 """
-
 import os
 import tempfile
 
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QTableWidgetItem, QSplitter, QColor, QColorDialog, QIcon
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QTableWidgetItem, QSplitter, QColorDialog
+from qgis.PyQt.QtGui import QColor, QIcon
 from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform
 from qgis.gui import QgsMessageBar
 

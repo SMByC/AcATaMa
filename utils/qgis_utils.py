@@ -20,7 +20,7 @@
 """
 import os
 
-from PyQt4.QtCore import Qt
+from qgis.PyQt.QtCore import Qt
 from qgis.core import QgsMapLayerRegistry, QgsRasterLayer, QgsVectorLayer
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
@@ -48,14 +48,14 @@ def get_layer_by_name(layer_name):
 
 def get_file_path_of_layer(layer):
     try:
-        return unicode(layer.dataProvider().dataSourceUri().split('|layerid')[0])
+        return str(layer.dataProvider().dataSourceUri().split('|layerid')[0])
     except:
         return None
 
 
 def get_current_file_path_in(combo_box, show_message=True):
     try:
-        file_path = unicode(get_layer_by_name(combo_box.currentText()).dataProvider().dataSourceUri().split('|layerid')[0])
+        file_path = str(get_layer_by_name(combo_box.currentText()).dataProvider().dataSourceUri().split('|layerid')[0])
         if os.path.isfile(file_path):
             return file_path
     except:
@@ -117,5 +117,4 @@ def unload_layer_in_qgis(layer_path):
         if hasattr(layer_loaded, "dataProvider"):
             if layer_path == layer_loaded.dataProvider().dataSourceUri().split('|layerid')[0]:
                 QgsMapLayerRegistry.instance().removeMapLayer(layer_loaded)
-
 

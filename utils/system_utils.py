@@ -20,8 +20,10 @@
 """
 import traceback
 import os, sys, subprocess
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QApplication, QCursor
+
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QApplication
+from qgis.PyQt.QtGui import QCursor
 from qgis.core import QgsMessageLog
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
@@ -97,7 +99,7 @@ def open_file(filename):
         os.startfile(filename)
 
 
-class block_signals_to:
+class block_signals_to(object):
     """Block all signals emits from specific QT object"""
     def __init__(self, object_to_block):
         self.object_to_block = object_to_block

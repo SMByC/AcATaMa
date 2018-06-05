@@ -19,8 +19,6 @@
  ***************************************************************************/
 """
 import os
-
-from PyQt4.QtGui import QMessageBox
 from osgeo import gdal
 from subprocess import call
 from numpy.core.umath import isnan
@@ -30,6 +28,7 @@ import xml.etree.ElementTree as ET
 from qgis.core import QgsRaster, QgsPoint
 from qgis.utils import iface
 from qgis.gui import QgsMessageBar
+from qgis.PyQt.QtWidgets import QMessageBox
 
 from AcATaMa.utils.qgis_utils import get_file_path_of_layer
 from AcATaMa.utils.system_utils import wait_process
@@ -149,7 +148,7 @@ def get_current_colors_style(layer, band_number=1, nodata=None):
         return get_singleband_pseudocolor(layer, band_number, nodata)
 
 
-class Raster():
+class Raster(object):
     def __init__(self, file_selected_combo_box, band=1, nodata=None):
         from AcATaMa.utils.qgis_utils import get_current_file_path_in, get_current_layer_in
         self.file_path = get_current_file_path_in(file_selected_combo_box)

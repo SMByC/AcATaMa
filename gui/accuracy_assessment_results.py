@@ -18,8 +18,6 @@
  *                                                                         *
  ***************************************************************************/
 """
-from __future__ import division
-
 import csv
 import os
 import copy

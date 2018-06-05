@@ -18,9 +18,9 @@
  *                                                                         *
  ***************************************************************************/
 """
-
 import os
-from PyQt4 import QtGui, uic
+
+from qgis.PyQt import QtGui, uic
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
