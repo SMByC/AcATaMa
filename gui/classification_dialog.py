@@ -21,9 +21,9 @@
 import os
 import tempfile
 
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtWidgets import QTableWidgetItem, QSplitter, QColorDialog
+from qgis.PyQt.QtWidgets import QTableWidgetItem, QSplitter, QColorDialog, QDialog, QDialogButtonBox, QPushButton
 from qgis.PyQt.QtGui import QColor, QIcon
 from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform
 from qgis.gui import QgsMessageBar
@@ -41,14 +41,14 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     plugin_folder, 'ui', 'classification_dialog.ui'))
 
 
-class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
+class ClassificationDialog(QDialog, FORM_CLASS):
     is_opened = False
     view_widgets = []
     current_sample = None
 
     def __init__(self, sampling_layer, columns, rows):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        QtGui.QDialog.__init__(self)
+        QDialog.__init__(self)
         self.sampling_layer = sampling_layer
         self.iface = AcATaMa.dockwidget.iface
         self.setupUi(self)
@@ -161,7 +161,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         # dialog buttons box
         self.closeButton.rejected.connect(self.closing)
         # disable enter action
-        self.closeButton.button(QtGui.QDialogButtonBox.Close).setAutoDefault(False)
+        self.closeButton.button(QDialogButtonBox.Close).setAutoDefault(False)
 
         # init current point
         self.current_sample_idx = self.classification.current_sample_idx
@@ -349,7 +349,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
             buttons[int(item_num)] = {"name": item_name, "color": item_color,
                                       "thematic_class": item_thematic_class}
             # create button
-            QPButton = QtGui.QPushButton(item_name)
+            QPButton = QPushButton(item_name)
             QPButton.setStyleSheet('QPushButton {color: '+item_color+'}')
             QPButton.clicked.connect(lambda state, classif_id=item_num: self.classify_sample(classif_id))
             QPButton.setAutoDefault(False)
@@ -429,9 +429,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     plugin_folder, 'ui', 'classification_buttons_config.ui'))
 
 
-class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
+class ClassificationButtonsConfig(QDialog, FORM_CLASS):
     def __init__(self, buttons_config):
-        QtGui.QDialog.__init__(self)
+        QDialog.__init__(self)
         self.setupUi(self)
         self.buttons_config = buttons_config if buttons_config is not None else {}
         # init with empty table
@@ -539,9 +539,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     plugin_folder, 'ui', 'classification_thematic_raster_classes.ui'))
 
 
-class ThematicRasterClasses(QtGui.QDialog, FORM_CLASS):
+class ThematicRasterClasses(QDialog, FORM_CLASS):
     def __init__(self):
-        QtGui.QDialog.__init__(self)
+        QDialog.__init__(self)
         self.setupUi(self)
         # init with empty table
         self.create_table()
@@ -589,7 +589,7 @@ class ThematicRasterClasses(QtGui.QDialog, FORM_CLASS):
                     self.tableOfClasses.setItem(m, n, item_table)
             if h == "Select":
                 for m in range(thematic_table["row_count"]):
-                    item_table = QtGui.QPushButton("Select this")
+                    item_table = QPushButton("Select this")
                     item_table.clicked.connect(self.select_clicked)
                     self.tableOfClasses.setCellWidget(m, n, item_table)
 

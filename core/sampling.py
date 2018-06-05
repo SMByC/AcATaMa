@@ -21,12 +21,12 @@
 import os
 import configparser
 
-from qgis.PyQt import QtGui
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QVariant
+from qgis.PyQt.QtWidgets import QFileDialog
 from qgis.core import QgsGeometry, QgsField, QgsFields, QgsRectangle, QgsSpatialIndex, \
-    QgsFeature, QGis
+    QgsFeature, Qgis
 from processing.tools import vector
 
 from AcATaMa.core.point import RandomPoint
@@ -81,7 +81,7 @@ def do_simple_random_sampling(dockwidget):
 
     # first select the target dir for save the sampling file
     suggested_filename = os.path.join(os.path.dirname(ThematicR.file_path), "random_sampling.shp")
-    output_file = QtGui.QFileDialog.getSaveFileName(dockwidget,
+    output_file = QFileDialog.getSaveFileName(dockwidget,
                                                  dockwidget.tr(u"Select the output file to save the sampling"),
                                                  suggested_filename,
                                                  dockwidget.tr(u"Shape files (*.shp);;All files (*.*)"))
@@ -180,7 +180,7 @@ def do_stratified_random_sampling(dockwidget):
 
     # first select the target dir for save the sampling file
     suggested_filename = os.path.join(os.path.dirname(ThematicR.file_path), "stratified_random_sampling.shp")
-    output_file = QtGui.QFileDialog.getSaveFileName(dockwidget,
+    output_file = QFileDialog.getSaveFileName(dockwidget,
                                                  dockwidget.tr(u"Select the output file to save the sampling"),
                                                  suggested_filename,
                                                  dockwidget.tr(u"Shape files (*.shp);;All files (*.*)"))
@@ -255,7 +255,7 @@ class Sampling(object):
         fields = QgsFields()
         fields.append(QgsField('id', QVariant.Int, '', 10, 0))
         thematic_CRS = self.ThematicR.qgs_layer.crs()
-        writer = vector.VectorWriter(self.output_file, None, fields, QGis.WKBPoint, thematic_CRS)
+        writer = vector.VectorWriter(self.output_file, None, fields, Qgis.WKBPoint, thematic_CRS)
 
         if self.sampling_type == "simple":
             total_of_samples = self.number_of_samples

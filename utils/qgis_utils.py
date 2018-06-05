@@ -21,7 +21,7 @@
 import os
 
 from qgis.PyQt.QtCore import Qt
-from qgis.core import QgsMapLayerRegistry, QgsRasterLayer, QgsVectorLayer
+from qgis.core import QgsProject, QgsRasterLayer, QgsVectorLayer
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
@@ -41,7 +41,7 @@ def valid_file_selected_in(combo_box, combobox_name=False):
 
 
 def get_layer_by_name(layer_name):
-    layer = QgsMapLayerRegistry.instance().mapLayersByName(layer_name)
+    layer = QgsProject.instance().mapLayersByName(layer_name)
     if layer:
         return layer[0]
 
@@ -104,7 +104,7 @@ def load_layer_in_qgis(file_path, layer_type):
             layer = QgsVectorLayer(file_path, filename, "ogr")
     # load
     if layer.isValid():
-        QgsMapLayerRegistry.instance().addMapLayer(layer)
+        QgsProject.instance().addMapLayer(layer)
     else:
         iface.messageBar().pushMessage("AcATaMa", "Error, {} is not a valid {} file!"
                                        .format(os.path.basename(file_path), layer_type))
@@ -112,9 +112,9 @@ def load_layer_in_qgis(file_path, layer_type):
 
 
 def unload_layer_in_qgis(layer_path):
-    layers_loaded = QgsMapLayerRegistry.instance().mapLayers().values()
+    layers_loaded = QgsProject.instance().mapLayers().values()
     for layer_loaded in layers_loaded:
         if hasattr(layer_loaded, "dataProvider"):
             if layer_path == layer_loaded.dataProvider().dataSourceUri().split('|layerid')[0]:
-                QgsMapLayerRegistry.instance().removeMapLayer(layer_loaded)
+                QgsProject.instance().removeMapLayer(layer_loaded)
 

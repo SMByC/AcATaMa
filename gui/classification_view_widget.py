@@ -19,12 +19,12 @@
  ***************************************************************************/
 """
 import os
-
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import uic
+from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtWidgets import QWidget, QGridLayout, QFileDialog
 from qgis.PyQt.QtCore import QSettings, pyqtSlot, QTimer
-from qgis.core import QgsGeometry, QgsPoint, QGis
-from qgis.gui import QgsMapCanvas, QgsMapCanvasLayer, QgsMapToolPan, QgsRubberBand, QgsVertexMarker, \
-    QgsMapLayerProxyModel
+from qgis.core import QgsGeometry, QgsPointXY, Qgis, QgsMapLayerProxyModel
+from qgis.gui import QgsMapCanvas, QgsMapCanvasLayer, QgsMapToolPan, QgsRubberBand, QgsVertexMarker
 from qgis.utils import iface
 
 from AcATaMa.utils.qgis_utils import get_current_layer_in, load_and_select_filepath_in
@@ -54,18 +54,18 @@ class Marker(object):
     def highlight(self):
         curr_ext = self.canvas.extent()
 
-        left_point = QgsPoint(curr_ext.xMinimum(), curr_ext.center().y())
-        right_point = QgsPoint(curr_ext.xMaximum(), curr_ext.center().y())
+        left_point = QgsPointXY(curr_ext.xMinimum(), curr_ext.center().y())
+        right_point = QgsPointXY(curr_ext.xMaximum(), curr_ext.center().y())
 
-        top_point = QgsPoint(curr_ext.center().x(), curr_ext.yMaximum())
-        bottom_point = QgsPoint(curr_ext.center().x(), curr_ext.yMinimum())
+        top_point = QgsPointXY(curr_ext.center().x(), curr_ext.yMaximum())
+        bottom_point = QgsPointXY(curr_ext.center().x(), curr_ext.yMinimum())
 
         horiz_line = QgsGeometry.fromPolyline([left_point, right_point])
         vert_line = QgsGeometry.fromPolyline([top_point, bottom_point])
 
-        cross_rb = QgsRubberBand(self.canvas, QGis.Line)
-        cross_rb.setColor(QtGui.QColor(255, 0, 0))
-        cross_rb.reset(QGis.Line)
+        cross_rb = QgsRubberBand(self.canvas, Qgis.Line)
+        cross_rb.setColor(QColor(255, 0, 0))
+        cross_rb.reset(Qgis.Line)
         cross_rb.addGeometry(horiz_line, None)
         cross_rb.addGeometry(vert_line, None)
 
@@ -73,18 +73,18 @@ class Marker(object):
         self.canvas.refresh()
 
 
-class RenderWidget(QtGui.QWidget):
+class RenderWidget(QWidget):
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
         self.setupUi()
         self.layer = None
         self.marker = Marker(self.canvas)
 
     def setupUi(self):
-        gridLayout = QtGui.QGridLayout(self)
+        gridLayout = QGridLayout(self)
         gridLayout.setContentsMargins(0, 0, 0, 0)
         self.canvas = QgsMapCanvas()
-        self.canvas.setCanvasColor(QtGui.QColor(255, 255, 255))
+        self.canvas.setCanvasColor(QColor(255, 255, 255))
         self.canvas.setStyleSheet("border: 0px;")
         settings = QSettings()
         self.canvas.enableAntiAliasing(settings.value("/qgis/enable_anti_aliasing", False, type=bool))
@@ -160,9 +160,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     plugin_folder, 'ui', 'classification_view_widget.ui'))
 
 
-class ClassificationViewWidget(QtGui.QWidget, FORM_CLASS):
+class ClassificationViewWidget(QWidget, FORM_CLASS):
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
         self.id = None
         self.is_active = False
         self.current_scale_factor = 1.0
@@ -196,7 +196,7 @@ class ClassificationViewWidget(QtGui.QWidget, FORM_CLASS):
 
     @pyqtSlot()
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
-        file_path = QtGui.QFileDialog.getOpenFileName(self, dialog_title, "", dialog_types)
+        file_path = QFileDialog.getOpenFileName(self, dialog_title, "", dialog_types)
         if file_path != '' and os.path.isfile(file_path):
             # load to qgis and update combobox list
             load_and_select_filepath_in(combo_box, file_path, layer_type)

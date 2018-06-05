@@ -19,9 +19,9 @@
  ***************************************************************************/
 """
 import os
-from qgis.PyQt import QtGui, uic
-from qgis.PyQt.QtWidgets import QApplication
+from qgis.PyQt import uic
 from qgis.gui import QgsMessageBar
+from qgis.PyQt.QtWidgets import QApplication, QDialogButtonBox, QDialog, QFileDialog
 
 from AcATaMa.core.raster import Raster
 from AcATaMa.core.classification import Classification
@@ -110,16 +110,16 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     plugin_folder, 'ui', 'accuracy_assessment_dialog.ui'))
 
 
-class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
+class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
     is_opened = False
 
     def __init__(self):
-        QtGui.QDialog.__init__(self)
+        QDialog.__init__(self)
         self.setupUi(self)
         # dialog buttons box
         self.DialogButtons.rejected.connect(self.closing)
-        self.DialogButtons.button(QtGui.QDialogButtonBox.Save).setText("Export to CSV")
-        self.DialogButtons.button(QtGui.QDialogButtonBox.Save).clicked.connect(self.export_to_csv)
+        self.DialogButtons.button(QDialogButtonBox.Save).setText("Export to CSV")
+        self.DialogButtons.button(QDialogButtonBox.Save).clicked.connect(self.export_to_csv)
 
         self.reloadButton.clicked.connect(self.reload)
         self.SettingsGroupBox.setVisible(False)
@@ -179,7 +179,7 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
             path = os.path.split(get_current_file_path_in(AcATaMa.dockwidget.QCBox_ThematicRaster))[0]
         suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_results.csv"
 
-        file_out = QtGui.QFileDialog.getSaveFileName(self, self.tr(u"Export accuracy assessment results to csv"),
+        file_out = QFileDialog.getSaveFileName(self, self.tr(u"Export accuracy assessment results to csv"),
                                                      suggested_filename,
                                                      self.tr(u"CSV files (*.csv);;All files (*.*)"))
         if file_out != '':
