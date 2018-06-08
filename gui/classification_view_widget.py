@@ -134,6 +134,8 @@ class RenderWidget(QWidget):
         with block_signals_to(self.canvas):
             self.canvas.setExtent(extent)
             self.canvas.zoomByFactor(self.parent().scaleFactor.value())
+            if self.marker.marker:
+                self.marker.marker.updatePosition()
 
     def layer_properties(self):
         if not self.layer:
