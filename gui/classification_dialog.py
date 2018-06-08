@@ -25,8 +25,7 @@ from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QSplitter, QColorDialog, QDialog, QDialogButtonBox, QPushButton
 from qgis.PyQt.QtGui import QColor, QIcon
-from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform
-from qgis.gui import QgsMessageBar
+from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, Qgis
 
 from AcATaMa.core.classification import Classification
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, get_current_file_path_in, \
@@ -115,7 +114,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
                     else:
                         AcATaMa.dockwidget.iface.messageBar().pushMessage(
                             "AcATaMa", "Impossible load '{}' in View No. {}"
-                                .format(layer_name, view_widget.id+1), level=QgsMessageBar.WARNING)
+                                .format(layer_name, view_widget.id+1), level=Qgis.Warning)
                     # restore render activated
                     view_widget.OnOff_RenderView.setChecked(view_config["render_activated"])
                     # active render layer in canvas
@@ -360,7 +359,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
             for row in range(self.classification_btns_config.tableBtnsConfig.rowCount()):
                 item_num = self.classification_btns_config.tableBtnsConfig.item(row, 0).text()
                 item_name = self.classification_btns_config.tableBtnsConfig.item(row, 1).text()
-                item_color = self.classification_btns_config.tableBtnsConfig.item(row, 2).backgroundColor().name()
+                item_color = self.classification_btns_config.tableBtnsConfig.item(row, 2).background().color().name()
                 item_thematic_class = self.classification_btns_config.tableBtnsConfig.item(row, 3).text()
                 item_thematic_class = None if item_thematic_class == "No thematic raster" else item_thematic_class
                 if item_name != "":
@@ -516,7 +515,7 @@ class ClassificationButtonsConfig(QDialog, FORM_CLASS):
             return
         # set color
         if tableItem.column() == 2:
-            remember_color = tableItem.backgroundColor()
+            remember_color = tableItem.background().color()
             remember_color = QColor("white") if remember_color.name() == QColor("black").name() else remember_color
             color = QColorDialog.getColor(remember_color, self)
             if color.isValid():
@@ -561,7 +560,7 @@ class ThematicRasterClasses(QDialog, FORM_CLASS):
             self.tableOfClasses.setRowCount(0)
             self.tableOfClasses.setColumnCount(0)
             return
-        thematic_table["row_count"] = len(thematic_table["color_table"].values()[0])
+        thematic_table["row_count"] = len(list(thematic_table["color_table"].values())[0])
         # init table
         self.tableOfClasses.setRowCount(thematic_table["row_count"])
         self.tableOfClasses.setColumnCount(3)
@@ -605,6 +604,6 @@ class ThematicRasterClasses(QDialog, FORM_CLASS):
         row = self.tableOfClasses.indexAt(button.pos()).row()
 
         self.pix_value = self.tableOfClasses.item(row, 0).text()
-        self.color = self.tableOfClasses.item(row, 1).backgroundColor()
+        self.color = self.tableOfClasses.item(row, 1).background().color()
 
         self.accept()

@@ -25,9 +25,8 @@ from numpy.core.umath import isnan
 from osgeo import gdalnumeric
 import xml.etree.ElementTree as ET
 
-from qgis.core import QgsRaster, QgsPointXY
+from qgis.core import QgsRaster, QgsPointXY, Qgis
 from qgis.utils import iface
-from qgis.gui import QgsMessageBar
 from qgis.PyQt.QtWidgets import QMessageBox
 
 from AcATaMa.utils.qgis_utils import get_file_path_of_layer
@@ -48,7 +47,7 @@ def do_clipping_with_shape(target_file, shape, out_path):
         return out_file
     else:
         iface.messageBar().pushMessage("AcATaMa", "Error while clipping the raster file with shape.",
-                                       level=QgsMessageBar.WARNING)
+                                       level=Qgis.Warning)
 
 
 def get_extent(img_path):
@@ -86,7 +85,7 @@ def get_color_table(layer, band_number, nodata=None):
     colorTable = gdalBand.GetColorTable()
     if colorTable is None:
         iface.messageBar().pushMessage("AcATaMa", "Error, the raster file selected has no color table",
-                                       level=QgsMessageBar.WARNING)
+                                       level=Qgis.Warning)
         return False
 
     count = colorTable.GetCount()

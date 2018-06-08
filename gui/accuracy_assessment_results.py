@@ -412,12 +412,12 @@ def get_html(accu_asse):
 
         html += "<th >{} ({})</th>".format(value, accu_asse.labels[str(value)] if str(value) in accu_asse.labels else "-")
         # area
-        area = sum(zip(*error_matrix_area_prop)[idx_row]) * \
+        area = sum(list(zip(*error_matrix_area_prop))[idx_row]) * \
                sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_ha
         html += '''<td>{area}</th>'''.format(area=rf(area))
         total_area += area
         # error
-        error = (sum(zip(*quadratic_error_matrix)[idx_row])**0.5) * \
+        error = (sum(list(zip(*quadratic_error_matrix))[idx_row])**0.5) * \
                 sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_ha
         html += '''<td>{error}</th>'''.format(error=rf(error))
         # lower limit
@@ -615,12 +615,12 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         r.append("{} ({})".format(value, accu_asse.labels[str(value)] if str(value) in accu_asse.labels else "-"))
 
         # area
-        area = sum(zip(*error_matrix_area_prop)[idx_row]) * \
+        area = sum(list(zip(*error_matrix_area_prop))[idx_row]) * \
                sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_ha
         r.append(rf(area))
         total_area += area
         # error
-        error = (sum(zip(*quadratic_error_matrix)[idx_row]) ** 0.5) * \
+        error = (sum(list(zip(*quadratic_error_matrix))[idx_row]) ** 0.5) * \
                 sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_ha
         r.append(rf(error))
         # lower limit

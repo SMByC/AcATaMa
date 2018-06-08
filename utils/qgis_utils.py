@@ -21,8 +21,7 @@
 import os
 
 from qgis.PyQt.QtCore import Qt
-from qgis.core import QgsProject, QgsRasterLayer, QgsVectorLayer
-from qgis.gui import QgsMessageBar
+from qgis.core import QgsProject, QgsRasterLayer, QgsVectorLayer, Qgis
 from qgis.utils import iface
 
 
@@ -34,7 +33,7 @@ def valid_file_selected_in(combo_box, combobox_name=False):
         # if not empty (valid selected) and combobox name given
         if combo_box.currentText() and combobox_name:
             iface.messageBar().pushMessage("AcATaMa", "Error, please browse/select a valid file in "
-                                           + combobox_name, level=QgsMessageBar.WARNING)
+                                           + combobox_name, level=Qgis.Warning)
 
         combo_box.setCurrentIndex(-1)
         return False
@@ -61,7 +60,7 @@ def get_current_file_path_in(combo_box, show_message=True):
     except:
         if show_message:
             iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file",
-                                           level=QgsMessageBar.WARNING)
+                                           level=Qgis.Warning)
     return None
 
 
@@ -71,7 +70,7 @@ def get_current_layer_in(combo_box, show_message=True):
     except:
         if show_message:
             iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file",
-                                           level=QgsMessageBar.WARNING)
+                                           level=Qgis.Warning)
         return None
 
 

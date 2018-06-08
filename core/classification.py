@@ -23,8 +23,7 @@ from random import shuffle
 
 from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.QtCore import NULL
-from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsVectorFileWriter
-from qgis.gui import QgsMessageBar
+from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsVectorFileWriter, Qgis
 
 from AcATaMa.core.point import ClassificationPoint
 from AcATaMa.core.raster import Raster
@@ -73,7 +72,7 @@ class Classification(object):
         for qgs_feature in self.sampling_layer.getFeatures():
             geom = qgs_feature.geometry()
             # get the id from shape file
-            idx = self.sampling_layer.fieldNameIndex('id')
+            idx = self.sampling_layer.fields().lookupField('id')
             shape_id = qgs_feature.attributes()[idx]
 
             x, y = geom.asPoint()
@@ -204,7 +203,7 @@ class Classification(object):
         # check if sampling has not changed
         if modified == 0 and added == 0 and removed == 0:
             AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa", "The sampling file has not detected changes",
-                                                              level=QgsMessageBar.SUCCESS)
+                                                              level=Qgis.Success)
             return
         # reassign points
         self.points = points_from_shapefile
@@ -213,7 +212,7 @@ class Classification(object):
         # notify
         AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa", "Sampling file reloaded successfully: {} modified,"
                                                                      "{} added and {} removed".format(modified, added, removed),
-                                                          level=QgsMessageBar.SUCCESS)
+                                                          level=Qgis.Success)
 
     def update_plugin_after_reload_sampling(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa

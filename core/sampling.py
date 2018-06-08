@@ -21,7 +21,6 @@
 import os
 import configparser
 
-from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.QtWidgets import QFileDialog
@@ -59,7 +58,7 @@ def do_simple_random_sampling(dockwidget):
             pixel_values = [int(p) for p in dockwidget.pixelsValuesCategRaster.text().split(",")]
         except:
             iface.messageBar().pushMessage("AcATaMa", "Error, wrong pixel values, set only integers and separated by commas",
-                                           level=QgsMessageBar.WARNING)
+                                           level=Qgis.Warning)
             return
     else:
         CategoricalR = None
@@ -81,7 +80,7 @@ def do_simple_random_sampling(dockwidget):
 
     # first select the target dir for save the sampling file
     suggested_filename = os.path.join(os.path.dirname(ThematicR.file_path), "random_sampling.shp")
-    output_file = QFileDialog.getSaveFileName(dockwidget,
+    output_file, _ = QFileDialog.getSaveFileName(dockwidget,
                                                  dockwidget.tr(u"Select the output file to save the sampling"),
                                                  suggested_filename,
                                                  dockwidget.tr(u"Shape files (*.shp);;All files (*.*)"))
@@ -98,19 +97,19 @@ def do_simple_random_sampling(dockwidget):
     if sampling.total_of_samples == number_of_samples:
         load_layer_in_qgis(sampling.output_file, "vector")
         iface.messageBar().pushMessage("AcATaMa", "Generate the simple random sampling, completed",
-                                       level=QgsMessageBar.SUCCESS)
+                                       level=Qgis.Success)
     # success but not completed
     if sampling.total_of_samples < number_of_samples and sampling.total_of_samples > 0:
         load_layer_in_qgis(sampling.output_file, "vector")
         iface.messageBar().pushMessage("AcATaMa", "Generated the simple random sampling, but can not generate requested number of "
                                                   "random points {}/{}, attempts exceeded".format(sampling.total_of_samples, number_of_samples),
-                                       level=QgsMessageBar.INFO, duration=10)
+                                       level=Qgis.Info, duration=10)
     # zero points
     if sampling.total_of_samples < number_of_samples and sampling.total_of_samples == 0:
         # delete instance where storage all sampling generated
         Sampling.samplings.pop(sampling.filename, None)
         iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any random points with this settings, "
-                                                  "attempts exceeded", level=QgsMessageBar.WARNING, duration=10)
+                                                  "attempts exceeded", level=Qgis.Warning, duration=10)
 
 
 @error_handler()
@@ -142,12 +141,12 @@ def do_stratified_random_sampling(dockwidget):
             raise Exception
     except:
         iface.messageBar().pushMessage("AcATaMa", "Error, the number of samples should be only positive integers",
-                                       level=QgsMessageBar.WARNING)
+                                       level=Qgis.Warning)
         return
     total_of_samples = sum(number_of_samples)
     if total_of_samples == 0:
         iface.messageBar().pushMessage("AcATaMa", "Error, no number of samples configured!",
-                                       level=QgsMessageBar.WARNING)
+                                       level=Qgis.Warning)
         return
 
     # check neighbors aggregation
@@ -180,7 +179,7 @@ def do_stratified_random_sampling(dockwidget):
 
     # first select the target dir for save the sampling file
     suggested_filename = os.path.join(os.path.dirname(ThematicR.file_path), "stratified_random_sampling.shp")
-    output_file = QFileDialog.getSaveFileName(dockwidget,
+    output_file, _ = QFileDialog.getSaveFileName(dockwidget,
                                                  dockwidget.tr(u"Select the output file to save the sampling"),
                                                  suggested_filename,
                                                  dockwidget.tr(u"Shape files (*.shp);;All files (*.*)"))
@@ -198,19 +197,19 @@ def do_stratified_random_sampling(dockwidget):
     if sampling.total_of_samples == total_of_samples:
         load_layer_in_qgis(sampling.output_file, "vector")
         iface.messageBar().pushMessage("AcATaMa", "Generate the stratified random sampling, completed",
-                                       level=QgsMessageBar.SUCCESS)
+                                       level=Qgis.Success)
     # success but not completed
     if sampling.total_of_samples < total_of_samples and sampling.total_of_samples > 0:
         load_layer_in_qgis(sampling.output_file, "vector")
         iface.messageBar().pushMessage("AcATaMa", "Generated the stratified random sampling, but can not generate requested number of "
                                                   "random points {}/{}, attempts exceeded".format(sampling.total_of_samples, total_of_samples),
-                                       level=QgsMessageBar.INFO, duration=10)
+                                       level=Qgis.Info, duration=10)
     # zero points
     if sampling.total_of_samples < total_of_samples and sampling.total_of_samples == 0:
         # delete instance where storage all sampling generated
         Sampling.samplings.pop(sampling.filename, None)
         iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any stratified random points with this settings, "
-                                                  "attempts exceeded", level=QgsMessageBar.WARNING, duration=10)
+                                                  "attempts exceeded", level=Qgis.Warning, duration=10)
 
 
 class Sampling(object):
