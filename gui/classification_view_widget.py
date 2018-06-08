@@ -23,8 +23,8 @@ from qgis.PyQt import uic
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QWidget, QGridLayout, QFileDialog
 from qgis.PyQt.QtCore import QSettings, pyqtSlot, QTimer
-from qgis.core import QgsGeometry, QgsPointXY, Qgis, QgsMapLayerProxyModel
-from qgis.gui import QgsMapCanvas, QgsMapCanvasLayer, QgsMapToolPan, QgsRubberBand, QgsVertexMarker
+from qgis.core import QgsGeometry, QgsMapLayerProxyModel, QgsWkbTypes, QgsPoint
+from qgis.gui import QgsMapCanvas, QgsMapToolPan, QgsRubberBand, QgsVertexMarker
 from qgis.utils import iface
 
 from AcATaMa.utils.qgis_utils import get_current_layer_in, load_and_select_filepath_in
@@ -54,18 +54,18 @@ class Marker(object):
     def highlight(self):
         curr_ext = self.canvas.extent()
 
-        left_point = QgsPointXY(curr_ext.xMinimum(), curr_ext.center().y())
-        right_point = QgsPointXY(curr_ext.xMaximum(), curr_ext.center().y())
+        left_point = QgsPoint(curr_ext.xMinimum(), curr_ext.center().y())
+        right_point = QgsPoint(curr_ext.xMaximum(), curr_ext.center().y())
 
-        top_point = QgsPointXY(curr_ext.center().x(), curr_ext.yMaximum())
-        bottom_point = QgsPointXY(curr_ext.center().x(), curr_ext.yMinimum())
+        top_point = QgsPoint(curr_ext.center().x(), curr_ext.yMaximum())
+        bottom_point = QgsPoint(curr_ext.center().x(), curr_ext.yMinimum())
 
         horiz_line = QgsGeometry.fromPolyline([left_point, right_point])
         vert_line = QgsGeometry.fromPolyline([top_point, bottom_point])
 
-        cross_rb = QgsRubberBand(self.canvas, Qgis.Line)
+        cross_rb = QgsRubberBand(self.canvas, QgsWkbTypes.LineGeometry)
         cross_rb.setColor(QColor(255, 0, 0))
-        cross_rb.reset(Qgis.Line)
+        cross_rb.reset(QgsWkbTypes.LineGeometry)
         cross_rb.addGeometry(horiz_line, None)
         cross_rb.addGeometry(vert_line, None)
 
@@ -88,11 +88,6 @@ class RenderWidget(QWidget):
         self.canvas.setStyleSheet("border: 0px;")
         settings = QSettings()
         self.canvas.enableAntiAliasing(settings.value("/qgis/enable_anti_aliasing", False, type=bool))
-        self.canvas.useImageToRender(settings.value("/qgis/use_qimage_to_render", False, type=bool))
-        # action zoom
-        action = settings.value("/qgis/wheel_action", 0, type=int)
-        zoomFactor = settings.value("/qgis/zoom_factor", 2.0, type=float)
-        self.canvas.setWheelAction(QgsMapCanvas.WheelAction(action), zoomFactor)
         # action pan
         self.toolPan = QgsMapToolPan(self.canvas)
         self.canvas.setMapTool(self.toolPan)
@@ -110,7 +105,7 @@ class RenderWidget(QWidget):
                 # set status for view widget
                 self.parent().is_active = False
                 return
-            self.canvas.setLayerSet([QgsMapCanvasLayer(self.parent().sampling_layer), QgsMapCanvasLayer(layer)])
+            self.canvas.setLayers([layer])
             self.update_crs()
 
             # set init extent from other view if any is activated else set layer extent
@@ -133,8 +128,7 @@ class RenderWidget(QWidget):
             self.parent().is_active = True
 
     def update_crs(self):
-        self.canvas.mapRenderer().setDestinationCrs(self.parent().sampling_layer.crs())
-        self.canvas.mapRenderer().setProjectionsEnabled(True)
+        self.canvas.mapSettings().setDestinationCrs(self.parent().sampling_layer.crs())
 
     def set_extents_and_scalefactor(self, extent):
         with block_signals_to(self.canvas):
@@ -196,7 +190,7 @@ class ClassificationViewWidget(QWidget, FORM_CLASS):
 
     @pyqtSlot()
     def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
-        file_path = QFileDialog.getOpenFileName(self, dialog_title, "", dialog_types)
+        file_path, _ = QFileDialog.getOpenFileName(self, dialog_title, "", dialog_types)
         if file_path != '' and os.path.isfile(file_path):
             # load to qgis and update combobox list
             load_and_select_filepath_in(combo_box, file_path, layer_type)

@@ -24,8 +24,7 @@ import os, sys, subprocess
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QApplication
 from qgis.PyQt.QtGui import QCursor
-from qgis.core import QgsMessageLog
-from qgis.gui import QgsMessageBar
+from qgis.core import QgsMessageLog, Qgis
 from qgis.utils import iface
 
 
@@ -42,7 +41,7 @@ def error_handler():
                 msg_error = "An error has occurred in AcATaMa plugin. " \
                             "See more in Qgis log messages panel."
                 iface.messageBar().pushMessage("AcATaMa", msg_error,
-                                                level=QgsMessageBar.CRITICAL, duration=10)
+                                                level=Qgis.Critical, duration=10)
                 # message in log
                 msg_error = "\n################## ERROR IN ACATAMA PLUGIN:\n"
                 msg_error += traceback.format_exc()

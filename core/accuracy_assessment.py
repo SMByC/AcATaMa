@@ -20,8 +20,8 @@
 """
 import os
 from qgis.PyQt import uic
-from qgis.gui import QgsMessageBar
 from qgis.PyQt.QtWidgets import QApplication, QDialogButtonBox, QDialog, QFileDialog
+from qgis.core import Qgis
 
 from AcATaMa.core.raster import Raster
 from AcATaMa.core.classification import Classification
@@ -146,7 +146,7 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
         if len(classification_points) == 0:
             AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa",
                   "The accuracy assessment needs at least one sample classified",
-                  level=QgsMessageBar.WARNING)
+                  level=Qgis.Warning)
             return
 
         AccuracyAssessmentDialog.is_opened = True
@@ -179,9 +179,9 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
             path = os.path.split(get_current_file_path_in(AcATaMa.dockwidget.QCBox_ThematicRaster))[0]
         suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_results.csv"
 
-        file_out = QFileDialog.getSaveFileName(self, self.tr(u"Export accuracy assessment results to csv"),
-                                                     suggested_filename,
-                                                     self.tr(u"CSV files (*.csv);;All files (*.*)"))
+        file_out, _ = QFileDialog.getSaveFileName(self, self.tr(u"Export accuracy assessment results to csv"),
+                                                  suggested_filename,
+                                                  self.tr(u"CSV files (*.csv);;All files (*.*)"))
         if file_out != '':
             try:
                 csv_separator = self.CSV_separator.text()
@@ -189,10 +189,10 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
                 accuracy_assessment_results.export_to_csv(self.accuracy_assessment, file_out,
                                                           csv_separator, csv_decimal_separator)
                 AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa", "File saved successfully",
-                                                                  level=QgsMessageBar.SUCCESS)
+                                                                  level=Qgis.Success)
             except:
                 AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa", "Failed export results in csv file",
-                                                                  level=QgsMessageBar.WARNING)
+                                                                  level=Qgis.Warning)
 
     def closeEvent(self, event):
         self.closing()
