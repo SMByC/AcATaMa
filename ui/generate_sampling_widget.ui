@@ -14,13 +14,22 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
     <widget class="QGroupBox" name="QGBox_neighbour_aggregation">
      <property name="title">
-      <string>With neighbors aggregation (optional)</string>
+      <string>With &amp;neighbors aggregation (optional)</string>
      </property>
      <property name="checkable">
       <bool>true</bool>
@@ -32,7 +41,16 @@
       <item>
        <widget class="QWidget" name="widget_neighbour_aggregation" native="true">
         <layout class="QVBoxLayout" name="verticalLayout_3">
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item>
@@ -51,7 +69,16 @@
          <item>
           <widget class="QWidget" name="widget_2" native="true">
            <layout class="QGridLayout" name="gridLayout">
-            <property name="margin">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
              <number>0</number>
             </property>
             <item row="0" column="1">
@@ -108,7 +135,7 @@
       <item>
        <widget class="QGroupBox" name="QGBox_generate_sampling_options">
         <property name="title">
-         <string>Generate sampling options</string>
+         <string>&amp;Generate sampling options</string>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -123,7 +150,7 @@
             <item row="0" column="0">
              <widget class="QRadioButton" name="button_attempts_by_sampling">
               <property name="text">
-               <string>Maximum attempts by sampling:</string>
+               <string>&amp;Maximum attempts by sampling:</string>
               </property>
               <property name="checked">
                <bool>true</bool>
@@ -137,7 +164,7 @@
 impossible complete the sampling set configured.</string>
               </property>
               <property name="text">
-               <string>Until reaching the set sampling numbers (!)</string>
+               <string>&amp;Until reaching the set sampling numbers (!)</string>
               </property>
               <property name="autoExclusive">
                <bool>true</bool>
@@ -169,7 +196,7 @@ impossible complete the sampling set configured.</string>
       <item>
        <widget class="QGroupBox" name="QGBox_save_sampling_config">
         <property name="title">
-         <string>Save sampling config (optional)</string>
+         <string>Sa&amp;ve sampling config (optional)</string>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -207,7 +234,16 @@ impossible complete the sampling set configured.</string>
             <item>
              <widget class="QWidget" name="widget_4" native="true">
               <layout class="QHBoxLayout" name="horizontalLayout_2">
-               <property name="margin">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
                 <number>0</number>
                </property>
                <item>
@@ -242,7 +278,16 @@ impossible complete the sampling set configured.</string>
       <item>
        <widget class="QWidget" name="widget_3" native="true">
         <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item>
@@ -277,7 +322,16 @@ impossible complete the sampling set configured.</string>
    <item>
     <widget class="QWidget" name="widget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
        <number>0</number>
       </property>
      </layout>
