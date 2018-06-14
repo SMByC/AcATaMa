@@ -105,9 +105,11 @@ class RenderWidget(QWidget):
                 # set status for view widget
                 self.parent().is_active = False
                 return
-            self.canvas.setLayers([layer])
-            self.update_crs()
-
+            # set the CRS of the canvas view based on sampling layer
+            sampling_crs = self.parent().sampling_layer.crs()
+            self.canvas.setDestinationCrs(sampling_crs)
+            # set the sampling over the layer to view
+            self.canvas.setLayers([self.parent().sampling_layer, layer])
             # set init extent from other view if any is activated else set layer extent
             from AcATaMa.gui.classification_dialog import ClassificationDialog
             others_view = [(view_widget.render_widget.canvas.extent(), view_widget.current_scale_factor) for view_widget
@@ -126,9 +128,6 @@ class RenderWidget(QWidget):
                 self.marker.show(ClassificationDialog.current_sample)
             # set status for view widget
             self.parent().is_active = True
-
-    def update_crs(self):
-        self.canvas.mapSettings().setDestinationCrs(self.parent().sampling_layer.crs())
 
     def set_extents_and_scalefactor(self, extent):
         with block_signals_to(self.canvas):
