@@ -357,13 +357,12 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         # from tableBtnsConfig
         if tableBtnsConfig:
             for row in range(self.classification_btns_config.tableBtnsConfig.rowCount()):
-                item_num = self.classification_btns_config.tableBtnsConfig.item(row, 0).text()
-                item_name = self.classification_btns_config.tableBtnsConfig.item(row, 1).text()
-                item_color = self.classification_btns_config.tableBtnsConfig.item(row, 2).background().color().name()
-                item_thematic_class = self.classification_btns_config.tableBtnsConfig.item(row, 3).text()
-                item_thematic_class = None if item_thematic_class == "No thematic raster" else item_thematic_class
+                item_name = self.classification_btns_config.tableBtnsConfig.item(row, 0).text()
+                item_color = self.classification_btns_config.tableBtnsConfig.item(row, 1).background().color().name()
+                item_thematic_class = self.classification_btns_config.tableBtnsConfig.item(row, 2).text()
+                item_thematic_class = None if item_thematic_class == "none" else item_thematic_class
                 if item_name != "":
-                    create_button(item_num, item_name, item_color, item_thematic_class)
+                    create_button(row+1, item_name, item_color, item_thematic_class)
                 # define if this classification was made with thematic classes
                 if item_thematic_class is not None and item_thematic_class != "":
                     self.classification.with_thematic_classes = True
@@ -440,29 +439,24 @@ class ClassificationButtonsConfig(QDialog, FORM_CLASS):
     def create_table(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
 
-        header = ["No.", "Classification Name", "Color", "Thematic raster class", ""]
+        header = ["Classification Name", "Color", "Thematic Class", ""]
         # init table
         self.tableBtnsConfig.setRowCount(len(self.table_buttons))
-        self.tableBtnsConfig.setColumnCount(5)
+        self.tableBtnsConfig.setColumnCount(4)
         # hidden row labels
         self.tableBtnsConfig.verticalHeader().setVisible(False)
         # add Header
         self.tableBtnsConfig.setHorizontalHeaderLabels(header)
         # insert items
         for n, h in enumerate(header):
-            if h == "No.":
-                for m, item in enumerate(self.table_buttons.keys()):
-                    item_table = QTableWidgetItem(str(item))
-                    item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                    self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "Classification Name":
-                for m, item in enumerate(self.table_buttons.values()):
+                for m, (key, item) in enumerate(self.table_buttons.items()):
                     if m+1 in self.buttons_config:
                         item_table = QTableWidgetItem(self.buttons_config[m + 1]["name"])
                     else:
                         item_table = QTableWidgetItem(str(item))
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    item_table.setToolTip("Classification button ID: {}".format(key))
                     self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "Color":
                 for m, item in enumerate(self.table_buttons.values()):
@@ -472,20 +466,23 @@ class ClassificationButtonsConfig(QDialog, FORM_CLASS):
                     item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
                     self.tableBtnsConfig.setItem(m, n, item_table)
-            if h == "Thematic raster class":
+            if h == "Thematic Class":
                 for m, item in enumerate(self.table_buttons.values()):
                     if valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicRaster):
                         if m+1 in self.buttons_config and self.buttons_config[m+1]["thematic_class"] is not None:
                             item_table = QTableWidgetItem(self.buttons_config[m + 1]["thematic_class"])
                         else:
                             item_table = QTableWidgetItem(str(item))
+                        item_table.setToolTip("Click to open the pixel value/color table of the thematic classes")
                     else:
-                        item_table = QTableWidgetItem("No thematic raster")
+                        item_table = QTableWidgetItem("none")
                         item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                         item_table.setForeground(QColor("lightGrey"))
+                        item_table.setToolTip("No thematic layer, if you want enable the thematic classes,\n"
+                                              "select first a valid thematic layer in thematic tab")
                         item_h = QTableWidgetItem(h)
                         item_h.setForeground(QColor("lightGrey"))
-                        self.tableBtnsConfig.setHorizontalHeaderItem(3, item_h)
+                        self.tableBtnsConfig.setHorizontalHeaderItem(2, item_h)
 
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
                     self.tableBtnsConfig.setItem(m, n, item_table)
@@ -497,6 +494,7 @@ class ClassificationButtonsConfig(QDialog, FORM_CLASS):
                     item_table.setIcon(icon)
                     item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    item_table.setToolTip("Clean this row")
                     self.tableBtnsConfig.setItem(m, n, item_table)
 
         # set the minimum width to 0 for headers
@@ -511,27 +509,28 @@ class ClassificationButtonsConfig(QDialog, FORM_CLASS):
         self.tableBtnsConfig.itemClicked.connect(self.table_item_clicked)
 
     def table_item_clicked(self, tableItem):
-        if tableItem.text() == "No thematic raster":
+        if tableItem.text() == "none":
             return
         # set color
-        if tableItem.column() == 2:
+        if tableItem.column() == 1:
             remember_color = tableItem.background().color()
             remember_color = QColor("white") if remember_color.name() == QColor("black").name() else remember_color
             color = QColorDialog.getColor(remember_color, self)
             if color.isValid():
                 tableItem.setBackground(color)
                 self.tableBtnsConfig.clearSelection()
-        # set the thematic raster class
-        if tableItem.column() == 3:
+        # set the thematic class
+        if tableItem.column() == 2:
             thematic_raster_class = ThematicRasterClasses()
             if thematic_raster_class.exec_():
                 tableItem.setText(thematic_raster_class.pix_value)
-                self.tableBtnsConfig.item(tableItem.row(), 2).setBackground(thematic_raster_class.color)
+                self.tableBtnsConfig.item(tableItem.row(), 1).setBackground(thematic_raster_class.color)
         # clean the current row clicked in the trash icon
-        if tableItem.column() == 4:
-            self.tableBtnsConfig.item(tableItem.row(), 1).setText("")
-            self.tableBtnsConfig.item(tableItem.row(), 2).setBackground(QColor(255, 255, 255, 0))
-            self.tableBtnsConfig.item(tableItem.row(), 3).setText("")
+        if tableItem.column() == 3:
+            self.tableBtnsConfig.item(tableItem.row(), 0).setText("")
+            self.tableBtnsConfig.item(tableItem.row(), 1).setBackground(QColor(255, 255, 255, 0))
+            if not self.tableBtnsConfig.item(tableItem.row(), 2).text() == "none":
+                self.tableBtnsConfig.item(tableItem.row(), 2).setText("")
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
