@@ -99,7 +99,6 @@ class RenderWidget(QWidget):
     def render_layer(self, layer):
         with block_signals_to(self):
             if not layer:
-                self.canvas.clear()
                 self.canvas.refreshAllLayers()
                 self.layer = None
                 # set status for view widget
