@@ -178,8 +178,6 @@ class Classification:
                     point_to_restore.is_classified = True
         # update plugin
         self.update_plugin_after_reload_sampling()
-        # update state of sampling file selected for accuracy assessment tab
-        AcATaMa.dockwidget.set_sampling_file_accuracy_assessment()
         # define if this classification was made with thematic classes
         if self.buttons_config and True in [bc["thematic_class"] is not None and bc["thematic_class"] != "" for bc in self.buttons_config.values()]:
             self.with_thematic_classes = True
@@ -232,8 +230,11 @@ class Classification:
             AcATaMa.dockwidget.QLabel_ClassificationStatus.setText("Classification completed")
             AcATaMa.dockwidget.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: green;}')
         else:
+            self.is_completed = False
             AcATaMa.dockwidget.QLabel_ClassificationStatus.setText("Classification not completed")
             AcATaMa.dockwidget.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: orange;}')
+        # update state of sampling file selected for accuracy assessment tab
+        AcATaMa.dockwidget.set_sampling_file_accuracy_assessment()
 
     @wait_process()
     def save_sampling_classification(self, file_out):
