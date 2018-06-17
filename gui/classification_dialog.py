@@ -279,6 +279,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
             AcATaMa.dockwidget.QLabel_ClassificationStatus.setText("Classification completed")
             AcATaMa.dockwidget.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: green;}')
         else:
+            self.classification.is_completed = False
             AcATaMa.dockwidget.QLabel_ClassificationStatus.setText("Classification not completed")
             AcATaMa.dockwidget.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: orange;}')
         # updated state of sampling file selected for accuracy assessment tab
