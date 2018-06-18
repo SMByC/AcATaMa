@@ -89,8 +89,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # call to browse the thematic raster file
         self.QPBtn_browseThematicRaster.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_ThematicRaster,
-            dialog_title=self.tr(u"Select the thematic raster image to evaluate"),
-            dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
+            dialog_title=self.tr("Select the thematic raster image to evaluate"),
+            dialog_types=self.tr("Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
         # select and check the thematic raster
         self.QCBox_ThematicRaster.layerChanged.connect(self.select_thematic_raster)
@@ -103,8 +103,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # call to browse the shape area
         self.QPBtn_browseAreaOfInterest.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_AreaOfInterest,
-            dialog_title=self.tr(u"Select the vector file"),
-            dialog_types=self.tr(u"Shape files (*.shp);;GeoPackage (*.gpkg);;All files (*.*)"),
+            dialog_title=self.tr("Select the vector file"),
+            dialog_types=self.tr("Shape files (*.shp);;GeoPackage (*.gpkg);;All files (*.*)"),
             layer_type="vector"))
         # do clip
         self.QPBtn_ClippingThematic.clicked.connect(self.clipping_thematic_raster)
@@ -115,8 +115,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # # call to browse the categorical raster
         # self.browseCategRaster.clicked.connect(lambda: self.fileDialog_browse(
         #     self.selectCategRaster,
-        #     dialog_title=self.tr(u"Select the categorical raster file"),
-        #     dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
+        #     dialog_title=self.tr("Select the categorical raster file"),
+        #     dialog_types=self.tr("Raster files (*.tif *.img);;All files (*.*)"),
         #     layer_type="raster"))
 
         # ######### simple random sampling ######### #
@@ -127,8 +127,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # call to browse the categorical raster
         self.QPBtn_browseCategRaster_SimpRS.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_CategRaster_SimpRS,
-            dialog_title=self.tr(u"Select the categorical raster file"),
-            dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
+            dialog_title=self.tr("Select the categorical raster file"),
+            dialog_types=self.tr("Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
         # select and check the categorical raster
         self.QCBox_CategRaster_SimpRS.layerChanged.connect(self.select_categorical_raster_SimpRS)
@@ -154,8 +154,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # call to browse the categorical raster
         self.QPBtn_browseCategRaster_StraRS.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_CategRaster_StraRS,
-            dialog_title=self.tr(u"Select the categorical raster file"),
-            dialog_types=self.tr(u"Raster files (*.tif *.img);;All files (*.*)"),
+            dialog_title=self.tr("Select the categorical raster file"),
+            dialog_types=self.tr("Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
         # select and check the categorical raster
         self.QCBox_CategRaster_StraRS.layerChanged.connect(self.select_categorical_raster_StraRS)
@@ -190,8 +190,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # call to browse the sampling file
         self.QPBtn_browseSamplingFile.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_SamplingFile,
-            dialog_title=self.tr(u"Select the Sampling points file to classify"),
-            dialog_types=self.tr(u"Shape files (*.shp);;All files (*.*)"),
+            dialog_title=self.tr("Select the Sampling points file to classify"),
+            dialog_types=self.tr("Shape files (*.shp);;All files (*.*)"),
             layer_type="vector"))
         # call to reload sampling file
         self.QPBtn_reloadSamplingFile.clicked.connect(self.reload_sampling_file)
@@ -313,9 +313,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         ext = ext if ext in [".tif", ".TIF", ".img", ".IMG"] else ".tif"
         suggested_filename = filename + "_clip" + ext
 
-        file_out, _ = QFileDialog.getSaveFileName(self, self.tr(u"Select the output file to save the clipping file"),
+        file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Select the output file to save the clipping file"),
                                                   suggested_filename,
-                                                  self.tr(u"Tiff files (*.tif);;Img files (*.img);;All files (*.*)"))
+                                                  self.tr("Tiff files (*.tif);;Img files (*.img);;All files (*.*)"))
         if file_out == '':
             return
 
@@ -350,9 +350,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             return
         suggested_filename = os.path.splitext(Sampling.samplings[combo_box.currentText()].ThematicR.file_path)[0] \
                              + "_sampling.shp"
-        file_out, _ = QFileDialog.getSaveFileName(self, self.tr(u"Save sampling file"),
+        file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save sampling file"),
                                                   suggested_filename,
-                                                  self.tr(u"Shape files (*.shp);;All files (*.*)"))
+                                                  self.tr("Shape files (*.shp);;All files (*.*)"))
         if file_out != '':
             layer = get_current_layer_in(combo_box)
             QgsVectorFileWriter.writeAsVectorFormat(layer, file_out, "utf-8", layer.crs(), "ESRI Shapefile")
@@ -367,9 +367,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         sampling_selected = Sampling.samplings[combo_box.currentText()]
         suggested_filename = os.path.splitext(sampling_selected.ThematicR.file_path)[0] \
                              + "_sampling.ini"
-        file_out, _ = QFileDialog.getSaveFileName(self, self.tr(u"Save sampling configuration"),
+        file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save sampling configuration"),
                                                   suggested_filename,
-                                                  self.tr(u"Ini files (*.ini);;All files (*.*)"))
+                                                  self.tr("Ini files (*.ini);;All files (*.*)"))
         if file_out != '':
             sampling_selected.save_config(file_out)
             iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=Qgis.Success)
@@ -447,8 +447,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     def fileDialog_loadClassificationConfig(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, self.tr(u"Save settings and classification status"),
-                                                   "", self.tr(u"Yaml (*.yaml *.yml);;All files (*.*)"))
+        file_path, _ = QFileDialog.getOpenFileName(self, self.tr("Save settings and classification status"),
+                                                   "", self.tr("Yaml (*.yaml *.yml);;All files (*.*)"))
 
         if file_path != '' and os.path.isfile(file_path):
             # load classification status from yaml file
@@ -491,8 +491,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             path = os.path.split(get_current_file_path_in(self.QCBox_ThematicRaster))[0]
         suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_config.yml"
 
-        file_out, _ = QFileDialog.getSaveFileName(self, self.tr(u"Save settings and classification status"),
-                                                  suggested_filename, self.tr(u"Yaml (*.yaml *.yml);;All files (*.*)"))
+        file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save settings and classification status"),
+                                                  suggested_filename, self.tr("Yaml (*.yaml *.yml);;All files (*.*)"))
         if file_out != '':
             sampling_layer = get_current_layer_in(self.QCBox_SamplingFile)
             if sampling_layer in Classification.instances:
@@ -531,9 +531,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         if self.tmp_dir in path:
             path = os.path.split(get_current_file_path_in(self.QCBox_ThematicRaster))[0]
         suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_classified.shp"
-        file_out, _ = QFileDialog.getSaveFileName(self, self.tr(u"Save sampling file with the classification"),
+        file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save sampling file with the classification"),
                                                   suggested_filename,
-                                                  self.tr(u"Shape files (*.shp);;All files (*.*)"))
+                                                  self.tr("Shape files (*.shp);;All files (*.*)"))
         if file_out != '':
             classification.save_sampling_classification(file_out)
             iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=Qgis.Success)

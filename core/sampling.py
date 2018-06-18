@@ -80,9 +80,9 @@ def do_simple_random_sampling(dockwidget):
     # first select the target dir for save the sampling file
     suggested_filename = os.path.join(os.path.dirname(ThematicR.file_path), "random_sampling.shp")
     output_file, _ = QFileDialog.getSaveFileName(dockwidget,
-                                                 dockwidget.tr(u"Select the output file to save the sampling"),
+                                                 dockwidget.tr("Select the output file to save the sampling"),
                                                  suggested_filename,
-                                                 dockwidget.tr(u"Shape files (*.shp);;All files (*.*)"))
+                                                 dockwidget.tr("Shape files (*.shp);;All files (*.*)"))
     if output_file == '':
         return
 
@@ -179,9 +179,9 @@ def do_stratified_random_sampling(dockwidget):
     # first select the target dir for save the sampling file
     suggested_filename = os.path.join(os.path.dirname(ThematicR.file_path), "stratified_random_sampling.shp")
     output_file, _ = QFileDialog.getSaveFileName(dockwidget,
-                                                 dockwidget.tr(u"Select the output file to save the sampling"),
+                                                 dockwidget.tr("Select the output file to save the sampling"),
                                                  suggested_filename,
-                                                 dockwidget.tr(u"Shape files (*.shp);;All files (*.*)"))
+                                                 dockwidget.tr("Shape files (*.shp);;All files (*.*)"))
     if output_file == '':
         return
 

@@ -175,7 +175,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         AcATaMa.dockwidget.QGBox_GridSettings.setDisabled(True)
         AcATaMa.dockwidget.QGBox_ClassificationStatus.setDisabled(True)
         AcATaMa.dockwidget.QGBox_saveSamplingClassified.setDisabled(True)
-        AcATaMa.dockwidget.QPBtn_OpenClassificationDialog.setText(u"Classification in progress, click to show")
+        AcATaMa.dockwidget.QPBtn_OpenClassificationDialog.setText("Classification in progress, click to show")
 
         super(ClassificationDialog, self).show()
 
@@ -419,7 +419,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         AcATaMa.dockwidget.QGBox_GridSettings.setEnabled(True)
         AcATaMa.dockwidget.QGBox_ClassificationStatus.setEnabled(True)
         AcATaMa.dockwidget.QGBox_saveSamplingClassified.setEnabled(True)
-        AcATaMa.dockwidget.QPBtn_OpenClassificationDialog.setText(u"Open the classification dialog")
+        AcATaMa.dockwidget.QPBtn_OpenClassificationDialog.setText("Open the classification dialog")
         self.reject(is_ok_to_close=True)
 
     def reject(self, is_ok_to_close=False):

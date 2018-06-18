@@ -45,7 +45,7 @@ class AccuracyAssessment(object):
     @wait_process()
     def compute(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText(u"Processing, please wait ...")
+        AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText("Processing, please wait ...")
         QApplication.processEvents()
 
         # get labels from classification buttons
@@ -160,7 +160,7 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
         self.ResultsHTML.setHtml(accuracy_assessment_results.get_html(self.accuracy_assessment))
         self.ResultsHTML.zoomOut()
 
-        AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText(u"Accuracy assessment is opened, click to show")
+        AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText("Accuracy assessment is opened, click to show")
         super(AccuracyAssessmentDialog, self).show()
 
     def reload(self):
@@ -171,7 +171,7 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
         self.accuracy_assessment.compute()
         # set content results in HTML
         self.ResultsHTML.setHtml(accuracy_assessment_results.get_html(self.accuracy_assessment))
-        AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText(u"Accuracy assessment is opened, click to show")
+        AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText("Accuracy assessment is opened, click to show")
 
     def export_to_csv(self):
         # get file path to suggest to save but not in tmp directory
@@ -181,9 +181,9 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
             path = os.path.split(get_current_file_path_in(AcATaMa.dockwidget.QCBox_ThematicRaster))[0]
         suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_results.csv"
 
-        file_out, _ = QFileDialog.getSaveFileName(self, self.tr(u"Export accuracy assessment results to csv"),
+        file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Export accuracy assessment results to csv"),
                                                   suggested_filename,
-                                                  self.tr(u"CSV files (*.csv);;All files (*.*)"))
+                                                  self.tr("CSV files (*.csv);;All files (*.*)"))
         if file_out != '':
             try:
                 csv_separator = self.CSV_separator.text()
@@ -206,7 +206,7 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
         """
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         AccuracyAssessmentDialog.is_opened = False
-        AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText(u"Open the accuracy assessment results")
+        AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText("Open the accuracy assessment results")
         self.reject(is_ok_to_close=True)
 
     def reject(self, is_ok_to_close=False):
