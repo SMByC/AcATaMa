@@ -29,6 +29,7 @@ from PyQt4.QtCore import pyqtSignal, pyqtSlot
 from PyQt4.QtGui import QMessageBox
 from qgis.core import QgsMapLayerRegistry, QgsVectorFileWriter
 from qgis.gui import QgsMessageBar, QgsMapLayerProxyModel
+from qgis.utils import iface
 
 from AcATaMa.core.accuracy_assessment import AccuracyAssessmentDialog
 from AcATaMa.core.classification import Classification
@@ -54,11 +55,10 @@ HOMEPAGE = cfg.get('general', 'homepage')
 
 
 class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
-
     closingPlugin = pyqtSignal()
     dockwidget = None
 
-    def __init__(self, parent, iface):
+    def __init__(self, parent=None):
         """Constructor."""
         super(AcATaMaDockWidget, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -66,8 +66,6 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
-        self.iface = iface
-        self.canvas = self.iface.mapCanvas()
         self.setupUi(self)
         self.setup_gui()
         # tmp dir for all process and intermediate files
@@ -114,7 +112,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.QPBtn_ClippingThematic.clicked.connect(self.clipping_thematic_raster)
 
         # ######### create categorical  ######### # TODO
-        #self.widget_CategRaster.setHidden(True)
+        # self.widget_CategRaster.setHidden(True)
         # # handle connect when the list of layers changed
         # # call to browse the categorical raster
         # self.browseCategRaster.clicked.connect(lambda: self.fileDialog_browse(
@@ -140,14 +138,15 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.widget_generate_SimpRS.generate_sampling_widget_options.setHidden(True)
         # save config
         self.widget_generate_SimpRS.widget_save_sampling_config.setHidden(True)
-        self.canvas.layersChanged.connect(
+        iface.mapCanvas().layersChanged.connect(
             lambda: self.update_generated_sampling_list_in(self.widget_generate_SimpRS.QCBox_SamplingToSave))
         self.widget_generate_SimpRS.QPBtn_SaveSamplingConf.clicked.connect(
             lambda: self.fileDialog_saveSamplingConf(self.widget_generate_SimpRS.QCBox_SamplingToSave))
         # generate sampling
         self.widget_generate_SimpRS.QPBtn_GenerateSampling.clicked.connect(lambda: do_simple_random_sampling(self))
         # update progress bar limits
-        self.numberOfSamples_SimpRS.valueChanged.connect(lambda: self.widget_generate_SimpRS.QPBar_GenerateSampling.setValue(0))
+        self.numberOfSamples_SimpRS.valueChanged.connect(
+            lambda: self.widget_generate_SimpRS.QPBar_GenerateSampling.setValue(0))
         self.numberOfSamples_SimpRS.valueChanged.connect(self.widget_generate_SimpRS.QPBar_GenerateSampling.setMaximum)
 
         # ######### stratified random sampling ######### #
@@ -177,7 +176,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.widget_generate_StraRS.generate_sampling_widget_options.setHidden(True)
         # save config
         self.widget_generate_StraRS.widget_save_sampling_config.setHidden(True)
-        self.canvas.layersChanged.connect(
+        iface.mapCanvas().layersChanged.connect(
             lambda: self.update_generated_sampling_list_in(self.widget_generate_StraRS.QCBox_SamplingToSave))
         self.widget_generate_StraRS.QPBtn_SaveSamplingConf.clicked.connect(
             lambda: self.fileDialog_saveSamplingConf(self.widget_generate_StraRS.QCBox_SamplingToSave))
@@ -239,8 +238,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             self.QCBox_ThematicRaster.setCurrentIndex(-1)
             self.QCBox_band_ThematicRaster.clear()
             self.nodata_ThematicRaster.setValue(-1)
-            self.iface.messageBar().pushMessage("AcATaMa", "Error, thematic raster must be byte or integer as data type.",
-                                                level=QgsMessageBar.WARNING)
+            iface.messageBar().pushMessage("AcATaMa", "Error, thematic raster must be byte or integer as data type.",
+                                           level=QgsMessageBar.WARNING)
             return
         # set band count
         self.QCBox_band_ThematicRaster.clear()
@@ -259,8 +258,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         if current_layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
             self.QCBox_CategRaster_SimpRS.setCurrentIndex(-1)
             self.QCBox_band_CategRaster_SimpRS.clear()
-            self.iface.messageBar().pushMessage("AcATaMa","Error, categorical raster must be byte or integer as data type.",
-                                                level=QgsMessageBar.WARNING)
+            iface.messageBar().pushMessage("AcATaMa", "Error, categorical raster must be byte or integer as data type.",
+                                           level=QgsMessageBar.WARNING)
             return
         # set band count
         self.QCBox_band_CategRaster_SimpRS.clear()
@@ -279,9 +278,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             self.QCBox_CategRaster_StraRS.setCurrentIndex(-1)
             self.QCBox_band_CategRaster_StraRS.clear()
             self.nodata_CategRaster_StraRS.setValue(-1)
-            self.iface.messageBar().pushMessage("AcATaMa",
-                                                "Error, categorical raster must be byte or integer as data type.",
-                                                level=QgsMessageBar.WARNING)
+            iface.messageBar().pushMessage("AcATaMa",
+                                           "Error, categorical raster must be byte or integer as data type.",
+                                           level=QgsMessageBar.WARNING)
             return
         # set band count
         self.QCBox_band_CategRaster_StraRS.clear()
@@ -331,8 +330,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # load to qgis and update combobox list
         load_and_select_filepath_in(self.QCBox_ThematicRaster, clip_file, "raster")
 
-        self.iface.messageBar().pushMessage("AcATaMa", "Clipping the thematic raster with shape, completed",
-                                            level=QgsMessageBar.SUCCESS)
+        iface.messageBar().pushMessage("AcATaMa", "Clipping the thematic raster with shape, completed",
+                                       level=QgsMessageBar.SUCCESS)
 
     @pyqtSlot()
     def update_generated_sampling_list_in(self, combo_box):
@@ -349,8 +348,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
     @pyqtSlot()
     def fileDialog_saveSampling(self, combo_box):
         if combo_box.currentText() not in Sampling.samplings:
-            self.iface.messageBar().pushMessage("AcATaMa",
-                                                "Error, please select a valid sampling file", level=QgsMessageBar.WARNING)
+            iface.messageBar().pushMessage("AcATaMa",
+                                           "Error, please select a valid sampling file", level=QgsMessageBar.WARNING)
             return
         suggested_filename = os.path.splitext(Sampling.samplings[combo_box.currentText()].ThematicR.file_path)[0] \
                              + "_sampling.shp"
@@ -360,13 +359,13 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         if file_out != '':
             layer = get_current_layer_in(combo_box)
             QgsVectorFileWriter.writeAsVectorFormat(layer, file_out, "utf-8", layer.crs(), "ESRI Shapefile")
-            self.iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=QgsMessageBar.SUCCESS)
+            iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=QgsMessageBar.SUCCESS)
 
     @pyqtSlot()
     def fileDialog_saveSamplingConf(self, combo_box):
         if combo_box.currentText() not in Sampling.samplings:
-            self.iface.messageBar().pushMessage("AcATaMa",
-                                                "Error, please select a valid sampling file", level=QgsMessageBar.WARNING)
+            iface.messageBar().pushMessage("AcATaMa",
+                                           "Error, please select a valid sampling file", level=QgsMessageBar.WARNING)
             return
         sampling_selected = Sampling.samplings[combo_box.currentText()]
         suggested_filename = os.path.splitext(sampling_selected.ThematicR.file_path)[0] \
@@ -376,7 +375,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                                                      self.tr(u"Ini files (*.ini);;All files (*.*)"))
         if file_out != '':
             sampling_selected.save_config(file_out)
-            self.iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=QgsMessageBar.SUCCESS)
+            iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=QgsMessageBar.SUCCESS)
 
     @pyqtSlot()
     def set_classification_file_settings(self):
@@ -436,8 +435,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             # updated state of sampling file selected for accuracy assessment tab
             self.set_sampling_file_accuracy_assessment()
         else:
-            self.iface.messageBar().pushMessage("AcATaMa", "No sampling file selected",
-                                                level=QgsMessageBar.WARNING)
+            iface.messageBar().pushMessage("AcATaMa", "No sampling file selected",
+                                           level=QgsMessageBar.WARNING)
 
     @pyqtSlot()
     def set_grid_setting(self, item):
@@ -452,7 +451,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
     @pyqtSlot()
     def fileDialog_loadClassificationConfig(self):
         file_path = QtGui.QFileDialog.getOpenFileName(self, self.tr(u"Save settings and classification status"),
-                                                     "", self.tr(u"Yaml (*.yaml *.yml);;All files (*.*)"))
+                                                      "", self.tr(u"Yaml (*.yaml *.yml);;All files (*.*)"))
 
         if file_path != '' and os.path.isfile(file_path):
             # load classification status from yaml file
@@ -461,14 +460,15 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 try:
                     yaml_config = yaml.load(yaml_file)
                 except yaml.YAMLError as err:
-                    self.iface.messageBar().pushMessage("AcATaMa","Error while read the yaml file classification config",
-                                                        level=QgsMessageBar.CRITICAL)
+                    iface.messageBar().pushMessage("AcATaMa", "Error while read the yaml file classification config",
+                                                   level=QgsMessageBar.CRITICAL)
                     return
             # load the sampling file save in yaml config
             sampling_filepath = yaml_config["sampling_layer"]
             if not os.path.isfile(sampling_filepath):
-                self.iface.messageBar().pushMessage("AcATaMa", "Error the sampling file saved in this config file, not exists",
-                                                    level=QgsMessageBar.CRITICAL)
+                iface.messageBar().pushMessage("AcATaMa",
+                                               "Error the sampling file saved in this config file, not exists",
+                                               level=QgsMessageBar.CRITICAL)
                 # TODO: ask for new location of the sampling file
                 return
 
@@ -476,7 +476,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
             classification = Classification(sampling_layer)
             classification.load_config(yaml_config)
-            self.iface.messageBar().pushMessage("AcATaMa", "File loaded successfully", level=QgsMessageBar.SUCCESS)
+            iface.messageBar().pushMessage("AcATaMa", "File loaded successfully", level=QgsMessageBar.SUCCESS)
 
             # reload sampling file status in accuracy assessment
             self.set_sampling_file_accuracy_assessment()
@@ -484,9 +484,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
     @pyqtSlot()
     def fileDialog_saveClassificationConfig(self):
         if not valid_file_selected_in(self.QCBox_SamplingFile):
-            self.iface.messageBar().pushMessage("AcATaMa",
-                                                "Error, please select a sampling file to save configuration",
-                                                level=QgsMessageBar.WARNING)
+            iface.messageBar().pushMessage("AcATaMa",
+                                           "Error, please select a sampling file to save configuration",
+                                           level=QgsMessageBar.WARNING)
             return
         # get file path to suggest to save but not in tmp directory
         path, filename = os.path.split(get_current_file_path_in(self.QCBox_SamplingFile))
@@ -495,22 +495,23 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_config.yml"
 
         file_out = QtGui.QFileDialog.getSaveFileName(self, self.tr(u"Save settings and classification status"),
-                                                     suggested_filename, self.tr(u"Yaml (*.yaml *.yml);;All files (*.*)"))
+                                                     suggested_filename,
+                                                     self.tr(u"Yaml (*.yaml *.yml);;All files (*.*)"))
         if file_out != '':
             sampling_layer = get_current_layer_in(self.QCBox_SamplingFile)
             if sampling_layer in Classification.instances:
                 Classification.instances[sampling_layer].save_config(file_out)
-                self.iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=QgsMessageBar.SUCCESS)
+                iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=QgsMessageBar.SUCCESS)
             else:
-                self.iface.messageBar().pushMessage("AcATaMa",
-                                                    "Failed to save, there isn't any configuration to save",
-                                                    level=QgsMessageBar.WARNING)
+                iface.messageBar().pushMessage("AcATaMa",
+                                               "Failed to save, there isn't any configuration to save",
+                                               level=QgsMessageBar.WARNING)
 
     @pyqtSlot()
     def fileDialog_saveSamplingClassification(self):
         if not valid_file_selected_in(self.QCBox_SamplingFile):
-            self.iface.messageBar().pushMessage("AcATaMa", "Error, please first select a sampling file",
-                                                level=QgsMessageBar.WARNING)
+            iface.messageBar().pushMessage("AcATaMa", "Error, please first select a sampling file",
+                                           level=QgsMessageBar.WARNING)
             return
         # get instance
         sampling_layer = get_current_layer_in(self.QCBox_SamplingFile)
@@ -521,13 +522,13 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                            "the result will have all sampling partially classified." \
                            "\nDo you want to continue?"
                 reply = QMessageBox.question(self, 'The classification is not completed',
-                                             quit_msg,QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+                                             quit_msg, QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
                 if reply == QMessageBox.No:
                     return
         else:
-            self.iface.messageBar().pushMessage("AcATaMa",
-                                                "Error, the classification for the sampling selected has not been initiated",
-                                                level=QgsMessageBar.WARNING)
+            iface.messageBar().pushMessage("AcATaMa",
+                                           "Error, the classification for the sampling selected has not been initiated",
+                                           level=QgsMessageBar.WARNING)
             return
         # get file path to suggest to save but not in tmp directory
         path, filename = os.path.split(get_current_file_path_in(self.QCBox_SamplingFile))
@@ -539,7 +540,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                                                      self.tr(u"Shape files (*.shp);;All files (*.*)"))
         if file_out != '':
             classification.save_sampling_classification(file_out)
-            self.iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=QgsMessageBar.SUCCESS)
+            iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=QgsMessageBar.SUCCESS)
 
     @pyqtSlot()
     def open_classification_dialog(self):
@@ -548,8 +549,8 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             return
         sampling_layer = get_current_layer_in(self.QCBox_SamplingFile)
         if not sampling_layer:
-            self.iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid sampling file to classify",
-                                                level=QgsMessageBar.WARNING)
+            iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid sampling file to classify",
+                                           level=QgsMessageBar.WARNING)
             return
 
         self.classification_dialog = \
@@ -601,5 +602,3 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.accuracy_assessment_dialog = AccuracyAssessmentDialog()
         # open dialog
         self.accuracy_assessment_dialog.show()
-
-

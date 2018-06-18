@@ -27,6 +27,7 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QTableWidgetItem, QSplitter, QColor, QColorDialog, QIcon
 from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform
 from qgis.gui import QgsMessageBar
+from qgis.utils import iface
 
 from AcATaMa.core.classification import Classification
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, get_current_file_path_in, \
@@ -47,10 +48,8 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
     current_sample = None
 
     def __init__(self, sampling_layer, columns, rows):
-        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         QtGui.QDialog.__init__(self)
         self.sampling_layer = sampling_layer
-        self.iface = AcATaMa.dockwidget.iface
         self.setupUi(self)
 
         # get classification or init new instance
@@ -92,7 +91,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         for idx, view_widget in enumerate(ClassificationDialog.view_widgets): view_widget.id = idx
         # set the label names for each view
         for num_view, view_widget in enumerate(ClassificationDialog.view_widgets):
-            view_widget.QLabel_ViewID.setText("View {}:".format(num_view+1))
+            view_widget.QLabel_ViewID.setText("View {}:".format(num_view + 1))
         # restore view widgets status
         for config_id, view_config in self.classification.view_widgets_config.items():
             for view_widget in ClassificationDialog.view_widgets:
@@ -113,15 +112,15 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                         # load file and select in view if this exists and not load in Qgis
                         load_and_select_filepath_in(view_widget.QCBox_RenderFile, view_config["render_file_path"])
                     else:
-                        AcATaMa.dockwidget.iface.messageBar().pushMessage(
+                        iface.messageBar().pushMessage(
                             "AcATaMa", "Impossible load '{}' in View No. {}"
-                                .format(layer_name, view_widget.id+1), level=QgsMessageBar.WARNING)
+                                .format(layer_name, view_widget.id + 1), level=QgsMessageBar.WARNING)
                     # restore render activated
                     view_widget.OnOff_RenderView.setChecked(view_config["render_activated"])
                     # active render layer in canvas
                     view_widget.render_widget.render_layer(view_widget.QCBox_RenderFile.currentLayer())
                     # TODO: restore size by view widget
-                    #view_widget.resize(*view_config["view_size"])
+                    # view_widget.resize(*view_config["view_size"])
                     view_widget.QLabel_ViewName.setText(view_config["view_name"])
                     view_widget.scaleFactor.setValue(view_config["scale_factor"])
 
@@ -208,8 +207,9 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
     def open_current_point_in_google_engine(self):
         # create temp file
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        kml_file = tempfile.mktemp(prefix="point_id_{}_{}_".format(self.current_sample.shape_id, self.sampling_layer.name()),
-                                   suffix=".kml", dir=AcATaMa.dockwidget.tmp_dir)
+        kml_file = tempfile.mktemp(
+            prefix="point_id_{}_{}_".format(self.current_sample.shape_id, self.sampling_layer.name()),
+            suffix=".kml", dir=AcATaMa.dockwidget.tmp_dir)
         # convert coordinates
         crsSrc = QgsCoordinateReferenceSystem(self.sampling_layer.crs())
         crsDest = QgsCoordinateReferenceSystem(4326)  # WGS84
@@ -220,8 +220,10 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         # make file and save
         description = "Classified as: <font color='{color}'><b> {class_name}</b></font><br/>" \
                       "Samp. file: <em> {samp_file}.shp</em><br/>AcATaMa Qgis-plugin".format(
-            color=self.classification.buttons_config[self.current_sample.classif_id]["color"] if self.current_sample.classif_id else "gray",
-            class_name=self.classification.buttons_config[self.current_sample.classif_id]["name"] if self.current_sample.classif_id else "not classified",
+            color=self.classification.buttons_config[self.current_sample.classif_id][
+                "color"] if self.current_sample.classif_id else "gray",
+            class_name=self.classification.buttons_config[self.current_sample.classif_id][
+                "name"] if self.current_sample.classif_id else "not classified",
             samp_file=self.sampling_layer.name())
         kml_raw = """<?xml version="1.0" encoding="UTF-8"?>
             <kml xmlns="http://www.opengis.net/kml/2.2">
@@ -298,7 +300,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                     view_widget.render_widget.marker.highlight()
 
     def next_sample(self):
-        if self.current_sample_idx >= len(self.classification.points)-1:
+        if self.current_sample_idx >= len(self.classification.points) - 1:
             return
         self.current_sample_idx += 1
         self.set_current_sample()
@@ -322,7 +324,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
     def previous_sample_not_classified(self):
         tmp_sample_idx = self.current_sample_idx - 1
         while self.classification.points[tmp_sample_idx].is_classified \
-              and tmp_sample_idx >= 0:
+                and tmp_sample_idx >= 0:
             tmp_sample_idx -= 1
         if not self.classification.points[tmp_sample_idx].is_classified and tmp_sample_idx >= 0:
             self.current_sample_idx = tmp_sample_idx
@@ -351,10 +353,10 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                                       "thematic_class": item_thematic_class}
             # create button
             QPButton = QtGui.QPushButton(item_name)
-            QPButton.setStyleSheet('QPushButton {color: '+item_color+'}')
+            QPButton.setStyleSheet('QPushButton {color: ' + item_color + '}')
             QPButton.clicked.connect(lambda state, classif_id=item_num: self.classify_sample(classif_id))
             QPButton.setAutoDefault(False)
-            self.gridButtonsClassification.addWidget(QPButton, len(buttons)-1, 0)
+            self.gridButtonsClassification.addWidget(QPButton, len(buttons) - 1, 0)
 
         # from tableBtnsConfig
         if tableBtnsConfig:
@@ -364,7 +366,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                 item_thematic_class = self.classification_btns_config.tableBtnsConfig.item(row, 2).text()
                 item_thematic_class = None if item_thematic_class == "none" else item_thematic_class
                 if item_name != "":
-                    create_button(row+1, item_name, item_color, item_thematic_class)
+                    create_button(row + 1, item_name, item_color, item_thematic_class)
                 # define if this classification was made with thematic classes
                 if item_thematic_class is not None and item_thematic_class != "":
                     self.classification.with_thematic_classes = True
@@ -405,7 +407,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                      "layer_name": get_current_layer_in(view_widget.QCBox_RenderFile, show_message=False).name(),
                      "render_file_path": get_current_file_path_in(view_widget.QCBox_RenderFile, show_message=False),
                      "render_activated": view_widget.OnOff_RenderView.isChecked(),
-                     #"view_size": (view_widget.size().width(), view_widget.size().height()),
+                     # "view_size": (view_widget.size().width(), view_widget.size().height()),
                      "scale_factor": view_widget.current_scale_factor}
 
         self.classification.view_widgets_config = view_widgets_config
@@ -435,7 +437,7 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
         self.setupUi(self)
         self.buttons_config = buttons_config if buttons_config is not None else {}
         # init with empty table
-        self.table_buttons = dict(zip(range(1,31), [""]*30))
+        self.table_buttons = dict(zip(range(1, 31), [""] * 30))
         self.create_table()
 
     def create_table(self):
@@ -453,7 +455,7 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
         for n, h in enumerate(header):
             if h == "Classification Name":
                 for m, (key, item) in enumerate(self.table_buttons.items()):
-                    if m+1 in self.buttons_config:
+                    if m + 1 in self.buttons_config:
                         item_table = QTableWidgetItem(self.buttons_config[m + 1]["name"])
                     else:
                         item_table = QTableWidgetItem(str(item))
@@ -463,7 +465,7 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
             if h == "Color":
                 for m, item in enumerate(self.table_buttons.values()):
                     item_table = QTableWidgetItem()
-                    if m+1 in self.buttons_config:
+                    if m + 1 in self.buttons_config:
                         item_table.setBackground(QColor(self.buttons_config[m + 1]["color"]))
                     item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
@@ -471,7 +473,7 @@ class ClassificationButtonsConfig(QtGui.QDialog, FORM_CLASS):
             if h == "Thematic Class":
                 for m, item in enumerate(self.table_buttons.values()):
                     if valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicRaster):
-                        if m+1 in self.buttons_config and self.buttons_config[m+1]["thematic_class"] is not None:
+                        if m + 1 in self.buttons_config and self.buttons_config[m + 1]["thematic_class"] is not None:
                             item_table = QTableWidgetItem(self.buttons_config[m + 1]["thematic_class"])
                         else:
                             item_table = QTableWidgetItem(str(item))
