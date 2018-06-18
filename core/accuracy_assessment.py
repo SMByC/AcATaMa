@@ -22,6 +22,7 @@ import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtGui import QApplication
 from qgis.gui import QgsMessageBar
+from qgis.utils import iface
 
 from AcATaMa.core.raster import Raster
 from AcATaMa.core.classification import Classification
@@ -142,9 +143,10 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
     def show(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         # first check
-        classification_points = [point for point in self.accuracy_assessment.classification.points if point.is_classified]
+        classification_points = [point for point in self.accuracy_assessment.classification.points if
+                                 point.is_classified]
         if len(classification_points) == 0:
-            AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa",
+            iface.messageBar().pushMessage("AcATaMa",
                   "The accuracy assessment needs at least one sample classified",
                   level=QgsMessageBar.WARNING)
             return
@@ -188,11 +190,11 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
                 csv_decimal_separator = self.CSV_decimal_sep.text()
                 accuracy_assessment_results.export_to_csv(self.accuracy_assessment, file_out,
                                                           csv_separator, csv_decimal_separator)
-                AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa", "File saved successfully",
-                                                                  level=QgsMessageBar.SUCCESS)
+                iface.messageBar().pushMessage("AcATaMa", "File saved successfully",
+                                               level=QgsMessageBar.SUCCESS)
             except:
-                AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa", "Failed export results in csv file",
-                                                                  level=QgsMessageBar.WARNING)
+                iface.messageBar().pushMessage("AcATaMa", "Failed export results in csv file",
+                                               level=QgsMessageBar.WARNING)
 
     def closeEvent(self, event):
         self.closing()
