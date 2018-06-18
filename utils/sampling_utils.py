@@ -187,7 +187,7 @@ def fill_stratified_sampling_table(dockwidget):
             # unselect
             dockwidget.QCBox_StraRS_Method.setCurrentIndex(-1)
             return
-        srs_table["row_count"] = len(srs_table["color_table"].values()[0])
+        srs_table["row_count"] = len(list(srs_table["color_table"].values())[0])
 
         if srs_method == "fixed values":
             srs_table["header"] = ["Pix Val", "Color", "Num Samples"]
