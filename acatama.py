@@ -101,7 +101,7 @@ class AcATaMa(object):
         # Plugin info
         # Create action that will start plugin configuration
         icon_path = ':/plugins/AcATaMa/icons/about.svg'
-        self.about_action = QAction(QIcon(icon_path), self.tr(u'About'), self.iface.mainWindow())
+        self.about_action = QAction(QIcon(icon_path), self.tr('About'), self.iface.mainWindow())
         # connect the action to the run method
         self.about_action.triggered.connect(self.about)
         # Add toolbar button and menu item
