@@ -632,7 +632,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows.append(["total"] + [rf(total_area)])
 
     # write CSV file
-    with open(file_out, 'wb') as csvfile:
+    with open(file_out, 'w') as csvfile:
         csv_w = csv.writer(csvfile, delimiter=str(csv_separator))
         # replace with the user define decimal separator
         if csv_decimal_separator != ".":

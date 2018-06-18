@@ -365,6 +365,6 @@ class Sampling(object):
                     if count > 0:
                         config.set('std_error', 'pix_val_' + str(pixel), str(std_error))
 
-        with open(file_out, 'wb') as configfile:
+        with open(file_out, 'w') as configfile:
             config.write(configfile)
 
