@@ -25,8 +25,7 @@ from qgis.utils import iface
 from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.QtWidgets import QFileDialog
 from qgis.core import QgsGeometry, QgsField, QgsFields, QgsRectangle, QgsSpatialIndex, \
-    QgsFeature, Qgis
-from processing.tools import vector
+    QgsFeature, Qgis, QgsVectorFileWriter, QgsWkbTypes
 
 from AcATaMa.core.point import RandomPoint
 from AcATaMa.core.raster import Raster
@@ -254,7 +253,7 @@ class Sampling(object):
         fields = QgsFields()
         fields.append(QgsField('id', QVariant.Int, '', 10, 0))
         thematic_CRS = self.ThematicR.qgs_layer.crs()
-        writer = vector.VectorWriter(self.output_file, None, fields, Qgis.WKBPoint, thematic_CRS)
+        writer = QgsVectorFileWriter(self.output_file, "System", fields, QgsWkbTypes.MultiPoint, thematic_CRS, "ESRI Shapefile")  # "GPKG"
 
         if self.sampling_type == "simple":
             total_of_samples = self.number_of_samples
