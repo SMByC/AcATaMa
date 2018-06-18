@@ -22,6 +22,7 @@ import os
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QApplication, QDialogButtonBox, QDialog, QFileDialog
 from qgis.core import Qgis
+from qgis.utils import iface
 
 from AcATaMa.core.raster import Raster
 from AcATaMa.core.classification import Classification
@@ -142,11 +143,12 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
     def show(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         # first check
-        classification_points = [point for point in self.accuracy_assessment.classification.points if point.is_classified]
+        classification_points = [point for point in self.accuracy_assessment.classification.points if
+                                 point.is_classified]
         if len(classification_points) == 0:
-            AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa",
-                  "The accuracy assessment needs at least one sample classified",
-                  level=Qgis.Warning)
+            iface.messageBar().pushMessage("AcATaMa",
+                                           "The accuracy assessment needs at least one sample classified",
+                                           level=Qgis.Warning)
             return
 
         AccuracyAssessmentDialog.is_opened = True
@@ -188,11 +190,11 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
                 csv_decimal_separator = self.CSV_decimal_sep.text()
                 accuracy_assessment_results.export_to_csv(self.accuracy_assessment, file_out,
                                                           csv_separator, csv_decimal_separator)
-                AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa", "File saved successfully",
-                                                                  level=Qgis.Success)
+                iface.messageBar().pushMessage("AcATaMa", "File saved successfully",
+                                               level=Qgis.Success)
             except:
-                AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa", "Failed export results in csv file",
-                                                                  level=Qgis.Warning)
+                iface.messageBar().pushMessage("AcATaMa", "Failed export results in csv file",
+                                               level=Qgis.Warning)
 
     def closeEvent(self, event):
         self.closing()

@@ -24,6 +24,7 @@ from random import shuffle
 from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.QtCore import NULL
 from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsVectorFileWriter, Qgis
+from qgis.utils import iface
 
 from AcATaMa.core.point import ClassificationPoint
 from AcATaMa.core.raster import Raster
@@ -88,8 +89,10 @@ class Classification(object):
             """
             Keep dump ordered with orderedDict
             """
-            represent_dict_order = lambda self, data: self.represent_mapping('tag:yaml.org,2002:map', list(data.items()))
+            represent_dict_order = lambda self, data: self.represent_mapping('tag:yaml.org,2002:map',
+                                                                             list(data.items()))
             yaml.add_representer(OrderedDict, represent_dict_order)
+
         setup_yaml()
 
         data = OrderedDict()
@@ -132,7 +135,7 @@ class Classification(object):
             AcATaMa.dockwidget.nodata_ThematicRaster.setValue(yaml_config["thematic_raster"]["nodata"])
             # band number
             if "band" in yaml_config["thematic_raster"]:
-                AcATaMa.dockwidget.QCBox_band_ThematicRaster.setCurrentIndex(yaml_config["thematic_raster"]["band"]-1)
+                AcATaMa.dockwidget.QCBox_band_ThematicRaster.setCurrentIndex(yaml_config["thematic_raster"]["band"] - 1)
 
         # restore the classification settings
         AcATaMa.dockwidget.grid_columns.setValue(yaml_config["grid_view_widgets"]["columns"])
@@ -178,12 +181,12 @@ class Classification(object):
         # update plugin
         self.update_plugin_after_reload_sampling()
         # define if this classification was made with thematic classes
-        if self.buttons_config and True in [bc["thematic_class"] is not None and bc["thematic_class"] != "" for bc in self.buttons_config.values()]:
+        if self.buttons_config and True in [bc["thematic_class"] is not None and bc["thematic_class"] != "" for bc in
+                                            self.buttons_config.values()]:
             self.with_thematic_classes = True
 
     @wait_process()
     def reload_sampling_file(self):
-        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         # update all points from file and restore its status classification
         points_from_shapefile = self.get_points_from_shapefile()
         modified = 0
@@ -200,17 +203,17 @@ class Classification(object):
         removed = len(set([p.shape_id for p in self.points]) - set([p.shape_id for p in points_from_shapefile]))
         # check if sampling has not changed
         if modified == 0 and added == 0 and removed == 0:
-            AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa", "The sampling file has not detected changes",
-                                                              level=Qgis.Success)
+            iface.messageBar().pushMessage("AcATaMa", "The sampling file has not detected changes",
+                                           level=Qgis.Success)
             return
         # reassign points
         self.points = points_from_shapefile
         # update plugin
         self.update_plugin_after_reload_sampling()
         # notify
-        AcATaMa.dockwidget.iface.messageBar().pushMessage("AcATaMa", "Sampling file reloaded successfully: {} modified,"
-                                                                     "{} added and {} removed".format(modified, added, removed),
-                                                          level=Qgis.Success)
+        iface.messageBar().pushMessage("AcATaMa", "Sampling file reloaded successfully: {} modified,"
+                                                  "{} added and {} removed".format(modified, added, removed),
+                                       level=Qgis.Success)
 
     def update_plugin_after_reload_sampling(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
@@ -266,7 +269,8 @@ class Classification(object):
             feature.setGeometry(point.QgsGeom)
             name = self.buttons_config[point.classif_id]["name"] if point.is_classified else NULL
             if self.with_thematic_classes:
-                classified = int(self.buttons_config[point.classif_id]["thematic_class"]) if point.is_classified else NULL
+                classified = int(
+                    self.buttons_config[point.classif_id]["thematic_class"]) if point.is_classified else NULL
                 thematic = int(ThematicR.get_pixel_value_from_pnt(point.QgsPnt)) \
                     if point.is_classified and ThematicR.get_pixel_value_from_pnt(point.QgsPnt) else NULL
                 match = ('Yes' if thematic == classified else 'No') if point.is_classified else NULL

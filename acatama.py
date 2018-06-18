@@ -70,9 +70,6 @@ class AcATaMa(object):
         self.pluginIsActive = False
         self.dockwidget = None
 
-        # Obtaining the map canvas
-        self.canvas = iface.mapCanvas()
-
         self.about_dialog = AboutDialog()
 
     # noinspection PyMethodMayBeStatic
@@ -128,7 +125,7 @@ class AcATaMa(object):
             #    removed on close (see self.onClosePlugin method)
             if self.dockwidget == None:
                 # Create the dockwidget (after translation) and keep reference
-                self.dockwidget = AcATaMaDockWidget(self.iface.mainWindow(), self.iface)
+                self.dockwidget = AcATaMaDockWidget()
 
             # connect to provide cleanup on closing of dockwidget
             self.dockwidget.closingPlugin.connect(self.onClosePlugin)
