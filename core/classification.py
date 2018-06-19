@@ -47,7 +47,7 @@ class Classification(object):
         # save and init the current sample index
         self.current_sample_idx = 0
         # grid config
-        self.grid_columns = 3
+        self.grid_columns = 2
         self.grid_rows = 2
         # radius to sample
         self.fit_to_sample = 120
