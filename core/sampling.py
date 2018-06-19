@@ -253,7 +253,7 @@ class Sampling(object):
         fields = QgsFields()
         fields.append(QgsField('id', QVariant.Int, '', 10, 0))
         thematic_CRS = self.ThematicR.qgs_layer.crs()
-        writer = QgsVectorFileWriter(self.output_file, "System", fields, QgsWkbTypes.MultiPoint, thematic_CRS, "ESRI Shapefile")  # "GPKG"
+        writer = QgsVectorFileWriter(self.output_file, "System", fields, QgsWkbTypes.Point, thematic_CRS, "ESRI Shapefile")  # "GPKG"
 
         if self.sampling_type == "simple":
             total_of_samples = self.number_of_samples
