@@ -25,7 +25,7 @@ from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QSplitter, QColorDialog, QDialog, QDialogButtonBox, QPushButton
 from qgis.PyQt.QtGui import QColor, QIcon
-from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, Qgis
+from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, Qgis, QgsProject
 from qgis.utils import iface
 
 from AcATaMa.core.classification import Classification
@@ -213,7 +213,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         # convert coordinates
         crsSrc = QgsCoordinateReferenceSystem(self.sampling_layer.crs())
         crsDest = QgsCoordinateReferenceSystem(4326)  # WGS84
-        xform = QgsCoordinateTransform(crsSrc, crsDest)
+        xform = QgsCoordinateTransform(crsSrc, crsDest, QgsProject.instance())
         # forward transformation: src -> dest
         point = xform.transform(self.current_sample.QgsPnt)
 
