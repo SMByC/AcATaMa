@@ -410,7 +410,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                     self.grid_rows.setValue(classification.grid_rows)
             else:
                 with block_signals_to(self.QGBox_GridSettings):
-                    self.grid_columns.setValue(3)
+                    self.grid_columns.setValue(2)
                     self.grid_rows.setValue(2)
             # enable group box that depends of sampling file
             self.QGBox_SamplingClassification.setEnabled(True)
@@ -421,7 +421,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             self.QPBar_ClassificationStatus.setValue(0)
             self.QLabel_ClassificationStatus.setText("No sampling file selected")
             self.QLabel_ClassificationStatus.setStyleSheet("QLabel {color: gray;}")
-            self.grid_columns.setValue(3)
+            self.grid_columns.setValue(2)
             self.grid_rows.setValue(2)
             # disable group box that depends of sampling file
             self.QGBox_SamplingClassification.setDisabled(True)
