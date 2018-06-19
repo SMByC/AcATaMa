@@ -100,8 +100,17 @@
                       <verstretch>0</verstretch>
                      </sizepolicy>
                     </property>
+                    <property name="focusPolicy">
+                     <enum>Qt::StrongFocus</enum>
+                    </property>
                     <property name="frame">
                      <bool>true</bool>
+                    </property>
+                    <property name="allowEmptyLayer">
+                     <bool>true</bool>
+                    </property>
+                    <property name="showCrs">
+                     <bool>false</bool>
                     </property>
                    </widget>
                   </item>
@@ -271,6 +280,12 @@
                          <horstretch>0</horstretch>
                          <verstretch>0</verstretch>
                         </sizepolicy>
+                       </property>
+                       <property name="focusPolicy">
+                        <enum>Qt::StrongFocus</enum>
+                       </property>
+                       <property name="allowEmptyLayer">
+                        <bool>true</bool>
                        </property>
                       </widget>
                      </item>
@@ -457,7 +472,7 @@
                    <item>
                     <widget class="QLabel" name="label_8">
                      <property name="text">
-                      <string>Generate N number of sampling points inside only valid thematic data and optionally only inside in valid pixel values in categorical raster and/or with neighbors aggregation
+                      <string>Generate n number of sampling points inside only valid thematic data and optionally only inside in valid pixel values in categorical raster and/or with neighbors aggregation and minimum distance
 </string>
                      </property>
                      <property name="alignment">
@@ -569,7 +584,7 @@
                          <item>
                           <widget class="QLabel" name="label_12">
                            <property name="text">
-                            <string>Select/browse the categorical raster for make the random sampling only in the selected pixels values in it (It can be the same thematic file, for example):</string>
+                            <string>Select/browse the categorical raster for make the random sampling only in the selected pixels values in it (e.g. it can be the same thematic file):</string>
                            </property>
                            <property name="alignment">
                             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -602,8 +617,14 @@
                                 <verstretch>0</verstretch>
                                </sizepolicy>
                               </property>
+                              <property name="focusPolicy">
+                               <enum>Qt::StrongFocus</enum>
+                              </property>
                               <property name="editable">
                                <bool>false</bool>
+                              </property>
+                              <property name="allowEmptyLayer">
+                               <bool>true</bool>
                               </property>
                              </widget>
                             </item>
@@ -729,7 +750,7 @@
                    <item>
                     <widget class="QLabel" name="label_11">
                      <property name="text">
-                      <string>Generate N number of sampling points for each pixel categorical value set and only in valid thematic data and optionally with neighbors aggregation
+                      <string>Generate n number of sampling points for each pixel categorical value set and only in valid thematic data and optionally with neighbors aggregation and minimum distance
 </string>
                      </property>
                      <property name="alignment">
@@ -749,7 +770,7 @@
                       <item>
                        <widget class="QLabel" name="label_17">
                         <property name="text">
-                         <string>Select/browse the categorical raster for stratified the random sampling (It can be the same thematic file, for example):</string>
+                         <string>Select/browse the categorical raster for stratified the random sampling (e.g. it can be the same thematic file):</string>
                         </property>
                         <property name="alignment">
                          <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -782,8 +803,14 @@
                              <verstretch>0</verstretch>
                             </sizepolicy>
                            </property>
+                           <property name="focusPolicy">
+                            <enum>Qt::StrongFocus</enum>
+                           </property>
                            <property name="editable">
                             <bool>false</bool>
+                           </property>
+                           <property name="allowEmptyLayer">
+                            <bool>true</bool>
                            </property>
                           </widget>
                          </item>
@@ -906,6 +933,9 @@
                           <horstretch>0</horstretch>
                           <verstretch>0</verstretch>
                          </sizepolicy>
+                        </property>
+                        <property name="focusPolicy">
+                         <enum>Qt::StrongFocus</enum>
                         </property>
                         <property name="currentIndex">
                          <number>-1</number>
@@ -1170,15 +1200,27 @@
                       <verstretch>0</verstretch>
                      </sizepolicy>
                     </property>
+                    <property name="focusPolicy">
+                     <enum>Qt::StrongFocus</enum>
+                    </property>
                     <property name="editable">
                      <bool>false</bool>
+                    </property>
+                    <property name="allowEmptyLayer">
+                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>
                   <item>
                    <widget class="QToolButton" name="QPBtn_reloadSamplingFile">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="toolTip">
-                     <string>Reload the sampling file if it has had changes (added/removed points)</string>
+                     <string>Reload the sampling file if it has had changes (moved/added/removed points)</string>
                     </property>
                     <property name="text">
                      <string/>
@@ -1363,6 +1405,166 @@
              </widget>
             </item>
             <item>
+             <widget class="QGroupBox" name="QGBox_SamplingClassification">
+              <property name="title">
+               <string>Sampling Classification</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_31">
+               <item>
+                <widget class="QWidget" name="QGBox_GridSettings" native="true">
+                 <layout class="QHBoxLayout" name="horizontalLayout_8">
+                  <property name="spacing">
+                   <number>0</number>
+                  </property>
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <spacer name="horizontalSpacer_3">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="label_30">
+                    <property name="text">
+                     <string>Render views config:</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_13">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                     <enum>QSizePolicy::Fixed</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>12</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="label_29">
+                    <property name="text">
+                     <string>Columns:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSpinBox" name="grid_columns">
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                    <property name="buttonSymbols">
+                     <enum>QAbstractSpinBox::PlusMinus</enum>
+                    </property>
+                    <property name="minimum">
+                     <number>1</number>
+                    </property>
+                    <property name="maximum">
+                     <number>30</number>
+                    </property>
+                    <property name="value">
+                     <number>3</number>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_4">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                     <enum>QSizePolicy::Fixed</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>12</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="label_28">
+                    <property name="text">
+                     <string>Rows:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSpinBox" name="grid_rows">
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                    <property name="buttonSymbols">
+                     <enum>QAbstractSpinBox::PlusMinus</enum>
+                    </property>
+                    <property name="minimum">
+                     <number>1</number>
+                    </property>
+                    <property name="maximum">
+                     <number>30</number>
+                    </property>
+                    <property name="value">
+                     <number>2</number>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_5">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="QPBtn_OpenClassificationDialog">
+                 <property name="toolTip">
+                  <string>Classify the samples of the sampling file selected one by one</string>
+                 </property>
+                 <property name="text">
+                  <string>Open the classification dialog</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
              <widget class="QGroupBox" name="QGBox_saveSamplingClassified">
               <property name="title">
                <string>Save Sampling Classified</string>
@@ -1423,160 +1625,6 @@
                    </widget>
                   </item>
                  </layout>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="QGBox_ClassificationDialog">
-              <property name="title">
-               <string>Classification Dialog</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_31">
-               <item>
-                <widget class="QLabel" name="label_25">
-                 <property name="text">
-                  <string>Classify the samples of the sampling file one by one:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QGroupBox" name="QGBox_GridSettings">
-                 <property name="title">
-                  <string>Grid Settings</string>
-                 </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_26">
-                  <item>
-                   <widget class="QLabel" name="label_30">
-                    <property name="text">
-                     <string>Settings of the grid size with render views:</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-                    </property>
-                    <property name="wordWrap">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QWidget" name="widget_11" native="true">
-                    <layout class="QHBoxLayout" name="horizontalLayout_8">
-                     <property name="spacing">
-                      <number>0</number>
-                     </property>
-                     <property name="leftMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="topMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="rightMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="bottomMargin">
-                      <number>0</number>
-                     </property>
-                     <item>
-                      <spacer name="horizontalSpacer_3">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>40</width>
-                         <height>20</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_29">
-                       <property name="text">
-                        <string>Columns:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QSpinBox" name="grid_columns">
-                       <property name="minimum">
-                        <number>1</number>
-                       </property>
-                       <property name="maximum">
-                        <number>30</number>
-                       </property>
-                       <property name="value">
-                        <number>3</number>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <spacer name="horizontalSpacer_4">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="sizeType">
-                        <enum>QSizePolicy::Fixed</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>24</width>
-                         <height>20</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_28">
-                       <property name="text">
-                        <string>Rows:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QSpinBox" name="grid_rows">
-                       <property name="minimum">
-                        <number>1</number>
-                       </property>
-                       <property name="maximum">
-                        <number>30</number>
-                       </property>
-                       <property name="value">
-                        <number>2</number>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <spacer name="horizontalSpacer_5">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>40</width>
-                         <height>20</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="QPBtn_OpenClassificationDialog">
-                 <property name="text">
-                  <string>Open the classification dialog</string>
-                 </property>
                 </widget>
                </item>
               </layout>
@@ -1678,8 +1726,14 @@
                       <verstretch>0</verstretch>
                      </sizepolicy>
                     </property>
+                    <property name="focusPolicy">
+                     <enum>Qt::StrongFocus</enum>
+                    </property>
                     <property name="editable">
                      <bool>false</bool>
+                    </property>
+                    <property name="allowEmptyLayer">
+                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>
@@ -1878,15 +1932,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>QgsMapLayerComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qgsmaplayercombobox.h</header>
+  </customwidget>
+  <customwidget>
    <class>GenerateSamplingWidget</class>
    <extends>QWidget</extends>
    <header>AcATaMa.gui.generate_sampling_widget</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QgsMapLayerComboBox</class>
-   <extends>QComboBox</extends>
-   <header>qgis.gui</header>
   </customwidget>
  </customwidgets>
  <resources/>
