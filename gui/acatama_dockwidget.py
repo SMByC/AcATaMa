@@ -203,6 +203,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # change grid config
         self.grid_columns.valueChanged.connect(lambda: self.set_grid_setting("column"))
         self.grid_rows.valueChanged.connect(lambda: self.set_grid_setting("row"))
+        # disable group box that depends of sampling file
+        self.QGBox_SamplingClassification.setDisabled(True)
+        self.QGBox_saveSamplingClassified.setDisabled(True)
 
         # connect the action to the run method
         self.QPBtn_OpenClassificationDialog.clicked.connect(self.open_classification_dialog)
@@ -406,6 +409,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                 with block_signals_to(self.QGBox_GridSettings):
                     self.grid_columns.setValue(3)
                     self.grid_rows.setValue(2)
+            # enable group box that depends of sampling file
+            self.QGBox_SamplingClassification.setEnabled(True)
+            self.QGBox_saveSamplingClassified.setEnabled(True)
         else:
             # return to default values
             self.QPBar_ClassificationStatus.setTextVisible(False)
@@ -414,6 +420,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.QLabel_ClassificationStatus.setStyleSheet("QLabel {color: gray;}")
             self.grid_columns.setValue(3)
             self.grid_rows.setValue(2)
+            # disable group box that depends of sampling file
+            self.QGBox_SamplingClassification.setDisabled(True)
+            self.QGBox_saveSamplingClassified.setDisabled(True)
 
         # updated state of sampling file selected for accuracy assessment tab
         self.set_sampling_file_accuracy_assessment()
