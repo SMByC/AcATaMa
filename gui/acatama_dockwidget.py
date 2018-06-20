@@ -188,7 +188,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.QCBox_SamplingFile.setCurrentIndex(-1)
         self.QCBox_SamplingFile.setFilters(QgsMapLayerProxyModel.PointLayer)
         # show the classification file settings in plugin when it is selected
-        self.QCBox_SamplingFile.layerChanged.connect(self.set_classification_file_settings)
+        self.QCBox_SamplingFile.layerChanged.connect(self.update_the_status_of_classification)
         # call to browse the sampling file
         self.QPBtn_browseSamplingFile.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_SamplingFile,
@@ -381,21 +381,20 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=QgsMessageBar.SUCCESS)
 
     @pyqtSlot()
-    def set_classification_file_settings(self):
+    def update_the_status_of_classification(self):
         sampling_layer = get_current_layer_in(self.QCBox_SamplingFile)
         if sampling_layer:
             # classification status
             if sampling_layer in Classification.instances:
                 classification = Classification.instances[sampling_layer]
-                total_classified = sum(sample.is_classified for sample in classification.points)
-                self.QPBar_ClassificationStatus.setMaximum(len(classification.points))
-                self.QPBar_ClassificationStatus.setValue(total_classified)
+                self.QPBar_ClassificationStatus.setMaximum(classification.num_points)
+                self.QPBar_ClassificationStatus.setValue(classification.total_classified)
             else:
                 count_samples = len(list(sampling_layer.getFeatures()))
                 self.QPBar_ClassificationStatus.setMaximum(count_samples)
                 self.QPBar_ClassificationStatus.setValue(0)
             self.QPBar_ClassificationStatus.setTextVisible(True)
-            # check is the classification is completed and update in dockwidget status
+            # check if the classification is completed and update in dockwidget status
             if sampling_layer in Classification.instances and Classification.instances[sampling_layer].is_completed:
                 self.QLabel_ClassificationStatus.setText("Classification completed")
                 self.QLabel_ClassificationStatus.setStyleSheet("QLabel {color: green;}")
@@ -412,9 +411,10 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 with block_signals_to(self.QGBox_GridSettings):
                     self.grid_columns.setValue(2)
                     self.grid_rows.setValue(2)
-            # enable group box that depends of sampling file
-            self.QGBox_SamplingClassification.setEnabled(True)
-            self.QGBox_saveSamplingClassified.setEnabled(True)
+            if not ClassificationDialog.is_opened:
+                # enable group box that depends of sampling file
+                self.QGBox_SamplingClassification.setEnabled(True)
+                self.QGBox_saveSamplingClassified.setEnabled(True)
         else:
             # return to default values
             self.QPBar_ClassificationStatus.setTextVisible(False)
@@ -575,7 +575,6 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
             if sampling_layer in Classification.instances:
                 # classification exists for this file
                 classification = Classification.instances[sampling_layer]
-                total_classified = sum(sample.is_classified for sample in classification.points)
                 # define if this classification was made with thematic classes
                 if not classification.with_thematic_classes:
                     self.QLabel_SamplingFileStatus_AA.setText("Classification was not made with thematic classes")
@@ -585,11 +584,13 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                 # check is the classification is completed and update in dockwidget status
                 if classification.is_completed:
                     self.QLabel_SamplingFileStatus_AA.setText("Classification completed ({}/{})".
-                                                              format(total_classified, len(classification.points)))
+                                                              format(classification.total_classified,
+                                                                     classification.num_points))
                     self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: green;}")
                 else:
                     self.QLabel_SamplingFileStatus_AA.setText("Classification not completed ({}/{})".
-                                                              format(total_classified, len(classification.points)))
+                                                              format(classification.total_classified,
+                                                                     classification.num_points))
                     self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: orange;}")
                 self.QGBox_AccuracyAssessment.setEnabled(True)
             else:
