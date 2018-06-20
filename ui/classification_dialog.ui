@@ -1008,7 +1008,7 @@
                </font>
               </property>
               <property name="text">
-               <string>Not classified: </string>
+               <string>Unclassified: </string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1049,7 +1049,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="totalNotClassified">
+             <widget class="QLabel" name="totalUnclassified">
               <property name="font">
                <font>
                 <pointsize>8</pointsize>
