@@ -244,16 +244,14 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
 
     def classify_sample(self, classif_id):
         if classif_id:
-            self.current_sample.classif_id = int(classif_id)
-            self.current_sample.is_classified = True
+            self.classification.classify_the_current_sample(int(classif_id))
             self.display_sample_status()
             if self.autoNextSample.isChecked():
                 # automatically follows the next sample
                 self.next_sample()
 
     def unclassify_sample(self):
-        self.current_sample.is_classified = False
-        self.current_sample.classif_id = None
+        self.classification.classify_the_current_sample(False)
         self.display_sample_status()
         if self.autoNextSample.isChecked():
             # automatically follows the next sample
@@ -270,23 +268,10 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
             self.statusCurrentSample.setText("not classified")
             self.statusCurrentSample.setStyleSheet('QLabel {color: gray;}')
         # update the total classified and not classified samples labels
-        total_classified = sum(sample.is_classified for sample in self.classification.points)
-        total_not_classified = sum(not sample.is_classified for sample in self.classification.points)
-        self.totalClassified.setText(str(total_classified))
-        self.totalNotClassified.setText(str(total_not_classified))
-        # update in dockwidget status
-        AcATaMa.dockwidget.QPBar_ClassificationStatus.setValue(total_classified)
-        # check is the classification is completed and update in dockwidget status
-        if total_not_classified == 0:
-            self.classification.is_completed = True
-            AcATaMa.dockwidget.QLabel_ClassificationStatus.setText("Classification completed")
-            AcATaMa.dockwidget.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: green;}')
-        else:
-            self.classification.is_completed = False
-            AcATaMa.dockwidget.QLabel_ClassificationStatus.setText("Classification not completed")
-            AcATaMa.dockwidget.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: orange;}')
-        # updated state of sampling file selected for accuracy assessment tab
-        AcATaMa.dockwidget.set_sampling_file_accuracy_assessment()
+        self.totalClassified.setText(str(self.classification.total_classified))
+        self.totalNotClassified.setText(str(self.classification.total_unclassified))
+        # update plugin with the current sampling status
+        AcATaMa.dockwidget.update_the_status_of_classification()
 
     def show_and_go_to_current_sample(self, highlight=True):
         for view_widget in ClassificationDialog.view_widgets:

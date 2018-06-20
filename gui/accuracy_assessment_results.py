@@ -69,9 +69,10 @@ def get_html(accu_asse):
         '''
     html += "<h2>Classification accuracy assessment results</h2>"
     html += "<p><strong>Thematic raster:</strong> {}</p>".format(os.path.basename((accu_asse.ThematicR.file_path).encode('utf-8')))
-    html += "<p><strong>Sampling file:</strong> {}</p>".format(os.path.basename((get_file_path_of_layer(accu_asse.classification.sampling_layer)).encode('utf-8')))
-    total_classified = sum(sample.is_classified for sample in accu_asse.classification.points)
-    html += "<p><strong>Classification status:</strong> {}/{} samples classified</p>".format(total_classified, len(accu_asse.classification.points))
+    html += "<p><strong>Sampling file:</strong> {}</p>".format(
+        os.path.basename((get_file_path_of_layer(accu_asse.classification.sampling_layer)).encode('utf-8')))
+    html += "<p><strong>Classification status:</strong> {}/{} samples classified</p>".format(
+        accu_asse.classification.total_classified, accu_asse.classification.num_points)
 
     # warning block for samples outside the thematic raster area or inside the no data values
     if accu_asse.samples_outside_the_thematic:
@@ -461,9 +462,9 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows.append(["Sampling file:"])
     csv_rows.append([os.path.basename((get_file_path_of_layer(accu_asse.classification.sampling_layer)).encode('utf-8'))])
     csv_rows.append([])
-    total_classified = sum(sample.is_classified for sample in accu_asse.classification.points)
     csv_rows.append(["Classification status:"])
-    csv_rows.append(["{}/{} samples classified".format(total_classified, len(accu_asse.classification.points))])
+    csv_rows.append(["{}/{} samples classified".format(accu_asse.classification.total_classified,
+                                                       accu_asse.classification.num_points)])
 
     ###########################################################################
     csv_rows.append([])
