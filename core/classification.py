@@ -43,6 +43,7 @@ class Classification(object):
         self.buttons_config = None
         # get all points from the layer
         # [ClassificationPoint, ClassificationPoint, ...]
+        self.num_points = None
         self.points = self.get_points_from_shapefile()
         # save and init the current sample index
         self.current_sample_idx = 0
@@ -58,6 +59,9 @@ class Classification(object):
         self.dialog_size = None
         # if this classification was made with thematic classes
         self.with_thematic_classes = False
+        # init classification status
+        self.total_classified = 0
+        self.total_unclassified = self.num_points
         # when all points are classified
         self.is_completed = False
         # for store the instance of the accuracy assessment results
@@ -67,6 +71,27 @@ class Classification(object):
         shuffle(self.points)
         # save instance
         Classification.instances[sampling_layer] = self
+
+    def classify_the_current_sample(self, classif_id):
+        current_sample = self.points[self.current_sample_idx]
+        if classif_id:  # classify with valid integer class
+            if current_sample.is_classified is False:  # only when the classification is changed
+                self.total_classified += 1
+                self.total_unclassified -= 1 if self.total_unclassified > 0 else 0
+            current_sample.classif_id = classif_id
+            current_sample.is_classified = True
+        else:  # unclassify the sample
+            if current_sample.is_classified is True:  # only when the classification is changed
+                self.total_classified -= 1 if self.total_classified > 0 else 0
+                self.total_unclassified += 1
+            current_sample.classif_id = None
+            current_sample.is_classified = False
+        self.is_completed = True if self.total_unclassified == 0 else False
+
+    def reload_classification_status(self):
+        self.total_classified = sum(sample.is_classified for sample in self.points)
+        self.total_unclassified = sum(not sample.is_classified for sample in self.points)
+        self.is_completed = True if self.total_unclassified == 0 else False
 
     def get_points_from_shapefile(self):
         points = []
@@ -78,6 +103,7 @@ class Classification(object):
 
             x, y = geom.asPoint()
             points.append(ClassificationPoint(x, y, shape_id))
+        self.num_points = len(points)
         return points
 
     @wait_process()
@@ -178,8 +204,9 @@ class Classification(object):
                 point_to_restore.classif_id = status["classif_id"]
                 if point_to_restore.classif_id is not None:
                     point_to_restore.is_classified = True
-        # update plugin
-        self.update_plugin_after_reload_sampling()
+        # update the status and labels plugin with the current sampling classification
+        self.reload_classification_status()
+        AcATaMa.dockwidget.update_the_status_of_classification()
         # define if this classification was made with thematic classes
         if self.buttons_config and True in [bc["thematic_class"] is not None and bc["thematic_class"] != "" for bc in
                                             self.buttons_config.values()]:
@@ -187,6 +214,7 @@ class Classification(object):
 
     @wait_process()
     def reload_sampling_file(self):
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         # update all points from file and restore its status classification
         points_from_shapefile = self.get_points_from_shapefile()
         modified = 0
@@ -208,35 +236,13 @@ class Classification(object):
             return
         # reassign points
         self.points = points_from_shapefile
-        # update plugin
-        self.update_plugin_after_reload_sampling()
+        # update the status and labels plugin with the current sampling classification
+        self.reload_classification_status()
+        AcATaMa.dockwidget.update_the_status_of_classification()
         # notify
         iface.messageBar().pushMessage("AcATaMa", "Sampling file reloaded successfully: {} modified,"
                                                   "{} added and {} removed".format(modified, added, removed),
                                        level=Qgis.Success)
-
-    def update_plugin_after_reload_sampling(self):
-        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        # check the current_sample_idx after reload the sampling file
-        if self.current_sample_idx >= len(self.points) - 1:
-            self.current_sample_idx = len(self.points) - 1
-        # update the total classified progress bar
-        total_classified = sum(sample.is_classified for sample in self.points)
-        total_not_classified = sum(not sample.is_classified for sample in self.points)
-        AcATaMa.dockwidget.QPBar_ClassificationStatus.setMaximum(len(self.points))
-        AcATaMa.dockwidget.QPBar_ClassificationStatus.setValue(total_classified)
-        AcATaMa.dockwidget.QPBar_ClassificationStatus.setTextVisible(True)
-        # check is the classification is completed and update in dockwidget status
-        if total_not_classified == 0:
-            self.is_completed = True
-            AcATaMa.dockwidget.QLabel_ClassificationStatus.setText("Classification completed")
-            AcATaMa.dockwidget.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: green;}')
-        else:
-            self.is_completed = False
-            AcATaMa.dockwidget.QLabel_ClassificationStatus.setText("Classification not completed")
-            AcATaMa.dockwidget.QLabel_ClassificationStatus.setStyleSheet('QLabel {color: orange;}')
-        # update state of sampling file selected for accuracy assessment tab
-        AcATaMa.dockwidget.set_sampling_file_accuracy_assessment()
 
     @wait_process()
     def save_sampling_classification(self, file_out):

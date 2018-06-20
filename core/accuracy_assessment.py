@@ -143,9 +143,7 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
     def show(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         # first check
-        classification_points = [point for point in self.accuracy_assessment.classification.points if
-                                 point.is_classified]
-        if len(classification_points) == 0:
+        if self.accuracy_assessment.classification.total_classified == 0:
             iface.messageBar().pushMessage("AcATaMa",
                                            "The accuracy assessment needs at least one sample classified",
                                            level=Qgis.Warning)
