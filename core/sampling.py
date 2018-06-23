@@ -78,11 +78,11 @@ def do_simple_random_sampling(dockwidget):
         attempts_by_sampling = None
 
     # first select the target dir for save the sampling file
-    suggested_filename = os.path.join(os.path.dirname(ThematicR.file_path), "random_sampling.shp")
+    suggested_filename = os.path.join(os.path.dirname(ThematicR.file_path), "random_sampling.gpkg")
     output_file, _ = QFileDialog.getSaveFileName(dockwidget,
                                                  dockwidget.tr("Select the output file to save the sampling"),
                                                  suggested_filename,
-                                                 dockwidget.tr("Shape files (*.shp);;All files (*.*)"))
+                                                 dockwidget.tr("GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"))
     if output_file == '':
         return
 
@@ -177,11 +177,11 @@ def do_stratified_random_sampling(dockwidget):
             srs_config["std_error"].append(float(dockwidget.QTableW_StraRS.item(row, 3).text()))
 
     # first select the target dir for save the sampling file
-    suggested_filename = os.path.join(os.path.dirname(ThematicR.file_path), "stratified_random_sampling.shp")
+    suggested_filename = os.path.join(os.path.dirname(ThematicR.file_path), "stratified_random_sampling.gpkg")
     output_file, _ = QFileDialog.getSaveFileName(dockwidget,
                                                  dockwidget.tr("Select the output file to save the sampling"),
                                                  suggested_filename,
-                                                 dockwidget.tr("Shape files (*.shp);;All files (*.*)"))
+                                                 dockwidget.tr("GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"))
     if output_file == '':
         return
 
@@ -253,7 +253,9 @@ class Sampling(object):
         fields = QgsFields()
         fields.append(QgsField('id', QVariant.Int, '', 10, 0))
         thematic_CRS = self.ThematicR.qgs_layer.crs()
-        writer = QgsVectorFileWriter(self.output_file, "System", fields, QgsWkbTypes.Point, thematic_CRS, "ESRI Shapefile")  # "GPKG"
+        file_format = \
+            "GPKG" if self.output_file.endswith(".gpkg") else "ESRI Shapefile" if self.output_file.endswith(".shp") else None
+        writer = QgsVectorFileWriter(self.output_file, "System", fields, QgsWkbTypes.Point, thematic_CRS, file_format)
 
         if self.sampling_type == "simple":
             total_of_samples = self.number_of_samples

@@ -176,7 +176,7 @@ class ClassificationViewWidget(QWidget, FORM_CLASS):
         self.QCBox_browseRenderFile.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_RenderFile,
             dialog_title=self.tr("Select the file for this view"),
-            dialog_types=self.tr("Raster or vector files (*.tif *.img *.shp);;All files (*.*)"),
+            dialog_types=self.tr("Raster or vector files (*.tif *.img *.gpkg *.shp);;All files (*.*)"),
             layer_type="any"))
 
         # zoom scale factor

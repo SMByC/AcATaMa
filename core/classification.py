@@ -288,4 +288,6 @@ class Classification(object):
         vlayer.commitChanges()
         vlayer.updateExtents()
 
-        QgsVectorFileWriter.writeAsVectorFormat(vlayer, file_out, "utf-8", self.sampling_layer.crs(), "ESRI Shapefile")
+        file_format = \
+            "GPKG" if file_out.endswith(".gpkg") else "ESRI Shapefile" if file_out.endswith(".shp") else None
+        QgsVectorFileWriter.writeAsVectorFormat(vlayer, file_out, "System", self.sampling_layer.crs(), file_format)
