@@ -106,7 +106,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.QPBtn_browseAreaOfInterest.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_AreaOfInterest,
             dialog_title=self.tr(u"Select the vector file"),
-            dialog_types=self.tr(u"Shape files (*.shp);;GeoPackage (*.gpkg);;All files (*.*)"),
+            dialog_types=self.tr(u"Vector files (*.gpkg *.shp);;All files (*.*)"),
             layer_type="vector"))
         # do clip
         self.QPBtn_ClippingThematic.clicked.connect(self.clipping_thematic_raster)
@@ -193,7 +193,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.QPBtn_browseSamplingFile.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_SamplingFile,
             dialog_title=self.tr(u"Select the Sampling points file to classify"),
-            dialog_types=self.tr(u"Shape files (*.shp);;All files (*.*)"),
+            dialog_types=self.tr(u"Vector files (*.gpkg *.shp);;All files (*.*)"),
             layer_type="vector"))
         # call to reload sampling file
         self.QPBtn_reloadSamplingFile.clicked.connect(self.reload_sampling_file)
@@ -355,13 +355,15 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
                                            "Error, please select a valid sampling file", level=QgsMessageBar.WARNING)
             return
         suggested_filename = os.path.splitext(Sampling.samplings[combo_box.currentText()].ThematicR.file_path)[0] \
-                             + "_sampling.shp"
+                             + "_sampling.gpkg"
         file_out = QtGui.QFileDialog.getSaveFileName(self, self.tr(u"Save sampling file"),
                                                      suggested_filename,
-                                                     self.tr(u"Shape files (*.shp);;All files (*.*)"))
+                                                     self.tr(u"GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"))
         if file_out != '':
             layer = get_current_layer_in(combo_box)
-            QgsVectorFileWriter.writeAsVectorFormat(layer, file_out, "utf-8", layer.crs(), "ESRI Shapefile")
+            file_format = \
+                "GPKG" if file_out.endswith(".gpkg") else "ESRI Shapefile" if file_out.endswith(".shp") else None
+            QgsVectorFileWriter.writeAsVectorFormat(layer, file_out, "System", layer.crs(), file_format)
             iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=QgsMessageBar.SUCCESS)
 
     @pyqtSlot()
@@ -543,10 +545,10 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         path, filename = os.path.split(get_current_file_path_in(self.QCBox_SamplingFile))
         if self.tmp_dir in path:
             path = os.path.split(get_current_file_path_in(self.QCBox_ThematicRaster))[0]
-        suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_classified.shp"
+        suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_classified.gpkg"
         file_out = QtGui.QFileDialog.getSaveFileName(self, self.tr(u"Save sampling file with the classification"),
                                                      suggested_filename,
-                                                     self.tr(u"Shape files (*.shp);;All files (*.*)"))
+                                                     self.tr(u"GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"))
         if file_out != '':
             classification.save_sampling_classification(file_out)
             iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=QgsMessageBar.SUCCESS)
