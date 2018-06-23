@@ -219,7 +219,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
 
         # make file and save
         description = "Classified as: <font color='{color}'><b> {class_name}</b></font><br/>" \
-                      "Samp. file: <em> {samp_file}.shp</em><br/>AcATaMa Qgis-plugin".format(
+                      "Samp. file: <em> {samp_file} </em><br/>AcATaMa Qgis-plugin".format(
             color=self.classification.buttons_config[self.current_sample.classif_id][
                 "color"] if self.current_sample.classif_id else "gray",
             class_name=self.classification.buttons_config[self.current_sample.classif_id][

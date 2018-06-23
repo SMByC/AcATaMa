@@ -99,7 +99,7 @@ def load_layer_in_qgis(file_path, layer_type):
     if layer_type == "any":
         if file_path.endswith((".tif", ".TIF", ".img", ".IMG")):
             layer = QgsRasterLayer(file_path, filename)
-        if file_path.endswith((".shp", ".SHP")):
+        if file_path.endswith((".gpkg", ".GPKG", ".shp", ".SHP")):
             layer = QgsVectorLayer(file_path, filename, "ogr")
     # load
     if layer.isValid():
