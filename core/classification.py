@@ -255,7 +255,7 @@ class Classification(object):
             pr.addAttributes([QgsField("ID", QVariant.Int),
                               QgsField("Class Name", QVariant.String),
                               QgsField("Classified", QVariant.Int),
-                              QgsField("thematic_raster", QVariant.Int),
+                              QgsField("Thematic Class", QVariant.Int),
                               QgsField("Match", QVariant.String)])
         else:
             pr.addAttributes([QgsField("ID", QVariant.Int),
