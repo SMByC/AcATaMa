@@ -344,6 +344,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         unload_layer_in_qgis(get_current_file_path_in(self.QCBox_ThematicRaster))
         # load to qgis and update combobox list
         load_and_select_filepath_in(self.QCBox_ThematicRaster, clip_file, "raster")
+        self.select_thematic_raster()
         # clean tmp file
         if get_current_file_path_in(self.QCBox_AreaOfInterest).startswith("memory") and os.path.isfile(tmp_memory_file):
             os.remove(tmp_memory_file)
