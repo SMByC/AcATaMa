@@ -22,6 +22,7 @@ import os
 import tempfile
 import configparser
 import webbrowser
+from shutil import copyfile
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot
@@ -335,6 +336,10 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         clip_file = do_clipping_with_shape(
             get_current_file_path_in(self.QCBox_ThematicRaster),
             file_path_area_of_interest, file_out)
+        # copy the style
+        thematic_basename = os.path.splitext(get_current_file_path_in(self.QCBox_ThematicRaster))[0]
+        if os.path.isfile(thematic_basename + ".qml"):
+            copyfile(thematic_basename + ".qml", os.path.splitext(file_out)[0] + ".qml")
         # unload old thematic file
         unload_layer_in_qgis(get_current_file_path_in(self.QCBox_ThematicRaster))
         # load to qgis and update combobox list
