@@ -27,7 +27,7 @@ from qgis.utils import iface
 
 def valid_file_selected_in(combo_box, combobox_name=False):
     try:
-        get_layer_by_name(combo_box.currentText()).dataProvider().dataSourceUri()
+        combo_box.currentLayer().dataProvider().dataSourceUri()
         return True
     except:
         # if not empty (valid selected) and combobox name given
@@ -54,7 +54,7 @@ def get_file_path_of_layer(layer):
 
 def get_current_file_path_in(combo_box, show_message=True):
     try:
-        file_path = str(get_layer_by_name(combo_box.currentText()).dataProvider().dataSourceUri().split('|layerid')[0])
+        file_path = str(combo_box.currentLayer().dataProvider().dataSourceUri().split('|layerid')[0])
         if os.path.isfile(file_path):
             return file_path
     except:
@@ -62,16 +62,6 @@ def get_current_file_path_in(combo_box, show_message=True):
             iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file",
                                            level=Qgis.Warning)
     return None
-
-
-def get_current_layer_in(combo_box, show_message=True):
-    try:
-        return get_layer_by_name(combo_box.currentText())
-    except:
-        if show_message:
-            iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file",
-                                           level=Qgis.Warning)
-        return None
 
 
 def load_and_select_filepath_in(combo_box, file_path, layer_type="any"):

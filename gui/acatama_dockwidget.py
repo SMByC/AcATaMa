@@ -36,8 +36,7 @@ from AcATaMa.core.raster import do_clipping_with_shape, get_nodata_value
 from AcATaMa.gui.about_dialog import AboutDialog
 from AcATaMa.gui.classification_dialog import ClassificationDialog
 from AcATaMa.utils.qgis_utils import get_current_file_path_in, \
-    unload_layer_in_qgis, get_current_layer_in, valid_file_selected_in, \
-    load_and_select_filepath_in
+    unload_layer_in_qgis, valid_file_selected_in, load_and_select_filepath_in
 from AcATaMa.utils.sampling_utils import update_stratified_sampling_table, fill_stratified_sampling_table
 from AcATaMa.utils.system_utils import error_handler, block_signals_to
 
@@ -233,7 +232,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.QCBox_band_ThematicRaster.clear()
             self.nodata_ThematicRaster.setValue(-1)
             return
-        current_layer = get_current_layer_in(self.QCBox_ThematicRaster)
+        current_layer = self.QCBox_ThematicRaster.currentLayer()
         # check if thematic raster data type is integer or byte
         if current_layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
             self.QCBox_ThematicRaster.setCurrentIndex(-1)
@@ -254,7 +253,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         if not valid_file_selected_in(self.QCBox_CategRaster_SimpRS, "categorical raster"):
             self.QCBox_band_CategRaster_SimpRS.clear()
             return
-        current_layer = get_current_layer_in(self.QCBox_CategRaster_SimpRS)
+        current_layer = self.QCBox_CategRaster_SimpRS.currentLayer()
         # check if categorical raster data type is integer or byte
         if current_layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
             self.QCBox_CategRaster_SimpRS.setCurrentIndex(-1)
@@ -273,7 +272,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.QCBox_band_CategRaster_StraRS.clear()
             self.nodata_CategRaster_StraRS.setValue(-1)
             return
-        current_layer = get_current_layer_in(self.QCBox_CategRaster_StraRS)
+        current_layer = self.QCBox_CategRaster_StraRS.currentLayer()
         # check if categorical raster data type is integer or byte
         if current_layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
             self.QCBox_CategRaster_StraRS.setCurrentIndex(-1)
@@ -287,7 +286,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QCBox_band_CategRaster_StraRS.clear()
         self.QCBox_band_CategRaster_StraRS.addItems([str(x) for x in range(1, current_layer.bandCount() + 1)])
         # set the same nodata value if select the thematic raster
-        if current_layer == get_current_layer_in(self.QCBox_ThematicRaster):
+        if current_layer == self.QCBox_ThematicRaster.currentLayer():
             self.nodata_CategRaster_StraRS.setValue(self.nodata_ThematicRaster.value())
             return
         self.nodata_CategRaster_StraRS.setValue(get_nodata_value(current_layer))
@@ -357,7 +356,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                                                   suggested_filename,
                                                   self.tr("GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"))
         if file_out != '':
-            layer = get_current_layer_in(combo_box)
+            layer = combo_box.currentLayer()
             file_format = \
                 "GPKG" if file_out.endswith(".gpkg") else "ESRI Shapefile" if file_out.endswith(".shp") else None
             QgsVectorFileWriter.writeAsVectorFormat(layer, file_out, "System", layer.crs(), file_format)
@@ -381,7 +380,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     def update_the_status_of_classification(self):
-        sampling_layer = get_current_layer_in(self.QCBox_SamplingFile)
+        sampling_layer = self.QCBox_SamplingFile.currentLayer()
         if sampling_layer:
             # classification status
             if sampling_layer in Classification.instances:
@@ -431,7 +430,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     def reload_sampling_file(self):
-        sampling_layer = get_current_layer_in(self.QCBox_SamplingFile)
+        sampling_layer = self.QCBox_SamplingFile.currentLayer()
         if sampling_layer:
             # sampling file valid
             if sampling_layer in Classification.instances:
@@ -448,7 +447,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     def set_grid_setting(self, item):
-        sampling_layer = get_current_layer_in(self.QCBox_SamplingFile)
+        sampling_layer = self.QCBox_SamplingFile.currentLayer()
         if sampling_layer in Classification.instances:
             classification = Classification.instances[sampling_layer]
             if item == "column":
@@ -505,7 +504,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save settings and classification status"),
                                                   suggested_filename, self.tr("Yaml (*.yaml *.yml);;All files (*.*)"))
         if file_out != '':
-            sampling_layer = get_current_layer_in(self.QCBox_SamplingFile)
+            sampling_layer = self.QCBox_SamplingFile.currentLayer()
             if sampling_layer in Classification.instances:
                 Classification.instances[sampling_layer].save_config(file_out)
                 iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=Qgis.Success)
@@ -521,7 +520,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                                            level=Qgis.Warning)
             return
         # get instance
-        sampling_layer = get_current_layer_in(self.QCBox_SamplingFile)
+        sampling_layer = self.QCBox_SamplingFile.currentLayer()
         if sampling_layer in Classification.instances:
             classification = Classification.instances[sampling_layer]
             if not classification.is_completed:
@@ -554,7 +553,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         if ClassificationDialog.is_opened:
             self.classification_dialog.activateWindow()
             return
-        sampling_layer = get_current_layer_in(self.QCBox_SamplingFile)
+        sampling_layer = self.QCBox_SamplingFile.currentLayer()
         if not sampling_layer:
             iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid sampling file to classify",
                                            level=Qgis.Warning)
@@ -567,7 +566,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     def set_sampling_file_accuracy_assessment(self):
-        sampling_layer = get_current_layer_in(self.QCBox_SamplingFile_AA)
+        sampling_layer = self.QCBox_SamplingFile_AA.currentLayer()
         if sampling_layer:
             # sampling file valid
             if sampling_layer in Classification.instances:

@@ -27,7 +27,7 @@ from qgis.utils import iface
 from AcATaMa.core.raster import Raster
 from AcATaMa.core.classification import Classification
 from AcATaMa.gui import accuracy_assessment_results
-from AcATaMa.utils.qgis_utils import get_current_layer_in, get_current_file_path_in
+from AcATaMa.utils.qgis_utils import get_current_file_path_in
 from AcATaMa.utils.system_utils import wait_process
 
 
@@ -128,7 +128,7 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
 
         # get AccuracyAssessment or init new instance
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        sampling_layer = get_current_layer_in(AcATaMa.dockwidget.QCBox_SamplingFile_AA)
+        sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile_AA.currentLayer()
         if sampling_layer:
             # sampling file valid
             if sampling_layer in Classification.instances:

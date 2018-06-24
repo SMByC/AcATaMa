@@ -149,9 +149,9 @@ def get_current_colors_style(layer, band_number=1, nodata=None):
 
 class Raster(object):
     def __init__(self, file_selected_combo_box, band=1, nodata=None):
-        from AcATaMa.utils.qgis_utils import get_current_file_path_in, get_current_layer_in
+        from AcATaMa.utils.qgis_utils import get_current_file_path_in
         self.file_path = get_current_file_path_in(file_selected_combo_box)
-        self.qgs_layer = get_current_layer_in(file_selected_combo_box)
+        self.qgs_layer = file_selected_combo_box.currentLayer()
         self.band = band
         self.nodata = nodata if nodata != -1 else None
 

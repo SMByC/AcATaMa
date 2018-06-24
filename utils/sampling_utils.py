@@ -22,7 +22,7 @@ from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QTableWidgetItem
 from qgis.PyQt.QtGui import QColor
 
-from AcATaMa.utils.qgis_utils import get_layer_by_name, get_current_layer_in, get_current_file_path_in
+from AcATaMa.utils.qgis_utils import get_current_file_path_in
 from AcATaMa.utils.system_utils import wait_process, block_signals_to
 from AcATaMa.utils.others_utils import mask
 
@@ -151,7 +151,7 @@ def update_srs_table_content(dockwidget, srs_table):
 def fill_stratified_sampling_table(dockwidget):
     try:
         # check the current selected file
-        get_layer_by_name(dockwidget.QCBox_CategRaster_StraRS.currentText()).dataProvider()
+        dockwidget.QCBox_CategRaster_StraRS.currentLayer().dataProvider()
         # check sampling method selected
         if not dockwidget.QCBox_StraRS_Method.currentText():
             raise Exception
@@ -176,7 +176,7 @@ def fill_stratified_sampling_table(dockwidget):
         from AcATaMa.core.raster import get_current_colors_style
         # init a new stratified random sampling table
         srs_table = {"color_table": get_current_colors_style(
-            get_current_layer_in(dockwidget.QCBox_CategRaster_StraRS),
+            dockwidget.QCBox_CategRaster_StraRS.currentLayer(),
             band_number=int(dockwidget.QCBox_band_CategRaster_StraRS.currentText()),
             nodata=int(dockwidget.nodata_CategRaster_StraRS.value()))}
 
