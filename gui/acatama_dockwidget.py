@@ -335,7 +335,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # clipping
         clip_file = do_clipping_with_shape(
             get_current_file_path_in(self.QCBox_ThematicRaster),
-            file_path_area_of_interest, file_out)
+            file_path_area_of_interest, file_out,
+            get_nodata_value(self.QCBox_ThematicRaster.currentLayer()))
         # copy the style
         thematic_basename = os.path.splitext(get_current_file_path_in(self.QCBox_ThematicRaster))[0]
         if os.path.isfile(thematic_basename + ".qml"):
