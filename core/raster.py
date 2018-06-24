@@ -34,15 +34,18 @@ from AcATaMa.utils.system_utils import wait_process
 
 
 @wait_process()
-def do_clipping_with_shape(target_file, shape, out_path):
+def do_clipping_with_shape(target_file, shape, out_path, dst_nodata=None):
+    print(dst_nodata)
     if out_path.endswith((".tif", ".TIF", ".img", ".IMG")):
         out_file = out_path
     else:
         filename, ext = os.path.splitext(os.path.basename(target_file))
         out_file = os.path.join(out_path, filename + "_clip" + ext)
 
-    return_code = call('gdalwarp --config GDALWARP_IGNORE_BAD_CUTLINE YES -cutline "{}" -dstnodata 0 "{}" "{}"'
-                       .format(shape, target_file, out_file), shell=True)
+    dst_nodata = "-dstnodata {}".format(dst_nodata) if dst_nodata not in [None, -1] else ""
+
+    return_code = call('gdalwarp --config GDALWARP_IGNORE_BAD_CUTLINE YES -cutline "{}" {} "{}" "{}"'
+                       .format(shape, dst_nodata, target_file, out_file), shell=True)
     if return_code == 0:  # successfully
         return out_file
     else:
