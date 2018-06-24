@@ -31,7 +31,7 @@ from qgis.utils import iface
 
 from AcATaMa.core.classification import Classification
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, get_current_file_path_in, \
-    load_and_select_filepath_in, get_current_layer_in
+    load_and_select_filepath_in
 from AcATaMa.core.raster import get_current_colors_style
 from AcATaMa.utils.system_utils import open_file
 from AcATaMa.gui.classification_view_widget import ClassificationViewWidget
@@ -389,7 +389,7 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                 # {N: {"view_name", "layer_name", "render_file_path", "render_activated", "scale_factor"}, ...}
                 view_widgets_config[view_widget.id] = \
                     {"view_name": view_widget.QLabel_ViewName.text(),
-                     "layer_name": get_current_layer_in(view_widget.QCBox_RenderFile, show_message=False).name(),
+                     "layer_name": view_widget.QCBox_RenderFile.currentLayer().name(),
                      "render_file_path": get_current_file_path_in(view_widget.QCBox_RenderFile, show_message=False),
                      "render_activated": view_widget.OnOff_RenderView.isChecked(),
                      # "view_size": (view_widget.size().width(), view_widget.size().height()),
@@ -539,7 +539,7 @@ class ThematicRasterClasses(QtGui.QDialog, FORM_CLASS):
         header = ["Pix Val", "Color", "Select"]
         # get color table from raster
         thematic_table = {"color_table": get_current_colors_style(
-            get_current_layer_in(AcATaMa.dockwidget.QCBox_ThematicRaster),
+            AcATaMa.dockwidget.QCBox_ThematicRaster.currentLayer(),
             band_number=int(AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText()),
             nodata=int(AcATaMa.dockwidget.nodata_ThematicRaster.value()))}
 
