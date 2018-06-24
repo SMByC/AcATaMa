@@ -27,7 +27,7 @@ from qgis.gui import QgsMapCanvas, QgsMapCanvasLayer, QgsMapToolPan, QgsRubberBa
     QgsMapLayerProxyModel
 from qgis.utils import iface
 
-from AcATaMa.utils.qgis_utils import get_current_layer_in, load_and_select_filepath_in
+from AcATaMa.utils.qgis_utils import load_and_select_filepath_in
 from AcATaMa.utils.system_utils import block_signals_to
 
 
@@ -201,7 +201,7 @@ class ClassificationViewWidget(QtGui.QWidget, FORM_CLASS):
             # load to qgis and update combobox list
             load_and_select_filepath_in(combo_box, file_path, layer_type)
 
-            self.render_widget.canvas.setExtent(get_current_layer_in(combo_box).extent())
+            self.render_widget.canvas.setExtent(combo_box.currentLayer().extent())
             self.render_widget.canvas.refresh()
 
     @pyqtSlot()
