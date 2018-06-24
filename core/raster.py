@@ -35,7 +35,6 @@ from AcATaMa.utils.system_utils import wait_process
 
 @wait_process()
 def do_clipping_with_shape(target_file, shape, out_path, dst_nodata=None):
-    print(dst_nodata)
     if out_path.endswith((".tif", ".TIF", ".img", ".IMG")):
         out_file = out_path
     else:
