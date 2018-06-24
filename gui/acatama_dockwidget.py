@@ -321,14 +321,27 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         if file_out == '':
             return
 
+        # check if the shape is a memory layer, then save and used it
+        if get_current_file_path_in(self.QCBox_AreaOfInterest).startswith("memory"):
+            mem_layer = self.QCBox_AreaOfInterest.currentLayer()
+            tmp_memory_fd, tmp_memory_file = tempfile.mkstemp(prefix='memory_layer_', suffix='.gpkg')
+            QgsVectorFileWriter.writeAsVectorFormat(mem_layer, tmp_memory_file, "UTF-8", mem_layer.crs(), "GPKG")
+            os.close(tmp_memory_fd)
+            file_path_area_of_interest = tmp_memory_file
+        else:
+            file_path_area_of_interest = get_current_file_path_in(self.QCBox_AreaOfInterest)
+
         # clipping
         clip_file = do_clipping_with_shape(
             get_current_file_path_in(self.QCBox_ThematicRaster),
-            get_current_file_path_in(self.QCBox_AreaOfInterest), file_out)
+            file_path_area_of_interest, file_out)
         # unload old thematic file
         unload_layer_in_qgis(get_current_file_path_in(self.QCBox_ThematicRaster))
         # load to qgis and update combobox list
         load_and_select_filepath_in(self.QCBox_ThematicRaster, clip_file, "raster")
+        # clean tmp file
+        if get_current_file_path_in(self.QCBox_AreaOfInterest).startswith("memory") and os.path.isfile(tmp_memory_file):
+            os.remove(tmp_memory_file)
 
         iface.messageBar().pushMessage("AcATaMa", "Clipping the thematic raster with shape, completed",
                                        level=Qgis.Success)

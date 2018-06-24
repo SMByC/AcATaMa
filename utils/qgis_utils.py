@@ -55,7 +55,7 @@ def get_file_path_of_layer(layer):
 def get_current_file_path_in(combo_box, show_message=True):
     try:
         file_path = str(combo_box.currentLayer().dataProvider().dataSourceUri().split('|layerid')[0])
-        if os.path.isfile(file_path):
+        if os.path.isfile(file_path) or file_path.startswith("memory"):
             return file_path
     except:
         if show_message:
