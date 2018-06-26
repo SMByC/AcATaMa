@@ -99,7 +99,10 @@ class RenderWidget(QWidget):
     def render_layer(self, layer):
         with block_signals_to(self):
             if not layer:
-                self.canvas.refreshAllLayers()
+                self.canvas.setLayers([])
+                self.marker.remove()
+                self.canvas.clearCache()
+                self.canvas.refresh()
                 self.layer = None
                 # set status for view widget
                 self.parent().is_active = False
