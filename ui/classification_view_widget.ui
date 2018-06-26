@@ -120,6 +120,9 @@
           <pointsize>7</pointsize>
          </font>
         </property>
+        <property name="allowEmptyLayer">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
@@ -284,15 +287,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>QgsMapLayerComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qgsmaplayercombobox.h</header>
+  </customwidget>
+  <customwidget>
    <class>RenderWidget</class>
    <extends>QWidget</extends>
    <header>AcATaMa.gui.classification_view_widget</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QgsMapLayerComboBox</class>
-   <extends>QComboBox</extends>
-   <header>qgis.gui</header>
   </customwidget>
  </customwidgets>
  <resources/>
