@@ -177,7 +177,8 @@ class ClassificationViewWidget(QtGui.QWidget, FORM_CLASS):
         # ignore and not show the sampling layer
         self.QCBox_RenderFile.setExceptedLayerList([self.sampling_layer])
         # handle connect layer selection with render canvas
-        self.QCBox_RenderFile.layerChanged.connect(self.render_widget.render_layer)
+        self.QCBox_RenderFile.currentIndexChanged.connect(lambda: self.render_widget.render_layer(
+            self.QCBox_RenderFile.currentLayer()))
         # call to browse the render file
         self.QCBox_browseRenderFile.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_RenderFile,
