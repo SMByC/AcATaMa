@@ -93,7 +93,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             dialog_types=self.tr("Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
         # select and check the thematic raster
-        self.QCBox_ThematicRaster.layerChanged.connect(self.select_thematic_raster)
+        self.QCBox_ThematicRaster.currentIndexChanged.connect(self.select_thematic_raster)
 
         # ######### shape area of interest ######### #
         self.widget_AreaOfInterest.setHidden(True)
@@ -131,7 +131,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             dialog_types=self.tr("Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
         # select and check the categorical raster
-        self.QCBox_CategRaster_SimpRS.layerChanged.connect(self.select_categorical_raster_SimpRS)
+        self.QCBox_CategRaster_SimpRS.currentIndexChanged.connect(self.select_categorical_raster_SimpRS)
         # generate sampling options
         self.widget_generate_SimpRS.generate_sampling_widget_options.setHidden(True)
         # save config
@@ -158,14 +158,14 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             dialog_types=self.tr("Raster files (*.tif *.img);;All files (*.*)"),
             layer_type="raster"))
         # select and check the categorical raster
-        self.QCBox_CategRaster_StraRS.layerChanged.connect(self.select_categorical_raster_StraRS)
+        self.QCBox_CategRaster_StraRS.currentIndexChanged.connect(self.select_categorical_raster_StraRS)
         self.QCBox_band_CategRaster_StraRS.currentIndexChanged.connect(self.reset_StraRS_method)
         self.nodata_CategRaster_StraRS.valueChanged.connect(self.reset_StraRS_method)
         # init variable for save tables content
         self.srs_tables = {}
         # fill table of categorical raster
         self.widget_TotalExpectedSE.setHidden(True)
-        self.QCBox_CategRaster_StraRS.layerChanged.connect(lambda: fill_stratified_sampling_table(self))
+        self.QCBox_CategRaster_StraRS.currentIndexChanged.connect(lambda: fill_stratified_sampling_table(self))
         self.QCBox_StraRS_Method.currentIndexChanged.connect(lambda: fill_stratified_sampling_table(self))
         # for each item changed in table, save and update it
         self.TotalExpectedSE.valueChanged.connect(lambda: update_stratified_sampling_table(self, "TotalExpectedSE"))
@@ -186,7 +186,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QCBox_SamplingFile.setCurrentIndex(-1)
         self.QCBox_SamplingFile.setFilters(QgsMapLayerProxyModel.PointLayer)
         # show the classification file settings in plugin when it is selected
-        self.QCBox_SamplingFile.layerChanged.connect(self.update_the_status_of_classification)
+        self.QCBox_SamplingFile.currentIndexChanged.connect(self.update_the_status_of_classification)
         # call to browse the sampling file
         self.QPBtn_browseSamplingFile.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_SamplingFile,
@@ -215,7 +215,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QCBox_SamplingFile_AA.setCurrentIndex(-1)
         self.QCBox_SamplingFile_AA.setFilters(QgsMapLayerProxyModel.PointLayer)
         # set and show the classification file status in AA
-        self.QCBox_SamplingFile_AA.layerChanged.connect(self.set_sampling_file_accuracy_assessment)
+        self.QCBox_SamplingFile_AA.currentIndexChanged.connect(self.set_sampling_file_accuracy_assessment)
         # compute the AA and open the result dialog
         self.QPBtn_ComputeViewAccurasyAssessment.clicked.connect(self.open_accuracy_assessment_results)
 
