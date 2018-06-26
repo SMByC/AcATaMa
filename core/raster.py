@@ -53,8 +53,8 @@ def do_clipping_with_shape(target_layer, shape_layer, out_path, dst_nodata=None)
     else:
         shape_file = get_file_path_of_layer(shape_layer)
     # clipping in shape
-    return_code = call('gdalwarp --config GDALWARP_IGNORE_BAD_CUTLINE YES -cutline "{}" {} "{}" "{}"'
-                       .format(shape_file, dst_nodata, target_file, tmp_file), shell=True)
+    return_code = call('gdalwarp -multi -wo NUM_THREADS=ALL_CPUS --config GDALWARP_IGNORE_BAD_CUTLINE YES'
+                       ' -cutline "{}" {} "{}" "{}"'.format(shape_file, dst_nodata, target_file, tmp_file), shell=True)
     # create convert coordinates
     crsSrc = QgsCoordinateReferenceSystem(shape_layer.crs())
     crsDest = QgsCoordinateReferenceSystem(target_layer.crs())
