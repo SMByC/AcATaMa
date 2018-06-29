@@ -123,6 +123,9 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                     # view_widget.resize(*view_config["view_size"])
                     view_widget.QLabel_ViewName.setText(view_config["view_name"])
                     view_widget.scaleFactor.setValue(view_config["scale_factor"])
+                    # restore render activated
+                    view_widget.render_widget.toggle_render(view_config["render_activated"])
+                    view_widget.OnOff_RenderView.setChecked(view_config["render_activated"])
 
         # set classification buttons
         self.classification_btns_config = ClassificationButtonsConfig(self.classification.buttons_config)

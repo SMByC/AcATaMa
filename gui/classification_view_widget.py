@@ -22,6 +22,7 @@
 import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import QSettings, pyqtSlot, QTimer
+from PyQt4.QtGui import QColor
 from qgis.core import QgsGeometry, QgsPoint, QGis
 from qgis.gui import QgsMapCanvas, QgsMapCanvasLayer, QgsMapToolPan, QgsRubberBand, QgsVertexMarker, \
     QgsMapLayerProxyModel
@@ -151,6 +152,35 @@ class RenderWidget(QtGui.QWidget):
         self.canvas.refresh()
 
     def toggle_render(self, enabled):
+        self.canvas.refreshAllLayers()
+        if enabled:
+            self.parent().QLabel_ViewID.setEnabled(True)
+            self.parent().QLabel_ViewName.setEnabled(True)
+            self.parent().QCBox_RenderFile.setEnabled(True)
+            self.parent().QCBox_browseRenderFile.setEnabled(True)
+            self.parent().render_widget.setEnabled(True)
+            self.parent().scaleFactorLabel.setEnabled(True)
+            self.parent().scaleFactor.setEnabled(True)
+            self.parent().layerProperties.setEnabled(True)
+
+            self.canvas.setCanvasColor(QColor(255, 255, 255))
+
+        else:
+            self.parent().QLabel_ViewID.setDisabled(True)
+            self.parent().QLabel_ViewName.setDisabled(True)
+            self.parent().QCBox_RenderFile.setDisabled(True)
+            self.parent().QCBox_browseRenderFile.setDisabled(True)
+            self.parent().render_widget.setDisabled(True)
+            self.parent().scaleFactorLabel.setDisabled(True)
+            self.parent().scaleFactor.setDisabled(True)
+            self.parent().layerProperties.setDisabled(True)
+
+            self.canvas.setCanvasColor(QColor(245, 245, 245))
+
+        for layer in iface.mapCanvas().layers():
+            if iface.mapCanvas().isCachingEnabled():
+                layer.setCacheImage(None)
+            layer.triggerRepaint()
         self.canvas.setRenderFlag(enabled)
 
 
