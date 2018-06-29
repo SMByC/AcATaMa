@@ -73,16 +73,6 @@
         </property>
        </widget>
       </item>
-      <item>
-       <widget class="QCheckBox" name="OnOff_RenderView">
-        <property name="toolTip">
-         <string>Enable/disable render this view</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
@@ -191,7 +181,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="scaleFactorLabel">
         <property name="maximumSize">
          <size>
           <width>16777215</width>

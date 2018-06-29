@@ -91,12 +91,12 @@ class RenderWidget(QWidget):
         # action pan
         self.toolPan = QgsMapToolPan(self.canvas)
         self.canvas.setMapTool(self.toolPan)
-        # toggled render view widget
-        self.parent().OnOff_RenderView.toggled.connect(self.toggle_render)
 
         gridLayout.addWidget(self.canvas)
 
     def render_layer(self, layer):
+        from AcATaMa.gui.classification_dialog import ClassificationDialog
+
         with block_signals_to(self):
             if not layer:
                 self.canvas.setLayers([])
@@ -104,24 +104,42 @@ class RenderWidget(QWidget):
                 self.canvas.clearCache()
                 self.canvas.refresh()
                 self.layer = None
+                # deactivate some parts of this view
+                self.parent().QLabel_ViewID.setDisabled(True)
+                self.parent().QLabel_ViewName.setDisabled(True)
+                self.parent().render_widget.setDisabled(True)
+                self.parent().scaleFactorLabel.setDisabled(True)
+                self.parent().scaleFactor.setDisabled(True)
+                self.parent().layerProperties.setDisabled(True)
+                self.canvas.setCanvasColor(QColor(245, 245, 245))
                 # set status for view widget
                 self.parent().is_active = False
                 return
+            # activate some parts of this view
+            self.parent().QLabel_ViewID.setEnabled(True)
+            self.parent().QLabel_ViewName.setEnabled(True)
+            self.parent().render_widget.setEnabled(True)
+            self.parent().scaleFactorLabel.setEnabled(True)
+            self.parent().scaleFactor.setEnabled(True)
+            self.parent().layerProperties.setEnabled(True)
+            self.canvas.setCanvasColor(QColor(255, 255, 255))
+
             # set the CRS of the canvas view based on sampling layer
             sampling_crs = self.parent().sampling_layer.crs()
             self.canvas.setDestinationCrs(sampling_crs)
             # set the sampling over the layer to view
             self.canvas.setLayers([self.parent().sampling_layer, layer])
             # set init extent from other view if any is activated else set layer extent
-            from AcATaMa.gui.classification_dialog import ClassificationDialog
+
             others_view = [(view_widget.render_widget.canvas.extent(), view_widget.current_scale_factor) for view_widget
-                           in ClassificationDialog.view_widgets if view_widget.is_active]
+                           in ClassificationDialog.view_widgets if not view_widget.render_widget.canvas.extent().isEmpty()]
             if others_view:
                 extent, scale = others_view[0]
                 extent.scale(1 / scale)
-                self.canvas.setExtent(extent)
+                self.set_extents_and_scalefactor(extent)
             else:
-                self.canvas.setExtent(layer.extent())
+                ClassificationDialog.current_sample.fit_to(
+                    self.parent(), ClassificationDialog.instance.radiusFitToSample.value())
 
             self.canvas.refresh()
             self.layer = layer
@@ -147,9 +165,6 @@ class RenderWidget(QWidget):
         self.parent().activateWindow()
         self.canvas.refresh()
 
-    def toggle_render(self, enabled):
-        self.canvas.setRenderFlag(enabled)
-
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -165,6 +180,8 @@ class ClassificationViewWidget(QWidget, FORM_CLASS):
         self.current_scale_factor = 1.0
         self.qgs_main_canvas = iface.mapCanvas()
         self.setupUi(self)
+        # init as unactivated render widget for new instances
+        self.render_widget.render_layer(None)
 
     def setup_view_widget(self, sampling_layer):
         self.sampling_layer = sampling_layer
@@ -199,8 +216,7 @@ class ClassificationViewWidget(QWidget, FORM_CLASS):
             # load to qgis and update combobox list
             load_and_select_filepath_in(combo_box, file_path, layer_type)
 
-            self.render_widget.canvas.setExtent(combo_box.currentLayer().extent())
-            self.render_widget.canvas.refresh()
+            self.render_widget.render_layer(combo_box.currentLayer())
 
     @pyqtSlot()
     def extent_changed(self):
@@ -216,11 +232,10 @@ class ClassificationViewWidget(QWidget, FORM_CLASS):
 
     @pyqtSlot()
     def scalefactor_changed(self):
-        if self.is_active:
-            # adjust view with the original extent (scale factor=1)
-            # and with the new scale factor
-            view_extent = self.render_widget.canvas.extent()
-            view_extent.scale(1 / self.current_scale_factor)
-            self.render_widget.set_extents_and_scalefactor(view_extent)
-            # save the new scale factor
-            self.current_scale_factor = self.scaleFactor.value()
+        # adjust view with the original extent (scale factor=1)
+        # and with the new scale factor
+        view_extent = self.render_widget.canvas.extent()
+        view_extent.scale(1 / self.current_scale_factor)
+        self.render_widget.set_extents_and_scalefactor(view_extent)
+        # save the new scale factor
+        self.current_scale_factor = self.scaleFactor.value()
