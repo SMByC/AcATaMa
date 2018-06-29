@@ -32,7 +32,7 @@ from AcATaMa.core.classification import Classification
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, get_current_file_path_in, \
     load_and_select_filepath_in
 from AcATaMa.core.raster import get_current_colors_style
-from AcATaMa.utils.system_utils import open_file
+from AcATaMa.utils.system_utils import open_file, block_signals_to
 from AcATaMa.gui.classification_view_widget import ClassificationViewWidget
 
 # plugin path
@@ -45,11 +45,13 @@ class ClassificationDialog(QDialog, FORM_CLASS):
     is_opened = False
     view_widgets = []
     current_sample = None
+    instance = None
 
     def __init__(self, sampling_layer, columns, rows):
         QDialog.__init__(self)
         self.sampling_layer = sampling_layer
         self.setupUi(self)
+        ClassificationDialog.instance = self
 
         # get classification or init new instance
         if sampling_layer in Classification.instances:
@@ -66,63 +68,6 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         # resize the classification dialog
         if self.classification.dialog_size:
             self.resize(*self.classification.dialog_size)
-
-        # create dynamic size of the view render widgets windows
-        # inside the grid with columns x rows divide by splitters
-        h_splitters = []
-        view_widgets = []
-        for row in range(self.classification.grid_rows):
-            splitter = QSplitter(Qt.Horizontal)
-            for column in range(self.classification.grid_columns):
-                new_view_widget = ClassificationViewWidget()
-                splitter.addWidget(new_view_widget)
-                h_splitters.append(splitter)
-                view_widgets.append(new_view_widget)
-        v_splitter = QSplitter(Qt.Vertical)
-        for splitter in h_splitters:
-            v_splitter.addWidget(splitter)
-        # add to classification dialog
-        self.widget_view_windows.layout().addWidget(v_splitter)
-        # save instances
-        ClassificationDialog.view_widgets = view_widgets
-        # setup view widget
-        [view_widget.setup_view_widget(sampling_layer) for view_widget in ClassificationDialog.view_widgets]
-        for idx, view_widget in enumerate(ClassificationDialog.view_widgets): view_widget.id = idx
-        # set the label names for each view
-        for num_view, view_widget in enumerate(ClassificationDialog.view_widgets):
-            view_widget.QLabel_ViewID.setText("View {}:".format(num_view + 1))
-        # restore view widgets status
-        for config_id, view_config in self.classification.view_widgets_config.items():
-            for view_widget in ClassificationDialog.view_widgets:
-                if config_id == view_widget.id:
-                    view_widget = ClassificationDialog.view_widgets[config_id]
-                    # load file for this view widget if exists
-                    if view_config["render_file_path"] and os.path.isfile(view_config["render_file_path"]):
-                        # if render file in view has a real path
-                        layer_name = os.path.splitext(os.path.basename(view_config["render_file_path"]))[0]
-                    else:  # external layer, e.g. google maps
-                        layer_name = view_config["layer_name"]
-                    file_index = view_widget.QCBox_RenderFile.findText(layer_name, Qt.MatchFixedString)
-
-                    if file_index != -1:
-                        # select layer if exists in Qgis
-                        view_widget.QCBox_RenderFile.setCurrentIndex(file_index)
-                    elif view_config["render_file_path"] and os.path.isfile(view_config["render_file_path"]):
-                        # load file and select in view if this exists and not load in Qgis
-                        load_and_select_filepath_in(view_widget.QCBox_RenderFile, view_config["render_file_path"])
-                    else:
-                        iface.messageBar().pushMessage("AcATaMa",
-                                                       "Impossible load '{}' in View No. {}".format(layer_name,
-                                                                                                    view_widget.id + 1),
-                                                       level=Qgis.Warning)
-                    # restore render activated
-                    view_widget.OnOff_RenderView.setChecked(view_config["render_activated"])
-                    # active render layer in canvas
-                    view_widget.render_widget.render_layer(view_widget.QCBox_RenderFile.currentLayer())
-                    # TODO: restore size by view widget
-                    # view_widget.resize(*view_config["view_size"])
-                    view_widget.QLabel_ViewName.setText(view_config["view_name"])
-                    view_widget.scaleFactor.setValue(view_config["scale_factor"])
 
         # set classification buttons
         self.classification_btns_config = ClassificationButtonsConfig(self.classification.buttons_config)
@@ -166,6 +111,62 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         self.current_sample_idx = self.classification.current_sample_idx
         self.current_sample = None
         self.set_current_sample()
+
+        # create dynamic size of the view render widgets windows
+        # inside the grid with columns x rows divide by splitters
+        h_splitters = []
+        view_widgets = []
+        for row in range(self.classification.grid_rows):
+            splitter = QSplitter(Qt.Horizontal)
+            for column in range(self.classification.grid_columns):
+                new_view_widget = ClassificationViewWidget()
+                splitter.addWidget(new_view_widget)
+                h_splitters.append(splitter)
+                view_widgets.append(new_view_widget)
+        v_splitter = QSplitter(Qt.Vertical)
+        for splitter in h_splitters:
+            v_splitter.addWidget(splitter)
+        # add to classification dialog
+        self.widget_view_windows.layout().addWidget(v_splitter)
+        # save instances
+        ClassificationDialog.view_widgets = view_widgets
+        # setup view widget
+        [view_widget.setup_view_widget(sampling_layer) for view_widget in ClassificationDialog.view_widgets]
+        for idx, view_widget in enumerate(ClassificationDialog.view_widgets): view_widget.id = idx
+        # set the label names for each view
+        for num_view, view_widget in enumerate(ClassificationDialog.view_widgets):
+            view_widget.QLabel_ViewID.setText("View {}:".format(num_view + 1))
+        # restore view widgets status
+        for config_id, view_config in self.classification.view_widgets_config.items():
+            for view_widget in ClassificationDialog.view_widgets:
+                if config_id == view_widget.id:
+                    view_widget = ClassificationDialog.view_widgets[config_id]
+                    # load file for this view widget if exists
+                    if view_config["render_file_path"] and os.path.isfile(view_config["render_file_path"]):
+                        # if render file in view has a real path
+                        layer_name = os.path.splitext(os.path.basename(view_config["render_file_path"]))[0]
+                    else:  # external layer, e.g. google maps
+                        layer_name = view_config["layer_name"]
+                    file_index = view_widget.QCBox_RenderFile.findText(layer_name, Qt.MatchFixedString)
+
+                    if file_index != -1:
+                        # select layer if exists in Qgis
+                        with block_signals_to(view_widget.QCBox_RenderFile):
+                            view_widget.QCBox_RenderFile.setCurrentIndex(file_index)
+                    elif view_config["render_file_path"] and os.path.isfile(view_config["render_file_path"]):
+                        # load file and select in view if this exists and not load in Qgis
+                        load_and_select_filepath_in(view_widget.QCBox_RenderFile, view_config["render_file_path"])
+                    else:
+                        iface.messageBar().pushMessage("AcATaMa",
+                                                       "Impossible load '{}' in View No. {}".format(layer_name,
+                                                                                                    view_widget.id + 1),
+                                                       level=Qgis.Warning)
+                    # TODO: restore size by view widget
+                    # view_widget.resize(*view_config["view_size"])
+                    view_widget.QLabel_ViewName.setText(view_config["view_name"])
+                    view_widget.scaleFactor.setValue(view_config["scale_factor"])
+                    # active render layer in canvas
+                    view_widget.render_widget.render_layer(view_widget.QCBox_RenderFile.currentLayer())
 
     def show(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
@@ -385,15 +386,13 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         # save view widgets status
         view_widgets_config = {}
         for view_widget in ClassificationDialog.view_widgets:
-            if view_widget.is_active:
-                # {N: {"view_name", "layer_name", "render_file_path", "render_activated", "scale_factor"}, ...}
-                view_widgets_config[view_widget.id] = \
-                    {"view_name": view_widget.QLabel_ViewName.text(),
-                     "layer_name": view_widget.QCBox_RenderFile.currentLayer().name(),
-                     "render_file_path": get_current_file_path_in(view_widget.QCBox_RenderFile, show_message=False),
-                     "render_activated": view_widget.OnOff_RenderView.isChecked(),
-                     # "view_size": (view_widget.size().width(), view_widget.size().height()),
-                     "scale_factor": view_widget.current_scale_factor}
+            # {N: {"view_name", "layer_name", "render_file_path", "scale_factor"}, ...}
+            view_widgets_config[view_widget.id] = \
+                {"view_name": view_widget.QLabel_ViewName.text(),
+                 "layer_name": view_widget.QCBox_RenderFile.currentLayer().name() if view_widget.QCBox_RenderFile.currentLayer() else None,
+                 "render_file_path": get_current_file_path_in(view_widget.QCBox_RenderFile, show_message=False),
+                 # "view_size": (view_widget.size().width(), view_widget.size().height()),
+                 "scale_factor": view_widget.current_scale_factor}
 
         self.classification.view_widgets_config = view_widgets_config
         self.classification.dialog_size = (self.size().width(), self.size().height())
