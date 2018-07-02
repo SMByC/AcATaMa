@@ -69,11 +69,6 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         if self.classification.dialog_size:
             self.resize(*self.classification.dialog_size)
 
-        # set classification buttons
-        self.classification_btns_config = ClassificationButtonsConfig(self.classification.buttons_config)
-        self.create_classification_buttons(buttons_config=self.classification.buttons_config)
-        self.QPBtn_SetClassification.clicked.connect(self.open_set_classification_dialog)
-        self.QPBtn_unclassifySampleButton.clicked.connect(self.unclassify_sample)
         # disable enter action
         self.QPBtn_SetClassification.setAutoDefault(False)
         self.QPBtn_unclassifySampleButton.setAutoDefault(False)
@@ -111,6 +106,11 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         self.current_sample_idx = self.classification.current_sample_idx
         self.current_sample = None
         self.set_current_sample()
+        # set classification buttons
+        self.classification_btns_config = ClassificationButtonsConfig(self.classification.buttons_config)
+        self.create_classification_buttons(buttons_config=self.classification.buttons_config)
+        self.QPBtn_SetClassification.clicked.connect(self.open_set_classification_dialog)
+        self.QPBtn_unclassifySampleButton.clicked.connect(self.unclassify_sample)
 
         # create dynamic size of the view render widgets windows
         # inside the grid with columns x rows divide by splitters
@@ -158,11 +158,11 @@ class ClassificationDialog(QDialog, FORM_CLASS):
                         load_and_select_filepath_in(view_widget.QCBox_RenderFile, view_config["render_file_path"])
                     elif view_config["render_file_path"] and not os.path.isfile(view_config["render_file_path"]):
                         self.MsgBar.pushMessage(
-                            "Impossible to load the layer in the view {}: no such file {}"
-                                .format(view_widget.id + 1, view_config["render_file_path"]), level=Qgis.Warning, duration=0)
+                            "Impossible to load the layer '{}' in the view {}: no such file {}"
+                                .format(layer_name, view_widget.id + 1, view_config["render_file_path"]), level=Qgis.Warning, duration=0)
                     else:
                         self.MsgBar.pushMessage(
-                            "Impossible to load the '{}' in the view {} (for network layers use save/load a Qgis project)"
+                            "Impossible to load the layer '{}' in the view {} (for network layers use save/load a Qgis project)"
                                 .format(layer_name, view_widget.id + 1), level=Qgis.Warning, duration=0)
                     # TODO: restore size by view widget
                     # view_widget.resize(*view_config["view_size"])
@@ -184,7 +184,9 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         super(ClassificationDialog, self).show()
 
     def set_current_sample(self):
-        """Set the current sample"""
+        # clear all message bar
+        self.MsgBar.clearWidgets()
+        # set the current sample
         self.current_sample = self.classification.points[self.current_sample_idx]
         ClassificationDialog.current_sample = self.current_sample
         self.classification.current_sample_idx = self.current_sample_idx
@@ -264,10 +266,19 @@ class ClassificationDialog(QDialog, FORM_CLASS):
     def display_sample_status(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         if self.current_sample.is_classified:
-            class_name = self.classification.buttons_config[self.current_sample.classif_id]["name"]
-            self.statusCurrentSample.setText(class_name)
-            self.statusCurrentSample.setStyleSheet(
-                'QLabel {color: ' + self.classification.buttons_config[self.current_sample.classif_id]["color"] + ';}')
+            if self.current_sample.classif_id in self.classification.buttons_config:
+                class_name = self.classification.buttons_config[self.current_sample.classif_id]["name"]
+                self.statusCurrentSample.setText(class_name)
+                self.statusCurrentSample.setStyleSheet(
+                    'QLabel {color: ' + self.classification.buttons_config[self.current_sample.classif_id]["color"] + ';}')
+                # clear all message bar
+                self.MsgBar.clearWidgets()
+            else:
+                self.statusCurrentSample.setText("Invalid button {}".format(self.current_sample.classif_id))
+                self.statusCurrentSample.setStyleSheet('QLabel {color: red;}')
+                self.MsgBar.pushMessage(
+                    "This sample was classified with invalid/deleted item, fix the classification buttons "
+                    "or reclassify the sample", level=Qgis.Critical, duration=0)
         else:
             self.statusCurrentSample.setText("not classified")
             self.statusCurrentSample.setStyleSheet('QLabel {color: gray;}')
@@ -374,6 +385,8 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         # reload sampling file status in accuracy assessment
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         AcATaMa.dockwidget.set_sampling_file_accuracy_assessment()
+        # reload the current sample status
+        self.display_sample_status()
 
     def closeEvent(self, event):
         self.closing()
