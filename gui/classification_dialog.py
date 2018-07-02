@@ -158,7 +158,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
                         load_and_select_filepath_in(view_widget.QCBox_RenderFile, view_config["render_file_path"])
                     elif view_config["render_file_path"] and not os.path.isfile(view_config["render_file_path"]):
                         self.MsgBar.pushMessage(
-                            "Impossible to load the image in the view {}: no such file {}"
+                            "Impossible to load the layer in the view {}: no such file {}"
                                 .format(view_widget.id + 1, view_config["render_file_path"]), level=Qgis.Warning, duration=0)
                     else:
                         self.MsgBar.pushMessage(
