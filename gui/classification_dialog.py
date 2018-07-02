@@ -157,10 +157,9 @@ class ClassificationDialog(QDialog, FORM_CLASS):
                         # load file and select in view if this exists and not load in Qgis
                         load_and_select_filepath_in(view_widget.QCBox_RenderFile, view_config["render_file_path"])
                     else:
-                        iface.messageBar().pushMessage("AcATaMa",
-                                                       "Impossible load '{}' in View No. {}".format(layer_name,
-                                                                                                    view_widget.id + 1),
-                                                       level=Qgis.Warning)
+                        self.MsgBar.pushMessage(
+                            "Impossible load the '{}' in View {} (for network layers use save/load a Qgis project)"
+                                .format(layer_name, view_widget.id + 1), level=Qgis.Warning, duration=0)
                     # TODO: restore size by view widget
                     # view_widget.resize(*view_config["view_size"])
                     view_widget.QLabel_ViewName.setText(view_config["view_name"])
