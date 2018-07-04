@@ -20,8 +20,11 @@
 """
 import os
 
+from PyQt5.QtWidgets import QDialog, QDialogButtonBox
+from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
-from qgis.core import QgsProject, QgsRasterLayer, QgsVectorLayer, Qgis
+from qgis.gui import QgsRendererPropertiesDialog, QgsRendererRasterPropertiesWidget
+from qgis.core import QgsProject, QgsRasterLayer, QgsVectorLayer, Qgis, QgsStyle, QgsMapLayer
 from qgis.utils import iface
 
 
@@ -107,3 +110,33 @@ def unload_layer_in_qgis(layer_path):
             if layer_path == layer_loaded.dataProvider().dataSourceUri().split('|layerid')[0]:
                 QgsProject.instance().removeMapLayer(layer_loaded)
 
+
+# plugin path
+plugin_folder = os.path.dirname(os.path.dirname(__file__))
+FORM_CLASS, _ = uic.loadUiType(os.path.join(
+    plugin_folder, 'ui', 'classification_style_editor.ui'))
+
+
+class StyleEditorDialog(QDialog, FORM_CLASS):
+    def __init__(self, layer, canvas, parent=None):
+        QDialog.__init__(self)
+        self.setupUi(self)
+        self.layer = layer
+
+        self.setWindowTitle("{} - style editor".format(self.layer.name()))
+
+        if self.layer.type() == QgsMapLayer.VectorLayer:
+            self.StyleEditorWidget = QgsRendererPropertiesDialog(self.layer, QgsStyle(), True, parent)
+
+        if self.layer.type() == QgsMapLayer.RasterLayer:
+            self.StyleEditorWidget = QgsRendererRasterPropertiesWidget(self.layer, canvas, parent)
+
+        self.scrollArea.setWidget(self.StyleEditorWidget)
+
+        self.DialogButtons.button(QDialogButtonBox.Cancel).clicked.connect(self.reject)
+        self.DialogButtons.button(QDialogButtonBox.Ok).clicked.connect(self.accept)
+        self.DialogButtons.button(QDialogButtonBox.Apply).clicked.connect(self.apply)
+
+    def apply(self):
+        self.StyleEditorWidget.apply()
+        self.layer.triggerRepaint()

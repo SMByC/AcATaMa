@@ -27,7 +27,7 @@ from qgis.core import QgsGeometry, QgsMapLayerProxyModel, QgsWkbTypes, QgsPoint
 from qgis.gui import QgsMapCanvas, QgsMapToolPan, QgsRubberBand, QgsVertexMarker
 from qgis.utils import iface
 
-from AcATaMa.utils.qgis_utils import load_and_select_filepath_in
+from AcATaMa.utils.qgis_utils import load_and_select_filepath_in, StyleEditorDialog
 from AcATaMa.utils.system_utils import block_signals_to
 
 
@@ -110,7 +110,7 @@ class RenderWidget(QWidget):
                 self.parent().render_widget.setDisabled(True)
                 self.parent().scaleFactorLabel.setDisabled(True)
                 self.parent().scaleFactor.setDisabled(True)
-                self.parent().layerProperties.setDisabled(True)
+                self.parent().layerStyleEditor.setDisabled(True)
                 self.canvas.setCanvasColor(QColor(245, 245, 245))
                 # set status for view widget
                 self.parent().is_active = False
@@ -121,7 +121,7 @@ class RenderWidget(QWidget):
             self.parent().render_widget.setEnabled(True)
             self.parent().scaleFactorLabel.setEnabled(True)
             self.parent().scaleFactor.setEnabled(True)
-            self.parent().layerProperties.setEnabled(True)
+            self.parent().layerStyleEditor.setEnabled(True)
             self.canvas.setCanvasColor(QColor(255, 255, 255))
 
             # set the CRS of the canvas view based on sampling layer
@@ -156,14 +156,10 @@ class RenderWidget(QWidget):
             if self.marker.marker:
                 self.marker.marker.updatePosition()
 
-    def layer_properties(self):
-        if not self.layer:
-            return
-        # call properties dialog
-        iface.showLayerProperties(self.layer)
-
-        self.parent().activateWindow()
-        self.canvas.refresh()
+    def layer_style_editor(self):
+        style_editor_dlg = StyleEditorDialog(self.layer, self.canvas, self.parent())
+        if style_editor_dlg.exec_():
+            style_editor_dlg.apply()
 
 
 # plugin path
@@ -203,7 +199,7 @@ class ClassificationViewWidget(QWidget, FORM_CLASS):
         # zoom scale factor
         self.scaleFactor.valueChanged.connect(self.scalefactor_changed)
         # edit layer properties
-        self.layerProperties.clicked.connect(self.render_widget.layer_properties)
+        self.layerStyleEditor.clicked.connect(self.render_widget.layer_style_editor)
         # action for synchronize all view extent
         self.render_widget.canvas.extentsChanged.connect(self.extent_changed)
         # disable enter action
