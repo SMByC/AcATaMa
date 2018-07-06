@@ -111,9 +111,13 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                     elif view_config["render_file_path"] and os.path.isfile(view_config["render_file_path"]):
                         # load file and select in view if this exists and not load in Qgis
                         load_and_select_filepath_in(view_widget.QCBox_RenderFile, view_config["render_file_path"])
+                    elif view_config["render_file_path"] and not os.path.isfile(view_config["render_file_path"]):
+                        iface.messageBar().pushMessage(
+                            "Impossible to load the image in the view {}: no such file {}"
+                                .format(view_widget.id + 1, view_config["render_file_path"]), level=QgsMessageBar.WARNING)
                     else:
                         iface.messageBar().pushMessage(
-                            "AcATaMa", "Impossible load '{}' in View No. {}"
+                            "AcATaMa", "Impossible to load '{}' in the View No. {} (for network layers use save/load a Qgis project)"
                                 .format(layer_name, view_widget.id + 1), level=QgsMessageBar.WARNING)
                     # restore render activated
                     view_widget.OnOff_RenderView.setChecked(view_config["render_activated"])
