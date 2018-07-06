@@ -119,8 +119,6 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                         iface.messageBar().pushMessage(
                             "AcATaMa", "Impossible to load the layer '{}' in the View No. {} (for network layers use save/load a Qgis project)"
                                 .format(layer_name, view_widget.id + 1), level=QgsMessageBar.WARNING)
-                    # restore render activated
-                    view_widget.OnOff_RenderView.setChecked(view_config["render_activated"])
                     # active render layer in canvas
                     view_widget.render_widget.render_layer(view_widget.QCBox_RenderFile.currentLayer())
                     # TODO: restore size by view widget
@@ -128,8 +126,12 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                     view_widget.QLabel_ViewName.setText(view_config["view_name"])
                     view_widget.scaleFactor.setValue(view_config["scale_factor"])
                     # restore render activated
-                    view_widget.render_widget.toggle_render(view_config["render_activated"])
-                    view_widget.OnOff_RenderView.setChecked(view_config["render_activated"])
+                    if "render_activated" in view_config:
+                        view_widget.render_widget.toggle_render(view_config["render_activated"])
+                        view_widget.OnOff_RenderView.setChecked(view_config["render_activated"])
+                    else:
+                        view_widget.render_widget.toggle_render(True)
+                        view_widget.OnOff_RenderView.setChecked(True)
 
         # disable enter action
         self.QPBtn_SetClassification.setAutoDefault(False)
