@@ -113,11 +113,11 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                         load_and_select_filepath_in(view_widget.QCBox_RenderFile, view_config["render_file_path"])
                     elif view_config["render_file_path"] and not os.path.isfile(view_config["render_file_path"]):
                         iface.messageBar().pushMessage(
-                            "Impossible to load the image in the view {}: no such file {}"
-                                .format(view_widget.id + 1, view_config["render_file_path"]), level=QgsMessageBar.WARNING)
+                            "Impossible to load the layer '{}' in the view {}: no such file {}"
+                                .format(layer_name, view_widget.id + 1, view_config["render_file_path"]), level=QgsMessageBar.WARNING)
                     else:
                         iface.messageBar().pushMessage(
-                            "AcATaMa", "Impossible to load '{}' in the View No. {} (for network layers use save/load a Qgis project)"
+                            "AcATaMa", "Impossible to load the layer '{}' in the View No. {} (for network layers use save/load a Qgis project)"
                                 .format(layer_name, view_widget.id + 1), level=QgsMessageBar.WARNING)
                     # restore render activated
                     view_widget.OnOff_RenderView.setChecked(view_config["render_activated"])
@@ -131,11 +131,6 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
                     view_widget.render_widget.toggle_render(view_config["render_activated"])
                     view_widget.OnOff_RenderView.setChecked(view_config["render_activated"])
 
-        # set classification buttons
-        self.classification_btns_config = ClassificationButtonsConfig(self.classification.buttons_config)
-        self.create_classification_buttons(buttons_config=self.classification.buttons_config)
-        self.QPBtn_SetClassification.clicked.connect(self.open_set_classification_dialog)
-        self.QPBtn_unclassifySampleButton.clicked.connect(self.unclassify_sample)
         # disable enter action
         self.QPBtn_SetClassification.setAutoDefault(False)
         self.QPBtn_unclassifySampleButton.setAutoDefault(False)
@@ -173,6 +168,11 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.current_sample_idx = self.classification.current_sample_idx
         self.current_sample = None
         self.set_current_sample()
+        # set classification buttons
+        self.classification_btns_config = ClassificationButtonsConfig(self.classification.buttons_config)
+        self.create_classification_buttons(buttons_config=self.classification.buttons_config)
+        self.QPBtn_SetClassification.clicked.connect(self.open_set_classification_dialog)
+        self.QPBtn_unclassifySampleButton.clicked.connect(self.unclassify_sample)
 
     def show(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
@@ -267,10 +267,17 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
     def display_sample_status(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         if self.current_sample.is_classified:
-            class_name = self.classification.buttons_config[self.current_sample.classif_id]["name"]
-            self.statusCurrentSample.setText(class_name)
-            self.statusCurrentSample.setStyleSheet(
-                'QLabel {color: ' + self.classification.buttons_config[self.current_sample.classif_id]["color"] + ';}')
+            if self.current_sample.classif_id in self.classification.buttons_config:
+                class_name = self.classification.buttons_config[self.current_sample.classif_id]["name"]
+                self.statusCurrentSample.setText(class_name)
+                self.statusCurrentSample.setStyleSheet(
+                    'QLabel {color: ' + self.classification.buttons_config[self.current_sample.classif_id]["color"] + ';}')
+            else:
+                self.statusCurrentSample.setText("Invalid button {}".format(self.current_sample.classif_id))
+                self.statusCurrentSample.setStyleSheet('QLabel {color: red;}')
+                iface.messageBar().pushMessage(
+                    "This sample was classified with invalid/deleted item, fix the classification buttons "
+                    "or reclassify the sample", level=QgsMessageBar.CRITICAL)
         else:
             self.statusCurrentSample.setText("not classified")
             self.statusCurrentSample.setStyleSheet('QLabel {color: gray;}')
@@ -377,6 +384,8 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         # reload sampling file status in accuracy assessment
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         AcATaMa.dockwidget.set_sampling_file_accuracy_assessment()
+        # reload the current sample status
+        self.display_sample_status()
 
     def closeEvent(self, event):
         self.closing()
