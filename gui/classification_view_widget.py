@@ -137,7 +137,7 @@ class RenderWidget(QWidget):
                 extent, scale = others_view[0]
                 extent.scale(1 / scale)
                 self.set_extents_and_scalefactor(extent)
-            else:
+            elif ClassificationDialog.current_sample:
                 ClassificationDialog.current_sample.fit_to(
                     self.parent(), ClassificationDialog.instance.radiusFitToSample.value())
 
