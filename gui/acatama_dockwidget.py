@@ -346,7 +346,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             combo_box.clear()
             layers = QgsProject.instance().mapLayers().values()
             for layer in layers:
-                if layer.name() in Sampling.samplings.keys():
+                if layer.name() in list(Sampling.samplings.keys()):
                     combo_box.addItem(layer.name())
         except:
             pass
