@@ -122,9 +122,9 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
         self.DialogButtons.button(QDialogButtonBox.Save).setText("Export to CSV")
         self.DialogButtons.button(QDialogButtonBox.Save).clicked.connect(self.export_to_csv)
 
-        self.reloadButton.clicked.connect(self.reload)
         self.SettingsGroupBox.setVisible(False)
-        self.z_score.valueChanged.connect(self.reload)
+        self.reloadButton.clicked.connect(lambda: self.reload(msg_bar=True))
+        self.z_score.valueChanged.connect(lambda: self.reload(msg_bar=False))
 
         # get AccuracyAssessment or init new instance
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
@@ -159,9 +159,10 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
         self.ResultsHTML.zoomOut()
 
         AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText("Accuracy assessment is opened, click to show")
+        AcATaMa.dockwidget.QGBox_SamplingSelection_AA.setDisabled(True)
         super(AccuracyAssessmentDialog, self).show()
 
-    def reload(self):
+    def reload(self, msg_bar=True):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         # set adjust variables from dialog
         self.accuracy_assessment.z_score = self.z_score.value()
@@ -170,6 +171,10 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
         # set content results in HTML
         self.ResultsHTML.setHtml(accuracy_assessment_results.get_html(self.accuracy_assessment))
         AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText("Accuracy assessment is opened, click to show")
+        if msg_bar:
+            self.MsgBar.pushMessage(
+                "Reload successfully from classification status of \"{}\"".format(
+                    AcATaMa.dockwidget.QCBox_SamplingFile_AA.currentText()), level=Qgis.Success)
 
     def export_to_csv(self):
         # get file path to suggest to save but not in tmp directory
@@ -188,11 +193,11 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
                 csv_decimal_separator = self.CSV_decimal_sep.text()
                 accuracy_assessment_results.export_to_csv(self.accuracy_assessment, file_out,
                                                           csv_separator, csv_decimal_separator)
-                iface.messageBar().pushMessage("AcATaMa", "File saved successfully",
-                                               level=Qgis.Success)
-            except:
-                iface.messageBar().pushMessage("AcATaMa", "Failed export results in csv file",
-                                               level=Qgis.Warning)
+                self.MsgBar.pushMessage(
+                    "File saved successfully \"{}\"".format(os.path.basename(file_out)), level=Qgis.Success)
+            except Exception as err:
+                self.MsgBar.pushMessage(
+                    "Failed saving the csv file: {}".format(err), level=Qgis.Critical, duration=0)
 
     def closeEvent(self, event):
         self.closing()
@@ -205,6 +210,7 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         AccuracyAssessmentDialog.is_opened = False
         AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText("Open the accuracy assessment results")
+        AcATaMa.dockwidget.QGBox_SamplingSelection_AA.setEnabled(True)
         self.reject(is_ok_to_close=True)
 
     def reject(self, is_ok_to_close=False):
