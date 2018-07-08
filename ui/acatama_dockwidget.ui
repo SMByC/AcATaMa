@@ -1691,7 +1691,7 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_11">
             <item>
-             <widget class="QGroupBox" name="groupBox_2">
+             <widget class="QGroupBox" name="QGBox_SamplingSelection_AA">
               <property name="title">
                <string>Sampling File Classified</string>
               </property>
