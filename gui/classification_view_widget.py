@@ -88,6 +88,7 @@ class RenderWidget(QWidget):
         self.canvas.setStyleSheet("border: 0px;")
         settings = QSettings()
         self.canvas.enableAntiAliasing(settings.value("/qgis/enable_anti_aliasing", False, type=bool))
+        self.setMinimumSize(15, 15)
         # action pan
         self.toolPan = QgsMapToolPan(self.canvas)
         self.canvas.setMapTool(self.toolPan)
