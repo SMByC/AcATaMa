@@ -36,13 +36,18 @@ class Point(object):
 
 
 class RandomPoint(Point):
-    # init random
+    """Class for generate, check and validate the random points
+    """
     random.seed()
 
-    def __init__(self, xMin, yMax, xMax, yMin):
-        # generate the random x and y between boundaries
-        rx = xMin + (xMax - xMin) * random.random()
-        ry = yMin + (yMax - yMin) * random.random()
+    def __init__(self, extent):
+        """Generate the random x and y between boundaries
+
+        Args:
+            extent (QgsRectangle): extent boundaries for generate random points inside it
+        """
+        rx = extent.xMinimum() + (extent.xMaximum() - extent.xMinimum()) * random.random()
+        ry = extent.yMinimum() + (extent.yMaximum() - extent.yMinimum()) * random.random()
         self.set_qgis_pnt(rx, ry)
 
     def in_valid_data(self, ThematicR):
@@ -58,6 +63,9 @@ class RandomPoint(Point):
 
     def in_extent(self, boundaries):
         """Check if the point is inside boundaries
+
+        Args:
+            boundaries (QgsGeometry)
         """
         if self.QgsGeom.within(boundaries):
             return True

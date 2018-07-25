@@ -87,18 +87,6 @@ def do_clipping_with_shape(target_layer, shape_layer, out_path, dst_nodata=None)
                                        level=QgsMessageBar.WARNING)
 
 
-def get_extent(img_path):
-    data = gdal.Open(img_path, gdal.GA_ReadOnly)
-    geoTransform = data.GetGeoTransform()
-    minx = geoTransform[0]
-    maxy = geoTransform[3]
-    maxx = minx + geoTransform[1] * data.RasterXSize
-    miny = maxy + geoTransform[5] * data.RasterYSize
-    del data
-
-    return [round(minx), round(maxy), round(maxx), round(miny)]
-
-
 def get_nodata_value(layer_file):
     extent = layer_file.extent()
     rows = layer_file.rasterUnitsPerPixelY()
@@ -193,7 +181,7 @@ class Raster():
         self.nodata = nodata if nodata != -1 else None
 
     def extent(self):
-        return get_extent(self.file_path)
+        return self.qgs_layer.extent()
 
     def get_pixel_value_from_xy(self, x, y):
         return self.qgs_layer.dataProvider().identify(QgsPoint(x, y), QgsRaster.IdentifyFormatValue).results()[self.band]
