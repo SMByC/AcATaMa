@@ -24,7 +24,7 @@ import configparser
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.QtWidgets import QFileDialog
-from qgis.core import QgsGeometry, QgsField, QgsFields, QgsRectangle, QgsSpatialIndex, \
+from qgis.core import QgsGeometry, QgsField, QgsFields, QgsSpatialIndex, \
     QgsFeature, Qgis, QgsVectorFileWriter, QgsWkbTypes
 
 from AcATaMa.core.point import RandomPoint
@@ -247,8 +247,7 @@ class Sampling(object):
         self.neighbor_aggregation = neighbor_aggregation
         progress_bar.setValue(0)  # init progress bar
 
-        xMin, yMax, xMax, yMin = self.ThematicR.extent()
-        self.ThematicR_boundaries = QgsGeometry().fromRect(QgsRectangle(xMin, yMin, xMax, yMax))
+        self.ThematicR_boundaries = QgsGeometry().fromRect(self.ThematicR.extent())
 
         fields = QgsFields()
         fields.append(QgsField('id', QVariant.Int, '', 10, 0))
@@ -273,7 +272,7 @@ class Sampling(object):
 
         while nIterations < maxIterations and nPoints < total_of_samples:
 
-            random_sampling_point = RandomPoint(xMin, yMax, xMax, yMin)
+            random_sampling_point = RandomPoint(self.ThematicR.extent())
 
             # checks to the sampling point, else discard and continue
             if not self.check_sampling_point(random_sampling_point):
