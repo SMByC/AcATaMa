@@ -5,7 +5,7 @@ about=The AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps.
     It was designed mainly for: to assess the accuracy of thematic maps, to
     estimate areas of the map classes, sampling design/classification and others.
 
-version=18.7.6
+version=18.7.25.q2
 qgisMinimumVersion=2.14
 qgisMaximumVersion=2.99
 
@@ -17,15 +17,8 @@ tracker=https://bitbucket.org/smbyc/qgisplugin-acatama/issues
 repository=https://bitbucket.org/smbyc/qgisplugin-acatama
 
 changelog=
-    18.7.6: (Qgis2)
-    - Some cleaned and fixes the render views in classification dialog
-    - Fix classification status message in several cases
-    - Implemented QgsMessageBar in classification dialog and check the load of layers
-    - Use by default the GeoPackage file format, shapefile is optional (http://switchfromshapefile.org)
-    - Use the iface from utils, adjust some parent of qtdialog and some pep8 fixes
-    - Some fixes in clipping in an area of interest
-    - Trim the boundaries while clipping the area of interest
-    - UI adjustment and others bugfixes
+    18.7.25.q2: (Qgis2)
+    - Important bugfix getting the boundaries of the layer in sampling generation
 
     Previous versions:
     - All commits in: https://bitbucket.org/smbyc/qgisplugin-acatama/commits/all
