@@ -263,10 +263,11 @@ class Classification:
                               QgsField("Classif ID", QVariant.Int)])
         vlayer.updateFields()  # tell the vector layer to fetch changes from the provider
 
-        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        ThematicR = Raster(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicRaster,
-                           band=int(AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText()),
-                           nodata=int(AcATaMa.dockwidget.nodata_ThematicRaster.value()))
+        if self.with_thematic_classes:
+            from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+            ThematicR = Raster(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicRaster,
+                               band=int(AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText()),
+                               nodata=int(AcATaMa.dockwidget.nodata_ThematicRaster.value()))
 
         points_ordered = sorted(self.points, key=lambda p: p.shape_id)
         for point in points_ordered:
