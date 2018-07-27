@@ -390,26 +390,11 @@
                    <pointsize>8</pointsize>
                   </font>
                  </property>
-                 <property name="toolTip">
-                  <string>Units for the radius to fit for the current sample</string>
-                 </property>
                  <property name="frame">
                   <bool>false</bool>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
-                 </property>
-                 <property name="decimals">
-                  <number>0</number>
-                 </property>
-                 <property name="minimum">
-                  <double>1.000000000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>9000.000000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>1.000000000000000</double>
                  </property>
                 </widget>
                </item>
@@ -820,7 +805,7 @@
               <x>0</x>
               <y>0</y>
               <width>254</width>
-              <height>441</height>
+              <height>431</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_5">

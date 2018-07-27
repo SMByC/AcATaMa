@@ -50,8 +50,10 @@ class Classification(object):
         # grid config
         self.grid_columns = 2
         self.grid_rows = 2
-        # radius to sample
-        self.fit_to_sample = 120
+        # default radius to fit the sample based on the units of the sampling file selected
+        enum_unit = self.sampling_layer.crs().mapUnits()
+        fit_to_sample_list = {0: 120, 1: 0.120, 2: 393, 3: 0.065, 4: 132, 5: 0.075, 6: 0.0011, 7: 12000, 8: 120000}
+        self.fit_to_sample = fit_to_sample_list[enum_unit]
         # save views widget config
         # {N: {"view_name", "layer_name", "render_file_path", "render_activated", "scale_factor"}, ...}
         self.view_widgets_config = {}
