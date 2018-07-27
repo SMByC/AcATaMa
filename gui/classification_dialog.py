@@ -25,8 +25,7 @@ from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QSplitter, QColorDialog, QDialog, QDialogButtonBox, QPushButton
 from qgis.PyQt.QtGui import QColor, QIcon
-from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, Qgis, QgsProject
-from qgis.utils import iface
+from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, Qgis, QgsProject, QgsUnitTypes
 
 from AcATaMa.core.classification import Classification
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, get_current_file_path_in, \
@@ -81,7 +80,17 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         # open in Google Earth
         self.QPBtn_OpenInGE.clicked.connect(self.open_current_point_in_google_engine)
 
-        # set radius fit to sample
+        # set properties and default value for the fit to sample spinBox based on sampling file
+        enum_unit = self.sampling_layer.crs().mapUnits()
+        str_unit = QgsUnitTypes.toString(enum_unit)
+        abbr_unit = QgsUnitTypes.toAbbreviatedString(enum_unit)
+        self.radiusFitToSample.setSuffix(" {}".format(abbr_unit))
+        self.radiusFitToSample.setToolTip(
+            "Units in {} for set the zoom radius to the current sample\n"
+            "(units based on sampling file selected)".format(str_unit))
+        self.radiusFitToSample.setRange(0, 360 if enum_unit == 6 else 10e6)
+        self.radiusFitToSample.setDecimals(4 if enum_unit in [1, 3, 5, 6] else 1)
+        self.radiusFitToSample.setSingleStep(0.0001 if enum_unit in [1, 3, 5, 6] else 1)
         self.radiusFitToSample.setValue(self.classification.fit_to_sample)
 
         # set total samples

@@ -216,7 +216,7 @@
             <item>
              <widget class="QGroupBox" name="QGBox_AreaOfInterest">
               <property name="title">
-               <string>Working alone &amp;in an area of interest (optional)</string>
+               <string>Wor&amp;king alone in an area of interest (optional)</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -539,14 +539,7 @@
                           </widget>
                          </item>
                          <item row="1" column="1">
-                          <widget class="QSpinBox" name="minDistance_SimpRS">
-                           <property name="suffix">
-                            <string> meters</string>
-                           </property>
-                           <property name="maximum">
-                            <number>99999</number>
-                           </property>
-                          </widget>
+                          <widget class="QDoubleSpinBox" name="minDistance_SimpRS"/>
                          </item>
                         </layout>
                        </widget>
@@ -1072,14 +1065,7 @@
                        </widget>
                       </item>
                       <item row="1" column="1">
-                       <widget class="QSpinBox" name="minDistance_StraRS">
-                        <property name="suffix">
-                         <string> meters</string>
-                        </property>
-                        <property name="maximum">
-                         <number>99999</number>
-                        </property>
-                       </widget>
+                       <widget class="QDoubleSpinBox" name="minDistance_StraRS"/>
                       </item>
                      </layout>
                     </widget>
