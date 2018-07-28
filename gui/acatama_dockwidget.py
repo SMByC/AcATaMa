@@ -262,26 +262,34 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # set nodata value of thematic raster in nodata field
         self.nodata_ThematicRaster.setValue(get_nodata_value(current_layer))
         # set/update the units in minimum distance items in sampling tab
-        enum_unit = current_layer.crs().mapUnits()
-        str_unit = QgsUnitTypes.toString(enum_unit)
-        abbr_unit = QgsUnitTypes.toAbbreviatedString(enum_unit)
+        units_type = current_layer.crs().mapUnits()
+        str_unit = QgsUnitTypes.toString(units_type)
+        abbr_unit = QgsUnitTypes.toAbbreviatedString(units_type)
         # Set the properties of the QdoubleSpinBox based on the QgsUnitTypes of the thematic raster
         # https://qgis.org/api/classQgsUnitTypes.html
         # SimpRS
         self.minDistance_SimpRS.setSuffix(" {}".format(abbr_unit))
         self.minDistance_SimpRS.setToolTip(
             "Minimum distance in {} (units based on thematic raster selected)".format(str_unit))
-        self.minDistance_SimpRS.setRange(0, 360 if enum_unit == 6 else 10e6)
-        self.minDistance_SimpRS.setDecimals(3 if enum_unit in [1, 3, 5, 6] else 1)
-        self.minDistance_SimpRS.setSingleStep(0.005 if enum_unit in [1, 3, 5, 6] else 1)
+        self.minDistance_SimpRS.setRange(0, 360 if units_type == QgsUnitTypes.DistanceDegrees else 10e6)
+        self.minDistance_SimpRS.setDecimals(
+            4 if units_type in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
+                                QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
+        self.minDistance_SimpRS.setSingleStep(
+            0.0001 if units_type in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
+                                     QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
         self.minDistance_SimpRS.setValue(0)
         # StraRS
         self.minDistance_StraRS.setSuffix(" {}".format(abbr_unit))
         self.minDistance_StraRS.setToolTip(
             "Minimum distance in {} (units based on thematic raster selected)".format(str_unit))
-        self.minDistance_StraRS.setRange(0, 360 if enum_unit == 6 else 10e6)
-        self.minDistance_StraRS.setDecimals(3 if enum_unit in [1, 3, 5, 6] else 1)
-        self.minDistance_StraRS.setSingleStep(0.005 if enum_unit in [1, 3, 5, 6] else 1)
+        self.minDistance_StraRS.setRange(0, 360 if units_type == QgsUnitTypes.DistanceDegrees else 10e6)
+        self.minDistance_StraRS.setDecimals(
+            4 if units_type in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
+                                QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
+        self.minDistance_StraRS.setSingleStep(
+            0.0001 if units_type in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
+                                     QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
         self.minDistance_StraRS.setValue(0)
         # enable sampling tab
         self.scrollAreaWidgetContents_S.setEnabled(True)
