@@ -23,7 +23,7 @@ from random import shuffle
 
 from PyQt4.QtCore import QVariant
 from qgis.PyQt.QtCore import NULL
-from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsVectorFileWriter
+from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsVectorFileWriter, QGis
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
@@ -51,8 +51,11 @@ class Classification:
         # grid config
         self.grid_columns = 2
         self.grid_rows = 2
-        # radius to sample
-        self.fit_to_sample = 120
+        # default radius to fit the sample based on the units of the sampling file selected
+        enum_unit = self.sampling_layer.crs().mapUnits()
+        fit_to_sample_list = {QGis.Meters: 120, QGis.Kilometers: 0.120, QGis.Feet: 393, QGis.NauticalMiles: 0.065,
+                              QGis.Yards: 132, QGis.Miles: 0.075, QGis.Degrees: 0.0011}
+        self.fit_to_sample = fit_to_sample_list[enum_unit]
         # save views widget config
         # {N: {"view_name", "layer_name", "render_file_path", "render_activated", "scale_factor"}, ...}
         self.view_widgets_config = {}

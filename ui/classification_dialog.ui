@@ -316,9 +316,6 @@
                 <pointsize>8</pointsize>
                </font>
               </property>
-              <property name="toolTip">
-               <string>Units for the radius to fit for the current sample</string>
-              </property>
               <property name="frame">
                <bool>false</bool>
               </property>

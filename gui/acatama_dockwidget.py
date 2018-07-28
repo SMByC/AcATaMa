@@ -28,7 +28,7 @@ from shutil import copyfile
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSignal, pyqtSlot
 from PyQt4.QtGui import QMessageBox
-from qgis.core import QgsMapLayerRegistry, QgsVectorFileWriter
+from qgis.core import QgsMapLayerRegistry, QgsVectorFileWriter, QgsUnitTypes, QGis
 from qgis.gui import QgsMessageBar, QgsMapLayerProxyModel
 from qgis.utils import iface
 
@@ -183,6 +183,9 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # generate sampling
         self.widget_generate_StraRS.QPBtn_GenerateSampling.clicked.connect(lambda: do_stratified_random_sampling(self))
 
+        # disable sampling tab at start
+        self.scrollAreaWidgetContents_S.setDisabled(True)
+
         # ######### Classification sampling tab ######### #
         # set properties to QgsMapLayerComboBox
         self.QCBox_SamplingFile.setCurrentIndex(-1)
@@ -230,17 +233,28 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     def select_thematic_raster(self):
-        # first check
-        if not valid_file_selected_in(self.QCBox_ThematicRaster, "thematic raster"):
+        def clear_and_unset_the_thematic_raster():
+            self.QCBox_ThematicRaster.setCurrentIndex(-1)
             self.QCBox_band_ThematicRaster.clear()
             self.nodata_ThematicRaster.setValue(-1)
+            # SimpRS
+            self.minDistance_SimpRS.setSuffix("")
+            self.minDistance_SimpRS.setToolTip("")
+            self.minDistance_SimpRS.setValue(0)
+            # StraRS
+            self.minDistance_StraRS.setSuffix("")
+            self.minDistance_StraRS.setToolTip("")
+            self.minDistance_StraRS.setValue(0)
+            # disable sampling tab
+            self.scrollAreaWidgetContents_S.setDisabled(True)
+        # first check
+        if not valid_file_selected_in(self.QCBox_ThematicRaster, "thematic raster"):
+            clear_and_unset_the_thematic_raster()
             return
         current_layer = self.QCBox_ThematicRaster.currentLayer()
         # check if thematic raster data type is integer or byte
         if current_layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
-            self.QCBox_ThematicRaster.setCurrentIndex(-1)
-            self.QCBox_band_ThematicRaster.clear()
-            self.nodata_ThematicRaster.setValue(-1)
+            clear_and_unset_the_thematic_raster()
             iface.messageBar().pushMessage("AcATaMa", "Error, thematic raster must be byte or integer as data type.",
                                            level=QgsMessageBar.WARNING)
             return
@@ -249,6 +263,29 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.QCBox_band_ThematicRaster.addItems([str(x) for x in range(1, current_layer.bandCount() + 1)])
         # set nodata value of thematic raster in nodata field
         self.nodata_ThematicRaster.setValue(get_nodata_value(current_layer))
+        # set/update the units in minimum distance items in sampling tab
+        enum_unit = current_layer.crs().mapUnits()
+        str_unit = QgsUnitTypes.toString(enum_unit)
+        # Set the properties of the QdoubleSpinBox based on the QgsUnitTypes of the thematic raster
+        # https://qgis.org/api/classQgsUnitTypes.html
+        # SimpRS
+        self.minDistance_SimpRS.setSuffix(" {}".format(str_unit))
+        self.minDistance_SimpRS.setToolTip(
+            "Minimum distance in {} (units based on thematic raster selected)".format(str_unit))
+        self.minDistance_SimpRS.setRange(0, 360 if enum_unit == QGis.Degrees else 10e6)
+        self.minDistance_SimpRS.setDecimals(4 if enum_unit in [QGis.Kilometers, QGis.NauticalMiles, QGis.Miles, QGis.Degrees] else 1)
+        self.minDistance_SimpRS.setSingleStep(0.0001 if enum_unit in [QGis.Kilometers, QGis.NauticalMiles, QGis.Miles, QGis.Degrees] else 1)
+        self.minDistance_SimpRS.setValue(0)
+        # StraRS
+        self.minDistance_StraRS.setSuffix(" {}".format(str_unit))
+        self.minDistance_StraRS.setToolTip(
+            "Minimum distance in {} (units based on thematic raster selected)".format(str_unit))
+        self.minDistance_StraRS.setRange(0, 360 if enum_unit == QGis.Degrees else 10e6)
+        self.minDistance_StraRS.setDecimals(4 if enum_unit in [QGis.Kilometers, QGis.NauticalMiles, QGis.Miles, QGis.Degrees] else 1)
+        self.minDistance_StraRS.setSingleStep(0.0001 if enum_unit in [QGis.Kilometers, QGis.NauticalMiles, QGis.Miles, QGis.Degrees] else 1)
+        self.minDistance_StraRS.setValue(0)
+        # enable sampling tab
+        self.scrollAreaWidgetContents_S.setEnabled(True)
 
     @pyqtSlot()
     def select_categorical_raster_SimpRS(self):
