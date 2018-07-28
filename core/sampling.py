@@ -45,7 +45,7 @@ def do_simple_random_sampling(dockwidget):
             return
     # get and define some variables
     number_of_samples = int(dockwidget.numberOfSamples_SimpRS.value())
-    min_distance = int(dockwidget.minDistance_SimpRS.value())
+    min_distance = float(dockwidget.minDistance_SimpRS.value())
 
     ThematicR = Raster(file_selected_combo_box=dockwidget.QCBox_ThematicRaster,
                        band=int(dockwidget.QCBox_band_ThematicRaster.currentText()),
@@ -121,7 +121,7 @@ def do_stratified_random_sampling(dockwidget):
     if not valid_file_selected_in(dockwidget.QCBox_CategRaster_StraRS, "categorical raster"):
         return
     # get and define some variables
-    min_distance = int(dockwidget.minDistance_StraRS.value())
+    min_distance = float(dockwidget.minDistance_StraRS.value())
     ThematicR = Raster(file_selected_combo_box=dockwidget.QCBox_ThematicRaster,
                        band=int(dockwidget.QCBox_band_ThematicRaster.currentText()),
                        nodata=int(dockwidget.nodata_ThematicRaster.value()))
