@@ -23,7 +23,7 @@ from random import shuffle
 
 from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.QtCore import NULL
-from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsVectorFileWriter, Qgis
+from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsVectorFileWriter, Qgis, QgsUnitTypes
 from qgis.utils import iface
 
 from AcATaMa.core.point import ClassificationPoint
@@ -51,9 +51,13 @@ class Classification(object):
         self.grid_columns = 2
         self.grid_rows = 2
         # default radius to fit the sample based on the units of the sampling file selected
-        enum_unit = self.sampling_layer.crs().mapUnits()
-        fit_to_sample_list = {0: 120, 1: 0.120, 2: 393, 3: 0.065, 4: 132, 5: 0.075, 6: 0.0011, 7: 12000, 8: 120000}
-        self.fit_to_sample = fit_to_sample_list[enum_unit]
+        units_type = self.sampling_layer.crs().mapUnits()
+        fit_to_sample_list = {QgsUnitTypes.DistanceMeters: 120, QgsUnitTypes.DistanceKilometers: 0.120,
+                              QgsUnitTypes.DistanceFeet: 393, QgsUnitTypes.DistanceNauticalMiles: 0.065,
+                              QgsUnitTypes.DistanceYards: 132, QgsUnitTypes.DistanceMiles: 0.075,
+                              QgsUnitTypes.DistanceDegrees: 0.0011, QgsUnitTypes.DistanceCentimeters: 12000,
+                              QgsUnitTypes.DistanceMillimeters: 120000}
+        self.fit_to_sample = fit_to_sample_list[units_type]
         # save views widget config
         # {N: {"view_name", "layer_name", "render_file_path", "render_activated", "scale_factor"}, ...}
         self.view_widgets_config = {}
