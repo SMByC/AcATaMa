@@ -146,15 +146,15 @@ class ClassificationDialog(QtGui.QDialog, FORM_CLASS):
         self.QPBtn_OpenInGE.clicked.connect(self.open_current_point_in_google_engine)
 
         # set properties and default value for the fit to sample spinBox based on sampling file
-        enum_unit = self.sampling_layer.crs().mapUnits()
-        str_unit = QgsUnitTypes.toString(enum_unit)
+        units_type = self.sampling_layer.crs().mapUnits()
+        str_unit = QgsUnitTypes.toString(units_type)
         self.radiusFitToSample.setSuffix(" {}".format(str_unit))
         self.radiusFitToSample.setToolTip(
             "Units in {} for set the zoom radius to the current sample\n"
             "(units based on sampling file selected)".format(str_unit))
-        self.radiusFitToSample.setRange(0, 360 if enum_unit == QGis.Degrees else 10e6)
-        self.radiusFitToSample.setDecimals(4 if enum_unit in [QGis.Kilometers, QGis.NauticalMiles, QGis.Miles, QGis.Degrees] else 1)
-        self.radiusFitToSample.setSingleStep(0.0001 if enum_unit in [QGis.Kilometers, QGis.NauticalMiles, QGis.Miles, QGis.Degrees] else 1)
+        self.radiusFitToSample.setRange(0, 360 if units_type == QGis.Degrees else 10e6)
+        self.radiusFitToSample.setDecimals(4 if units_type in [QGis.Kilometers, QGis.NauticalMiles, QGis.Miles, QGis.Degrees] else 1)
+        self.radiusFitToSample.setSingleStep(0.0001 if units_type in [QGis.Kilometers, QGis.NauticalMiles, QGis.Miles, QGis.Degrees] else 1)
         self.radiusFitToSample.setValue(self.classification.fit_to_sample)
 
         # set total samples
