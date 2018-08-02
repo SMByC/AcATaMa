@@ -51,13 +51,13 @@ class Classification(object):
         self.grid_columns = 2
         self.grid_rows = 2
         # default radius to fit the sample based on the units of the sampling file selected
-        units_type = self.sampling_layer.crs().mapUnits()
+        layer_dist_unit = self.sampling_layer.crs().mapUnits()
         fit_to_sample_list = {QgsUnitTypes.DistanceMeters: 120, QgsUnitTypes.DistanceKilometers: 0.120,
                               QgsUnitTypes.DistanceFeet: 393, QgsUnitTypes.DistanceNauticalMiles: 0.065,
                               QgsUnitTypes.DistanceYards: 132, QgsUnitTypes.DistanceMiles: 0.075,
                               QgsUnitTypes.DistanceDegrees: 0.0011, QgsUnitTypes.DistanceCentimeters: 12000,
                               QgsUnitTypes.DistanceMillimeters: 120000}
-        self.fit_to_sample = fit_to_sample_list[units_type]
+        self.fit_to_sample = fit_to_sample_list[layer_dist_unit]
         # save views widget config
         # {N: {"view_name", "layer_name", "render_file_path", "render_activated", "scale_factor"}, ...}
         self.view_widgets_config = {}
