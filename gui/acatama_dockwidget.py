@@ -264,25 +264,25 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         # set nodata value of thematic raster in nodata field
         self.nodata_ThematicRaster.setValue(get_nodata_value(current_layer))
         # set/update the units in minimum distance items in sampling tab
-        units_type = current_layer.crs().mapUnits()
-        str_unit = QgsUnitTypes.toString(units_type)
+        layer_dist_unit = current_layer.crs().mapUnits()
+        str_unit = QgsUnitTypes.toString(layer_dist_unit)
         # Set the properties of the QdoubleSpinBox based on the QgsUnitTypes of the thematic raster
         # https://qgis.org/api/classQgsUnitTypes.html
         # SimpRS
         self.minDistance_SimpRS.setSuffix(" {}".format(str_unit))
         self.minDistance_SimpRS.setToolTip(
             "Minimum distance in {} (units based on thematic raster selected)".format(str_unit))
-        self.minDistance_SimpRS.setRange(0, 360 if units_type == QGis.Degrees else 10e6)
-        self.minDistance_SimpRS.setDecimals(4 if units_type in [QGis.Kilometers, QGis.NauticalMiles, QGis.Miles, QGis.Degrees] else 1)
-        self.minDistance_SimpRS.setSingleStep(0.0001 if units_type in [QGis.Kilometers, QGis.NauticalMiles, QGis.Miles, QGis.Degrees] else 1)
+        self.minDistance_SimpRS.setRange(0, 360 if layer_dist_unit == QGis.Degrees else 10e6)
+        self.minDistance_SimpRS.setDecimals(4 if layer_dist_unit in [QGis.Kilometers, QGis.NauticalMiles, QGis.Miles, QGis.Degrees] else 1)
+        self.minDistance_SimpRS.setSingleStep(0.0001 if layer_dist_unit in [QGis.Kilometers, QGis.NauticalMiles, QGis.Miles, QGis.Degrees] else 1)
         self.minDistance_SimpRS.setValue(0)
         # StraRS
         self.minDistance_StraRS.setSuffix(" {}".format(str_unit))
         self.minDistance_StraRS.setToolTip(
             "Minimum distance in {} (units based on thematic raster selected)".format(str_unit))
-        self.minDistance_StraRS.setRange(0, 360 if units_type == QGis.Degrees else 10e6)
-        self.minDistance_StraRS.setDecimals(4 if units_type in [QGis.Kilometers, QGis.NauticalMiles, QGis.Miles, QGis.Degrees] else 1)
-        self.minDistance_StraRS.setSingleStep(0.0001 if units_type in [QGis.Kilometers, QGis.NauticalMiles, QGis.Miles, QGis.Degrees] else 1)
+        self.minDistance_StraRS.setRange(0, 360 if layer_dist_unit == QGis.Degrees else 10e6)
+        self.minDistance_StraRS.setDecimals(4 if layer_dist_unit in [QGis.Kilometers, QGis.NauticalMiles, QGis.Miles, QGis.Degrees] else 1)
+        self.minDistance_StraRS.setSingleStep(0.0001 if layer_dist_unit in [QGis.Kilometers, QGis.NauticalMiles, QGis.Miles, QGis.Degrees] else 1)
         self.minDistance_StraRS.setValue(0)
         # enable sampling tab
         self.scrollAreaWidgetContents_S.setEnabled(True)
