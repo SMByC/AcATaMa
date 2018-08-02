@@ -41,6 +41,13 @@ class AccuracyAssessment:
                                 band=int(AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText()),
                                 nodata=int(AcATaMa.dockwidget.nodata_ThematicRaster.value()))
         self.thematic_pixels_count = {}
+        # dialog settings
+        self.area_unit = False
+        self.z_score = False
+        # define the base area unit based on the thematic raster distance unit
+        thematic_layer = AcATaMa.dockwidget.QCBox_ThematicRaster.currentLayer()
+        layer_dist_unit = thematic_layer.crs().mapUnits()
+        self.base_area_unit = QgsUnitTypes.distanceToAreaUnit(layer_dist_unit)
 
     @wait_process()
     def compute(self):
@@ -101,9 +108,16 @@ class AccuracyAssessment:
         self.error_matrix = error_matrix
         self.samples_outside_the_thematic = samples_outside_the_thematic
         # set area by pixel
-        self.pixel_area = self.ThematicR.qgs_layer.rasterUnitsPerPixelX() * self.ThematicR.qgs_layer.rasterUnitsPerPixelY()
-        self.pixel_area_ha = self.pixel_area / 10000.0  # hectare
+        self.pixel_area_base = self.ThematicR.qgs_layer.rasterUnitsPerPixelX() * self.ThematicR.qgs_layer.rasterUnitsPerPixelY()
+        self.pixel_area_value = self.pixel_area_base * QgsUnitTypes.fromUnitToUnitFactor(self.base_area_unit, self.area_unit)
+        self.pixel_area_unit = QgsUnitTypes.toAbbreviatedString(self.area_unit)
 
+
+# Qgis 3 ares units, int values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+AREA_UNITS = [QgsUnitTypes.AreaSquareMeters, QgsUnitTypes.AreaSquareKilometers, QgsUnitTypes.AreaSquareFeet,
+              QgsUnitTypes.AreaSquareYards, QgsUnitTypes.AreaSquareMiles, QgsUnitTypes.AreaHectares,
+              QgsUnitTypes.AreaAcres, QgsUnitTypes.AreaSquareNauticalMiles, QgsUnitTypes.AreaSquareDegrees,
+              QgsUnitTypes.AreaSquareCentimeters, QgsUnitTypes.AreaSquareMillimeters]
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -126,9 +140,19 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
         self.SettingsGroupBox.setVisible(False)
         self.z_score.valueChanged.connect(self.reload)
 
-        # get AccuracyAssessment or init new instance
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile_AA.currentLayer()
+        thematic_layer = AcATaMa.dockwidget.QCBox_ThematicRaster.currentLayer()
+
+        # fill the area units
+        self.area_unit.clear()
+        layer_dist_unit = thematic_layer.crs().mapUnits()
+        for area_unit in AREA_UNITS:
+            self.area_unit.addItem("{} ({})".format(QgsUnitTypes.toString(area_unit),
+                                                    QgsUnitTypes.toAbbreviatedString(area_unit)))
+        self.area_unit.currentIndexChanged.connect(lambda: self.reload(msg_bar=False))
+
+        # get AccuracyAssessment or init new instance
         if sampling_layer:
             # sampling file valid
             if sampling_layer in Classification.instances:
@@ -139,6 +163,12 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
                 else:
                     self.accuracy_assessment = AccuracyAssessment(classification)
                     classification.accuracy_assessment = self.accuracy_assessment
+        # set the area unit saved or based on the sampling file by default
+        if self.accuracy_assessment.area_unit is not False:
+            self.area_unit.setCurrentIndex(self.accuracy_assessment.area_unit)
+        else:
+            self.accuracy_assessment.area_unit = QgsUnitTypes.distanceToAreaUnit(layer_dist_unit)
+            self.area_unit.setCurrentIndex(self.accuracy_assessment.area_unit)
 
     def show(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
@@ -165,6 +195,7 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         # set adjust variables from dialog
         self.accuracy_assessment.z_score = self.z_score.value()
+        self.accuracy_assessment.area_unit = AREA_UNITS[self.area_unit.currentIndex()]
         # first compute the accuracy assessment
         self.accuracy_assessment.compute()
         # set content results in HTML
