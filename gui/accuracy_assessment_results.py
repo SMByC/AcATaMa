@@ -76,11 +76,11 @@ def get_html(accu_asse):
 
     # warning block for samples outside the thematic raster area or inside the no data values
     if accu_asse.samples_outside_the_thematic:
-        html += "<p style='color:white;background-color:#ac3f3f;white-space:pre;'>Warning:<br/>" \
+        html += "<p style='color:black;background-color:#ffc53a;white-space:pre;padding:4px'><strong>Warning!</strong><br/>" \
                 "There are {} samples classified that are outside the thematic raster area or inside the no data values:<br/>".format(
             len(accu_asse.samples_outside_the_thematic))
         for idx, sample in enumerate(accu_asse.samples_outside_the_thematic):
-            html += "    {}) coordinate: {},{}<br/>".format(idx+1, int(sample.QgsPnt.x()), int(sample.QgsPnt.y()))
+            html += "    {}) Sample ID: {}, Coordinate: {},{}<br/>".format(idx+1, sample.shape_id, int(sample.QgsPnt.x()), int(sample.QgsPnt.y()))
         html += "These samples will be ignored for accuracy assessment results.</p>"
 
     ###########################################################################
