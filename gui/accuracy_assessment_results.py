@@ -25,7 +25,7 @@ import copy
 from AcATaMa.utils.qgis_utils import get_file_path_of_layer
 
 
-def rf(fv, r=4):
+def rf(fv, r=5):
     """
     Round float
     """
@@ -107,10 +107,10 @@ def get_html(accu_asse):
     html += '''
         <th>Total</th>
         <th>User accuracy</th>
-        <th>Total class area (ha)</th>
+        <th>Total class area ({area_unit})</th>
         <th>Wi</th>
         </tr>
-        '''
+        '''.format(area_unit=accu_asse.pixel_area_unit)
     for idx_row, value in enumerate(accu_asse.values):
         html += "<tr>"
         if idx_row == 0:
@@ -131,7 +131,7 @@ def get_html(accu_asse):
             '''.format(total_row=sum(accu_asse.error_matrix[idx_row]),
                        u_accuracy=rf(accu_asse.error_matrix[idx_row][idx_row]/sum(accu_asse.error_matrix[idx_row]))
                            if sum(accu_asse.error_matrix[idx_row]) > 0 else "-",
-                       total_class_area=accu_asse.thematic_pixels_count[value] * accu_asse.pixel_area_ha,
+                       total_class_area=rf(accu_asse.thematic_pixels_count[value] * accu_asse.pixel_area_value),
                        wi=rf(accu_asse.thematic_pixels_count[value] /
                            sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values])))
     html += '''    
@@ -150,7 +150,8 @@ def get_html(accu_asse):
         '''
     html += '''
         <td>{total_classes_area}</td>
-        '''.format(total_classes_area=sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_ha)
+        '''.format(total_classes_area=rf(sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) *
+                                         accu_asse.pixel_area_value))
     html += '''
         <td></td>
         </tr>
@@ -216,7 +217,7 @@ def get_html(accu_asse):
         html += "<th>{value}</th>".format(value=value)
         html += "".join(['''
             <td class="field-values">{table_field}</td>
-            '''.format(table_field=(rf(t, 5)) if t > 0 else "-") for t in error_matrix_area_prop[idx_row]])
+            '''.format(table_field=(rf(t)) if t > 0 else "-") for t in error_matrix_area_prop[idx_row]])
         html += '''
             <td>{wi}</td>
             </tr>
@@ -228,7 +229,7 @@ def get_html(accu_asse):
         '''
     html += "".join(['''
                 <td>{total_col}</td>
-                '''.format(total_col=rf(sum(t), 5)) for t in zip(*error_matrix_area_prop)])
+                '''.format(total_col=rf(sum(t))) for t in zip(*error_matrix_area_prop)])
     html += '''
         <td></td>
         </tr>
@@ -275,7 +276,7 @@ def get_html(accu_asse):
         html += "<th>{value}</th>".format(value=value)
         html += "".join(['''
             <td class="field-values">{table_field}</td>
-            '''.format(table_field=(rf(t, 5)) if t > 0 else "-") for t in quadratic_error_matrix[idx_row]])
+            '''.format(table_field=(rf(t)) if t > 0 else "-") for t in quadratic_error_matrix[idx_row]])
         html += "</tr>"
     html += '''    
         <tr>
@@ -284,7 +285,7 @@ def get_html(accu_asse):
         '''
     html += "".join(['''
                     <td>{total_col}</td>
-                    '''.format(total_col=rf(sum(t)**0.5, 5)) for t in zip(*quadratic_error_matrix)])
+                    '''.format(total_col=rf(sum(t)**0.5)) for t in zip(*quadratic_error_matrix)])
     html += '''
         </tr>
         </tbody>
@@ -330,7 +331,7 @@ def get_html(accu_asse):
         html += "<th>{value}</th>".format(value=value)
         html += "".join(['''
             <td class="field-values">{table_field}</td>
-            '''.format(table_field=(rf(t, 5)) if t > 0 else "-") for t in user_accuracy_matrix[idx_row]])
+            '''.format(table_field=(rf(t)) if t > 0 else "-") for t in user_accuracy_matrix[idx_row]])
         html += "</tr>"
     html += '''
         </tbody>
@@ -371,7 +372,7 @@ def get_html(accu_asse):
         html += "<th>{value}</th>".format(value=value)
         html += "".join(['''
             <td class="field-values">{table_field}</td>
-            '''.format(table_field=(rf(t, 5)) if t > 0 else "-") for t in producer_accuracy_matrix[idx_row]])
+            '''.format(table_field=(rf(t)) if t > 0 else "-") for t in producer_accuracy_matrix[idx_row]])
         html += "</tr>"
         
     html += '''
@@ -386,7 +387,7 @@ def get_html(accu_asse):
             <tbody>
             <tr>
             <td>{}</td>
-            </tr>'''.format(rf(overall_accuracy, 5))
+            </tr>'''.format(rf(overall_accuracy))
     html += '''
             </tbody>
             </table>
@@ -401,7 +402,7 @@ def get_html(accu_asse):
         <tr>
         <td class="empty"></td>
         '''.format(table_size=len(accu_asse.values))
-    headers = ["Area (ha)", "Error", "Lower limit", "Upper limit"]
+    headers = ["Area ({area_unit})".format(area_unit=accu_asse.pixel_area_unit), "Error", "Lower limit", "Upper limit"]
     html += "".join([
         "<th >" + str(h) + "</th>" for h in headers])
     html += "</tr>"
@@ -414,12 +415,12 @@ def get_html(accu_asse):
         html += "<th >{} ({})</th>".format(value, accu_asse.labels[str(value)] if str(value) in accu_asse.labels else "-")
         # area
         area = sum(list(zip(*error_matrix_area_prop))[idx_row]) * \
-               sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_ha
+               sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_value
         html += '''<td>{area}</th>'''.format(area=rf(area))
         total_area += area
         # error
         error = (sum(list(zip(*quadratic_error_matrix))[idx_row])**0.5) * \
-                sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_ha
+                sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_value
         html += '''<td>{error}</th>'''.format(error=rf(error))
         # lower limit
         html += '''<td>{lower_limit}</th>'''.format(lower_limit=rf(area - accu_asse.z_score * error))
@@ -470,7 +471,8 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows.append(["", "", "Classified values"])
     labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
-    csv_rows.append(["", ""] + labels + ["Total", "User accuracy", "Total class area (ha)", "Wi"])
+    csv_rows.append(["", ""] + labels + ["Total", "User accuracy",
+                                         "Total class area ({area_unit})".format(area_unit=accu_asse.pixel_area_unit), "Wi"])
 
     for idx_row, value in enumerate(accu_asse.values):
         r = []
@@ -483,13 +485,13 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         r.append(sum(accu_asse.error_matrix[idx_row]))
         r.append(rf(accu_asse.error_matrix[idx_row][idx_row]/sum(accu_asse.error_matrix[idx_row]))
                  if sum(accu_asse.error_matrix[idx_row]) > 0 else "-")
-        r.append(rf(accu_asse.thematic_pixels_count[value] * accu_asse.pixel_area_ha))
+        r.append(rf(accu_asse.thematic_pixels_count[value] * accu_asse.pixel_area_value))
         r.append(rf(accu_asse.thematic_pixels_count[value] /
                  sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values])))
         csv_rows.append(r)
 
     csv_rows.append(["", "total"] + [sum(t) for t in zip(*accu_asse.error_matrix)] + [sum([sum(r) for r in accu_asse.error_matrix])] +
-                    [""] + [sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_ha])
+                    [""] + [sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_value])
     csv_rows.append(["", "Producer accuracy"] +
                     [rf(col[idx_col] / sum(col)) if sum(col) > 0 else "-" for idx_col, col in enumerate(zip(*accu_asse.error_matrix))] +
                     [""] + [rf(sum([col[idx_col] for idx_col, col in enumerate(zip(*accu_asse.error_matrix))]) /
@@ -517,11 +519,11 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         else:
             r.append("")
         r.append(value)
-        r += [rf(t, 5) if t > 0 else "-" for t in error_matrix_area_prop[idx_row]]
+        r += [rf(t) if t > 0 else "-" for t in error_matrix_area_prop[idx_row]]
         r.append(rf(sum(error_matrix_area_prop[idx_row])) if sum(error_matrix_area_prop[idx_row]) > 0 else "-")
         csv_rows.append(r)
 
-    csv_rows.append(["", "total"] + [rf(sum(t), 5) for t in zip(*error_matrix_area_prop)])
+    csv_rows.append(["", "total"] + [rf(sum(t)) for t in zip(*error_matrix_area_prop)])
 
     ###########################################################################
     csv_rows.append([])
@@ -546,10 +548,10 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         else:
             r.append("")
         r.append(value)
-        r += [rf(t, 5) if t > 0 else "-" for t in quadratic_error_matrix[idx_row]]
+        r += [rf(t) if t > 0 else "-" for t in quadratic_error_matrix[idx_row]]
         csv_rows.append(r)
 
-    csv_rows.append(["", "total"] + [rf(sum(t)**0.5, 5) for t in zip(*quadratic_error_matrix)])
+    csv_rows.append(["", "total"] + [rf(sum(t)**0.5) for t in zip(*quadratic_error_matrix)])
 
     ###########################################################################
     csv_rows.append([])
@@ -574,7 +576,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         else:
             r.append("")
         r.append(value)
-        r += [rf(t, 5) if t > 0 else "-" for t in user_accuracy_matrix[idx_row]]
+        r += [rf(t) if t > 0 else "-" for t in user_accuracy_matrix[idx_row]]
         csv_rows.append(r)
 
     csv_rows.append([])
@@ -596,18 +598,18 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         else:
             r.append("")
         r.append(value)
-        r += [rf(t, 5) if t > 0 else "-" for t in producer_accuracy_matrix[idx_row]]
+        r += [rf(t) if t > 0 else "-" for t in producer_accuracy_matrix[idx_row]]
         csv_rows.append(r)
 
     csv_rows.append([])
     csv_rows.append(["Overall Accuracy:"])
     overall_accuracy = sum([row[idx_row] for idx_row, row in enumerate(error_matrix_area_prop)])
-    csv_rows.append([rf(overall_accuracy, 5)])
+    csv_rows.append([rf(overall_accuracy)])
 
     ###########################################################################
     csv_rows.append([])
     csv_rows.append(["5) Class area adjusted table:"])
-    csv_rows.append(["", "Area (ha)", "Error", "Lower limit", "Upper limit"])
+    csv_rows.append(["", "Area ({area_unit})".format(area_unit=accu_asse.pixel_area_unit), "Error", "Lower limit", "Upper limit"])
 
     total_area = 0
 
@@ -617,12 +619,12 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
 
         # area
         area = sum(list(zip(*error_matrix_area_prop))[idx_row]) * \
-               sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_ha
+               sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_value
         r.append(rf(area))
         total_area += area
         # error
         error = (sum(list(zip(*quadratic_error_matrix))[idx_row]) ** 0.5) * \
-                sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_ha
+                sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_value
         r.append(rf(error))
         # lower limit
         r.append(rf(area - accu_asse.z_score * error))
