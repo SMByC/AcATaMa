@@ -42,8 +42,10 @@ class AccuracyAssessment(object):
                                 nodata=int(AcATaMa.dockwidget.nodata_ThematicRaster.value()))
         self.thematic_pixels_count = {}
         # dialog settings
-        self.area_unit = False
-        self.z_score = False
+        self.area_unit = None
+        self.z_score = 1.96
+        self.csv_separator = ";"
+        self.csv_decimal = "."
         # define the base area unit based on the thematic raster distance unit
         thematic_layer = AcATaMa.dockwidget.QCBox_ThematicRaster.currentLayer()
         layer_dist_unit = thematic_layer.crs().mapUnits()
@@ -136,20 +138,9 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
         self.DialogButtons.button(QDialogButtonBox.Save).setText("Export to CSV")
         self.DialogButtons.button(QDialogButtonBox.Save).clicked.connect(self.export_to_csv)
 
-        self.reloadButton.clicked.connect(lambda: self.reload(msg_bar=True))
-        self.z_score.valueChanged.connect(lambda: self.reload(msg_bar=False))
-
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile_AA.currentLayer()
         thematic_layer = AcATaMa.dockwidget.QCBox_ThematicRaster.currentLayer()
-
-        # fill the area units
-        self.area_unit.clear()
-        layer_dist_unit = thematic_layer.crs().mapUnits()
-        for area_unit in AREA_UNITS:
-            self.area_unit.addItem("{} ({})".format(QgsUnitTypes.toString(area_unit),
-                                                    QgsUnitTypes.toAbbreviatedString(area_unit)))
-        self.area_unit.currentIndexChanged.connect(lambda: self.reload(msg_bar=False))
 
         # get AccuracyAssessment or init new instance
         if sampling_layer:
@@ -159,15 +150,32 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
                 classification = Classification.instances[sampling_layer]
                 if classification.accuracy_assessment:
                     self.accuracy_assessment = classification.accuracy_assessment
+                    # restore config to dialog
+                    self.z_score.setValue(self.accuracy_assessment.z_score)
+                    self.CSV_separator.setText(self.accuracy_assessment.csv_separator)
+                    self.CSV_decimal_sep.setText(self.accuracy_assessment.csv_decimal)
                 else:
                     self.accuracy_assessment = AccuracyAssessment(classification)
                     classification.accuracy_assessment = self.accuracy_assessment
+
+        # fill the area units
+        self.area_unit.clear()
+        layer_dist_unit = thematic_layer.crs().mapUnits()
+        for area_unit in AREA_UNITS:
+            self.area_unit.addItem("{} ({})".format(QgsUnitTypes.toString(area_unit),
+                                                    QgsUnitTypes.toAbbreviatedString(area_unit)))
         # set the area unit saved or based on the sampling file by default
-        if self.accuracy_assessment.area_unit is not False:
+        if self.accuracy_assessment.area_unit is not None:
             self.area_unit.setCurrentIndex(self.accuracy_assessment.area_unit)
         else:
             self.accuracy_assessment.area_unit = QgsUnitTypes.distanceToAreaUnit(layer_dist_unit)
             self.area_unit.setCurrentIndex(self.accuracy_assessment.area_unit)
+
+        self.area_unit.currentIndexChanged.connect(lambda: self.reload(msg_bar=False))
+        self.z_score.valueChanged.connect(lambda: self.reload(msg_bar=False))
+        self.CSV_separator.textChanged.connect(lambda value: setattr(self.accuracy_assessment, "csv_separator", value))
+        self.CSV_decimal_sep.textChanged.connect(lambda value: setattr(self.accuracy_assessment, "csv_decimal", value))
+        self.reloadButton.clicked.connect(lambda: self.reload(msg_bar=True))
 
     def show(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
@@ -179,8 +187,6 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
             return
 
         AccuracyAssessmentDialog.is_opened = True
-        # set adjust variables from dialog
-        self.accuracy_assessment.z_score = self.z_score.value()
         # first compute the accuracy assessment
         self.accuracy_assessment.compute()
         # set content results in HTML
@@ -219,10 +225,9 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
                                                   self.tr("CSV files (*.csv);;All files (*.*)"))
         if file_out != '':
             try:
-                csv_separator = self.CSV_separator.text()
-                csv_decimal_separator = self.CSV_decimal_sep.text()
                 accuracy_assessment_results.export_to_csv(self.accuracy_assessment, file_out,
-                                                          csv_separator, csv_decimal_separator)
+                                                          self.accuracy_assessment.csv_separator,
+                                                          self.accuracy_assessment.csv_decimal)
                 self.MsgBar.pushMessage(
                     "File saved successfully \"{}\"".format(os.path.basename(file_out)), level=Qgis.Success)
             except Exception as err:
