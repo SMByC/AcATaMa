@@ -151,6 +151,15 @@ class Classification(object):
         # save the samples order
         data["points_order"] = [p.shape_id for p in self.points]
 
+        # save config of the accuracy assessment dialog if exists
+        if self.accuracy_assessment:
+            data["accuracy_assessment_dialog"] = {
+                "area_unit": QgsUnitTypes.toString(self.accuracy_assessment.area_unit),
+                "z_score": self.accuracy_assessment.z_score,
+                "csv_separator": self.accuracy_assessment.csv_separator,
+                "csv_decimal": self.accuracy_assessment.csv_decimal,
+            }
+
         with open(file_out, 'w') as yaml_file:
             yaml.dump(data, yaml_file)
 
@@ -217,6 +226,18 @@ class Classification(object):
         if self.buttons_config and True in [bc["thematic_class"] is not None and bc["thematic_class"] != "" for bc in
                                             self.buttons_config.values()]:
             self.with_thematic_classes = True
+
+        # restore accuracy assessment conf
+        if "accuracy_assessment_dialog" in yaml_config:
+            from AcATaMa.core.accuracy_assessment import AccuracyAssessment
+            accuracy_assessment = AccuracyAssessment(self)
+            area_unit, success = QgsUnitTypes.stringToAreaUnit(yaml_config["accuracy_assessment_dialog"]["area_unit"])
+            if success:
+                accuracy_assessment.area_unit = area_unit
+            accuracy_assessment.z_score = yaml_config["accuracy_assessment_dialog"]["z_score"]
+            accuracy_assessment.csv_separator = yaml_config["accuracy_assessment_dialog"]["csv_separator"]
+            accuracy_assessment.csv_decimal = yaml_config["accuracy_assessment_dialog"]["csv_decimal"]
+            self.accuracy_assessment = accuracy_assessment
 
     @wait_process()
     def reload_sampling_file(self):
