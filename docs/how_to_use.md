@@ -98,7 +98,7 @@ Optionally, in any type of sampling you can restrain the allocation of the point
 
 <img src="../img/2d.png" width="45%">
 
- - In `Sampling options` you can set the minimum distance between the point generated respect to all points generated (in meters)
+ - In `Sampling options` you can set the minimum distance between the point generated respect to all points generated (units based on thematic raster selected)
  - In `With neighbors aggregation` you can set the number of nearest neighbors pixels that belong to the same class:
     - *Number of neighbors*: It is the number of neighbors that AcATaMa evaluate to decide if a point can be included or not in the sample
     - *Min neighbors with the same class*: It is the minimum number of neighbors (according to the number of neighbors selected above) that must belong to the same class so that a point can be included in the sample
