@@ -504,7 +504,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     def fileDialog_loadClassificationConfig(self):
-        file_path = QtGui.QFileDialog.getOpenFileName(self, self.tr(u"Save settings and classification status"),
+        file_path = QtGui.QFileDialog.getOpenFileName(self, self.tr(u"Restore the configuration and classification status"),
                                                       "", self.tr(u"Yaml (*.yaml *.yml);;All files (*.*)"))
 
         if file_path != '' and os.path.isfile(file_path):
@@ -528,12 +528,14 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
             sampling_layer = load_and_select_filepath_in(self.QCBox_SamplingFile, sampling_filepath, "vector")
 
+            # restore configuration and classification status
             classification = Classification(sampling_layer)
             classification.load_config(yaml_config)
-            iface.messageBar().pushMessage("AcATaMa", "File loaded successfully", level=QgsMessageBar.SUCCESS)
 
             # reload sampling file status in accuracy assessment
             self.set_sampling_file_accuracy_assessment()
+
+            iface.messageBar().pushMessage("AcATaMa", "File loaded successfully", level=QgsMessageBar.SUCCESS)
 
     @pyqtSlot()
     def fileDialog_saveClassificationConfig(self):
