@@ -24,7 +24,7 @@ import csv
 import os
 import copy
 
-from qgis.core import QGis
+from qgis.core import QgsUnitTypes
 
 from AcATaMa.utils.qgis_utils import get_file_path_of_layer
 
@@ -77,7 +77,7 @@ def get_html(accu_asse):
         accu_asse.classification.total_classified, accu_asse.classification.num_points)
 
     # warning block if the thematic has a geographic units
-    if accu_asse.base_area_unit == QGis.Degrees:
+    if accu_asse.base_area_unit == QgsUnitTypes.SquareDegrees:
         html += "<p style='color:black;background-color:#ffc53a;white-space:pre;padding:4px'><strong>Warning!</strong><br/>" \
                 "The thematic raster has a geographic coordinate system, therefore all area values are not accurate.<br/>" \
                 "For fix that use the UTM coordinate system.</p>"
