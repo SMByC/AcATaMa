@@ -113,14 +113,13 @@ class AccuracyAssessment:
         # set area by pixel
         self.pixel_area_base = self.ThematicR.qgs_layer.rasterUnitsPerPixelX() * self.ThematicR.qgs_layer.rasterUnitsPerPixelY()
         self.pixel_area_value = self.pixel_area_base * QgsUnitTypes.fromUnitToUnitFactor(self.base_area_unit, self.area_unit)
-        self.pixel_area_unit = QgsUnitTypes.toAbbreviatedString(self.area_unit)
+        self.pixel_area_unit = QgsUnitTypes.toString(self.area_unit)
 
 
-# Qgis 3 ares units, int values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-AREA_UNITS = [QgsUnitTypes.AreaSquareMeters, QgsUnitTypes.AreaSquareKilometers, QgsUnitTypes.AreaSquareFeet,
-              QgsUnitTypes.AreaSquareYards, QgsUnitTypes.AreaSquareMiles, QgsUnitTypes.AreaHectares,
-              QgsUnitTypes.AreaAcres, QgsUnitTypes.AreaSquareNauticalMiles, QgsUnitTypes.AreaSquareDegrees,
-              QgsUnitTypes.AreaSquareCentimeters, QgsUnitTypes.AreaSquareMillimeters]
+# Qgis 2 ares units, int values: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+AREA_UNITS = [QgsUnitTypes.SquareMeters, QgsUnitTypes.SquareKilometers, QgsUnitTypes.SquareFeet,
+              QgsUnitTypes.SquareYards, QgsUnitTypes.SquareMiles, QgsUnitTypes.Hectares,
+              QgsUnitTypes.Acres, QgsUnitTypes.SquareNauticalMiles, QgsUnitTypes.SquareDegrees]
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -163,8 +162,7 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
         self.area_unit.clear()
         layer_dist_unit = thematic_layer.crs().mapUnits()
         for area_unit in AREA_UNITS:
-            self.area_unit.addItem("{} ({})".format(QgsUnitTypes.toString(area_unit),
-                                                    QgsUnitTypes.toAbbreviatedString(area_unit)))
+            self.area_unit.addItem("{}".format(QgsUnitTypes.toString(area_unit)))
         # set the area unit saved or based on the sampling file by default
         if self.accuracy_assessment.area_unit is not None:
             self.area_unit.setCurrentIndex(self.accuracy_assessment.area_unit)
@@ -172,11 +170,11 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
             self.accuracy_assessment.area_unit = QgsUnitTypes.distanceToAreaUnit(layer_dist_unit)
             self.area_unit.setCurrentIndex(self.accuracy_assessment.area_unit)
 
-        self.area_unit.currentIndexChanged.connect(lambda: self.reload(msg_bar=False))
-        self.z_score.valueChanged.connect(lambda: self.reload(msg_bar=False))
+        self.area_unit.currentIndexChanged.connect(self.reload)
+        self.z_score.valueChanged.connect(self.reload)
         self.CSV_separator.textChanged.connect(lambda value: setattr(self.accuracy_assessment, "csv_separator", value))
         self.CSV_decimal_sep.textChanged.connect(lambda value: setattr(self.accuracy_assessment, "csv_decimal", value))
-        self.reloadButton.clicked.connect(lambda: self.reload(msg_bar=True))
+        self.reloadButton.clicked.connect(self.reload)
 
     def show(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
