@@ -148,6 +148,9 @@ class Classification:
         # save the samples order
         data["points_order"] = [p.shape_id for p in self.points]
 
+        # save sampling selected in accuracy assessment
+        data["accuracy_assessment_sampling_file"] = get_current_file_path_in(AcATaMa.dockwidget.QCBox_SamplingFile_AA,
+                                                                             show_message=False)
         # save config of the accuracy assessment dialog if exists
         if self.accuracy_assessment:
             data["accuracy_assessment_dialog"] = {
@@ -225,6 +228,9 @@ class Classification:
             self.with_thematic_classes = True
 
         # restore accuracy assessment conf
+        if "accuracy_assessment_sampling_file" in yaml_config and yaml_config["accuracy_assessment_sampling_file"]:
+            load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_SamplingFile_AA,
+                                        yaml_config["accuracy_assessment_sampling_file"], "vector")
         if "accuracy_assessment_dialog" in yaml_config:
             from AcATaMa.core.accuracy_assessment import AccuracyAssessment
             accuracy_assessment = AccuracyAssessment(self)
