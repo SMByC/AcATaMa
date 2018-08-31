@@ -162,7 +162,7 @@ class AccuracyAssessmentDialog(QtGui.QDialog, FORM_CLASS):
         self.area_unit.clear()
         layer_dist_unit = thematic_layer.crs().mapUnits()
         for area_unit in AREA_UNITS:
-            self.area_unit.addItem("{}".format(QgsUnitTypes.toString(area_unit)))
+            self.area_unit.addItem(u"{}".format(QgsUnitTypes.toString(area_unit)))
         # set the area unit saved or based on the sampling file by default
         if self.accuracy_assessment.area_unit is not None:
             self.area_unit.setCurrentIndex(self.accuracy_assessment.area_unit)

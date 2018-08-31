@@ -20,12 +20,12 @@
 """
 from __future__ import division
 
-import csv
 import os
 import copy
 
 from qgis.core import QgsUnitTypes
 
+from AcATaMa.utils.others_utils import UnicodeWriter
 from AcATaMa.utils.qgis_utils import get_file_path_of_layer
 
 
@@ -110,11 +110,11 @@ def get_html(accu_asse):
         <td class="empty"></td>
         <td class="empty"></td>
         '''.format(table_size=len(accu_asse.values))
-    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
+    labels = [u"{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
     html += "".join([
-        "<th >"+str(i)+"</th>" for i in labels])
-    html += '''
+        "<th >"+i+"</th>" for i in labels])
+    html += u'''
         <th>Total</th>
         <th>User accuracy</th>
         <th>Total class area ({area_unit})</th>
@@ -202,10 +202,10 @@ def get_html(accu_asse):
         <td class="empty"></td>
         <td class="empty"></td>
         '''.format(table_size=len(accu_asse.values))
-    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
+    labels = [u"{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
     html += "".join([
-        "<th >"+str(i)+"</th>" for i in labels])
+        "<th >"+i+"</th>" for i in labels])
     html += '''
         <th>Wi</th>
         </tr>
@@ -262,10 +262,10 @@ def get_html(accu_asse):
         <td class="empty"></td>
         <td class="empty"></td>
         '''.format(table_size=len(accu_asse.values))
-    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
+    labels = [u"{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
     html += "".join([
-        "<th >"+str(i)+"</th>" for i in labels])
+        "<th >"+i+"</th>" for i in labels])
     html += "</tr>"
     
     quadratic_error_matrix = copy.deepcopy(accu_asse.error_matrix)
@@ -319,10 +319,10 @@ def get_html(accu_asse):
         <td class="empty"></td>
         <td class="empty"></td>
         '''.format(table_size=len(accu_asse.values))
-    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
+    labels = [u"{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
     html += "".join([
-        "<th >"+str(i)+"</th>" for i in labels])
+        "<th >"+i+"</th>" for i in labels])
     html += "</tr>"
     
     user_accuracy_matrix = copy.deepcopy(accu_asse.error_matrix)
@@ -361,10 +361,10 @@ def get_html(accu_asse):
         <td class="empty"></td>
         <td class="empty"></td>
         '''.format(table_size=len(accu_asse.values))
-    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
+    labels = [u"{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
     html += "".join([
-        "<th >"+str(i)+"</th>" for i in labels])
+        "<th >"+i+"</th>" for i in labels])
     html += "</tr>"
     
     producer_accuracy_matrix = copy.deepcopy(error_matrix_area_prop)
@@ -412,9 +412,9 @@ def get_html(accu_asse):
         <tr>
         <td class="empty"></td>
         '''.format(table_size=len(accu_asse.values))
-    headers = ["Area ({area_unit})".format(area_unit=accu_asse.pixel_area_unit), "Error", "Lower limit", "Upper limit"]
-    html += "".join([
-        "<th >" + str(h) + "</th>" for h in headers])
+    headers = [u"Area ({area_unit})".format(area_unit=accu_asse.pixel_area_unit), "Error", "Lower limit", "Upper limit"]
+    html += u"".join([
+        "<th >" + h + "</th>" for h in headers])
     html += "</tr>"
 
     total_area = 0
@@ -422,7 +422,7 @@ def get_html(accu_asse):
     for idx_row, value in enumerate(accu_asse.values):
         html += "<tr>"
 
-        html += "<th >{} ({})</th>".format(value, accu_asse.labels[str(value)] if str(value) in accu_asse.labels else "-")
+        html += u"<th >{} ({})</th>".format(value, accu_asse.labels[str(value)] if str(value) in accu_asse.labels else "-")
         # area
         area = sum(zip(*error_matrix_area_prop)[idx_row]) * \
                sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values]) * accu_asse.pixel_area_value
@@ -479,10 +479,10 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows.append([])
     csv_rows.append(["1) Error matrix (confusion matrix):"])
     csv_rows.append(["", "", "Classified values"])
-    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
+    labels = [u"{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
     csv_rows.append(["", ""] + labels + ["Total", "User accuracy",
-                                         "Total class area ({area_unit})".format(area_unit=accu_asse.pixel_area_unit), "Wi"])
+                                         u"Total class area ({area_unit})".format(area_unit=accu_asse.pixel_area_unit), "Wi"])
 
     for idx_row, value in enumerate(accu_asse.values):
         r = []
@@ -511,7 +511,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows.append([])
     csv_rows.append(["2) Error matrix of estimated area proportion:"])
     csv_rows.append(["", "", "Classified values"])
-    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
+    labels = [u"{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
     csv_rows.append(["", ""] + labels + ["Wi"])
 
@@ -539,7 +539,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows.append([])
     csv_rows.append(["3) Quadratic error matrix of estimated area proportion:"])
     csv_rows.append(["", "", "Classified values"])
-    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
+    labels = [u"{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
     csv_rows.append(["", ""] + labels)
 
@@ -569,7 +569,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows.append([])
     csv_rows.append(["User's accuracy matrix of estimated area proportion:"])
     csv_rows.append(["", "", "Classified values"])
-    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
+    labels = [u"{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
     csv_rows.append(["", ""] + labels)
 
@@ -592,7 +592,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows.append([])
     csv_rows.append(["Producer's accuracy matrix of estimated area proportion:"])
     csv_rows.append(["", "", "Classified values"])
-    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
+    labels = [u"{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
     csv_rows.append(["", ""] + labels)
 
@@ -619,13 +619,13 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     ###########################################################################
     csv_rows.append([])
     csv_rows.append(["5) Class area adjusted table:"])
-    csv_rows.append(["", "Area ({area_unit})".format(area_unit=accu_asse.pixel_area_unit), "Error", "Lower limit", "Upper limit"])
+    csv_rows.append(["", u"Area ({area_unit})".format(area_unit=accu_asse.pixel_area_unit), "Error", "Lower limit", "Upper limit"])
 
     total_area = 0
 
     for idx_row, value in enumerate(accu_asse.values):
         r = []
-        r.append("{} ({})".format(value, accu_asse.labels[str(value)] if str(value) in accu_asse.labels else "-"))
+        r.append(u"{} ({})".format(value, accu_asse.labels[str(value)] if str(value) in accu_asse.labels else "-"))
 
         # area
         area = sum(zip(*error_matrix_area_prop)[idx_row]) * \
@@ -646,7 +646,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
 
     # write CSV file
     with open(file_out, 'wb') as csvfile:
-        csv_w = csv.writer(csvfile, delimiter=str(csv_separator))
+        csv_w = UnicodeWriter(csvfile, delimiter=str(csv_separator))
         # replace with the user define decimal separator
         if csv_decimal_separator != ".":
             for idx, row in enumerate(csv_rows):
