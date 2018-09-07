@@ -3,7 +3,7 @@
 AcATaMa is divided and ordered by four tabs/sections:
 
 1. [Thematic](#1-thematic-map)
-2. [Sampling](#2-sampling-desing)
+2. [Sampling](#2-sampling-design)
 3. [Classification](#3-classification)
 4. [Accuracy Assessment](#4-accuracy-assessment)
 
@@ -51,7 +51,7 @@ It must be a categorical thematic layer **with byte or integer as data type** wi
 !!! note
     The thematic map is the raster layer to which the accuracy assessment will be applied (for example a land cover map) and also is the base to generate the random sampling.
 
-## 2. Sampling desing
+## 2. Sampling design
 
 The sampling design defines how to select the sampled for the accuracy assessment (or any others uses). The `Sampling` section you can make and design the sampling using two categories for that: `Simple Random Sampling` and `Stratified Random Sampling`:
 
