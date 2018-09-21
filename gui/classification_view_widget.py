@@ -96,7 +96,8 @@ class RenderWidget(QWidget):
         gridLayout.addWidget(self.canvas)
 
     def render_layer(self, layer):
-        from AcATaMa.gui.classification_dialog import ClassificationDialog
+        if self.layer == layer:
+            return
 
         with block_signals_to(self):
             if not layer:
@@ -131,7 +132,7 @@ class RenderWidget(QWidget):
             # set the sampling over the layer to view
             self.canvas.setLayers([self.parent().sampling_layer, layer])
             # set init extent from other view if any is activated else set layer extent
-
+            from AcATaMa.gui.classification_dialog import ClassificationDialog
             others_view = [(view_widget.render_widget.canvas.extent(), view_widget.current_scale_factor) for view_widget
                            in ClassificationDialog.view_widgets if not view_widget.render_widget.canvas.extent().isEmpty()]
             if others_view:
