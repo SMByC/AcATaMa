@@ -182,7 +182,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
                     view_widget.QLabel_ViewName.setText(view_config["view_name"])
                     view_widget.scaleFactor.setValue(view_config["scale_factor"])
                     # active render layer in canvas
-                    view_widget.render_widget.render_layer(view_widget.QCBox_RenderFile.currentLayer())
+                    view_widget.set_render_layer(view_widget.QCBox_RenderFile.currentLayer())
 
     def show(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
