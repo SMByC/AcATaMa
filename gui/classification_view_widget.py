@@ -98,10 +98,10 @@ class RenderWidget(QWidget):
     def render_layer(self, layer):
         with block_signals_to(self):
             # set the CRS of the canvas view based on sampling layer
-            sampling_crs = self.parent().sampling_layer.crs()
+            sampling_crs = self.parent_view.sampling_layer.crs()
             self.canvas.setDestinationCrs(sampling_crs)
             # set the sampling over the layer to view
-            self.canvas.setLayers([self.parent().sampling_layer, layer])
+            self.canvas.setLayers([self.parent_view.sampling_layer, layer])
             # set init extent from other view if any is activated else set layer extent
             from AcATaMa.gui.classification_dialog import ClassificationDialog
             others_view = [(view_widget.render_widget.canvas.extent(), view_widget.current_scale_factor) for view_widget
@@ -112,7 +112,7 @@ class RenderWidget(QWidget):
                 self.set_extents_and_scalefactor(extent)
             elif ClassificationDialog.current_sample:
                 ClassificationDialog.current_sample.fit_to(
-                    self.parent(), ClassificationDialog.instance.radiusFitToSample.value())
+                    self.parent_view, ClassificationDialog.instance.radiusFitToSample.value())
 
             self.canvas.refresh()
             self.layer = layer
@@ -123,12 +123,12 @@ class RenderWidget(QWidget):
     def set_extents_and_scalefactor(self, extent):
         with block_signals_to(self.canvas):
             self.canvas.setExtent(extent)
-            self.canvas.zoomByFactor(self.parent().scaleFactor.value())
+            self.canvas.zoomByFactor(self.parent_view.scaleFactor.value())
             if self.marker.marker:
                 self.marker.marker.updatePosition()
 
     def layer_style_editor(self):
-        style_editor_dlg = StyleEditorDialog(self.layer, self.canvas, self.parent())
+        style_editor_dlg = StyleEditorDialog(self.layer, self.canvas, self.parent_view)
         if style_editor_dlg.exec_():
             style_editor_dlg.apply()
 
@@ -152,6 +152,7 @@ class ClassificationViewWidget(QWidget, FORM_CLASS):
 
     def setup_view_widget(self, sampling_layer):
         self.sampling_layer = sampling_layer
+        self.render_widget.parent_view = self
         # set properties to QgsMapLayerComboBox
         self.QCBox_RenderFile.setCurrentIndex(-1)
         self.QCBox_RenderFile.setFilters(QgsMapLayerProxyModel.All)
