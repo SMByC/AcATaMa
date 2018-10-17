@@ -27,7 +27,7 @@ from AcATaMa.utils.system_utils import wait_process, block_signals_to
 from AcATaMa.utils.others_utils import mask
 
 
-@wait_process()
+@wait_process
 def get_pixel_count_by_category(srs_table, categorical_raster):
     """Get the total pixel count for all pixel values"""
     from osgeo import gdalnumeric
@@ -82,7 +82,7 @@ def get_num_samples_by_keeping_total_samples(srs_table, new_num_samples):
     return num_samples
 
 
-@wait_process()
+@wait_process
 def update_srs_table_content(dockwidget, srs_table):
     with block_signals_to(dockwidget.QTableW_StraRS):
         # init table

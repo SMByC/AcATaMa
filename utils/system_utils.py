@@ -18,6 +18,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+import functools
 import traceback
 import os, sys, subprocess
 
@@ -28,59 +29,43 @@ from qgis.core import QgsMessageLog, Qgis
 from qgis.utils import iface
 
 
-def error_handler():
-    def decorate(f):
-        def applicator(*args, **kwargs):
-            try:
-                f(*args, **kwargs)
-            except Exception as e:
-                # restore mouse
-                QApplication.restoreOverrideCursor()
-                QApplication.processEvents()
-                # message in status bar
-                msg_error = "An error has occurred in AcATaMa plugin. " \
-                            "See more in Qgis log messages panel."
-                iface.messageBar().pushMessage("AcATaMa", msg_error,
-                                                level=Qgis.Critical, duration=10)
-                # message in log
-                msg_error = "\n################## ERROR IN ACATAMA PLUGIN:\n"
-                msg_error += traceback.format_exc()
-                msg_error += "\nPlease report the error in:\n" \
-                             "\thttps://bitbucket.org/smbyc/qgisplugin-acatama/issues"
-                msg_error += "\n################## END REPORT"
-                QgsMessageLog.logMessage(msg_error)
-        return applicator
-    return decorate
-
-
-def wait_process(disable_button=None):
-    def decorate(f):
-        def applicator(*args, **kwargs):
-            # disable button during process
-            if disable_button:
-                if "." in disable_button:
-                    getattr(getattr(args[0], disable_button.split(".")[0]),
-                            disable_button.split(".")[1]).setEnabled(False)
-                else:
-                    getattr(args[0], disable_button).setEnabled(False)
-            # mouse wait
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            # do
-            obj_returned = f(*args, **kwargs)
+def error_handler(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
             # restore mouse
             QApplication.restoreOverrideCursor()
             QApplication.processEvents()
-            # restore button
-            if disable_button:
-                if "." in disable_button:
-                    getattr(getattr(args[0], disable_button.split(".")[0]),
-                            disable_button.split(".")[1]).setEnabled(True)
-                else:
-                    getattr(args[0], disable_button).setEnabled(True)
-            # finally return the object by f
-            return obj_returned
-        return applicator
-    return decorate
+            # message in status bar
+            msg_error = "An error has occurred in ACATAMA plugin. " \
+                        "See more in Qgis log messages panel."
+            iface.messageBar().pushMessage("AcATaMa", msg_error,
+                                           level=Qgis.Critical, duration=10)
+            # message in log
+            msg_error = "\n################## ERROR IN ACATAMA PLUGIN:\n"
+            msg_error += traceback.format_exc()
+            msg_error += "\nPlease report the error in:\n" \
+                         "\thttps://bitbucket.org/smbyc/qgisplugin-acatama/issues"
+            msg_error += "\n################## END REPORT"
+            QgsMessageLog.logMessage(msg_error)
+    return wrapper
+
+
+def wait_process(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        # mouse wait
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        # do
+        obj_returned = func(*args, **kwargs)
+        # restore mouse
+        QApplication.restoreOverrideCursor()
+        QApplication.processEvents()
+        # finally return the object by f
+        return obj_returned
+    return wrapper
 
 
 def open_file(filename):
