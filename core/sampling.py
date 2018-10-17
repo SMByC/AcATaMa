@@ -33,7 +33,7 @@ from AcATaMa.utils.qgis_utils import load_layer_in_qgis, valid_file_selected_in
 from AcATaMa.utils.system_utils import wait_process, error_handler
 
 
-@error_handler()
+@error_handler
 def do_simple_random_sampling(dockwidget):
     # first check input files requirements
     if not valid_file_selected_in(dockwidget.QCBox_ThematicRaster, "thematic raster"):
@@ -111,7 +111,7 @@ def do_simple_random_sampling(dockwidget):
                                                   "attempts exceeded", level=Qgis.Warning, duration=10)
 
 
-@error_handler()
+@error_handler
 def do_stratified_random_sampling(dockwidget):
     # first check input files requirements
     if not valid_file_selected_in(dockwidget.QCBox_ThematicRaster, "thematic raster"):
@@ -234,7 +234,7 @@ class Sampling(object):
         # for save all sampling points
         self.points = dict()
 
-    @wait_process()
+    @wait_process
     def generate_sampling_points(self, pixel_values, number_of_samples, min_distance,
                                  neighbor_aggregation, attempts_by_sampling, progress_bar):
         """Some code base from (by Alexander Bruy):

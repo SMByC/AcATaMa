@@ -112,7 +112,7 @@ class Classification(object):
         self.num_points = len(points)
         return points
 
-    @wait_process()
+    @wait_process
     def save_config(self, file_out):
         import yaml
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
@@ -166,7 +166,7 @@ class Classification(object):
         with open(file_out, 'w') as yaml_file:
             yaml.dump(data, yaml_file)
 
-    @wait_process()
+    @wait_process
     def load_config(self, yaml_config):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         # restore the thematic raster
@@ -245,7 +245,7 @@ class Classification(object):
             accuracy_assessment.csv_decimal = yaml_config["accuracy_assessment_dialog"]["csv_decimal"]
             self.accuracy_assessment = accuracy_assessment
 
-    @wait_process()
+    @wait_process
     def reload_sampling_file(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         # update all points from file and restore its status classification
@@ -277,7 +277,7 @@ class Classification(object):
                                                   "{} added and {} removed".format(modified, added, removed),
                                        level=Qgis.Success)
 
-    @wait_process()
+    @wait_process
     def save_sampling_classification(self, file_out):
         crs = self.sampling_layer.crs().toWkt()
         # create layer
