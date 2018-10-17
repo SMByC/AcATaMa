@@ -37,7 +37,7 @@ from AcATaMa.utils.qgis_utils import get_file_path_of_layer
 from AcATaMa.utils.system_utils import wait_process
 
 
-@wait_process()
+@wait_process
 def do_clipping_with_shape(target_layer, shape_layer, out_path, dst_nodata=None):
     target_file = get_file_path_of_layer(target_layer)
     filename, ext = os.path.splitext(out_path)
