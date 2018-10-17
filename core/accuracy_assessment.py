@@ -52,7 +52,7 @@ class AccuracyAssessment:
         layer_dist_unit = thematic_layer.crs().mapUnits()
         self.base_area_unit = QgsUnitTypes.distanceToAreaUnit(layer_dist_unit)
 
-    @wait_process()
+    @wait_process
     def compute(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText(u"Processing, please wait ...")

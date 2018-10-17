@@ -342,7 +342,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
         self.QCBox_StraRS_Method.setCurrentIndex(-1)
 
     @pyqtSlot()
-    @error_handler()
+    @error_handler
     def clipping_thematic_raster(self):
         # first check input files requirements
         if not valid_file_selected_in(self.QCBox_ThematicRaster, "thematic raster"):
