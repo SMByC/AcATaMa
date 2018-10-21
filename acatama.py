@@ -210,3 +210,7 @@ class AcATaMa(object):
         if self.dockwidget.tmp_dir and os.path.isdir(self.dockwidget.tmp_dir):
             shutil.rmtree(self.dockwidget.tmp_dir, ignore_errors=True)
         self.dockwidget.tmp_dir = None
+
+        # clear qgis main canvas
+        self.iface.mapCanvas().clearCache()
+        self.iface.mapCanvas().refresh()
