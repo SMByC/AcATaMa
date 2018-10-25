@@ -357,7 +357,7 @@ class AcATaMaDockWidget(QtGui.QDockWidget, FORM_CLASS):
 
         file_out = QtGui.QFileDialog.getSaveFileName(self, self.tr(u"Select the output file to save the clipping file"),
                                                      suggested_filename,
-                                                     self.tr(u"Tiff files (*.tif);;Img files (*.img);;All files (*.*)"))
+                                                     self.tr(u"GeoTiff Files (*.tif);;Img files (*.img);;All files (*.*)"))
         if file_out == '':
             return
 
