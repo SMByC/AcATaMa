@@ -48,7 +48,7 @@ def do_clipping_with_shape(target_layer, shape_layer, out_path, dst_nodata=None)
     # check if the shape is a memory layer, then save and used it
     if get_file_path_of_layer(shape_layer).startswith("memory"):
         tmp_memory_fd, tmp_memory_file = tempfile.mkstemp(prefix='memory_layer_', suffix='.gpkg')
-        QgsVectorFileWriter.writeAsVectorFormat(shape_layer, tmp_memory_file, "UTF-8", shape_layer.crs(), "GPKG")
+        QgsVectorFileWriter.writeAsVectorFormat(shape_layer, tmp_memory_file, "System", shape_layer.crs(), "GPKG")
         os.close(tmp_memory_fd)
         shape_file = tmp_memory_file
     else:
