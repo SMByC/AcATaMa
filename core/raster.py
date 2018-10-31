@@ -86,13 +86,12 @@ def do_clipping_with_shape(target_layer, shape_layer, out_path, dst_nodata=None)
                                        level=Qgis.Warning)
 
 
-def get_nodata_value(layer_file):
-    extent = layer_file.extent()
-    rows = layer_file.rasterUnitsPerPixelY()
-    cols = layer_file.rasterUnitsPerPixelX()
-    nodata_value = layer_file.dataProvider().block(1, extent, rows, cols).noDataValue()
-    if isnan(nodata_value):
-        nodata_value = -1
+def get_nodata_value(layer):
+    nodata_value = -1  # nan in the spinbox
+    if layer is not None:
+        if not isnan(layer.dataProvider().sourceNoDataValue(1)):
+            nodata_value = layer.dataProvider().sourceNoDataValue(1)
+
     return nodata_value
 
 
