@@ -89,8 +89,9 @@ def do_clipping_with_shape(target_layer, shape_layer, out_path, dst_nodata=None)
 def get_nodata_value(layer):
     nodata_value = -1  # nan in the spinbox
     if layer is not None:
-        if not isnan(layer.dataProvider().sourceNoDataValue(1)):
-            nodata_value = layer.dataProvider().sourceNoDataValue(1)
+        nodata = layer.dataProvider().sourceNoDataValue(1)
+        if not isnan(nodata) and (-1 <= nodata <= 999999):
+            nodata_value = nodata
 
     return nodata_value
 
