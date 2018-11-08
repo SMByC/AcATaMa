@@ -172,11 +172,11 @@ class Classification:
             load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_ThematicRaster,
                                         yaml_config["thematic_raster"]["path"], "raster")
             AcATaMa.dockwidget.select_thematic_raster()
-            # nodata
-            AcATaMa.dockwidget.nodata_ThematicRaster.setValue(yaml_config["thematic_raster"]["nodata"])
             # band number
             if "band" in yaml_config["thematic_raster"]:
                 AcATaMa.dockwidget.QCBox_band_ThematicRaster.setCurrentIndex(yaml_config["thematic_raster"]["band"] - 1)
+            # nodata
+            AcATaMa.dockwidget.nodata_ThematicRaster.setValue(yaml_config["thematic_raster"]["nodata"])
 
         # restore the classification settings
         AcATaMa.dockwidget.grid_columns.setValue(yaml_config["grid_view_widgets"]["columns"])
