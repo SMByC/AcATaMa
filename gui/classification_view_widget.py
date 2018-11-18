@@ -188,8 +188,6 @@ class ClassificationViewWidget(QWidget, FORM_CLASS):
         self.scaleFactor.valueChanged.connect(self.scalefactor_changed)
         # edit layer properties
         self.layerStyleEditor.clicked.connect(self.render_widget.layer_style_editor)
-        # disable enter action
-        self.QCBox_browseRenderFile.setAutoDefault(False)
 
     def enable(self):
         with block_signals_to(self.render_widget):
