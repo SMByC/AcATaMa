@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>AcATaMa</string>
+   <string>A&amp;cATaMa</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -115,15 +115,9 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="QPBtn_browseThematicRaster">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
+                   <widget class="QToolButton" name="QPBtn_browseThematicRaster">
                     <property name="text">
-                     <string>Browse</string>
+                     <string>...</string>
                     </property>
                    </widget>
                   </item>
@@ -290,15 +284,9 @@
                       </widget>
                      </item>
                      <item>
-                      <widget class="QPushButton" name="QPBtn_browseAreaOfInterest">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
+                      <widget class="QToolButton" name="QPBtn_browseAreaOfInterest">
                        <property name="text">
-                        <string>Browse</string>
+                        <string>...</string>
                        </property>
                       </widget>
                      </item>
@@ -622,15 +610,9 @@
                              </widget>
                             </item>
                             <item>
-                             <widget class="QPushButton" name="QPBtn_browseCategRaster_SimpRS">
-                              <property name="sizePolicy">
-                               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                               </sizepolicy>
-                              </property>
+                             <widget class="QToolButton" name="QPBtn_browseCategRaster_SimpRS">
                               <property name="text">
-                               <string>Browse</string>
+                               <string>...</string>
                               </property>
                              </widget>
                             </item>
@@ -808,15 +790,9 @@
                           </widget>
                          </item>
                          <item>
-                          <widget class="QPushButton" name="QPBtn_browseCategRaster_StraRS">
-                           <property name="sizePolicy">
-                            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                             <horstretch>0</horstretch>
-                             <verstretch>0</verstretch>
-                            </sizepolicy>
-                           </property>
+                          <widget class="QToolButton" name="QPBtn_browseCategRaster_StraRS">
                            <property name="text">
-                            <string>Browse</string>
+                            <string>...</string>
                            </property>
                           </widget>
                          </item>
@@ -1221,15 +1197,9 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="QPBtn_browseSamplingFile">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
+                   <widget class="QToolButton" name="QPBtn_browseSamplingFile">
                     <property name="text">
-                     <string>Browse</string>
+                     <string>...</string>
                     </property>
                    </widget>
                   </item>

@@ -116,16 +116,10 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="QCBox_browseRenderFile">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
+       <widget class="QToolButton" name="QCBox_browseRenderFile">
         <property name="maximumSize">
          <size>
-          <width>76</width>
+          <width>16777215</width>
           <height>22</height>
          </size>
         </property>
@@ -135,7 +129,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Browse</string>
+         <string>...</string>
         </property>
        </widget>
       </item>
