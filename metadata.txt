@@ -5,7 +5,7 @@ about=The AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps.
     It was designed mainly for: to assess the accuracy of thematic maps, to
     estimate areas of the map classes, sampling design/classification and others.
 
-version=18.8.7.q3
+version=18.11.21.q3
 qgisMinimumVersion=3.0
 qgisMaximumVersion=3.99
 
@@ -17,14 +17,11 @@ tracker=https://bitbucket.org/smbyc/qgisplugin-acatama/issues
 repository=https://bitbucket.org/smbyc/qgisplugin-acatama
 
 changelog=
-    18.8.7.q3: (Qgis3)
-    - Added support to different units in accuracy assessment results for calculate
-    the class areas and added the possibility to change this area measurement unit
-    - Save and restore the accuracy assessment configuration dialog such as area unit, z-score
-    and csv output options in the same yaml file where classification status is saved
-    - Save in the yaml file conf the sampling selected in accuracy assessment
-    - Adjusted the precision in accuracy assessment results
-    - Improved the warning message when the samples classified are outside the thematic raster
+    18.11.21.q3: (Qgis3)
+    - Not process the render layer function in classification views if the layer selected not changed
+    - Implemented pan and zoom point tool for manage the mouse gesture actions in classification canvas
+    - Fix load the band number of thematic map while is loading the config file
+    - A lot of minor improvements and fixes
 
     Previous versions:
     - All commits in: https://bitbucket.org/smbyc/qgisplugin-acatama/commits/all
