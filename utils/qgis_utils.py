@@ -106,6 +106,6 @@ def unload_layer_in_qgis(layer_path):
     for layer_loaded in layers_loaded:
         if hasattr(layer_loaded, "dataProvider"):
             if layer_path == layer_loaded.dataProvider().dataSourceUri().split('|layerid')[0]:
-                QgsMapLayerRegistry.instance().removeMapLayer(layer_loaded)
+                QgsMapLayerRegistry.instance().removeMapLayer(layer_loaded.id())
 
 
