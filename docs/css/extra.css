@@ -1,8 +1,9 @@
 
 
 body {
-    font-size: 15.5px;
     font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 16px;
+    line-height: 1.35;
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
@@ -19,6 +20,16 @@ h2 {
 
 h3 {
     font-size: 22px;
+}
+
+h1, h2, h3 {
+    margin-top: 22px;
+    margin-bottom: 8px;
+}
+
+h4, h5, h6 {
+    margin-top: 16px;
+    margin-bottom: 6px;
 }
 
 .navbar {
@@ -60,6 +71,10 @@ a {
     color: #1775B6;
 }
 
+blockquote p {
+    font-size: 16.5px;
+}
+
 pre code {
     font-size: 14px;
 }
@@ -70,6 +85,7 @@ pre code {
 
 .admonition {
     font-size: 15px;
+    margin-bottom: 10px;
 }
 
 ul.nav > li > a[rel~="prev"], ul.nav > li > a[rel~="next"] {

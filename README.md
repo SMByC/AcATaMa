@@ -35,8 +35,20 @@ The AcATaMa plugin is open source and you can help in different ways:
 * help with developing and/or improve the docs cloning the repository and doing the push request ([howto](https://confluence.atlassian.com/bitbucket/fork-a-teammate-s-repository-774243391.html)).
 * or just test it, report issues, ideas and enhancements in the issue tracker.
 
-***
+## About us
 
-Copyright (C) Xavier Corredor Llano <xcorredorl@ideam.gov.co>  
-Sistema de Monitoreo de Bosques y Carbono (SMByC)  
-General Public License - GPLv3
+AcATaMa was developing, designed and implemented by the Group of Forest and Carbon Monitoring System (SMByC), operated by the Institute of Hydrology, Meteorology and Environmental Studies (IDEAM) - Colombia.
+
+Author and developer: *Xavier Corredor Ll.*  
+Theoretical support, tester and product verification: Lina Katerine V., Gustavo Galindo, Juan Carlos R.
+
+Acknowledge to all SMByC team.
+
+### Contact
+
+Xavier Corredor Ll.: *xcorredorl (a) ideam.gov.co*  
+SMByC: *smbyc (a) ideam.gov.co*
+
+## License
+
+AcATaMa is a free/libre software and is licensed under the GNU General Public License.
