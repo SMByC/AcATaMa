@@ -8,12 +8,9 @@ Home page documentation: [https://smbyc.bitbucket.io/qgisplugins/acatama](https:
 
 ## Installation
 
-- The plugin can be installed using the QGIS Plugin Manager
-- Go into Qgis to `Plugins` menu and `Manage and install plugins`
-- In `All` section search for `AcATaMa` click and press Install plugin
-- The plugin will be available in the `Plugins` menu and `Plugins toolbar`
+The plugin can be installed using the QGIS Plugin Manager, go into Qgis to `Plugins` menu and `Manage and install plugins`, in `All` section search for `AcATaMa`.
 
-(see more about [installation and upgrade](https://smbyc.bitbucket.io/qgisplugins/acatama/installation))
+The plugin will be available in the `Plugins` menu and `Plugins toolbar`.
 
 ## Source code
 
