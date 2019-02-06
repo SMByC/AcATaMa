@@ -6,9 +6,14 @@ The AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps. It was de
 
 ## Index:
 - [About](about.md)
-- [Installation](installation.md)
 - [How to use](how_to_use.md)
 - [Use cases](use_cases.md)
+
+## Installation
+
+The plugin can be installed using the QGIS Plugin Manager, go into Qgis to `Plugins` menu and `Manage and install plugins`, in `All` section search for `AcATaMa`.
+
+The plugin will be available in the `Plugins` menu and `Plugins toolbar`.
 
 ## Source code
 
