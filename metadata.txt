@@ -26,7 +26,7 @@ changelog=
     Previous versions:
     - All commits in: https://bitbucket.org/smbyc/qgisplugin-acatama/commits/all
 
-tags=accuracy,accuracy assessment,thematic map,classification,sample,sampling design,points,remote sensing
+tags=accuracy,accuracy assessment,thematic,classification,sample,sampling design,points,remote sensing
 
 category=Plugins
 icon=icons/acatama.svg
