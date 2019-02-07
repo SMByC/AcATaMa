@@ -20,7 +20,7 @@
 """
 import os
 
-from PyQt5.QtWidgets import QDialog, QDialogButtonBox
+from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
 from qgis.gui import QgsRendererPropertiesDialog, QgsRendererRasterPropertiesWidget
