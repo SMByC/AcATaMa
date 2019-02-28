@@ -22,20 +22,8 @@ from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QTableWidgetItem
 from qgis.PyQt.QtGui import QColor
 
-from AcATaMa.utils.qgis_utils import get_current_file_path_in
 from AcATaMa.utils.system_utils import wait_process, block_signals_to
-from AcATaMa.utils.others_utils import mask
-
-
-@wait_process
-def get_pixel_count_by_category(srs_table, categorical_raster):
-    """Get the total pixel count for all pixel values"""
-    from osgeo import gdalnumeric
-    cateR_numpy = gdalnumeric.LoadFile(categorical_raster)
-    pixel_count = []
-    for pixel_value in srs_table["color_table"]["Pixel Value"]:
-        pixel_count.append((cateR_numpy == int(pixel_value)).sum())
-    return pixel_count
+from AcATaMa.utils.others_utils import mask, get_pixel_count_by_pixel_values
 
 
 def get_num_samples_by_area_based_proportion(srs_table, total_std_error):
@@ -199,8 +187,10 @@ def fill_stratified_sampling_table(dockwidget):
             srs_table["header"] = ["Pix Val", "Color", "Num Samples", "Std Error", "On"]
             srs_table["column_count"] = len(srs_table["header"])
             srs_table["std_error"] = [str(0.01)]*srs_table["row_count"]
-            srs_table["pixel_count"] = \
-                get_pixel_count_by_category(srs_table, get_current_file_path_in(dockwidget.QCBox_CategRaster_StraRS))
+            srs_table["pixel_count"] = list(
+                get_pixel_count_by_pixel_values(dockwidget.QCBox_CategRaster_StraRS.currentLayer(),
+                                                int(dockwidget.QCBox_band_CategRaster_StraRS.currentText()),
+                                                srs_table["color_table"]["Pixel Value"]).values())
             total_std_error = dockwidget.TotalExpectedSE.value()
             srs_table["On"] = [True] * srs_table["row_count"]
             srs_table["num_samples"] = get_num_samples_by_area_based_proportion(srs_table, total_std_error)

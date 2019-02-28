@@ -32,6 +32,7 @@ from qgis.core import QgsRaster, QgsPointXY, Qgis, QgsVectorFileWriter, QgsCoord
 from qgis.utils import iface
 from qgis.PyQt.QtWidgets import QMessageBox
 
+from AcATaMa.utils.others_utils import get_pixel_count_by_pixel_values
 from AcATaMa.utils.qgis_utils import get_file_path_of_layer
 from AcATaMa.utils.system_utils import wait_process
 
@@ -178,6 +179,7 @@ class Raster(object):
         self.qgs_layer = file_selected_combo_box.currentLayer()
         self.band = band
         self.nodata = nodata if nodata != -1 else None
+        self.pixel_counts_by_value = None
 
     def extent(self):
         return self.qgs_layer.extent()
@@ -189,5 +191,8 @@ class Raster(object):
         return self.qgs_layer.dataProvider().identify(point, QgsRaster.IdentifyFormatValue).results()[self.band]
 
     def get_total_pixels_by_value(self, pixel_value):
-        raster_numpy = gdalnumeric.LoadFile(self.file_path)
-        return (raster_numpy == int(pixel_value)).sum()
+        if self.pixel_counts_by_value is None:
+            self.pixel_counts_by_value = get_pixel_count_by_pixel_values(self.qgs_layer, self.band)
+
+        if pixel_value in self.pixel_counts_by_value:
+            return self.pixel_counts_by_value[pixel_value]
