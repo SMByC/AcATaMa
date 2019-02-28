@@ -149,7 +149,7 @@ The configuration buttons dialog you can set all buttons for classify the sample
     <img src="../img/3d.png" width="60%">
 
 !!! warning "Important!"
-    The column `Thematic raster class` is available only if you set the thematic raster in [Thematic](#1-thematic) tab before open the dialog. You must configure the thematic raster class for all buttons if you want accuracy assessment result.
+    The column `Thematic raster class` is available only if you set the thematic raster in [Thematic](#1-thematic-map) tab before open the dialog. You must configure the thematic raster class for all buttons if you want accuracy assessment result.
 
 
 ## 4. Accuracy Assessment
