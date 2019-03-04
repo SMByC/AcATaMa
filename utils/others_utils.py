@@ -52,7 +52,7 @@ def get_pixel_values(layer, band):
     # for singleband_pseudocolor
     items = xml_style.findall('pipe/rasterrenderer[@band="{}"]/rastershader/colorrampshader/item'.format(band))
     if not items:
-        # for color table
+        # for unique values
         items = xml_style.findall('pipe/rasterrenderer[@band="{}"]/colorPalette/paletteEntry'.format(band))
 
     pixel_values = []
