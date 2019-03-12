@@ -3,7 +3,7 @@
 body {
     font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 16px;
-    line-height: 1.35;
+    line-height: 1.5em;
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
@@ -34,7 +34,7 @@ h4, h5, h6 {
 
 .navbar {
     background-image: none;
-    border-bottom: 3px solid #1775B6;
+    border-bottom: 6px solid #1775B6;
     box-shadow: 0 1px 10px rgba(0,0,0,0.1);
     min-height: 45px;
 }
@@ -54,17 +54,26 @@ h4, h5, h6 {
 }
 
 .navbar-brand {
-    font-size: 17px;
+    font-size: 19px;
     padding: 11px 14px;
     font-weight: bold;
 }
 
 .navbar-nav > li > a {
+    font-size: 17px;
     padding: 11px 14px;
+    font-weight: bold;
 }
 
 .bs-sidebar {
     font-size: 15px;
+}
+
+ul.nav .main {
+    border-bottom: 2px solid #DFDFDF;
+    margin-bottom: 4px;
+    padding-bottom: 4px;
+    margin-left: -8px;
 }
 
 a {
@@ -94,4 +103,8 @@ ul.nav > li > a[rel~="prev"], ul.nav > li > a[rel~="next"] {
 
 div.container div p img {
     margin: 15px auto 18px auto;
+}
+
+[class*="col-md-"] {
+    float: none;
 }
