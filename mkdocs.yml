@@ -14,7 +14,7 @@ markdown_extensions:
   - toc:
       permalink: true
   - sane_lists
-pages:
+nav:
   - Home: index.md
   - About: about.md
   - How to use: how_to_use.md
