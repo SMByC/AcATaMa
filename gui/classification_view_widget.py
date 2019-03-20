@@ -22,7 +22,7 @@ import os
 from qgis.PyQt import uic
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QWidget, QGridLayout, QFileDialog
-from qgis.PyQt.QtCore import QSettings, pyqtSlot, QTimer
+from qgis.PyQt.QtCore import QSettings, pyqtSlot, QTimer, Qt
 from qgis.core import QgsGeometry, QgsMapLayerProxyModel, QgsWkbTypes, QgsPoint
 from qgis.gui import QgsMapCanvas, QgsMapToolPan, QgsRubberBand, QgsVertexMarker
 from qgis.utils import iface
@@ -36,6 +36,9 @@ class PanAndZoomPointTool(QgsMapToolPan):
         QgsMapToolPan.__init__(self, render_widget.canvas)
         self.render_widget = render_widget
 
+    def update_canvas(self):
+        self.render_widget.parent_view.canvas_changed()
+
     def canvasReleaseEvent(self, event):
         QgsMapToolPan.canvasReleaseEvent(self, event)
         self.update_canvas()
@@ -44,8 +47,9 @@ class PanAndZoomPointTool(QgsMapToolPan):
         QgsMapToolPan.wheelEvent(self, event)
         QTimer.singleShot(10, self.update_canvas)
 
-    def update_canvas(self):
-        self.render_widget.parent_view.canvas_changed()
+    def keyReleaseEvent(self, event):
+        if event.key() in [Qt.Key_Up, Qt.Key_Down, Qt.Key_Right, Qt.Key_Left, Qt.Key_PageUp, Qt.Key_PageDown]:
+            QTimer.singleShot(10, self.update_canvas)
 
 
 class Marker(object):
