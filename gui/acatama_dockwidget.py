@@ -25,7 +25,7 @@ import webbrowser
 from shutil import copyfile
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot
+from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, Qt
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QDockWidget
 from qgis.core import QgsProject, QgsVectorFileWriter, QgsMapLayerProxyModel, Qgis, QgsUnitTypes
 from qgis.utils import iface
@@ -606,6 +606,11 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
     @pyqtSlot()
     def open_classification_dialog(self):
         if ClassificationDialog.is_opened:
+            # an instance of classification dialog is already created
+            # brings that instance to front even if it is minimized
+            self.classification_dialog.setWindowState(self.classification_dialog.windowState()
+                                                      & ~Qt.WindowMinimized | Qt.WindowActive)
+            self.classification_dialog.raise_()
             self.classification_dialog.activateWindow()
             return
         sampling_layer = self.QCBox_SamplingFile.currentLayer()
