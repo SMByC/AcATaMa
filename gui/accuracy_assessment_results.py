@@ -25,6 +25,7 @@ import copy
 from qgis.core import QgsUnitTypes
 
 from AcATaMa.utils.qgis_utils import get_file_path_of_layer
+from AcATaMa.utils.system_utils import error_handler
 
 
 def rf(fv, r=5):
@@ -34,6 +35,7 @@ def rf(fv, r=5):
     return round(fv, r)
 
 
+@error_handler
 def get_html(accu_asse):
     html = '''
         <head>
@@ -459,6 +461,7 @@ def get_html(accu_asse):
     return html
 
 
+@error_handler
 def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows = []
     csv_rows.append(["Classification accuracy assessment results"])

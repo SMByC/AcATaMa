@@ -23,9 +23,9 @@ import traceback
 import os, sys, subprocess
 
 from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtWidgets import QApplication
+from qgis.PyQt.QtWidgets import QApplication, QMessageBox, QPushButton
 from qgis.PyQt.QtGui import QCursor
-from qgis.core import QgsMessageLog, Qgis
+from qgis.core import Qgis
 from qgis.utils import iface
 
 
@@ -34,26 +34,50 @@ def error_handler(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except Exception as e:
+        except Exception as err:
             # restore mouse
             QApplication.restoreOverrideCursor()
             QApplication.processEvents()
-            # message in status bar
-            msg_error = "An error has occurred in ACATAMA plugin. " \
-                        "See more in Qgis log messages panel."
-            iface.messageBar().pushMessage("AcATaMa", msg_error,
-                                           level=Qgis.Critical, duration=10)
-            # message in log
-            msg_error = "\n################## ERROR IN ACATAMA PLUGIN:\n"
-            msg_error += traceback.format_exc()
-            msg_error += "\nPlease report the error in:\n" \
-                         "\thttps://bitbucket.org/smbyc/qgisplugin-acatama/issues"
-            msg_error += "\n################## END REPORT"
-            QgsMessageLog.logMessage(msg_error)
+
+            # select the message bar
+            from AcATaMa.gui.classification_dialog import ClassificationDialog
+            if ClassificationDialog.is_opened:
+                msg_bar = ClassificationDialog.instance.MsgBar
+            else:
+                msg_bar = iface.messageBar()
+
+            msg_bar.clearWidgets()
+
+            # message in status bar with details
+            def details_message_box(error, more_details):
+                msgBox = QMessageBox()
+                msgBox.setWindowTitle("AcATaMa - Error handler")
+                msgBox.setText("<i>{}</i>".format(error))
+                msgBox.setInformativeText("If you consider this as an error of AcATaMa, report it in "
+                                          "<a href='https://bitbucket.org/smbyc/qgisplugin-acatama/issues'>issue tracker</a>")
+                msgBox.setDetailedText(more_details)
+                msgBox.setTextFormat(Qt.RichText)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec()
+                del msgBox
+
+            msg_error = "Ups! an error has occurred in AcATaMa plugin"
+            widget = msg_bar.createMessage("AcATaMa", msg_error)
+            error = err
+            more_details = traceback.format_exc()
+
+            button = QPushButton(widget)
+            button.setText("Show details...")
+            button.pressed.connect(lambda: details_message_box(error, more_details))
+            widget.layout().addWidget(button)
+
+            msg_bar.pushWidget(widget, level=Qgis.Warning, duration=10)
+
     return wrapper
 
 
 def wait_process(func):
+    @error_handler
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         # mouse wait

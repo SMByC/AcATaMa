@@ -31,7 +31,7 @@ from AcATaMa.core.classification import Classification
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, get_current_file_path_in, \
     load_and_select_filepath_in
 from AcATaMa.core.raster import get_current_colors_style
-from AcATaMa.utils.system_utils import open_file, block_signals_to
+from AcATaMa.utils.system_utils import open_file, block_signals_to, error_handler
 from AcATaMa.gui.classification_view_widget import ClassificationViewWidget
 
 # plugin path
@@ -223,6 +223,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         except:
             self.GoTo_ID.setStyleSheet("color: red")
 
+    @error_handler
     def open_current_point_in_google_engine(self):
         # create temp file
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
@@ -351,6 +352,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
             # cancel button -> restore the old button config
             self.classification_btns_config = ClassificationButtonsConfig(self.classification.buttons_config)
 
+    @error_handler
     def create_classification_buttons(self, tableBtnsConfig=None, buttons_config=None):
         if not tableBtnsConfig and not buttons_config:
             return
@@ -453,6 +455,7 @@ class ClassificationButtonsConfig(QDialog, FORM_CLASS):
         self.table_buttons = dict(zip(range(1, 31), [""] * 30))
         self.create_table()
 
+    @error_handler
     def create_table(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
 
@@ -561,6 +564,7 @@ class ThematicRasterClasses(QDialog, FORM_CLASS):
         # init with empty table
         self.create_table()
 
+    @error_handler
     def create_table(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
 
