@@ -172,11 +172,11 @@ class ClassificationDialog(QDialog, FORM_CLASS):
                     elif view_config["render_file_path"] and not os.path.isfile(view_config["render_file_path"]):
                         self.MsgBar.pushMessage(
                             "Impossible to load the layer '{}' in the view {}: no such file {}"
-                                .format(layer_name, view_widget.id + 1, view_config["render_file_path"]), level=Qgis.Warning, duration=0)
+                                .format(layer_name, view_widget.id + 1, view_config["render_file_path"]), level=Qgis.Warning, duration=20)
                     else:
                         self.MsgBar.pushMessage(
                             "Impossible to load the layer '{}' in the view {} (for network layers use save/load a Qgis project)"
-                                .format(layer_name, view_widget.id + 1), level=Qgis.Warning, duration=0)
+                                .format(layer_name, view_widget.id + 1), level=Qgis.Warning, duration=20)
                     # TODO: restore size by view widget
                     # view_widget.resize(*view_config["view_size"])
                     view_widget.QLabel_ViewName.setText(view_config["view_name"])
@@ -292,7 +292,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
                 self.statusCurrentSample.setStyleSheet('QLabel {color: red;}')
                 self.MsgBar.pushMessage(
                     "This sample was classified with invalid/deleted item, fix the classification buttons "
-                    "or reclassify the sample", level=Qgis.Critical, duration=0)
+                    "or reclassify the sample", level=Qgis.Critical, duration=20)
         else:
             self.statusCurrentSample.setText("not classified")
             self.statusCurrentSample.setStyleSheet('QLabel {color: gray;}')

@@ -71,7 +71,7 @@ def error_handler(func):
             button.pressed.connect(lambda: details_message_box(error, more_details))
             widget.layout().addWidget(button)
 
-            msg_bar.pushWidget(widget, level=Qgis.Warning, duration=10)
+            msg_bar.pushWidget(widget, level=Qgis.Warning, duration=20)
 
     return wrapper
 

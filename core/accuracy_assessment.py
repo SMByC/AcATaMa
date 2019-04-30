@@ -233,7 +233,7 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
                     "File saved successfully \"{}\"".format(os.path.basename(file_out)), level=Qgis.Success)
             except Exception as err:
                 self.MsgBar.pushMessage(
-                    "Failed saving the csv file: {}".format(err), level=Qgis.Critical, duration=0)
+                    "Failed saving the csv file: {}".format(err), level=Qgis.Critical, duration=20)
 
     def closeEvent(self, event):
         self.closing()
