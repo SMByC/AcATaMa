@@ -398,6 +398,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             pass
 
     @pyqtSlot()
+    @error_handler
     def fileDialog_saveSampling(self, combo_box):
         if combo_box.currentText() not in Sampling.samplings:
             iface.messageBar().pushMessage("AcATaMa",
@@ -416,6 +417,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=Qgis.Success)
 
     @pyqtSlot()
+    @error_handler
     def fileDialog_saveSamplingConf(self, combo_box):
         if combo_box.currentText() not in Sampling.samplings:
             iface.messageBar().pushMessage("AcATaMa",
@@ -509,6 +511,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                 classification.grid_rows = self.grid_rows.value()
 
     @pyqtSlot()
+    @error_handler
     def fileDialog_loadClassificationConfig(self):
         file_path, _ = QFileDialog.getOpenFileName(self, self.tr("Restore the configuration and classification status"),
                                                    "", self.tr("Yaml (*.yaml *.yml);;All files (*.*)"))
@@ -544,6 +547,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             iface.messageBar().pushMessage("AcATaMa", "File loaded successfully", level=Qgis.Success)
 
     @pyqtSlot()
+    @error_handler
     def fileDialog_saveClassificationConfig(self):
         if not valid_file_selected_in(self.QCBox_SamplingFile):
             iface.messageBar().pushMessage("AcATaMa",
@@ -569,6 +573,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                                                level=Qgis.Warning)
 
     @pyqtSlot()
+    @error_handler
     def fileDialog_saveSamplingClassification(self):
         if not valid_file_selected_in(self.QCBox_SamplingFile):
             iface.messageBar().pushMessage("AcATaMa", "Error, please first select a sampling file",
@@ -604,6 +609,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=Qgis.Success)
 
     @pyqtSlot()
+    @error_handler
     def open_classification_dialog(self):
         if ClassificationDialog.is_opened:
             # an instance of classification dialog is already created

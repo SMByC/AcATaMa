@@ -153,7 +153,7 @@ def get_singleband_pseudocolor(layer, band_number, nodata=None):
         color_table["Pixel Value"].append(int(item.get("value")))
 
         item_color = item.get("color").lstrip('#')
-        item_color = tuple(int(item_color[i:i+2], 16) for i in (0, 2 ,4))
+        item_color = tuple(int(item_color[i:i+2], 16) for i in (0, 2, 4))
 
         color_table["Red"].append(item_color[0])
         color_table["Green"].append(item_color[1])
