@@ -245,6 +245,13 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.minDistance_StraRS.setValue(0)
             # disable sampling tab
             self.scrollAreaWidgetContents_S.setDisabled(True)
+            # unset the thematic classes in classification instance
+            sampling_layer = self.QCBox_SamplingFile.currentLayer()
+            if sampling_layer and sampling_layer in Classification.instances:
+                Classification.instances[sampling_layer].with_thematic_classes = False
+            # updated state of sampling file selected for accuracy assessment tab
+            self.set_sampling_file_accuracy_assessment()
+
         # first check
         if not valid_file_selected_in(self.QCBox_ThematicRaster, "thematic raster"):
             clear_and_unset_the_thematic_raster()
