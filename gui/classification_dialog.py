@@ -23,7 +23,8 @@ import tempfile
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtWidgets import QTableWidgetItem, QSplitter, QColorDialog, QDialog, QDialogButtonBox, QPushButton
+from qgis.PyQt.QtWidgets import QTableWidgetItem, QSplitter, QColorDialog, QDialog, QDialogButtonBox, QPushButton, \
+    QMessageBox
 from qgis.PyQt.QtGui import QColor, QIcon
 from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, Qgis, QgsProject, QgsUnitTypes
 
@@ -454,6 +455,9 @@ class ClassificationButtonsConfig(QDialog, FORM_CLASS):
         # init with empty table
         self.table_buttons = dict(zip(range(1, 31), [""] * 30))
         self.create_table()
+        #
+        self.buttonBox.button(QDialogButtonBox.Ok).clicked.connect(self.check_before_accept)
+        self.buttonBox.button(QDialogButtonBox.Cancel).clicked.connect(self.reject)
 
     @error_handler
     def create_table(self):
@@ -551,6 +555,27 @@ class ClassificationButtonsConfig(QDialog, FORM_CLASS):
             self.tableBtnsConfig.item(tableItem.row(), 1).setBackground(QColor(255, 255, 255, 0))
             if not self.tableBtnsConfig.item(tableItem.row(), 2).text() == "none":
                 self.tableBtnsConfig.item(tableItem.row(), 2).setText("")
+
+    def check_before_accept(self):
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        # check if all buttons are associated to thematic classes if it is working with thematic classes
+        sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile.currentLayer()
+        if sampling_layer and sampling_layer in Classification.instances:
+            if Classification.instances[sampling_layer].with_thematic_classes:
+                items_with_classes = [self.tableBtnsConfig.item(row, 2).text() != "" for row in
+                                      range(self.tableBtnsConfig.rowCount()) if self.tableBtnsConfig.item(row, 0).text() != ""]
+                items_thematic_class = \
+                    [self.tableBtnsConfig.item(row, 2).text() for row in
+                     range(self.tableBtnsConfig.rowCount()) if self.tableBtnsConfig.item(row, 2).text() != ""]
+
+                if False in items_with_classes:
+                    msg = "A) If you are classifying with thematic classes, then you must configure " \
+                          "the thematic class value for all buttons. \n\nB) Or if you are classifying the " \
+                          "sampling without pairing with thematic classes, then unselected the thematic " \
+                          "raster in the thematic tab."
+                    QMessageBox.warning(self, 'Problems with the classification buttons', msg, QMessageBox.Ok)
+                    return
+        self.accept()
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
