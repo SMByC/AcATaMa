@@ -346,6 +346,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
             self.set_current_sample()
 
     def open_set_classification_dialog(self):
+        self.classification_btns_config.create_table()
         if self.classification_btns_config.exec_():
             # ok button -> accept the new buttons config
             self.create_classification_buttons(tableBtnsConfig=self.classification_btns_config.tableBtnsConfig)
