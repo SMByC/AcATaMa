@@ -564,10 +564,6 @@ class ClassificationButtonsConfig(QDialog, FORM_CLASS):
             if Classification.instances[sampling_layer].with_thematic_classes:
                 items_with_classes = [self.tableBtnsConfig.item(row, 2).text() != "" for row in
                                       range(self.tableBtnsConfig.rowCount()) if self.tableBtnsConfig.item(row, 0).text() != ""]
-                items_thematic_class = \
-                    [self.tableBtnsConfig.item(row, 2).text() for row in
-                     range(self.tableBtnsConfig.rowCount()) if self.tableBtnsConfig.item(row, 2).text() != ""]
-
                 if False in items_with_classes:
                     msg = "A) If you are classifying with thematic classes, then you must configure " \
                           "the thematic class value for all buttons. \n\nB) Or if you are classifying the " \
