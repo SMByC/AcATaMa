@@ -87,7 +87,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QCBox_ThematicRaster.setCurrentIndex(-1)
         self.QCBox_ThematicRaster.setFilters(QgsMapLayerProxyModel.RasterLayer)
         # call to browse the thematic raster file
-        self.QPBtn_browseThematicRaster.clicked.connect(lambda: self.fileDialog_browse(
+        self.QPBtn_browseThematicRaster.clicked.connect(lambda: self.browser_dialog_to_load_file(
             self.QCBox_ThematicRaster,
             dialog_title=self.tr("Select the thematic raster image to evaluate"),
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
@@ -100,7 +100,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QCBox_AreaOfInterest.setCurrentIndex(-1)
         self.QCBox_AreaOfInterest.setFilters(QgsMapLayerProxyModel.PolygonLayer)
         # call to browse the shape area
-        self.QPBtn_browseAreaOfInterest.clicked.connect(lambda: self.fileDialog_browse(
+        self.QPBtn_browseAreaOfInterest.clicked.connect(lambda: self.browser_dialog_to_load_file(
             self.QCBox_AreaOfInterest,
             dialog_title=self.tr("Select the vector file"),
             file_filters=self.tr("Vector files (*.gpkg *.shp);;All files (*.*)")))
@@ -123,7 +123,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QCBox_CategRaster_SimpRS.setCurrentIndex(-1)
         self.QCBox_CategRaster_SimpRS.setFilters(QgsMapLayerProxyModel.RasterLayer)
         # call to browse the categorical raster
-        self.QPBtn_browseCategRaster_SimpRS.clicked.connect(lambda: self.fileDialog_browse(
+        self.QPBtn_browseCategRaster_SimpRS.clicked.connect(lambda: self.browser_dialog_to_load_file(
             self.QCBox_CategRaster_SimpRS,
             dialog_title=self.tr("Select the categorical raster file"),
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
@@ -149,7 +149,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QCBox_CategRaster_StraRS.setCurrentIndex(-1)
         self.QCBox_CategRaster_StraRS.setFilters(QgsMapLayerProxyModel.RasterLayer)
         # call to browse the categorical raster
-        self.QPBtn_browseCategRaster_StraRS.clicked.connect(lambda: self.fileDialog_browse(
+        self.QPBtn_browseCategRaster_StraRS.clicked.connect(lambda: self.browser_dialog_to_load_file(
             self.QCBox_CategRaster_StraRS,
             dialog_title=self.tr("Select the categorical raster file"),
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
@@ -187,7 +187,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # show the classification file settings in plugin when it is selected
         self.QCBox_SamplingFile.currentIndexChanged.connect(self.update_the_status_of_classification)
         # call to browse the sampling file
-        self.QPBtn_browseSamplingFile.clicked.connect(lambda: self.fileDialog_browse(
+        self.QPBtn_browseSamplingFile.clicked.connect(lambda: self.browser_dialog_to_load_file(
             self.QCBox_SamplingFile,
             dialog_title=self.tr("Select the Sampling points file to classify"),
             file_filters=self.tr("Vector files (*.gpkg *.shp);;All files (*.*)")))
@@ -218,7 +218,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QPBtn_ComputeViewAccurasyAssessment.clicked.connect(self.open_accuracy_assessment_results)
 
     @pyqtSlot()
-    def fileDialog_browse(self, combo_box, dialog_title, file_filters):
+    def browser_dialog_to_load_file(self, combo_box, dialog_title, file_filters):
         file_path, _ = QFileDialog.getOpenFileName(self, dialog_title, "", file_filters)
         if file_path != '' and os.path.isfile(file_path):
             # load to qgis and update combobox list
