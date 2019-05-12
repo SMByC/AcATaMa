@@ -37,7 +37,7 @@ from AcATaMa.core.raster import do_clipping_with_shape, get_nodata_value
 from AcATaMa.gui.about_dialog import AboutDialog
 from AcATaMa.gui.classification_dialog import ClassificationDialog
 from AcATaMa.utils.qgis_utils import get_current_file_path_in, \
-    unload_layer_in_qgis, valid_file_selected_in, load_and_select_filepath_in
+    unload_layer, valid_file_selected_in, load_and_select_filepath_in
 from AcATaMa.utils.sampling_utils import update_stratified_sampling_table, fill_stratified_sampling_table
 from AcATaMa.utils.system_utils import error_handler, block_signals_to
 
@@ -90,8 +90,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QPBtn_browseThematicRaster.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_ThematicRaster,
             dialog_title=self.tr("Select the thematic raster image to evaluate"),
-            dialog_types=self.tr("Raster files (*.tif *.img);;All files (*.*)"),
-            layer_type="raster"))
+            file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
         # select and check the thematic raster
         self.QCBox_ThematicRaster.currentIndexChanged.connect(self.select_thematic_raster)
 
@@ -104,8 +103,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QPBtn_browseAreaOfInterest.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_AreaOfInterest,
             dialog_title=self.tr("Select the vector file"),
-            dialog_types=self.tr("Vector files (*.gpkg *.shp);;All files (*.*)"),
-            layer_type="vector"))
+            file_filters=self.tr("Vector files (*.gpkg *.shp);;All files (*.*)")))
         # do clip
         self.QPBtn_ClippingThematic.clicked.connect(self.clipping_thematic_raster)
 
@@ -128,8 +126,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QPBtn_browseCategRaster_SimpRS.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_CategRaster_SimpRS,
             dialog_title=self.tr("Select the categorical raster file"),
-            dialog_types=self.tr("Raster files (*.tif *.img);;All files (*.*)"),
-            layer_type="raster"))
+            file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
         # select and check the categorical raster
         self.QCBox_CategRaster_SimpRS.currentIndexChanged.connect(self.select_categorical_raster_SimpRS)
         # generate sampling options
@@ -155,8 +152,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QPBtn_browseCategRaster_StraRS.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_CategRaster_StraRS,
             dialog_title=self.tr("Select the categorical raster file"),
-            dialog_types=self.tr("Raster files (*.tif *.img);;All files (*.*)"),
-            layer_type="raster"))
+            file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
         # select and check the categorical raster
         self.QCBox_CategRaster_StraRS.currentIndexChanged.connect(self.select_categorical_raster_StraRS)
         self.QCBox_band_CategRaster_StraRS.currentIndexChanged.connect(self.reset_StraRS_method)
@@ -194,8 +190,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QPBtn_browseSamplingFile.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_SamplingFile,
             dialog_title=self.tr("Select the Sampling points file to classify"),
-            dialog_types=self.tr("Vector files (*.gpkg *.shp);;All files (*.*)"),
-            layer_type="vector"))
+            file_filters=self.tr("Vector files (*.gpkg *.shp);;All files (*.*)")))
         # call to reload sampling file
         self.QPBtn_reloadSamplingFile.clicked.connect(self.reload_sampling_file)
         # call to load and save classification config
@@ -223,11 +218,11 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QPBtn_ComputeViewAccurasyAssessment.clicked.connect(self.open_accuracy_assessment_results)
 
     @pyqtSlot()
-    def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
-        file_path, _ = QFileDialog.getOpenFileName(self, dialog_title, "", dialog_types)
+    def fileDialog_browse(self, combo_box, dialog_title, file_filters):
+        file_path, _ = QFileDialog.getOpenFileName(self, dialog_title, "", file_filters)
         if file_path != '' and os.path.isfile(file_path):
             # load to qgis and update combobox list
-            load_and_select_filepath_in(combo_box, file_path, layer_type)
+            load_and_select_filepath_in(combo_box, file_path)
 
     @pyqtSlot()
     def select_thematic_raster(self):
@@ -385,9 +380,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         if os.path.isfile(thematic_basename + ".qml"):
             copyfile(thematic_basename + ".qml", os.path.splitext(file_out)[0] + ".qml")
         # unload old thematic file
-        unload_layer_in_qgis(get_current_file_path_in(self.QCBox_ThematicRaster))
+        unload_layer(get_current_file_path_in(self.QCBox_ThematicRaster))
         # load to qgis and update combobox list
-        load_and_select_filepath_in(self.QCBox_ThematicRaster, clip_file, "raster")
+        load_and_select_filepath_in(self.QCBox_ThematicRaster, clip_file)
         self.select_thematic_raster()
 
         iface.messageBar().pushMessage("AcATaMa", "Clipping the thematic raster with shape, completed",
@@ -542,7 +537,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                 # TODO: ask for new location of the sampling file
                 return
 
-            sampling_layer = load_and_select_filepath_in(self.QCBox_SamplingFile, sampling_filepath, "vector")
+            sampling_layer = load_and_select_filepath_in(self.QCBox_SamplingFile, sampling_filepath)
 
             # restore configuration and classification status
             classification = Classification(sampling_layer)

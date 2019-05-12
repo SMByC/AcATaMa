@@ -29,7 +29,7 @@ from qgis.core import QgsGeometry, QgsField, QgsFields, QgsSpatialIndex, \
 
 from AcATaMa.core.point import RandomPoint
 from AcATaMa.core.raster import Raster
-from AcATaMa.utils.qgis_utils import load_layer_in_qgis, valid_file_selected_in
+from AcATaMa.utils.qgis_utils import load_layer, valid_file_selected_in
 from AcATaMa.utils.system_utils import wait_process, error_handler
 
 
@@ -94,12 +94,12 @@ def do_simple_random_sampling(dockwidget):
 
     # success
     if sampling.total_of_samples == number_of_samples:
-        load_layer_in_qgis(sampling.output_file, "vector")
+        load_layer(sampling.output_file)
         iface.messageBar().pushMessage("AcATaMa", "Generate the simple random sampling, completed",
                                        level=Qgis.Success)
     # success but not completed
     if sampling.total_of_samples < number_of_samples and sampling.total_of_samples > 0:
-        load_layer_in_qgis(sampling.output_file, "vector")
+        load_layer(sampling.output_file)
         iface.messageBar().pushMessage("AcATaMa", "Generated the simple random sampling, but can not generate requested number of "
                                                   "random points {}/{}, attempts exceeded".format(sampling.total_of_samples, number_of_samples),
                                        level=Qgis.Info, duration=20)
@@ -194,12 +194,12 @@ def do_stratified_random_sampling(dockwidget):
 
     # success
     if sampling.total_of_samples == total_of_samples:
-        load_layer_in_qgis(sampling.output_file, "vector")
+        load_layer(sampling.output_file)
         iface.messageBar().pushMessage("AcATaMa", "Generate the stratified random sampling, completed",
                                        level=Qgis.Success)
     # success but not completed
     if sampling.total_of_samples < total_of_samples and sampling.total_of_samples > 0:
-        load_layer_in_qgis(sampling.output_file, "vector")
+        load_layer(sampling.output_file)
         iface.messageBar().pushMessage("AcATaMa", "Generated the stratified random sampling, but can not generate requested number of "
                                                   "random points {}/{}, attempts exceeded".format(sampling.total_of_samples, total_of_samples),
                                        level=Qgis.Info, duration=20)

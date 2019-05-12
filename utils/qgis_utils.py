@@ -67,12 +67,12 @@ def get_current_file_path_in(combo_box, show_message=True):
     return None
 
 
-def load_and_select_filepath_in(combo_box, file_path, layer_type="any"):
+def load_and_select_filepath_in(combo_box, file_path):
     filename = os.path.splitext(os.path.basename(file_path))[0]
     layer = get_layer_by_name(filename)
+    # load
     if not layer:
-        # load to qgis and update combobox list
-        load_layer_in_qgis(file_path, layer_type)
+        load_layer(file_path)
     # select the sampling file in combobox
     selected_index = combo_box.findText(filename, Qt.MatchFixedString)
     combo_box.setCurrentIndex(selected_index)
@@ -80,30 +80,31 @@ def load_and_select_filepath_in(combo_box, file_path, layer_type="any"):
     return get_layer_by_name(filename)
 
 
-def load_layer_in_qgis(file_path, layer_type):
+def add_layer(layer, add_to_legend=True):
+    QgsProject.instance().addMapLayer(layer, add_to_legend)
+
+
+def load_layer(file_path, name=None, add_to_legend=True):
     # first unload layer from qgis if exists
-    unload_layer_in_qgis(file_path)
-    # create layer
-    filename = os.path.splitext(os.path.basename(file_path))[0]
-    if layer_type == "raster":
-        layer = QgsRasterLayer(file_path, filename)
-    if layer_type == "vector":
-        layer = QgsVectorLayer(file_path, filename, "ogr")
-    if layer_type == "any":
-        if file_path.endswith((".tif", ".TIF", ".img", ".IMG")):
-            layer = QgsRasterLayer(file_path, filename)
-        if file_path.endswith((".gpkg", ".GPKG", ".shp", ".SHP")):
-            layer = QgsVectorLayer(file_path, filename, "ogr")
+    unload_layer(file_path)
+
+    name = name or os.path.splitext(os.path.basename(file_path))[0]
+    # vector
+    qgslayer = QgsVectorLayer(file_path, name, "ogr")
+    if not qgslayer.isValid():
+        # raster
+        qgslayer = QgsRasterLayer(file_path, name, "gdal")
+
     # load
-    if layer.isValid():
-        QgsProject.instance().addMapLayer(layer)
+    if qgslayer.isValid():
+        add_layer(qgslayer, add_to_legend)
     else:
-        iface.messageBar().pushMessage("AcATaMa", "Error, {} is not a valid {} file!"
-                                       .format(os.path.basename(file_path), layer_type))
-    return filename
+        iface.messageBar().pushMessage("AcATaMa", "Could not load layer: {}".format(file_path))
+
+    return qgslayer
 
 
-def unload_layer_in_qgis(layer_path):
+def unload_layer(layer_path):
     layers_loaded = QgsProject.instance().mapLayers().values()
     for layer_loaded in layers_loaded:
         if hasattr(layer_loaded, "dataProvider"):
