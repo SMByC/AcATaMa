@@ -182,7 +182,7 @@ class ClassificationViewWidget(QWidget, FORM_CLASS):
         # handle connect layer selection with render canvas
         self.QCBox_RenderFile.currentIndexChanged.connect(lambda: self.set_render_layer(self.QCBox_RenderFile.currentLayer()))
         # call to browse the render file
-        self.QCBox_browseRenderFile.clicked.connect(lambda: self.fileDialog_browse(
+        self.QCBox_browseRenderFile.clicked.connect(lambda: self.browser_dialog_to_load_file(
             self.QCBox_RenderFile,
             dialog_title=self.tr("Select the file for this view"),
             file_filters=self.tr("Raster or vector files (*.tif *.img *.gpkg *.shp);;All files (*.*)")))
@@ -231,7 +231,7 @@ class ClassificationViewWidget(QWidget, FORM_CLASS):
         self.render_widget.render_layer(layer)
 
     @pyqtSlot()
-    def fileDialog_browse(self, combo_box, dialog_title, file_filters):
+    def browser_dialog_to_load_file(self, combo_box, dialog_title, file_filters):
         file_path, _ = QFileDialog.getOpenFileName(self, dialog_title, "", file_filters)
         if file_path != '' and os.path.isfile(file_path):
             # load to qgis and update combobox list
