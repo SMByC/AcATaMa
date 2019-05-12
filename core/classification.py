@@ -173,7 +173,7 @@ class Classification(object):
         if yaml_config["thematic_raster"]["path"]:
             # thematic raster
             load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_ThematicRaster,
-                                        yaml_config["thematic_raster"]["path"], "raster")
+                                        yaml_config["thematic_raster"]["path"])
             AcATaMa.dockwidget.select_thematic_raster()
             # band number
             if "band" in yaml_config["thematic_raster"]:
@@ -233,7 +233,7 @@ class Classification(object):
         # restore accuracy assessment conf
         if "accuracy_assessment_sampling_file" in yaml_config and yaml_config["accuracy_assessment_sampling_file"]:
             load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_SamplingFile_AA,
-                                        yaml_config["accuracy_assessment_sampling_file"], "vector")
+                                        yaml_config["accuracy_assessment_sampling_file"])
         if "accuracy_assessment_dialog" in yaml_config:
             from AcATaMa.core.accuracy_assessment import AccuracyAssessment
             accuracy_assessment = AccuracyAssessment(self)

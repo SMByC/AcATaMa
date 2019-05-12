@@ -30,7 +30,7 @@ from AcATaMa.core.accuracy_assessment import AccuracyAssessmentDialog
 from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget
 from AcATaMa.gui.about_dialog import AboutDialog
 from AcATaMa.gui.classification_dialog import ClassificationDialog
-from AcATaMa.utils.qgis_utils import unload_layer_in_qgis
+from AcATaMa.utils.qgis_utils import unload_layer
 
 # Initialize Qt resources from file resources.py
 from . import resources
@@ -204,7 +204,7 @@ class AcATaMa(object):
         except: files_in_tmp_dir = []
 
         for file_tmp in files_in_tmp_dir:
-            unload_layer_in_qgis(file_tmp)
+            unload_layer(file_tmp)
 
         # clear self.dockwidget.tmp_dir
         if self.dockwidget.tmp_dir and os.path.isdir(self.dockwidget.tmp_dir):

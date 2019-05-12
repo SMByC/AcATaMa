@@ -185,9 +185,7 @@ class ClassificationViewWidget(QWidget, FORM_CLASS):
         self.QCBox_browseRenderFile.clicked.connect(lambda: self.fileDialog_browse(
             self.QCBox_RenderFile,
             dialog_title=self.tr("Select the file for this view"),
-            dialog_types=self.tr("Raster or vector files (*.tif *.img *.gpkg *.shp);;All files (*.*)"),
-            layer_type="any"))
-
+            file_filters=self.tr("Raster or vector files (*.tif *.img *.gpkg *.shp);;All files (*.*)")))
         # zoom scale factor
         self.scaleFactor.valueChanged.connect(self.scalefactor_changed)
         # edit layer properties
@@ -233,11 +231,11 @@ class ClassificationViewWidget(QWidget, FORM_CLASS):
         self.render_widget.render_layer(layer)
 
     @pyqtSlot()
-    def fileDialog_browse(self, combo_box, dialog_title, dialog_types, layer_type):
-        file_path, _ = QFileDialog.getOpenFileName(self, dialog_title, "", dialog_types)
+    def fileDialog_browse(self, combo_box, dialog_title, file_filters):
+        file_path, _ = QFileDialog.getOpenFileName(self, dialog_title, "", file_filters)
         if file_path != '' and os.path.isfile(file_path):
             # load to qgis and update combobox list
-            load_and_select_filepath_in(combo_box, file_path, layer_type)
+            load_and_select_filepath_in(combo_box, file_path)
 
             self.set_render_layer(combo_box.currentLayer())
 
