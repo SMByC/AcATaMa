@@ -53,6 +53,9 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         self.setupUi(self)
         ClassificationDialog.instance = self
 
+        # flags
+        self.setWindowFlags(self.windowFlags() | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint)
+
         # get classification or init new instance
         if sampling_layer in Classification.instances:
             self.classification = Classification.instances[sampling_layer]
