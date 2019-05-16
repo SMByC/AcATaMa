@@ -158,12 +158,10 @@ class ClassificationDialog(QDialog, FORM_CLASS):
             for view_widget in ClassificationDialog.view_widgets:
                 if config_id == view_widget.id:
                     view_widget = ClassificationDialog.view_widgets[config_id]
-                    # load file for this view widget if exists
-                    if view_config["render_file_path"] and os.path.isfile(view_config["render_file_path"]):
-                        # if render file in view has a real path
+                    # select the file for this view widget if exists and is loaded in Qgis
+                    layer_name = view_config["layer_name"]
+                    if not layer_name:
                         layer_name = os.path.splitext(os.path.basename(view_config["render_file_path"]))[0]
-                    else:  # external layer, e.g. google maps
-                        layer_name = view_config["layer_name"]
                     file_index = view_widget.QCBox_RenderFile.findText(layer_name, Qt.MatchFixedString)
 
                     if file_index != -1:
@@ -172,15 +170,20 @@ class ClassificationDialog(QDialog, FORM_CLASS):
                             view_widget.QCBox_RenderFile.setCurrentIndex(file_index)
                     elif view_config["render_file_path"] and os.path.isfile(view_config["render_file_path"]):
                         # load file and select in view if this exists and not load in Qgis
-                        load_and_select_filepath_in(view_widget.QCBox_RenderFile, view_config["render_file_path"])
+                        load_and_select_filepath_in(view_widget.QCBox_RenderFile, view_config["render_file_path"],
+                                                    layer_name=layer_name)
                     elif view_config["render_file_path"] and not os.path.isfile(view_config["render_file_path"]):
                         self.MsgBar.pushMessage(
-                            "Impossible to load the layer '{}' in the view {}: no such file {}"
-                                .format(layer_name, view_widget.id + 1, view_config["render_file_path"]), level=Qgis.Warning, duration=20)
+                            "Could not to load the layer '{}' in the view {}: no such file {}".format(
+                                layer_name,
+                                "'{}'".format(view_config["view_name"]) if view_config["view_name"] else view_widget.id + 1,
+                                view_config["render_file_path"]), level=Qgis.Warning, duration=20)
                     else:
                         self.MsgBar.pushMessage(
-                            "Impossible to load the layer '{}' in the view {} (for network layers use save/load a Qgis project)"
-                                .format(layer_name, view_widget.id + 1), level=Qgis.Warning, duration=20)
+                            "Could not to load the layer '{}' in the view {} (for network layers use save/load a Qgis project)".format(
+                                layer_name,
+                                "'{}'".format(view_config["view_name"]) if view_config["view_name"] else view_widget.id + 1),
+                            level=Qgis.Warning, duration=20)
                     # TODO: restore size by view widget
                     # view_widget.resize(*view_config["view_size"])
                     view_widget.QLabel_ViewName.setText(view_config["view_name"])
