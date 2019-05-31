@@ -21,7 +21,7 @@
 import numpy as np
 import multiprocessing
 import xml.etree.ElementTree as ET
-from osgeo import gdal
+from osgeo import gdal, gdalnumeric
 
 from AcATaMa.utils.qgis_utils import get_file_path_of_layer
 from AcATaMa.utils.system_utils import wait_process
@@ -82,7 +82,7 @@ def pixel_count_in_chunk(args):
 
 
 @wait_process
-def get_pixel_count_by_pixel_values(layer, band, pixel_values=None):
+def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None):
     """Get the total pixel count for each pixel values"""
 
     if pixel_values is None:
@@ -108,3 +108,16 @@ def get_pixel_count_by_pixel_values(layer, band, pixel_values=None):
         return dict(zip(pixel_values, pixel_counts))
 
 # --------------------------------------------------------------------------
+
+
+@wait_process
+def get_pixel_count_by_pixel_values(layer, band, pixel_values=None):
+    if pixel_values is None:
+        pixel_values = get_pixel_values(layer, band)
+
+    raster_numpy = gdalnumeric.LoadFile(get_file_path_of_layer(layer))
+    pixel_counts = []
+    for pixel_value in pixel_values:
+        pixel_counts.append((raster_numpy == int(pixel_value)).sum())
+
+    return dict(zip(pixel_values, pixel_counts))
