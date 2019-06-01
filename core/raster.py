@@ -46,7 +46,7 @@ def do_clipping_with_shape(target_layer, shape_layer, out_path, dst_nodata=None)
     dst_nodata = "-dstnodata {}".format(dst_nodata) if dst_nodata not in [None, -1] else ""
     # set the file path for the area of interest
     # check if the shape is a memory layer, then save and used it
-    if get_file_path_of_layer(shape_layer).startswith("memory"):
+    if not os.path.isfile(get_file_path_of_layer(shape_layer)):
         tmp_memory_fd, tmp_memory_file = tempfile.mkstemp(prefix='memory_layer_', suffix='.gpkg')
         QgsVectorFileWriter.writeAsVectorFormat(shape_layer, tmp_memory_file, "System", shape_layer.crs(), "GPKG")
         os.close(tmp_memory_fd)
@@ -75,7 +75,7 @@ def do_clipping_with_shape(target_layer, shape_layer, out_path, dst_nodata=None)
     # trim
     gdal.Translate(out_path, tmp_file, projWin=[box.xMinimum(), box.yMaximum(), box.xMaximum(), box.yMinimum()])
     # clean tmp file
-    if get_file_path_of_layer(shape_layer).startswith("memory") and os.path.isfile(tmp_memory_file):
+    if not os.path.isfile(get_file_path_of_layer(shape_layer)) and os.path.isfile(tmp_memory_file):
         os.remove(tmp_memory_file)
     if os.path.isfile(tmp_file):
         os.remove(tmp_file)
