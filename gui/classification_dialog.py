@@ -160,7 +160,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
                     view_widget = ClassificationDialog.view_widgets[config_id]
                     # select the file for this view widget if exists and is loaded in Qgis
                     layer_name = view_config["layer_name"]
-                    if not layer_name:
+                    if not layer_name and view_config["render_file_path"]:
                         layer_name = os.path.splitext(os.path.basename(view_config["render_file_path"]))[0]
                     file_index = view_widget.QCBox_RenderFile.findText(layer_name, Qt.MatchFixedString)
 
