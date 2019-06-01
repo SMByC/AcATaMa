@@ -101,12 +101,14 @@ class Classification(object):
 
     def get_points_from_shapefile(self):
         points = []
-        for qgs_feature in self.sampling_layer.getFeatures():
+        for enum_id, qgs_feature in enumerate(self.sampling_layer.getFeatures(), start=1):
             geom = qgs_feature.geometry()
-            # get the id from shape file
-            idx = self.sampling_layer.fields().lookupField('id')
-            shape_id = qgs_feature.attributes()[idx]
-
+            # get the id from shape file using column name "id" else use auto-enumeration
+            attr_id = self.sampling_layer.fields().lookupField('id')
+            if attr_id != -1:
+                shape_id = qgs_feature.attributes()[attr_id]
+            else:
+                shape_id = enum_id
             x, y = geom.asPoint()
             points.append(ClassificationPoint(x, y, shape_id))
         self.num_points = len(points)
