@@ -22,7 +22,7 @@ import os
 import tempfile
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QSplitter, QColorDialog, QDialog, QDialogButtonBox, QPushButton, \
     QMessageBox
 from qgis.PyQt.QtGui import QColor, QIcon
@@ -230,6 +230,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         except:
             self.GoTo_ID.setStyleSheet("color: red")
 
+    @pyqtSlot()
     @error_handler
     def open_current_point_in_google_engine(self):
         # create temp file
