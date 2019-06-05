@@ -19,6 +19,7 @@
  ***************************************************************************/
 """
 import random
+
 from qgis.core import QgsGeometry, QgsPointXY, QgsRectangle
 from processing.tools import vector
 
