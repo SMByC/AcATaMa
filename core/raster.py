@@ -20,11 +20,9 @@
 """
 import os
 import tempfile
-
 from osgeo import gdal
 from subprocess import call
 from numpy.core.umath import isnan
-from osgeo import gdalnumeric
 import xml.etree.ElementTree as ET
 
 from qgis.core import QgsRaster, QgsPointXY, Qgis, QgsVectorFileWriter, QgsCoordinateReferenceSystem, \

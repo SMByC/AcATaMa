@@ -19,6 +19,7 @@
  ***************************************************************************/
 """
 import os
+
 from qgis.PyQt import uic
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QWidget, QGridLayout, QFileDialog
