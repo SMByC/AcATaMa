@@ -27,7 +27,7 @@ from qgis.utils import iface
 from AcATaMa.core.raster import Raster
 from AcATaMa.core.classification import Classification
 from AcATaMa.gui import accuracy_assessment_results
-from AcATaMa.utils.qgis_utils import get_current_file_path_in
+from AcATaMa.utils.qgis_utils import get_file_path_of_layer
 from AcATaMa.utils.system_utils import wait_process
 
 
@@ -216,10 +216,11 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
     def export_to_csv(self):
         # get file path to suggest to save but not in tmp directory
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        path, filename = os.path.split(get_current_file_path_in(AcATaMa.dockwidget.QCBox_SamplingFile_AA))
+        file_path = get_file_path_of_layer(AcATaMa.dockwidget.QCBox_SamplingFile_AA.currentLayer())
+        path, filename = os.path.split(file_path)
         if AcATaMa.dockwidget.tmp_dir in path:
-            path = os.path.split(get_current_file_path_in(AcATaMa.dockwidget.QCBox_ThematicRaster))[0]
-        suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_results.csv"
+            path = os.path.split(get_file_path_of_layer(AcATaMa.dockwidget.QCBox_ThematicRaster.currentLayer()))[0]
+        suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_results.csv" if filename else ""
 
         file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Export accuracy assessment results to csv"),
                                                   suggested_filename,
