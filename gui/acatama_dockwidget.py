@@ -37,7 +37,7 @@ from AcATaMa.core.raster import do_clipping_with_shape, get_nodata_value
 from AcATaMa.gui.about_dialog import AboutDialog
 from AcATaMa.gui.classification_dialog import ClassificationDialog
 from AcATaMa.utils.qgis_utils import get_current_file_path_in, \
-    unload_layer, valid_file_selected_in, load_and_select_filepath_in
+    unload_layer, valid_file_selected_in, load_and_select_filepath_in, get_file_path_of_layer
 from AcATaMa.utils.sampling_utils import update_stratified_sampling_table, fill_stratified_sampling_table
 from AcATaMa.utils.system_utils import error_handler, block_signals_to
 
@@ -557,10 +557,11 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                                            level=Qgis.Warning)
             return
         # get file path to suggest to save but not in tmp directory
-        path, filename = os.path.split(get_current_file_path_in(self.QCBox_SamplingFile))
+        file_path = get_file_path_of_layer(self.QCBox_SamplingFile.currentLayer())
+        path, filename = os.path.split(file_path)
         if self.tmp_dir in path:
-            path = os.path.split(get_current_file_path_in(self.QCBox_ThematicRaster))[0]
-        suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_config.yml"
+            path = os.path.split(get_file_path_of_layer(self.QCBox_ThematicRaster.currentLayer()))[0]
+        suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_config.yml" if filename else ""
 
         file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save settings and classification status"),
                                                   suggested_filename, self.tr("Yaml (*.yaml *.yml);;All files (*.*)"))
@@ -599,10 +600,12 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                                            level=Qgis.Warning)
             return
         # get file path to suggest to save but not in tmp directory
-        path, filename = os.path.split(get_current_file_path_in(self.QCBox_SamplingFile))
+        file_path = get_file_path_of_layer(self.QCBox_SamplingFile.currentLayer())
+        path, filename = os.path.split(file_path)
         if self.tmp_dir in path:
-            path = os.path.split(get_current_file_path_in(self.QCBox_ThematicRaster))[0]
-        suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_classified.gpkg"
+            path = os.path.split(get_file_path_of_layer(self.QCBox_ThematicRaster.currentLayer()))[0]
+        suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_classified.gpkg" if filename else ""
+
         file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save sampling file with the classification"),
                                                   suggested_filename,
                                                   self.tr("GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"))
