@@ -561,7 +561,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         path, filename = os.path.split(file_path)
         if self.tmp_dir in path:
             path = os.path.split(get_file_path_of_layer(self.QCBox_ThematicRaster.currentLayer()))[0]
-        suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_config.yml" if filename else ""
+        suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_acatama.yml" if filename else ""
 
         file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save settings and classification status"),
                                                   suggested_filename, self.tr("Yaml (*.yaml *.yml);;All files (*.*)"))
