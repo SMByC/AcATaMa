@@ -464,6 +464,7 @@ class ClassificationButtonsConfig(QDialog, FORM_CLASS):
         self.table_buttons = dict(zip(range(1, 31), [""] * 30))
         self.create_table()
         #
+        self.tableBtnsConfig.itemClicked.connect(self.table_item_clicked)
         self.buttonBox.button(QDialogButtonBox.Ok).clicked.connect(self.check_before_accept)
         self.buttonBox.button(QDialogButtonBox.Cancel).clicked.connect(self.reject)
 
@@ -538,8 +539,7 @@ class ClassificationButtonsConfig(QDialog, FORM_CLASS):
         dialog_width = self.tableBtnsConfig.horizontalHeader().length() + 50
         self.resize(dialog_width, self.height())
 
-        self.tableBtnsConfig.itemClicked.connect(self.table_item_clicked)
-
+    @pyqtSlot(QTableWidgetItem)
     def table_item_clicked(self, tableItem):
         if tableItem.text() == "none":
             return
@@ -648,6 +648,7 @@ class ThematicRasterClasses(QDialog, FORM_CLASS):
         dialog_width = self.tableOfClasses.horizontalHeader().length() + 50
         self.resize(dialog_width, self.height())
 
+    @pyqtSlot()
     def select_clicked(self):
         button = self.sender()
         row = self.tableOfClasses.indexAt(button.pos()).row()
