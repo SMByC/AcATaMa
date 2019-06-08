@@ -219,6 +219,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         # show and go to marker
         self.show_and_go_to_current_sample()
 
+    @pyqtSlot()
     def go_to_sample_id(self):
         try:
             shape_id = int(self.GoTo_ID.text())
@@ -270,6 +271,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
 
         open_file(kml_file)
 
+    @pyqtSlot(int)
     def classify_sample(self, classif_id):
         if classif_id:
             self.classification.classify_the_current_sample(int(classif_id))
@@ -278,6 +280,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
                 # automatically follows the next sample
                 self.next_sample()
 
+    @pyqtSlot()
     def unclassify_sample(self):
         self.classification.classify_the_current_sample(False)
         self.display_sample_status()
@@ -310,6 +313,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         # update plugin with the current sampling status
         AcATaMa.dockwidget.update_the_status_of_classification()
 
+    @pyqtSlot(bool)
     def show_and_go_to_current_sample(self, highlight=True):
         for view_widget in ClassificationDialog.view_widgets:
             if view_widget.is_active:
@@ -321,12 +325,14 @@ class ClassificationDialog(QDialog, FORM_CLASS):
                     # highlight to marker
                     view_widget.render_widget.marker.highlight()
 
+    @pyqtSlot()
     def next_sample(self):
         if self.current_sample_idx >= len(self.classification.points) - 1:
             return
         self.current_sample_idx += 1
         self.set_current_sample()
 
+    @pyqtSlot()
     def next_sample_not_classified(self):
         tmp_sample_idx = self.current_sample_idx + 1
         while tmp_sample_idx < len(self.classification.points) and \
@@ -337,12 +343,14 @@ class ClassificationDialog(QDialog, FORM_CLASS):
             self.current_sample_idx = tmp_sample_idx
             self.set_current_sample()
 
+    @pyqtSlot()
     def previous_sample(self):
         if self.current_sample_idx < 1:
             return
         self.current_sample_idx -= 1
         self.set_current_sample()
 
+    @pyqtSlot()
     def previous_sample_not_classified(self):
         tmp_sample_idx = self.current_sample_idx - 1
         while self.classification.points[tmp_sample_idx].is_classified \
@@ -352,6 +360,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
             self.current_sample_idx = tmp_sample_idx
             self.set_current_sample()
 
+    @pyqtSlot()
     def open_set_classification_dialog(self):
         self.classification_btns_config.create_table()
         if self.classification_btns_config.exec_():
@@ -564,6 +573,7 @@ class ClassificationButtonsConfig(QDialog, FORM_CLASS):
             if not self.tableBtnsConfig.item(tableItem.row(), 2).text() == "none":
                 self.tableBtnsConfig.item(tableItem.row(), 2).setText("")
 
+    @pyqtSlot()
     def check_before_accept(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         # check if all buttons are associated to thematic classes if it is working with thematic classes
