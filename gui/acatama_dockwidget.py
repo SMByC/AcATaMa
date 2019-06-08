@@ -27,7 +27,7 @@ from shutil import copyfile
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, Qt
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QDockWidget
-from qgis.core import QgsProject, QgsVectorFileWriter, QgsMapLayerProxyModel, Qgis, QgsUnitTypes
+from qgis.core import QgsProject, QgsVectorFileWriter, QgsMapLayerProxyModel, Qgis, QgsUnitTypes, QgsMapLayer
 from qgis.utils import iface
 
 from AcATaMa.core.accuracy_assessment import AccuracyAssessmentDialog
@@ -92,7 +92,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             dialog_title=self.tr("Select the thematic raster image to evaluate"),
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
         # select and check the thematic raster
-        self.QCBox_ThematicRaster.currentIndexChanged.connect(self.select_thematic_raster)
+        self.QCBox_ThematicRaster.layerChanged.connect(self.select_thematic_raster)
 
         # ######### shape area of interest ######### #
         self.widget_AreaOfInterest.setHidden(True)
@@ -224,10 +224,11 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             # load to qgis and update combobox list
             load_and_select_filepath_in(combo_box, file_path)
 
-    @pyqtSlot()
-    def select_thematic_raster(self):
+    @pyqtSlot(QgsMapLayer)
+    def select_thematic_raster(self, current_layer):
         def clear_and_unset_the_thematic_raster():
-            self.QCBox_ThematicRaster.setCurrentIndex(-1)
+            with block_signals_to(self.QCBox_ThematicRaster):
+                self.QCBox_ThematicRaster.setCurrentIndex(-1)
             self.QCBox_band_ThematicRaster.clear()
             self.nodata_ThematicRaster.setValue(-1)
             # SimpRS
@@ -248,10 +249,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.set_sampling_file_accuracy_assessment()
 
         # first check
-        if not valid_file_selected_in(self.QCBox_ThematicRaster, "thematic raster"):
+        if not current_layer or not valid_file_selected_in(self.QCBox_ThematicRaster, "thematic raster"):
             clear_and_unset_the_thematic_raster()
             return
-        current_layer = self.QCBox_ThematicRaster.currentLayer()
         # check if thematic raster data type is integer or byte
         if current_layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
             clear_and_unset_the_thematic_raster()
@@ -383,7 +383,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         unload_layer(get_current_file_path_in(self.QCBox_ThematicRaster))
         # load to qgis and update combobox list
         load_and_select_filepath_in(self.QCBox_ThematicRaster, clip_file)
-        self.select_thematic_raster()
+        self.select_thematic_raster(self.QCBox_ThematicRaster.currentLayer())
 
         iface.messageBar().pushMessage("AcATaMa", "Clipping the thematic raster with shape, completed",
                                        level=Qgis.Success)

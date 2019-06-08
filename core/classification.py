@@ -176,7 +176,7 @@ class Classification(object):
             # thematic raster
             load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_ThematicRaster,
                                         yaml_config["thematic_raster"]["path"])
-            AcATaMa.dockwidget.select_thematic_raster()
+            AcATaMa.dockwidget.select_thematic_raster(AcATaMa.dockwidget.QCBox_ThematicRaster.currentLayer())
             # band number
             if "band" in yaml_config["thematic_raster"]:
                 AcATaMa.dockwidget.QCBox_band_ThematicRaster.setCurrentIndex(yaml_config["thematic_raster"]["band"] - 1)
