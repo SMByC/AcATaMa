@@ -22,6 +22,7 @@ import os
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QWidget
+from qgis.PyQt.QtCore import pyqtSlot
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -39,6 +40,7 @@ class GenerateSamplingWidget(QWidget, FORM_CLASS):
         self.fill_same_class_of_neighbors()
         self.QCBox_NumberOfNeighbors.currentIndexChanged.connect(self.fill_same_class_of_neighbors)
 
+    @pyqtSlot()
     def fill_same_class_of_neighbors(self):
         self.QCBox_SameClassOfNeighbors.clear()
         number_of_neighbor = int(self.QCBox_NumberOfNeighbors.currentText())
