@@ -405,6 +405,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
                     self.classification.with_thematic_classes = True
             # save btns config
             self.classification.buttons_config = buttons
+            self.classification_btns_config.buttons_config = buttons
 
         # from buttons_config
         if buttons_config:
@@ -482,6 +483,8 @@ class ClassificationButtonsConfig(QDialog, FORM_CLASS):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
 
         header = ["Classification Name", "Color", "Thematic Class", ""]
+        # clear table
+        self.tableBtnsConfig.clear()
         # init table
         self.tableBtnsConfig.setRowCount(len(self.table_buttons))
         self.tableBtnsConfig.setColumnCount(4)
