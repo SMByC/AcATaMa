@@ -31,7 +31,7 @@ from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, Qgis
 from AcATaMa.core.classification import Classification
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, get_current_file_path_in, \
     load_and_select_filepath_in
-from AcATaMa.core.raster import get_current_colors_style
+from AcATaMa.core.raster import get_color_table
 from AcATaMa.utils.system_utils import open_file, block_signals_to, error_handler
 from AcATaMa.gui.classification_view_widget import ClassificationViewWidget
 
@@ -612,9 +612,9 @@ class ThematicRasterClasses(QDialog, FORM_CLASS):
 
         header = ["Pix Val", "Color", "Select"]
         # get color table from raster
-        thematic_table = {"color_table": get_current_colors_style(
+        thematic_table = {"color_table": get_color_table(
             AcATaMa.dockwidget.QCBox_ThematicRaster.currentLayer(),
-            band_number=int(AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText()),
+            band=int(AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText()),
             nodata=int(AcATaMa.dockwidget.nodata_ThematicRaster.value()))}
 
         if not thematic_table["color_table"]:

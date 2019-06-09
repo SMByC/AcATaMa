@@ -95,56 +95,32 @@ def get_nodata_value(layer):
     return nodata_value
 
 
-def get_color_table(layer, band_number, nodata=None):
-    try:
-        ds = gdal.Open(get_file_path_of_layer(layer))
-    except:
-        return False
-    # set all negative values as None to nodata
-    if nodata is not None:
-        nodata = nodata if nodata >= 0 else None
-
-    gdalBand = ds.GetRasterBand(band_number)
-    colorTable = gdalBand.GetColorTable()
-    if colorTable is None:
-        iface.messageBar().pushMessage("AcATaMa", "Error, the raster file selected has no color table",
-                                       level=Qgis.Warning)
-        return False
-
-    count = colorTable.GetCount()
-    color_table = {"Pixel Value":[], "Red":[], "Green":[], "Blue":[], "Alpha":[]}
-    for index in range(count):
-        if nodata is not None and index == int(nodata):
-            continue
-        color_table["Pixel Value"].append(index)
-        colorEntry = list(colorTable.GetColorEntry(index))
-        color_table["Red"].append(colorEntry[0])
-        color_table["Green"].append(colorEntry[1])
-        color_table["Blue"].append(colorEntry[2])
-        color_table["Alpha"].append(colorEntry[3])
-
-    return color_table
-
-
-def get_singleband_pseudocolor(layer, band_number, nodata=None):
+def get_color_table(layer, band=1, nodata=None):
     current_style = layer.styleManager().currentStyle()
     layer_style = layer.styleManager().style(current_style)
-
     xml_style_str = layer_style.xmlData()
     xml_style = ET.fromstring(xml_style_str)
 
-    items = xml_style.findall('pipe/rasterrenderer[@band="{}"]/rastershader/colorrampshader/item'.format(band_number))
-    # check if items is empty or any pixel value (in color table) not is integer
-    if not items or False in [i.get("value").lstrip('+-').isdigit() for i in items]:
-        msg = "The selected layer\"{}\" {}doesn't have an appropriate colors/values style for AcATaMa, " \
+    # for singleband_pseudocolor
+    xml_style_items = xml_style.findall(
+        'pipe/rasterrenderer[@band="{}"]/rastershader/colorrampshader/item'.format(band))
+    if not xml_style_items:
+        # for unique values
+        xml_style_items = xml_style.findall('pipe/rasterrenderer[@band="{}"]/colorPalette/paletteEntry'.format(band))
+
+    check_int_values = [int(float(xml_item.get("value"))) == float(xml_item.get("value")) for xml_item in
+                        xml_style_items]
+
+    if not xml_style_items or False in check_int_values:
+        msg = "The selected layer \"{}\" {}doesn't have an appropriate colors/values style for AcATaMa, " \
               "it must be unique values or singleband pseudocolor with integer values. " \
               "<a href='https://smbyc.bitbucket.io/qgisplugins/acatama/how_to_use/#types-of-thematic-rasters-accepted-in-acatama'>" \
-              "See more</a>.".format(layer.name(), "in the band {} ".format(band_number) if layer.bandCount() > 1 else "")
+              "See more</a>.".format(layer.name(), "in the band {} ".format(band) if layer.bandCount() > 1 else "")
         QMessageBox.warning(None, 'Reading the symbology layer style...', msg)
-        return False
+        return
 
     color_table = {"Pixel Value": [], "Red": [], "Green": [], "Blue": [], "Alpha": []}
-    for item in items:
+    for item in xml_style_items:
         if nodata is not None and int(item.get("value")) == int(nodata):
             continue
 
@@ -159,15 +135,6 @@ def get_singleband_pseudocolor(layer, band_number, nodata=None):
         color_table["Alpha"].append(int(item.get("alpha")))
 
     return color_table
-
-
-def get_current_colors_style(layer, band_number=1, nodata=None):
-    # with color table
-    if layer.dataProvider().colorTable(band_number):
-        return get_color_table(layer, band_number, nodata)
-    # without color table
-    else:
-        return get_singleband_pseudocolor(layer, band_number, nodata)
 
 
 class Raster(object):
