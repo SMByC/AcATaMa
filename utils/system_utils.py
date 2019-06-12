@@ -54,7 +54,7 @@ def error_handler(func):
                 msgBox.setWindowTitle("AcATaMa - Error handler")
                 msgBox.setText("<i>{}</i>".format(error))
                 msgBox.setInformativeText("If you consider this as an error of AcATaMa, report it in "
-                                          "<a href='https://bitbucket.org/smbyc/qgisplugin-acatama/issues'>issue tracker</a>")
+                                          "<a href='https://github.com/SMByC/AcATaMa/issues'>issue tracker</a>")
                 msgBox.setDetailedText(more_details)
                 msgBox.setTextFormat(Qt.RichText)
                 msgBox.setStandardButtons(QMessageBox.Ok)

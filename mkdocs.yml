@@ -3,7 +3,7 @@ site_description: AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic M
 site_author: Xavier Corredor Llano, SMByC-IDEAM
 site_favicon: img/favicon.png
 site_url: https://smbyc.bitbucket.io/qgisplugins/acatama
-repo_url: https://bitbucket.org/smbyc/qgisplugin-acatama
+repo_url: https://github.com/SMByC/AcATaMa
 theme:
   name: mkdocs
 extra_css:

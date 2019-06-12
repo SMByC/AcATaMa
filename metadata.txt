@@ -13,8 +13,8 @@ author=Xavier Corredor Llano, SMByC
 email=xcorredorl@ideam.gov.co
 
 homepage=https://smbyc.bitbucket.io/qgisplugins/acatama
-tracker=https://bitbucket.org/smbyc/qgisplugin-acatama/issues
-repository=https://bitbucket.org/smbyc/qgisplugin-acatama
+tracker=https://github.com/SMByC/AcATaMa/issues
+repository=https://github.com/SMByC/AcATaMa
 
 changelog=
     18.11.21.q3: (Qgis3)
@@ -24,7 +24,7 @@ changelog=
     - A lot of minor improvements and fixes
 
     Previous versions:
-    - All commits in: https://bitbucket.org/smbyc/qgisplugin-acatama/commits/all
+    - All commits in: https://github.com/SMByC/AcATaMa/commits/all
 
 tags=accuracy,accuracy assessment,thematic,classification,sample,sampling design,points,remote sensing
 
