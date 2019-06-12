@@ -25,21 +25,12 @@ The home plugin in plugins.qgis.org: [http://plugins.qgis.org/plugins/AcATaMa/](
 
 Issues, ideas and enhancements: [https://github.com/SMByC/AcATaMa/issues](https://github.com/SMByC/AcATaMa/issues)
 
-## Get involved
-
-The AcATaMa plugin is open source and you can help in different ways:
-
-* help with developing and/or improve the docs cloning the repository and doing the push request ([howto](https://confluence.atlassian.com/bitbucket/fork-a-teammate-s-repository-774243391.html)).
-* or just test it, report issues, ideas and enhancements in the issue tracker.
-
 ## About us
 
 AcATaMa was developing, designed and implemented by the Group of Forest and Carbon Monitoring System (SMByC), operated by the Institute of Hydrology, Meteorology and Environmental Studies (IDEAM) - Colombia.
 
 Author and developer: *Xavier Corredor Ll.*  
-Theoretical support, tester and product verification: Lina Katerine V., Gustavo Galindo, Juan Carlos R.
-
-Acknowledge to all SMByC team.
+Theoretical support, tester and product verification: SMByC-PDI group
 
 ### Contact
 
