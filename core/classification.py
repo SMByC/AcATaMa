@@ -205,6 +205,8 @@ class Classification(object):
             if "name" in x:
                 x["view_name"] = x["name"]
                 del x["name"]
+            if "layer_name" not in x:
+                x["layer_name"] = None
 
         # restore the samples order
         points_ordered = []
