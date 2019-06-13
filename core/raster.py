@@ -20,9 +20,9 @@
 """
 import os
 import tempfile
+from math import isnan
 from osgeo import gdal
 from subprocess import call
-from numpy.core.umath import isnan
 import xml.etree.ElementTree as ET
 
 from qgis.core import QgsRaster, QgsPointXY, Qgis, QgsVectorFileWriter, QgsCoordinateReferenceSystem, \
@@ -85,10 +85,10 @@ def do_clipping_with_shape(target_layer, shape_layer, out_path, dst_nodata=None)
                                        level=Qgis.Warning)
 
 
-def get_nodata_value(layer):
+def get_nodata_value(layer, band=1):
     nodata_value = -1  # nan in the spinbox
     if layer is not None:
-        nodata = layer.dataProvider().sourceNoDataValue(1)
+        nodata = layer.dataProvider().sourceNoDataValue(band)
         if not isnan(nodata) and (-1 <= nodata <= 999999):
             nodata_value = nodata
 
