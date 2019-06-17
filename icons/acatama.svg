@@ -13,7 +13,7 @@
    version="1.1"
    height="86.5"
    id="svg2"
-   inkscape:version="0.92.2 5c3e80d, 2017-08-06"
+   inkscape:version="0.92.4 5da689c313, 2019-01-14"
    sodipodi:docname="acatama.svg"
    inkscape:export-filename="/home/xavier/Projects/SMBYC/Qgis_Plugins/AcATaMa/AcATaMa/icon.png"
    inkscape:export-xdpi="168.75"
@@ -29,14 +29,14 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:window-width="2560"
-     inkscape:window-height="1404"
+     inkscape:window-height="1406"
      id="namedview45"
      showgrid="false"
-     inkscape:zoom="5.6568543"
-     inkscape:cx="62.203745"
-     inkscape:cy="62.782129"
+     inkscape:zoom="11.313709"
+     inkscape:cx="35.424423"
+     inkscape:cy="43.778878"
      inkscape:window-x="0"
-     inkscape:window-y="36"
+     inkscape:window-y="34"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1"
      inkscape:measure-start="0,0"
@@ -94,15 +94,23 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(-384.74537,-483.82661)">
+    <circle
+       style="fill:#d34f63;fill-opacity:1;stroke:none;stroke-width:2.26332474;stroke-opacity:1"
+       id="path4551-7-7-70-6"
+       cx="393.49493"
+       cy="527.06354"
+       inkscape:export-xdpi="152.85199"
+       inkscape:export-ydpi="152.85199"
+       r="6.4842377" />
     <path
-       style="fill:#4d4d4d;fill-opacity:1;stroke:#4d4d4d;stroke-width:4.6210351;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 405.58747,515.72348 H 394.8255 387.58052"
+       style="fill:#4d4d4d;fill-opacity:1;stroke:#333639;stroke-width:3.6875;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 407.72313,515.72348 H 397.61817 390.8155"
        id="path4510-3"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccc" />
     <path
-       style="fill:#4d4d4d;fill-opacity:1;stroke:#4d4d4d;stroke-width:4.6210351;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 416.64225,486.66138 v 17.9954 z"
+       style="fill:#4d4d4d;fill-opacity:1;stroke:#333639;stroke-width:3.6875;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 416.64224,489.92481 v 16.89678 z"
        id="path4510"
        inkscape:connector-curvature="0" />
     <rect
@@ -295,77 +303,69 @@
        style="fill:#4d4d4d"
        id="rect4035-9-6-9" />
     <circle
-       style="fill:#2c89a0;fill-opacity:1;stroke:none;stroke-width:2.26332474;stroke-opacity:1"
+       style="fill:#2c9bc4;fill-opacity:1;stroke:none;stroke-width:2.26332474;stroke-opacity:1"
        id="path4551-7-7-1"
-       cx="431.76031"
-       cy="489.58942"
+       cx="426.87134"
+       cy="492.84875"
        inkscape:export-xdpi="152.85199"
        inkscape:export-ydpi="152.85199"
        r="6.4842377" />
     <circle
-       style="fill:#2c89a0;fill-opacity:1;stroke:none;stroke-width:2.26332474;stroke-opacity:1"
+       style="fill:#2c9bc4;fill-opacity:1;stroke:none;stroke-width:2.26332474;stroke-opacity:1"
        id="path4551-7-7-7"
-       cx="448.57257"
-       cy="499.74344"
+       cx="442.05392"
+       cy="502.09015"
        inkscape:export-xdpi="152.85199"
        inkscape:export-ydpi="152.85199"
        r="6.4842377" />
     <circle
-       style="fill:#a02c5a;fill-opacity:1;stroke:none;stroke-width:2.26332474;stroke-opacity:1"
+       style="fill:#d34f63;fill-opacity:1;stroke:none;stroke-width:2.26332474;stroke-opacity:1"
        id="path4551-7-7-70"
-       cx="431.50534"
-       cy="544.82355"
+       cx="427.07266"
+       cy="540.78198"
        inkscape:export-xdpi="152.85199"
        inkscape:export-ydpi="152.85199"
        r="6.4842377" />
     <circle
-       style="fill:#00aa88;fill-opacity:1;stroke:none;stroke-width:2.26332474;stroke-opacity:1"
+       style="fill:#00b694;fill-opacity:1;stroke:none;stroke-width:2.26332474;stroke-opacity:1"
        id="path4551-7-7-8-2"
-       cx="397.06656"
-       cy="542.03284"
+       cx="400.06512"
+       cy="541.10522"
        inkscape:export-xdpi="152.85199"
        inkscape:export-ydpi="152.85199"
        r="6.4842377" />
     <circle
-       style="fill:#a02c5a;fill-opacity:1;stroke:none;stroke-width:2.26332474;stroke-opacity:1"
-       id="path4551-7-7-70-6"
-       cx="387.04147"
-       cy="528.04132"
-       inkscape:export-xdpi="152.85199"
-       inkscape:export-ydpi="152.85199"
-       r="6.4842377" />
-    <circle
-       style="fill:#2c89a0;fill-opacity:1;stroke:none;stroke-width:2.26332474;stroke-opacity:1"
+       style="fill:#2c9bc4;fill-opacity:1;stroke:none;stroke-width:2.26332474;stroke-opacity:1"
        id="path4551-7-7-1-1"
-       cx="401.90018"
-       cy="485.18747"
+       cx="401.24832"
+       cy="490.34818"
        inkscape:export-xdpi="152.85199"
        inkscape:export-ydpi="152.85199"
        r="6.4842377" />
     <circle
-       style="fill:#00aa88;fill-opacity:1;stroke:none;stroke-width:2.26332474;stroke-opacity:1"
+       style="fill:#00b694;fill-opacity:1;stroke:none;stroke-width:2.26332474;stroke-opacity:1"
        id="path4551-7-7-8-0"
-       cx="390.8389"
-       cy="499.9061"
+       cx="394.55453"
+       cy="503.23059"
        inkscape:export-xdpi="152.85199"
        inkscape:export-ydpi="152.85199"
        r="6.4842377" />
     <circle
-       style="fill:#2c89a0;fill-opacity:1;stroke:none;stroke-width:2.26332474;stroke-opacity:1"
+       style="fill:#2c9bc4;fill-opacity:1;stroke:none;stroke-width:2.26332474;stroke-opacity:1"
        id="path4551-7-7-7-3"
-       cx="445.83118"
-       cy="538.70398"
+       cx="442.05035"
+       cy="536.87878"
        inkscape:export-xdpi="152.85199"
        inkscape:export-ydpi="152.85199"
        r="6.4842377" />
     <circle
        id="path4502"
-       cx="416.64224"
-       cy="515.72351"
-       r="17.881203"
-       style="fill:none;stroke:#4d4d4d;stroke-width:7.31565952;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       cx="416.62799"
+       cy="515.73767"
+       r="15.580701"
+       style="fill:none;stroke:#333639;stroke-width:5.1624999;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <circle
-       style="fill:#2c89a0;fill-opacity:1;stroke:none;stroke-width:2.26332474;stroke-opacity:1"
+       style="fill:#2c9bc4;fill-opacity:1;stroke:none;stroke-width:2.26332474;stroke-opacity:1"
        id="path4551-7-7-7-3-6-7"
        cx="416.64804"
        cy="515.69348"
@@ -374,12 +374,12 @@
        r="6.4842377" />
     <path
        inkscape:connector-curvature="0"
-       style="fill:#4d4d4d;fill-opacity:1;stroke:#4d4d4d;stroke-width:4.62103558;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 416.64224,526.78154 v 18.00405 z"
+       style="fill:#4d4d4d;fill-opacity:1;stroke:#333639;stroke-width:3.6875;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 416.64224,524.64562 v 16.9049 z"
        id="path4510-1" />
     <path
-       style="fill:#4d4d4d;fill-opacity:1;stroke:#4d4d4d;stroke-width:4.6210351;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 445.70396,515.72346 h -10.75103 -7.23762"
+       style="fill:#4d4d4d;fill-opacity:1;stroke:#333639;stroke-width:3.6875;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 442.4405,515.72348 h -10.09468 -6.79577"
        id="path4510-3-2"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccc" />
