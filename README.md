@@ -17,9 +17,7 @@ The plugin will be available in the `Plugins` menu and `Plugins toolbar`.
 The official version control system repository of the plugin:
 [https://github.com/SMByC/AcATaMa](https://github.com/SMByC/AcATaMa)
 
-## The home plugin:
-
-The home plugin in plugins.qgis.org: [http://plugins.qgis.org/plugins/AcATaMa/](http://plugins.qgis.org/plugins/AcATaMa/)
+The home plugin in plugins.qgis.org: [https://plugins.qgis.org/plugins/AcATaMa/](https://plugins.qgis.org/plugins/AcATaMa/)
 
 ## Issue Tracker
 
