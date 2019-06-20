@@ -48,7 +48,7 @@ def pre_init_plugin(iface):
                              'An error occurred during the installation of Python packages. ' +
                              'Click on "Stack Trace" in the QGIS message bar for details.')
         raise RuntimeError('\nAcATaMa: Error installing Python packages. Read install instruction: '
-                           'https://smbyc.bitbucket.io/qgisplugins/acatama\nLog:\n' + log) from e
+                           'https://smbyc.github.io/AcATaMa\nLog:\n' + log) from e
 
 
 # noinspection PyPep8Naming

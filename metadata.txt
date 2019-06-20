@@ -12,7 +12,7 @@ qgisMaximumVersion=3.99
 author=Xavier Corredor Llano, SMByC
 email=xcorredorl@ideam.gov.co
 
-homepage=https://smbyc.bitbucket.io/qgisplugins/acatama
+homepage=https://smbyc.github.io/AcATaMa
 tracker=https://github.com/SMByC/AcATaMa/issues
 repository=https://github.com/SMByC/AcATaMa
 

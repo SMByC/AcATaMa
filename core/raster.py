@@ -114,7 +114,7 @@ def get_color_table(layer, band=1, nodata=None):
     if not xml_style_items or False in check_int_values:
         msg = "The selected layer \"{}\" {}doesn't have an appropriate colors/values style for AcATaMa, " \
               "it must be unique values or singleband pseudocolor with integer values. " \
-              "<a href='https://smbyc.bitbucket.io/qgisplugins/acatama/how_to_use/#types-of-thematic-rasters-accepted-in-acatama'>" \
+              "<a href='https://smbyc.github.io/AcATaMa/#types-of-thematic-rasters-accepted-in-acatama'>" \
               "See more</a>.".format(layer.name(), "in the band {} ".format(band) if layer.bandCount() > 1 else "")
         QMessageBox.warning(None, 'Reading the symbology layer style...', msg)
         return
