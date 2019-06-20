@@ -37,7 +37,7 @@ At the bottom of the plugin there are 3 buttons:
 
 ## 1. Thematic map
 
-The `Thematic` section you can set the thematic map (needed for some process, see more in [use cases](use_cases.md)).
+The `Thematic` section you can set the thematic map (needed for some process, see more in [use cases](#use-cases)).
 
 Optionally you can clip the thematic raster selected in an area of interest. After clipping the new thematic raster cut is automatically loaded.
 
