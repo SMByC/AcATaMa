@@ -5,7 +5,7 @@ about=The AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps.
     It was designed mainly for: to assess the accuracy of thematic maps, to
     estimate areas of the map classes, sampling design/classification and others.
 
-version=19.dev
+version=19.6.20
 qgisMinimumVersion=3.0
 qgisMaximumVersion=3.99
 
@@ -17,11 +17,24 @@ tracker=https://github.com/SMByC/AcATaMa/issues
 repository=https://github.com/SMByC/AcATaMa
 
 changelog=
-    18.11.21.q3: (Qgis3)
-    - Not process the render layer function in classification views if the layer selected not changed
-    - Implemented pan and zoom point tool for manage the mouse gesture actions in classification canvas
-    - Fix load the band number of thematic map while is loading the config file
-    - A lot of minor improvements and fixes
+    19.6.20:
+    - Add possibility to use any points vector without id column else use auto-enumeration
+    - Add flags for the minimize and maximize buttons for the main dialog
+    - Add functions for load/install extra python dependencies necessary for the plugin
+    - Add synchronization canvas using keys navigation
+    - Improve and fix the error handler and the wait process decorators
+    - Improve the load layers function to fix load specific file types
+    - Check if all classification buttons are associated to thematic classes
+    - Fix getting the color table style from thematic raster
+    - Fix brings action of classification dialog to front even if it is minimized
+    - Fix functions to get the file path of layers or files
+    - Fix bug defining the suggestion name while try to open the save dialog
+    - Fix saving and restoring the buttons config correctly
+    - Several adjusts in slots connections
+    - Update all the plugin icons
+    - Migration to Github
+    - Updated the docs
+    - Others minor improvements and fixes
 
     Previous versions:
     - All commits in: https://github.com/SMByC/AcATaMa/commits/all
