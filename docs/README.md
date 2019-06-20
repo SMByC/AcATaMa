@@ -27,8 +27,7 @@ AcATaMa is divided and ordered by four tabs/sections:
 3. [Classification](#3-classification)
 4. [Accuracy Assessment](#4-accuracy-assessment)
 
-<img src="img/dock_main.png" width="40%">
-![](img/dock_main.png)
+<img src="img/dock_main.png" width="60%">
 
 At the bottom of the plugin there are 3 buttons:
 
@@ -44,8 +43,7 @@ Optionally you can clip the thematic raster selected in an area of interest. Aft
 
 <img src="img/1a.png" width="100%">
 
-!!! warning "Important!"
-    Clip the thematic map in an area of interest (or load the thematic map clipped) can be (or not) very important for the sampling design and the accuracy assessment result, because the area by classes changes and some parts of AcATaMa depend on the area by classes.
+> *Important:* Clip the thematic map in an area of interest (or load the thematic map clipped) can be (or not) very important for the sampling design and the accuracy assessment result, because the area by classes changes and some parts of AcATaMa depend on the area by classes.
 
 ### Types of thematic rasters accepted in AcATaMa
 
@@ -55,12 +53,11 @@ It must be a categorical thematic layer **with byte or integer as data type** wi
 
     You can use any raster (of byte or integer as data type) with specific style so that AcATaMa acquire the categorical information from the raster. Go to `properties` of the raster, then go to `style`, select `singleband pseudocolor` and generate the desired pixel-value/color associated (manually or generated automatically using the several options that Qgis have to do this) with only one requirement: **the pixel-values associated must be integers**.
 
-    <img src="img/1b.png" width="90%">
+    <img src="img/1b.png" width="100%">
 
     (Optional) After configure the style in Qgis for the raster is recommended save it in `.qml` Qgis style file, else Qgis save it in temporal file (or on the fly) and if you restart the Qgis and load the raster again you lost the pixel-value/color style associated. For save the style go to `Style` menu and click in `Save as default` Qgis save it in the same place and name of the raster with extension `.qml`.
 
-    <img src="img/1c.png" width="65%">
-    ![](img/1c.png)
+    <img src="img/1c.png" width="85%">
 
     (Optional) Alternative (or additional) to the above, you can save all layers style and config saving it in a Qgis project.
 
@@ -68,10 +65,9 @@ It must be a categorical thematic layer **with byte or integer as data type** wi
 
     You can use any raster (of byte or integer as data type) with pixel-values/color associated through a color table inside it as metadata. You can see it using `gdalinfo` or in `style` in layer `properties` this is shown as `paletted`.
 
-    <img src="img/1d.png" width="65%">
+    <img src="img/1d.png" width="85%">
 
-!!! note
-    The thematic map is the raster layer to which the accuracy assessment will be applied (for example a land cover map) and also is the base to generate the random sampling.
+> *Note:* The thematic map is the raster layer to which the accuracy assessment will be applied (for example a land cover map) and also is the base to generate the random sampling.
 
 ## 2. Sampling design
 
@@ -84,7 +80,7 @@ In the `simple random sampling`, every points (each x, y coordinates combination
 * Indicating the value in the thematic raster of the No Data pixels (Tab: *"Thematic"*), AcATaMa will not generate point on these pixels
 * Selecting the classes in the thematic raster. If you define some classes in the: *"Tab Sampling / Simple Random Sampling / Sampling in categorical raster"* (Field: "Set pixel values") AcATaMa only will create points into the pixels that belongs to these classes
 
-<img src="img/2a.png" width="70%">
+<img src="img/2a.png" width="90%">
 
 
 ### Stratified Random Sampling
@@ -99,7 +95,7 @@ The stratified random may be:
 
 - `Stratified random sampling using a fixed number of sample`: The sample size for each stratum is defined by the user. In the table selecting the option *"Fixed values by category (manually)"* in *"stratified random Sampling Method"*, you can write the number of points desired for each stratum. If you do not want set points in any stratum, you should write 0.
 
-    <img src="img/2b.png" width="70%">
+    <img src="img/2b.png" width="90%">
 
 - `Stratified random sampling using area based proportion`: Designed to apply the proportional approaches sample allocations methodologies suggested by Olofsson et al. (2013, 2014), using the Cochran´s (1977) sample size formula for stratified random sampling in the option *"Area based proportion using std error"* in *"stratified random Sampling Method"*. The overall sample size and the number of point for each stratum is calculated according to:
 
@@ -107,7 +103,7 @@ The stratified random may be:
     - The standard error of the estimated overall accuracy that we would like to achieve. You write the value desired in the Field: "Overall expected standard error"
     - Standard deviation of each stratum: You define the values in the table
 
-    <img src="img/2c.png" width="70%">
+    <img src="img/2c.png" width="90%">
 
 If you want to define a specific sample size for one or more stratum, you can write it in the table and AcATaMa will modify the number of points in the others strata proportionally to the area, in order to keep the overall sample size; this allow perform the simplified approach of sample size allocation suggested by Olofsson et al.(2014), in which you define a specific sample size for the rare classes and the remain samples is allocated proportionally to the area of each other strata. If you want allocate a equal size sample for all strata, you can use this option to calculate the overall sample size, and assigning the number of points in each stratum in the Fixed values by category (manually) option.
 
@@ -117,7 +113,7 @@ You can *"turn off"* strata by deselecting in the last column of the table (*"On
 
 Optionally, in any type of sampling you can restrain the allocation of the points according to these criteria::
 
-<img src="img/2d.png" width="45%">
+<img src="img/2d.png" width="65%">
 
  - In `Sampling options` you can set the minimum distance between the point generated respect to all points generated (units based on thematic raster selected)
  - In `With neighbors aggregation` you can set the number of nearest neighbors pixels that belong to the same class:
@@ -128,8 +124,7 @@ Optionally, in any type of sampling you can restrain the allocation of the point
 
 Both `Simple Random Sampling` and `Stratified Random Sampling` at bottom has the following options:
 
-<img src="img/2e.png" width="45%">
-![](img/2e.png)
+<img src="img/2e.png" width="65%">
 
  - `Generate sampling options`: Set the number of attempts for to do the sampling, the difficulty of making the sampling depend on some conditions suck as; minimum distance, neighbors aggregations, total number of samples and the area for do this.
  - `Save sampling config`: Save in a plain text (ini format) all configuration with which the sampling was generated, it is only information for the user such as metadata for the sampling generated, this does not work for load the sampling config in the AcATaMa.
@@ -142,7 +137,7 @@ For the classification follow these steps:
 * Set the `Grid setting` it depends on the number of images to compare
 * Click in `Open the classification dialog`
 
-<img src="img/3a.png" width="70%">
+<img src="img/3a.png" width="90%">
 
 ### Classification dialog
 
@@ -155,8 +150,7 @@ For the classification follow these steps (in classification dialog):
 
 <img src="img/3b.png" width="100%">
 
-!!! note "Nota: Samples order"
-    For the classify the samples AcATaMa shuffles the list of samples for each file (the samples ID are not in order), this is to ensure randomization in the classification.
+> *Note about samples order:* For the classify the samples AcATaMa shuffles the list of samples for each file (the samples ID are not in order), this is to ensure randomization in the classification.
 
 #### Configuration buttons
 
@@ -164,46 +158,45 @@ The configuration buttons dialog you can set all buttons for classify the sample
 
 - `Without thematic raster classes`: You must define the classification name and the color (the color is not mandatory). This configuration is for some case of use like as sampling design and others that don't need the thematic raster.
 
-    <img src="img/3c.png" width="40%">
+    <img src="img/3c.png" width="60%">
 
 - `With thematic raster classes`: You must define the classification name, thematic raster class and the color, the color is auto filled when you pick the thematic raster class, after that you can change it if you want.
 
-    <img src="img/3d.png" width="60%">
+    <img src="img/3d.png" width="80%">
 
-!!! warning "Important!"
-    The column `Thematic raster class` is available only if you set the thematic raster in [Thematic](#1-thematic-map) tab before open the dialog. You must configure the thematic raster class for all buttons if you want accuracy assessment result.
+> *Important:* The column `Thematic raster class` is available only if you set the thematic raster in [Thematic](#1-thematic-map) tab before open the dialog. You must configure the thematic raster class for all buttons if you want accuracy assessment result.
 
 ## 4. Accuracy Assessment
 
-<img src="img/4a.png" width="40%">
+<img src="img/4a.png" width="60%">
 
 Accuracy is defined as the degree to which the map produced agrees with the reference classification.
 
-<img src="img/4b.png" width="80%">
+<img src="img/4b.png" width="90%">
 
 AcATaMa calculated the accuracy assessment using the formulas included in Olofsson et al. (2013, 2014), the results are presented in five tables:
 
 1. `Error Matrix`: The error matrix is a cross-tabulation of the class labels allocated by the classification of the remotely sensed data against the reference data (thematic map) for the sample sites. The main diagonal of the error matrix highlights correct classifications while the off-diagonal elements show omission and commission errors. The values of the error matrix are fundamental to both accuracy assessment and area estimation Olofsson et al. 2014). The column Wi is the area proportion of each stratum in the map.
 
-    <img src="img/4c.png" width="75%">
+    <img src="img/4c.png" width="95%">
 
 2. `Error matrix of estimated area proportion`: The absolute counts of the sample are converted into estimated area proportions using the equation (9) in Olofsson et al. (2014) for simple random, systematic or stratified random sampling with the map classes defined as the strata.
 
-    <img src="img/4d.png" width="35%">
+    <img src="img/4d.png" width="60%">
 
 3. `Quadratic error matrix for estimated area proportion`: Correspond to the standard error estimated by the equation (10) in Olofsson et al. (2014)
 
-    <img src="img/4e.png" width="35%">
+    <img src="img/4e.png" width="60%">
 
 4. `Accuracy Matrices`:
 
     * `User´s accuracy matrix of estimated area proportion`: User´s accuracy is the proportion of the area mapped as a particular category that is actually that category "on the ground" where the reference classification is the best assessment of ground condition. User's accuracy is the complement of the probability of commission error (Olofsson et al. 2013). The user´s accuracy is calculated by the equation (2) in Olofsson et al. (2014). In the report, the user´s accuracy for each class or category correspond to the diagonal of the matrix, that means, the fields in which the class of the thematic raster map and the classified category (reference) are equals.
 
-        <img src="img/4f.png" width="35%">
+        <img src="img/4f.png" width="60%">
 
     * `Producer´s accuracy matrix of estimated area proportion`: Producer's accuracy is the proportion of the area that is a particular category on the ground that is also mapped as that category. Producer's accuracy is the complement of the probability of omission error (Olofsson et al. 2013). The producer's accuracy is calculated by the equation (3) in Olofsson et al. (2014). In the report, the accuracy for each class or category correspond to the diagonal of the matrix, the fields in which the class of the thematic raster map and the classified category (reference) are equals.
 
-        <img src="img/4g.png" width="35%">
+        <img src="img/4g.png" width="60%">
 
     * `Overall accuracy`: Is the proportion of the area mapped correctly. It provides the user of the map with the probability that a randomly selected location on the map is correctly classified (Olofsson et al. 2013). It is important use carefully this value because the overall map accuracy is not always representative of the the accuracy of the individual classes or strata (FAO, 2016). The overall map accuracy is calculated by the equation (1) in Olofsson et al. (2014)
 
@@ -211,7 +204,7 @@ AcATaMa calculated the accuracy assessment using the formulas included in Olofss
 
     The estimated area for each class or stratum and the standard error of the estimated area is given by the equation (11) in Olofsson et al. (2014); they allow to obtain the confidence interval with the percent defined by the z-score value. By default AcATaMa calculate a 95% confidence interval (Z=1,96), but you can modify the z- score value according to the desired percent (Settings options in the report of results).
 
-    <img src="img/4h.png" width="35%">
+    <img src="img/4h.png" width="60%">
 
 ## Tips
 
