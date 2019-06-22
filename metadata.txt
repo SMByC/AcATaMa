@@ -37,7 +37,7 @@ changelog=
     - Others minor improvements and fixes
 
     Previous versions:
-    - All commits in: https://github.com/SMByC/AcATaMa/commits/all
+    - All commits in: https://github.com/SMByC/AcATaMa/commits
 
 tags=accuracy,accuracy assessment,thematic,classification,sample,sampling design,points,remote sensing
 
