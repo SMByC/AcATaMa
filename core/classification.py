@@ -230,8 +230,8 @@ class Classification(object):
         self.reload_classification_status()
         AcATaMa.dockwidget.update_the_status_of_classification()
         # define if this classification was made with thematic classes
-        if self.buttons_config and True in [bc["thematic_class"] is not None and bc["thematic_class"] != "" for bc in
-                                            self.buttons_config.values()]:
+        if self.buttons_config and yaml_config["thematic_raster"]["path"] and \
+           True in [bc["thematic_class"] is not None and bc["thematic_class"] != "" for bc in self.buttons_config.values()]:
             self.with_thematic_classes = True
 
         # restore accuracy assessment conf
