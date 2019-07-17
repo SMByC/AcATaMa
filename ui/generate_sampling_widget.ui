@@ -194,6 +194,51 @@ impossible complete the sampling set configured.</string>
        </widget>
       </item>
       <item>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="title">
+         <string>Random sampling options</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_8">
+         <item>
+          <widget class="QWidget" name="random_sampling_widget_options" native="true">
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="1" column="0">
+             <widget class="QRadioButton" name="button_random_seed_by_user">
+              <property name="text">
+               <string>Set the random seed:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="random_seed_by_user">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the seed random number as an integer value. It is possible to use strings, bytes, or bytearray but all of them get converted to an int and all of its bits are used.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0" colspan="2">
+             <widget class="QRadioButton" name="radioButton">
+              <property name="text">
+               <string>Automatic random seed</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
        <widget class="QWidget" name="widget_3" native="true">
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <property name="leftMargin">
@@ -384,8 +429,40 @@ impossible complete the sampling set configured.</string>
      <y>381</y>
     </hint>
     <hint type="destinationlabel">
-     <x>210</x>
-     <y>411</y>
+     <x>218</x>
+     <y>1263</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>groupBox_2</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>random_sampling_widget_options</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>298</x>
+     <y>632</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>312</x>
+     <y>659</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>random_seed_by_user</sender>
+   <signal>textEdited(QString)</signal>
+   <receiver>button_random_seed_by_user</receiver>
+   <slot>toggle()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>345</x>
+     <y>729</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>274</x>
+     <y>739</y>
     </hint>
    </hints>
   </connection>

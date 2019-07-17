@@ -129,8 +129,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
         # select and check the categorical raster
         self.QCBox_CategRaster_SimpRS.layerChanged.connect(self.select_categorical_raster_SimpRS)
-        # generate sampling options
+        # generate and random sampling options
         self.widget_generate_SimpRS.generate_sampling_widget_options.setHidden(True)
+        self.widget_generate_SimpRS.random_sampling_widget_options.setHidden(True)
         # save config
         self.widget_generate_SimpRS.widget_save_sampling_config.setHidden(True)
         iface.mapCanvas().layersChanged.connect(
@@ -166,8 +167,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # for each item changed in table, save and update it
         self.TotalExpectedSE.valueChanged.connect(lambda: update_stratified_sampling_table(self, "TotalExpectedSE"))
         self.QTableW_StraRS.itemChanged.connect(lambda: update_stratified_sampling_table(self, "TableContent"))
-        # generate sampling options
+        # generate and random sampling options
         self.widget_generate_StraRS.generate_sampling_widget_options.setHidden(True)
+        self.widget_generate_StraRS.random_sampling_widget_options.setHidden(True)
         # save config
         self.widget_generate_StraRS.widget_save_sampling_config.setHidden(True)
         iface.mapCanvas().layersChanged.connect(

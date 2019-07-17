@@ -39,7 +39,6 @@ class Point(object):
 class RandomPoint(Point):
     """Class for generate, check and validate the random points
     """
-    random.seed()
 
     def __init__(self, extent):
         """Generate the random x and y between boundaries

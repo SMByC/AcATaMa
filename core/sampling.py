@@ -20,6 +20,7 @@
 """
 import os
 import configparser
+import random
 
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QVariant
@@ -86,11 +87,22 @@ def do_simple_random_sampling(dockwidget):
     if output_file == '':
         return
 
+    # define the random seed
+    if dockwidget.widget_generate_SimpRS.button_random_seed_by_user.isChecked():
+        random_seed = dockwidget.widget_generate_SimpRS.random_seed_by_user.text()
+        try:
+            random_seed = int(random_seed)
+        except:
+            pass
+    else:
+        random_seed = None
+
     # process
     sampling = Sampling("simple", ThematicR, CategoricalR, output_file=output_file)
     sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
                                       neighbor_aggregation, attempts_by_sampling,
-                                      dockwidget.widget_generate_SimpRS.QPBar_GenerateSampling)
+                                      dockwidget.widget_generate_SimpRS.QPBar_GenerateSampling,
+                                      random_seed)
 
     # success
     if sampling.total_of_samples == number_of_samples:
@@ -185,12 +197,23 @@ def do_stratified_random_sampling(dockwidget):
     if output_file == '':
         return
 
+    # define the random seed
+    if dockwidget.widget_generate_StraRS.button_random_seed_by_user.isChecked():
+        random_seed = dockwidget.widget_generate_StraRS.random_seed_by_user.text()
+        try:
+            random_seed = int(random_seed)
+        except:
+            pass
+    else:
+        random_seed = None
+
     # process
     sampling = Sampling("stratified", ThematicR, CategoricalR, sampling_method,
                         srs_config=srs_config, output_file=output_file)
     sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
                                       neighbor_aggregation, attempts_by_sampling,
-                                      dockwidget.widget_generate_StraRS.QPBar_GenerateSampling)
+                                      dockwidget.widget_generate_StraRS.QPBar_GenerateSampling,
+                                      random_seed)
 
     # success
     if sampling.total_of_samples == total_of_samples:
@@ -236,7 +259,7 @@ class Sampling(object):
 
     @wait_process
     def generate_sampling_points(self, pixel_values, number_of_samples, min_distance,
-                                 neighbor_aggregation, attempts_by_sampling, progress_bar):
+                                 neighbor_aggregation, attempts_by_sampling, progress_bar, random_seed):
         """Some code base from (by Alexander Bruy):
         https://github.com/qgis/QGIS/blob/release-2_18/python/plugins/processing/algs/qgis/RandomPointsExtent.py
         """
@@ -269,6 +292,10 @@ class Sampling(object):
             maxIterations = total_of_samples * attempts_by_sampling
         else:
             maxIterations = float('Inf')
+
+        # init the random sampling seed
+        self.random_seed = random_seed
+        random.seed(self.random_seed)
 
         while nIterations < maxIterations and nPoints < total_of_samples:
 
@@ -365,6 +392,7 @@ class Sampling(object):
                 for pixel, count, std_error in zip(self.pixel_values, self.samples_in_categories, self.srs_config["std_error"]):
                     if count > 0:
                         config.set('std_error', 'pix_val_' + str(pixel), str(std_error))
+        config.set('sampling', 'random_seed', self.random_seed if self.random_seed is not None else "automatic")
 
         with open(file_out, 'w') as configfile:
             config.write(configfile)
