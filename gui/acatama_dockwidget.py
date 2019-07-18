@@ -162,7 +162,6 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.srs_tables = {}
         # fill table of categorical raster
         self.widget_TotalExpectedSE.setHidden(True)
-        self.QCBox_CategRaster_StraRS.currentIndexChanged.connect(lambda: fill_stratified_sampling_table(self))
         self.QCBox_StraRS_Method.currentIndexChanged.connect(lambda: fill_stratified_sampling_table(self))
         # for each item changed in table, save and update it
         self.TotalExpectedSE.valueChanged.connect(lambda: update_stratified_sampling_table(self, "TotalExpectedSE"))
@@ -317,16 +316,20 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
     @pyqtSlot(QgsMapLayer)
     def select_categorical_raster_StraRS(self, layer):
-        # first check
+        # first unselect/clear sampling method
+        self.QCBox_StraRS_Method.setCurrentIndex(-1)
+        # check
         if not valid_file_selected_in(self.QCBox_CategRaster_StraRS, "categorical raster"):
             self.QCBox_band_CategRaster_StraRS.clear()
             self.nodata_CategRaster_StraRS.setValue(-1)
+            self.QGBox_Sampling_Method.setEnabled(False)
             return
         # check if categorical raster data type is integer or byte
         if layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
             self.QCBox_CategRaster_StraRS.setCurrentIndex(-1)
             self.QCBox_band_CategRaster_StraRS.clear()
             self.nodata_CategRaster_StraRS.setValue(-1)
+            self.QGBox_Sampling_Method.setEnabled(False)
             iface.messageBar().pushMessage("AcATaMa",
                                            "Error, categorical raster must be byte or integer as data type.",
                                            level=Qgis.Warning)
@@ -334,6 +337,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # set band count
         self.QCBox_band_CategRaster_StraRS.clear()
         self.QCBox_band_CategRaster_StraRS.addItems([str(x) for x in range(1, layer.bandCount() + 1)])
+        self.QGBox_Sampling_Method.setEnabled(True)
         # set the same nodata value if select the thematic raster
         if layer == self.QCBox_ThematicRaster.currentLayer():
             self.nodata_CategRaster_StraRS.setValue(self.nodata_ThematicRaster.value())

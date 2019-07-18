@@ -883,7 +883,10 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QGroupBox" name="groupBox">
+                    <widget class="QGroupBox" name="QGBox_Sampling_Method">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
                      <property name="title">
                       <string>Stratified Random Sampling Method</string>
                      </property>
@@ -1888,15 +1891,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>QgsMapLayerComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qgis.gui</header>
+  </customwidget>
+  <customwidget>
    <class>GenerateSamplingWidget</class>
    <extends>QWidget</extends>
    <header>AcATaMa.gui.generate_sampling_widget</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QgsMapLayerComboBox</class>
-   <extends>QComboBox</extends>
-   <header>qgis.gui</header>
   </customwidget>
  </customwidgets>
  <resources/>
