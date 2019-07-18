@@ -352,34 +352,48 @@ class Sampling(object):
         return True
 
     def save_config(self, file_out):
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
         config = configparser.RawConfigParser()
 
-        config.add_section('general')
-        config.set('general', 'sampling_type', '{} random sampling'.format(self.sampling_type))
-        config.set('general', 'thematic_raster', self.ThematicR.file_path)
-        config.set('general', 'thematic_raster_nodata', str(self.ThematicR.nodata))
-        if isinstance(self.CategoricalR, Raster):
-            config.set('general', 'categorical_raster', self.CategoricalR.file_path)
-            config.set('general', 'categorical_raster_nodata', self.CategoricalR.nodata)
-        else:
-            config.set('general', 'categorical_raster', 'None')
-            config.set('general', 'categorical_raster_nodata', 'None')
+        config.add_section('thematic')
+        config.set('thematic', 'thematic_raster', self.ThematicR.file_path)
+        config.set('thematic', 'thematic_raster_band', str(self.ThematicR.band))
+        config.set('thematic', 'thematic_raster_nodata', str(self.ThematicR.nodata))
 
         config.add_section('sampling')
+        config.set('sampling', 'type', '{} random sampling'.format(self.sampling_type))
         if self.sampling_type == "simple":
-            config.set('sampling', 'total_of_samples', self.total_of_samples)
-            config.set('sampling', 'min_distance', self.min_distance)
-            config.set('sampling', 'in_categorical_raster_SimpRS',
+            config.add_section('sampling options')
+            config.set('sampling options', 'total_of_samples', self.total_of_samples)
+            config.set('sampling options', 'min_distance', self.min_distance)
+
+            config.add_section('sampling in categorical raster')
+            if isinstance(self.CategoricalR, Raster):
+                config.set('sampling in categorical raster', 'categorical_raster', self.CategoricalR.file_path)
+                config.set('sampling in categorical raster', 'categorical_raster_band', self.CategoricalR.band)
+            else:
+                config.set('sampling in categorical raster', 'categorical_raster', 'None')
+                config.set('sampling in categorical raster', 'categorical_raster_band', 'None')
+            config.set('sampling in categorical raster', 'set_pixel_values',
                        ','.join(map(str, self.pixel_values)) if self.pixel_values is not None else 'None')
-            config.set('sampling', 'with_neighbors_aggregation',
-                       '{1}/{0}'.format(*self.neighbor_aggregation) if self.neighbor_aggregation is not None else 'None')
+
         if self.sampling_type == "stratified":
-            config.set('sampling', 'sampling_method', self.sampling_method)
-            config.set('sampling', 'total_of_samples', self.total_of_samples)
-            config.set('sampling', 'min_distance', self.min_distance)
-            config.set('sampling', 'with_neighbors_aggregation',
-                       '{1}/{0}'.format(
-                           *self.neighbor_aggregation) if self.neighbor_aggregation is not None else 'None')
+            config.add_section('categorical raster')
+            if isinstance(self.CategoricalR, Raster):
+                config.set('categorical raster', 'categorical_raster', self.CategoricalR.file_path)
+                config.set('categorical raster', 'categorical_raster_band', self.CategoricalR.band)
+                config.set('categorical raster', 'categorical_raster_nodata', self.CategoricalR.nodata)
+            else:
+                config.set('categorical raster', 'categorical_raster', 'None')
+                config.set('categorical raster', 'categorical_raster_band', 'None')
+                config.set('categorical raster', 'categorical_raster_nodata', 'None')
+
+            config.add_section('stratified random sampling method')
+            config.set('stratified random sampling method', 'sampling_method', self.sampling_method)
+            if self.sampling_method == "area based proportion":
+                config.set('stratified random sampling method', 'total_expected_std_error', self.srs_config["total_std_error"])
+            config.set('stratified random sampling method', 'total_of_samples', self.total_of_samples)
 
             config.add_section('num_samples')
             for pixel, count in zip(self.pixel_values, self.samples_in_categories):
@@ -387,12 +401,26 @@ class Sampling(object):
                     config.set('num_samples', 'pix_val_'+str(pixel), str(count))
 
             if self.sampling_method == "area based proportion":
-                config.set('sampling', 'total_expected_std_error', self.srs_config["total_std_error"])
+                config.set('stratified random sampling method', 'total_expected_std_error', self.srs_config["total_std_error"])
                 config.add_section('std_error')
                 for pixel, count, std_error in zip(self.pixel_values, self.samples_in_categories, self.srs_config["std_error"]):
                     if count > 0:
                         config.set('std_error', 'pix_val_' + str(pixel), str(std_error))
-        config.set('sampling', 'random_seed', self.random_seed if self.random_seed is not None else "automatic")
+
+            config.add_section('sampling options')
+            config.set('sampling options', 'min_distance', self.min_distance)
+
+        config.add_section('with neighbors aggregation')
+        config.set('with neighbors aggregation', 'min_neighbors_with_the_same_class',
+                   '{1}/{0}'.format(
+                       *self.neighbor_aggregation) if self.neighbor_aggregation is not None else 'None')
+
+        config.add_section('generation')
+        if AcATaMa.dockwidget.widget_generate_SimpRS.button_attempts_by_sampling.isChecked():
+            config.set('generation', 'maximum_attempts_by_sampling', AcATaMa.dockwidget.widget_generate_SimpRS.attempts_by_sampling.value())
+        else:
+            config.set('generation', 'maximum_attempts_by_sampling', "until reaching the set sampling numbers")
+        config.set('generation', 'random_seed', self.random_seed if self.random_seed is not None else "automatic")
 
         with open(file_out, 'w') as configfile:
             config.write(configfile)
