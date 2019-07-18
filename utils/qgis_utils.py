@@ -35,7 +35,9 @@ def get_file_path_of_layer(layer):
 
 
 def valid_file_selected_in(combo_box, combobox_name=False):
-    if combo_box.currentLayer() is not None and combo_box.currentLayer().isValid():
+    if combo_box.currentLayer() is None:
+        return False
+    if combo_box.currentLayer().isValid():
         return True
     else:
         if combobox_name:
