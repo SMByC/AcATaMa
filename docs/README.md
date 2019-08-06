@@ -120,13 +120,19 @@ Optionally, in any type of sampling you can restrain the allocation of the point
     - *Number of neighbors*: It is the number of neighbors that AcATaMa evaluate to decide if a point can be included or not in the sample
     - *Min neighbors with the same class*: It is the minimum number of neighbors (according to the number of neighbors selected above) that must belong to the same class so that a point can be included in the sample
 
-### Other options
+### Generation options
 
 Both `Simple Random Sampling` and `Stratified Random Sampling` at bottom has the following options:
 
 <img src="img/2e.png" width="65%">
 
  - `Generate sampling options`: Set the number of attempts for to do the sampling, the difficulty of making the sampling depend on some conditions suck as; minimum distance, neighbors aggregations, total number of samples and the area for do this.
+  - `Random sampling options`: Set the seed random value for generating sampling points, with the purpose of generate reproducible sampling. Set the seed random number as an integer value. It is possible to use strings, bytes, or bytearray but all of them get converted to an int and all of its bits are used. 
+ 
+ ### Save config
+
+<img src="img/2f.png" width="65%">
+ 
  - `Save sampling config`: Save in a plain text (ini format) all configuration with which the sampling was generated, it is only information for the user such as metadata for the sampling generated, this does not work for load the sampling config in the AcATaMa.
 
 ## 3. Classification
