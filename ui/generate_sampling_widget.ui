@@ -183,7 +183,7 @@ impossible complete the sampling set configured.</string>
                <number>50</number>
               </property>
               <property name="value">
-               <number>4000</number>
+               <number>6000</number>
               </property>
              </widget>
             </item>
