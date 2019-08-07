@@ -114,13 +114,13 @@ def do_simple_random_sampling(dockwidget):
         load_layer(sampling.output_file)
         iface.messageBar().pushMessage("AcATaMa", "Generated the simple random sampling, but can not generate requested number of "
                                                   "random points {}/{}, attempts exceeded".format(sampling.total_of_samples, number_of_samples),
-                                       level=Qgis.Info, duration=20)
+                                       level=Qgis.Warning, duration=-1)
     # zero points
     if sampling.total_of_samples < number_of_samples and sampling.total_of_samples == 0:
         # delete instance where storage all sampling generated
         Sampling.samplings.pop(sampling.filename, None)
         iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any random points with this settings, "
-                                                  "attempts exceeded", level=Qgis.Warning, duration=20)
+                                                  "attempts exceeded", level=Qgis.Warning, duration=-1)
 
 
 @error_handler
@@ -225,13 +225,13 @@ def do_stratified_random_sampling(dockwidget):
         load_layer(sampling.output_file)
         iface.messageBar().pushMessage("AcATaMa", "Generated the stratified random sampling, but can not generate requested number of "
                                                   "random points {}/{}, attempts exceeded".format(sampling.total_of_samples, total_of_samples),
-                                       level=Qgis.Info, duration=20)
+                                       level=Qgis.Warning, duration=-1)
     # zero points
     if sampling.total_of_samples < total_of_samples and sampling.total_of_samples == 0:
         # delete instance where storage all sampling generated
         Sampling.samplings.pop(sampling.filename, None)
         iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any stratified random points with this settings, "
-                                                  "attempts exceeded", level=Qgis.Warning, duration=20)
+                                                  "attempts exceeded", level=Qgis.Warning, duration=-1)
 
 
 class Sampling(object):
