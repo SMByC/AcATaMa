@@ -297,6 +297,7 @@ class Sampling(object):
         self.random_seed = random_seed
         random.seed(self.random_seed)
 
+        points_generated = []
         while nIterations < maxIterations and nPoints < total_of_samples:
 
             random_sampling_point = RandomPoint(self.ThematicR.extent())
@@ -306,23 +307,30 @@ class Sampling(object):
                 nIterations += 1
                 continue
 
-            # random sampling point passed the checks, save it
-            f = QgsFeature(nPoints)
-            f.initAttributes(1)
-            f.setFields(fields)
-            f.setAttribute('id', nPoints+1)
-            f.setGeometry(random_sampling_point.QgsGeom)
-            writer.addFeature(f)
-            self.index.insertFeature(f)
-            self.points[nPoints] = random_sampling_point.QgsPnt
             nPoints += 1
             nIterations += 1
             if self.sampling_type == "stratified":
                 self.samples_in_categories[random_sampling_point.index_pixel_value] += 1
+            points_generated.append(random_sampling_point)
             # update progress bar
             progress_bar.setValue(int(nPoints))
+
+        # guarantee the random order for the classification
+        random.shuffle(points_generated)
+
+        for num_point, point_generated in enumerate(points_generated):
+            # random sampling point passed the checks, save it
+            f = QgsFeature()
+            f.initAttributes(1)
+            f.setFields(fields)
+            f.setAttribute('id', num_point+1)
+            f.setGeometry(point_generated.QgsGeom)
+            writer.addFeature(f)
+            self.index.insertFeature(f)
+            self.points[num_point] = point_generated.QgsPnt
+
         # save the total point generated
-        self.total_of_samples = nPoints
+        self.total_of_samples = len(points_generated)
         del writer
 
     def check_sampling_point(self, sampling_point):
