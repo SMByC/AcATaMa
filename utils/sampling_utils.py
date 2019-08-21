@@ -98,6 +98,9 @@ def update_srs_table_content(dockwidget, srs_table):
                 for m in range(srs_table["row_count"]):
                     item_table = QTableWidgetItem(srs_table["num_samples"][m])
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    item_table.setToolTip("Total number of samples for this class, this is generated\n"
+                                          "automatically based on the area proportion by the activated\n"
+                                          "classes, overall standard error and its standard deviation.")
                     if not srs_table["On"][m]:
                         item_table.setForeground(QColor("lightGrey"))
                         item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
@@ -116,6 +119,7 @@ def update_srs_table_content(dockwidget, srs_table):
                     item_table = QTableWidgetItem()
                     item_table.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    item_table.setToolTip("Enable/disable this class")
                     if srs_table["On"][m]:
                         item_table.setCheckState(Qt.Checked)
                     else:
