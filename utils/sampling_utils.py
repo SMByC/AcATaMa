@@ -29,7 +29,7 @@ from AcATaMa.utils.others_utils import mask, get_pixel_count_by_pixel_values
 def get_num_samples_by_area_based_proportion(srs_table, total_std_error):
     total_pixel_count = float(sum(mask(srs_table["pixel_count"], srs_table["On"])))
     ratio_pixel_count = [p_c / total_pixel_count for p_c in mask(srs_table["pixel_count"], srs_table["On"])]
-    Si = [(float(std_error)*(1-float(std_error))) ** 0.5 for std_error in mask(srs_table["std_error"], srs_table["On"])]
+    Si = [(float(std_dev)*(1-float(std_dev))) ** 0.5 for std_dev in mask(srs_table["std_dev"], srs_table["On"])]
     total_num_samples = (sum([rpc*si for rpc, si in zip(ratio_pixel_count, Si)])/total_std_error)**2
 
     num_samples = []
@@ -102,10 +102,11 @@ def update_srs_table_content(dockwidget, srs_table):
                         item_table.setForeground(QColor("lightGrey"))
                         item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                     dockwidget.QTableW_StraRS.setItem(m, n, item_table)
-            if key == "Std Error":
+            if key == "Std Dev":
                 for m in range(srs_table["row_count"]):
-                    item_table = QTableWidgetItem(srs_table["std_error"][m])
+                    item_table = QTableWidgetItem(srs_table["std_dev"][m])
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    item_table.setToolTip("Set the standard deviation for this class")
                     if not srs_table["On"][m]:
                         item_table.setForeground(QColor("lightGrey"))
                         item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
@@ -184,9 +185,9 @@ def fill_stratified_sampling_table(dockwidget):
             srs_table["On"] = [True] * srs_table["row_count"]
 
         if srs_method == "area based proportion":
-            srs_table["header"] = ["Pix Val", "Color", "Num Samples", "Std Error", "On"]
+            srs_table["header"] = ["Pix Val", "Color", "Num Samples", "Std Dev", "On"]
             srs_table["column_count"] = len(srs_table["header"])
-            srs_table["std_error"] = [str(0.01)]*srs_table["row_count"]
+            srs_table["std_dev"] = [str(0.01)]*srs_table["row_count"]
             srs_table["pixel_count"] = list(
                 get_pixel_count_by_pixel_values(dockwidget.QCBox_CategRaster_StraRS.currentLayer(),
                                                 int(dockwidget.QCBox_band_CategRaster_StraRS.currentText()),
@@ -217,13 +218,13 @@ def update_stratified_sampling_table(dockwidget, changes_from):
 
     if changes_from == "TableContent":
         num_samples = []
-        std_error = []
+        std_dev = []
         on = []
         try:
             for row in range(dockwidget.QTableW_StraRS.rowCount()):
                 num_samples.append(dockwidget.QTableW_StraRS.item(row, 2).text())
                 if srs_method == "area based proportion":
-                    std_error.append(dockwidget.QTableW_StraRS.item(row, 3).text())
+                    std_dev.append(dockwidget.QTableW_StraRS.item(row, 3).text())
                     if dockwidget.QTableW_StraRS.item(row, 4).checkState() == 2:
                         on.append(True)
                     if dockwidget.QTableW_StraRS.item(row, 4).checkState() == 0:
@@ -233,7 +234,7 @@ def update_stratified_sampling_table(dockwidget, changes_from):
         if srs_method == "fixed values":
             srs_table["num_samples"] = num_samples
         if srs_method == "area based proportion":
-            srs_table["std_error"] = std_error
+            srs_table["std_dev"] = std_dev
             srs_table["On"] = on
             if srs_table["num_samples"] != num_samples:
                 # only change the number of samples keeping the total samples

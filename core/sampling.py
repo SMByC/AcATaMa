@@ -183,10 +183,10 @@ def do_stratified_random_sampling(dockwidget):
         srs_config = {}
         # save total expected std error
         srs_config["total_std_error"] = dockwidget.TotalExpectedSE.value()
-        # get std_error from table
-        srs_config["std_error"] = []
+        # get std_dev from table
+        srs_config["std_dev"] = []
         for row in range(dockwidget.QTableW_StraRS.rowCount()):
-            srs_config["std_error"].append(float(dockwidget.QTableW_StraRS.item(row, 3).text()))
+            srs_config["std_dev"].append(float(dockwidget.QTableW_StraRS.item(row, 3).text()))
 
     # first select the target dir for save the sampling file
     suggested_filename = os.path.join(os.path.dirname(ThematicR.file_path), "stratified_random_sampling.gpkg")
@@ -410,10 +410,10 @@ class Sampling(object):
 
             if self.sampling_method == "area based proportion":
                 config.set('stratified random sampling method', 'total_expected_std_error', self.srs_config["total_std_error"])
-                config.add_section('std_error')
-                for pixel, count, std_error in zip(self.pixel_values, self.samples_in_categories, self.srs_config["std_error"]):
+                config.add_section('std_dev')
+                for pixel, count, std_dev in zip(self.pixel_values, self.samples_in_categories, self.srs_config["std_dev"]):
                     if count > 0:
-                        config.set('std_error', 'pix_val_' + str(pixel), str(std_error))
+                        config.set('std_dev', 'pix_val_' + str(pixel), str(std_dev))
 
             config.add_section('sampling options')
             config.set('sampling options', 'min_distance', self.min_distance)
