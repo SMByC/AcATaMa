@@ -919,7 +919,7 @@
                         </item>
                         <item>
                          <property name="text">
-                          <string>Area based proportion (using std error)</string>
+                          <string>Area based proportion (using overall std error)</string>
                          </property>
                         </item>
                        </widget>
