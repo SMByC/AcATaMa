@@ -14,6 +14,8 @@ The AcATaMa plugin was designed mainly with these keys goals:
 
 But nevertheless, you can use AcATaMa for many different uses.
 
+![](img/overview.jpg)
+
 The plugin allow to apply the methodology and main recommendations included (mainly) in these papers:
 
 + *Olofsson, P., Herold, M., Stehman, S. V., Woodcock, C. E. & , M. A. Wulder. 2014. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57. [Link](https://www.sciencedirect.com/science/article/pii/S0034425714000704)*
