@@ -266,6 +266,10 @@ class Classification(object):
         # calc added/removed changes
         added = len(set([p.shape_id for p in points_from_shapefile]) - set([p.shape_id for p in self.points]))
         removed = len(set([p.shape_id for p in self.points]) - set([p.shape_id for p in points_from_shapefile]))
+        # adjust the current sample id if some points are eliminated and its located before it
+        for rm_shape_id in set([p.shape_id for p in self.points]) - set([p.shape_id for p in points_from_shapefile]):
+            if [p.shape_id for p in self.points].index(rm_shape_id) <= self.current_sample_idx:
+                self.current_sample_idx -= 1
         # check if sampling has not changed
         if modified == 0 and added == 0 and removed == 0:
             iface.messageBar().pushMessage("AcATaMa", "The sampling file has not detected changes",
