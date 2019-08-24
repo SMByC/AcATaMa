@@ -207,7 +207,11 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         # clear all message bar
         self.MsgBar.clearWidgets()
         # set the current sample
-        self.current_sample = self.classification.points[self.current_sample_idx]
+        if self.current_sample_idx < len(self.classification.points):
+            self.current_sample = self.classification.points[self.current_sample_idx]
+        else:
+            self.current_sample = self.classification.points[-1]
+            self.current_sample_idx = len(self.classification.points) - 1
         ClassificationDialog.current_sample = self.current_sample
         self.classification.current_sample_idx = self.current_sample_idx
         # update progress bar
