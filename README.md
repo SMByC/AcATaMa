@@ -37,6 +37,10 @@ Theoretical support, tester and product verification: SMByC-PDI group
 Xavier Corredor Ll.: *xcorredorl (a) ideam.gov.co*  
 SMByC: *smbyc (a) ideam.gov.co*
 
+## How to cite
+
+Llano, X. C. (2019). "AcATaMa - QGIS plugin for Accuracy Assessment of Thematic Maps.", https://plugins.qgis.org/plugins/AcATaMa/.
+
 ## License
 
 AcATaMa is a free/libre software and is licensed under the GNU General Public License.
