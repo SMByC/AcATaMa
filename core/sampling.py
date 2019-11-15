@@ -110,7 +110,7 @@ def do_simple_random_sampling(dockwidget):
         iface.messageBar().pushMessage("AcATaMa", "Generate the simple random sampling, completed",
                                        level=Qgis.Success)
     # success but not completed
-    if sampling.total_of_samples < number_of_samples and sampling.total_of_samples > 0:
+    if number_of_samples > sampling.total_of_samples > 0:
         load_layer(sampling.output_file)
         iface.messageBar().pushMessage("AcATaMa", "Generated the simple random sampling, but can not generate requested number of "
                                                   "random points {}/{}, attempts exceeded".format(sampling.total_of_samples, number_of_samples),
@@ -358,7 +358,7 @@ class Sampling(object):
                 return False
         if self.sampling_type == "stratified":
             if not sampling_point.in_categorical_raster_StraRS(self.pixel_values, self.number_of_samples,
-                                                            self.CategoricalR, self.samples_in_categories):
+                                                               self.CategoricalR, self.samples_in_categories):
                 return False
 
         if self.neighbor_aggregation and \
