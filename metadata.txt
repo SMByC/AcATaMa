@@ -5,7 +5,7 @@ about=The AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps.
     It was designed mainly for: to assess the accuracy of thematic maps, to
     estimate areas of the map classes, sampling design/classification and others.
 
-version=19.8.26
+version=19.11.14
 qgisMinimumVersion=3.0
 qgisMaximumVersion=3.99
 
@@ -17,22 +17,9 @@ tracker=https://github.com/SMByC/AcATaMa/issues
 repository=https://github.com/SMByC/AcATaMa
 
 changelog=
-    19.8.26:
-    - Fix typos in the stratified random sampling table
-    - Adjust and fix some error when the user delete some points of the samples
-    - Updated the docs
+    19.11.14:
+    - [Important fix]: fixbug computing the minimum distance between samples when the sampling is being generated
     - Others minor improvements and fixes
-    19.8.8:
-    - Add random sampling option for set the seed random value for generating sampling points,
-      with the purpose of generate reproducible sampling
-    - Fix loading the config yaml file in define if classification was made with thematic classes
-    - Several adjusts to the ini metadata file where is saved the sampling config
-    - Fix in valid_file_selected_in when the selection is None
-    - Fix filling the pixel-values table when the category raster is changed, select or unselect
-    - Adjustments the warning/error popups for some cases
-    - Guarantee the random order for the classification
-    - Small increase the velocity of the sampling generation
-    - Updated the docs
     - Don't forget rate the plugin :)
 
     Previous versions:
