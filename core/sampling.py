@@ -307,16 +307,25 @@ class Sampling(object):
                 nIterations += 1
                 continue
 
-            nPoints += 1
-            nIterations += 1
             if self.sampling_type == "stratified":
                 self.samples_in_categories[random_sampling_point.index_pixel_value] += 1
+
             points_generated.append(random_sampling_point)
+
+            # it requires tmp save the point to check min distance for the next sample
+            f = QgsFeature(nPoints)
+            f.setGeometry(random_sampling_point.QgsGeom)
+            self.index.insertFeature(f)
+            self.points[nPoints] = random_sampling_point.QgsPnt
+
+            nPoints += 1
+            nIterations += 1
             # update progress bar
             progress_bar.setValue(int(nPoints))
 
         # guarantee the random order for the classification
         random.shuffle(points_generated)
+        self.points = dict()  # restart
 
         for num_point, point_generated in enumerate(points_generated):
             # random sampling point passed the checks, save it
@@ -326,12 +335,11 @@ class Sampling(object):
             f.setAttribute('id', num_point+1)
             f.setGeometry(point_generated.QgsGeom)
             writer.addFeature(f)
-            self.index.insertFeature(f)
             self.points[num_point] = point_generated.QgsPnt
 
         # save the total point generated
         self.total_of_samples = len(points_generated)
-        del writer
+        del writer, self.index
 
     def check_sampling_point(self, sampling_point):
         """Make several checks to the sampling point, else discard

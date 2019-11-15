@@ -21,8 +21,8 @@
 import random
 
 from qgis.core import QgsGeometry, QgsPointXY, QgsRectangle
-from processing.tools import vector
 
+from AcATaMa.utils.sampling_utils import check_min_distance
 from AcATaMa.utils.system_utils import block_signals_to
 
 
@@ -77,7 +77,7 @@ class RandomPoint(Point):
         """
         if min_distance == 0:
             return True
-        if vector.checkMinDistance(self.QgsPnt, index, min_distance, points):
+        if check_min_distance(self.QgsPnt, index, min_distance, points):
             return True
         return False
 

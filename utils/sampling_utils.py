@@ -26,6 +26,25 @@ from AcATaMa.utils.system_utils import wait_process, block_signals_to
 from AcATaMa.utils.others_utils import mask, get_pixel_count_by_pixel_values
 
 
+def check_min_distance(point, index, distance, points):
+    """Check if distance from given point to all other points is greater
+    than given value.
+    """
+    if distance == 0:
+        return True
+
+    neighbors = index.nearestNeighbor(point)
+    if len(neighbors) == 0:
+        return True
+
+    if neighbors[0] in points:
+        np = points[neighbors[0]]
+        if np.distance(point) < distance:
+            return False
+
+    return True
+
+
 def get_num_samples_by_area_based_proportion(srs_table, total_std_error):
     total_pixel_count = float(sum(mask(srs_table["pixel_count"], srs_table["On"])))
     ratio_pixel_count = [p_c / total_pixel_count for p_c in mask(srs_table["pixel_count"], srs_table["On"])]
