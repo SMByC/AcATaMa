@@ -291,7 +291,7 @@ SMByC: *smbyc (a) ideam.gov.co*
 
 ## How to cite
 
-Llano, X. C. (2019). "AcATaMa - QGIS plugin for Accuracy Assessment of Thematic Maps.", https://plugins.qgis.org/plugins/AcATaMa/.
+Llano, X. C. (2019). AcATaMa - QGIS plugin for Accuracy Assessment of Thematic Maps, version XX.XX, https://plugins.qgis.org/plugins/AcATaMa/.
 
 ## License
 
