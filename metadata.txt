@@ -5,7 +5,7 @@ about=The AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps.
     It was designed mainly for: to assess the accuracy of thematic maps, to
     estimate areas of the map classes, sampling design/classification and others.
 
-version=19.11.14
+version=19.11.21
 qgisMinimumVersion=3.0
 qgisMaximumVersion=3.99
 
@@ -17,6 +17,8 @@ tracker=https://github.com/SMByC/AcATaMa/issues
 repository=https://github.com/SMByC/AcATaMa
 
 changelog=
+    19.11.21:
+    - Typos and doc adjustments
     19.11.14:
     - [Important fix]: fixbug computing the minimum distance between samples when the sampling is being generated
     - Others minor improvements and fixes
