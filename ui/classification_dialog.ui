@@ -112,7 +112,7 @@
                 <widget class="QToolButton" name="previousSampleNotClassified">
                  <property name="font">
                   <font>
-                   <pointsize>8</pointsize>
+                   <pointsize>9</pointsize>
                   </font>
                  </property>
                  <property name="toolTip">
@@ -137,7 +137,7 @@
                 <widget class="QToolButton" name="previousSample">
                  <property name="font">
                   <font>
-                   <pointsize>8</pointsize>
+                   <pointsize>9</pointsize>
                   </font>
                  </property>
                  <property name="toolTip">
@@ -188,6 +188,11 @@
                   </item>
                   <item>
                    <widget class="QToolButton" name="currentSample">
+                    <property name="font">
+                     <font>
+                      <pointsize>9</pointsize>
+                     </font>
+                    </property>
                     <property name="toolTip">
                      <string>Go to current sample</string>
                     </property>
@@ -208,6 +213,11 @@
                   </item>
                   <item>
                    <widget class="QLabel" name="statusCurrentSample">
+                    <property name="font">
+                     <font>
+                      <pointsize>9</pointsize>
+                     </font>
+                    </property>
                     <property name="text">
                      <string/>
                     </property>
@@ -233,7 +243,7 @@
                 <widget class="QToolButton" name="nextSample">
                  <property name="font">
                   <font>
-                   <pointsize>8</pointsize>
+                   <pointsize>9</pointsize>
                   </font>
                  </property>
                  <property name="toolTip">
@@ -261,7 +271,7 @@
                 <widget class="QToolButton" name="nextSampleNotClassified">
                  <property name="font">
                   <font>
-                   <pointsize>8</pointsize>
+                   <pointsize>9</pointsize>
                   </font>
                  </property>
                  <property name="toolTip">
@@ -295,7 +305,7 @@
               </property>
               <property name="font">
                <font>
-                <pointsize>8</pointsize>
+                <pointsize>9</pointsize>
                 <weight>50</weight>
                 <bold>false</bold>
                </font>
@@ -351,7 +361,7 @@
                 <widget class="QLabel" name="label_2">
                  <property name="font">
                   <font>
-                   <pointsize>8</pointsize>
+                   <pointsize>9</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -387,7 +397,7 @@
                 <widget class="QDoubleSpinBox" name="radiusFitToSample">
                  <property name="font">
                   <font>
-                   <pointsize>8</pointsize>
+                   <pointsize>9</pointsize>
                   </font>
                  </property>
                  <property name="frame">
@@ -506,7 +516,7 @@
                 <widget class="QLabel" name="label_3">
                  <property name="font">
                   <font>
-                   <pointsize>8</pointsize>
+                   <pointsize>9</pointsize>
                   </font>
                  </property>
                  <property name="toolTip">
@@ -521,7 +531,7 @@
                 <widget class="QLabel" name="Sample_ID">
                  <property name="font">
                   <font>
-                   <pointsize>8</pointsize>
+                   <pointsize>9</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -533,7 +543,7 @@
                 <widget class="QToolButton" name="QPBtn_OpenInGE">
                  <property name="font">
                   <font>
-                   <pointsize>8</pointsize>
+                   <pointsize>9</pointsize>
                   </font>
                  </property>
                  <property name="toolTip">
@@ -576,7 +586,7 @@
                 <widget class="QLabel" name="label_8">
                  <property name="font">
                   <font>
-                   <pointsize>8</pointsize>
+                   <pointsize>9</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -600,7 +610,7 @@
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>8</pointsize>
+                   <pointsize>9</pointsize>
                   </font>
                  </property>
                  <property name="toolTip">
@@ -618,7 +628,7 @@
                 <widget class="QToolButton" name="GoTo_ID_Button">
                  <property name="font">
                   <font>
-                   <pointsize>8</pointsize>
+                   <pointsize>9</pointsize>
                   </font>
                  </property>
                  <property name="toolTip">
@@ -699,7 +709,7 @@
            </property>
            <property name="font">
             <font>
-             <pointsize>8</pointsize>
+             <pointsize>9</pointsize>
             </font>
            </property>
            <property name="text">
@@ -745,7 +755,7 @@
              <widget class="QPushButton" name="QPBtn_SetClassification">
               <property name="font">
                <font>
-                <pointsize>8</pointsize>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="text">
@@ -915,7 +925,7 @@
              <widget class="QCheckBox" name="autoNextSample">
               <property name="font">
                <font>
-                <pointsize>8</pointsize>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="toolTip">
@@ -992,7 +1002,7 @@
                 <widget class="QLabel" name="label">
                  <property name="font">
                   <font>
-                   <pointsize>8</pointsize>
+                   <pointsize>9</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -1007,7 +1017,7 @@
                 <widget class="QLabel" name="label_6">
                  <property name="font">
                   <font>
-                   <pointsize>8</pointsize>
+                   <pointsize>9</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -1043,7 +1053,7 @@
                 <widget class="QLabel" name="totalClassified">
                  <property name="font">
                   <font>
-                   <pointsize>8</pointsize>
+                   <pointsize>9</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -1055,7 +1065,7 @@
                 <widget class="QLabel" name="totalUnclassified">
                  <property name="font">
                   <font>
-                   <pointsize>8</pointsize>
+                   <pointsize>9</pointsize>
                   </font>
                  </property>
                  <property name="text">
