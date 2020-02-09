@@ -471,7 +471,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             else:
                 with block_signals_to(self.QGBox_GridSettings):
                     self.grid_columns.setValue(2)
-                    self.grid_rows.setValue(2)
+                    self.grid_rows.setValue(1)
             if not ClassificationDialog.is_opened:
                 # enable group box that depends of sampling file
                 self.QGBox_SamplingClassification.setEnabled(True)
@@ -483,7 +483,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.QLabel_ClassificationStatus.setText("No sampling file selected")
             self.QLabel_ClassificationStatus.setStyleSheet("QLabel {color: gray;}")
             self.grid_columns.setValue(2)
-            self.grid_rows.setValue(2)
+            self.grid_rows.setValue(1)
             # disable group box that depends of sampling file
             self.QGBox_SamplingClassification.setDisabled(True)
             self.QGBox_saveSamplingClassified.setDisabled(True)

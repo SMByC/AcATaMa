@@ -49,7 +49,7 @@ class Classification(object):
         self.current_sample_idx = 0
         # grid config
         self.grid_columns = 2
-        self.grid_rows = 2
+        self.grid_rows = 1
         # default radius to fit the sample based on the units of the sampling file selected
         layer_dist_unit = self.sampling_layer.crs().mapUnits()
         fit_to_sample_list = {QgsUnitTypes.DistanceMeters: 120, QgsUnitTypes.DistanceKilometers: 0.120,
