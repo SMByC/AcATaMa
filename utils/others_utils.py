@@ -110,14 +110,22 @@ def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None):
 # --------------------------------------------------------------------------
 
 
+def calc_pixel_count_by_value_lineal(layer, band, pixel_values):
+    raster_numpy = gdalnumeric.LoadFile(get_file_path_of_layer(layer))
+    if len(raster_numpy.shape) == 3:
+        raster_numpy = raster_numpy[band-1]
+
+    pixel_counts = [np.count_nonzero(raster_numpy == pixel_value)
+                    for pixel_value in pixel_values]
+
+    return pixel_counts
+
+
 @wait_process
 def get_pixel_count_by_pixel_values(layer, band, pixel_values=None):
     if pixel_values is None:
         pixel_values = get_pixel_values(layer, band)
 
-    raster_numpy = gdalnumeric.LoadFile(get_file_path_of_layer(layer))
-    pixel_counts = []
-    for pixel_value in pixel_values:
-        pixel_counts.append((raster_numpy == int(pixel_value)).sum())
+    pixel_counts = calc_pixel_count_by_value_lineal(layer, band, pixel_values)
 
     return dict(zip(pixel_values, pixel_counts))
