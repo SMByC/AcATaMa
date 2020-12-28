@@ -50,7 +50,8 @@ Dependency = namedtuple('Dep', ['name', 'min', 'install'])
 #   install: fix/exact version number or None
 #   min: minimum version number or None
 DEPS = [
-    #Dependency('dask', install=None, min='1.1.4'),
+    Dependency('dask', install=None, min=None),
+    Dependency('xarray', install=None, min=None),
 ]
 
 # Use a custom folder for the packages to avoid polluting the per-user site-packages.

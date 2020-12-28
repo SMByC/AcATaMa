@@ -214,7 +214,8 @@ def fill_stratified_sampling_table(dockwidget):
             srs_table["pixel_count"] = list(
                 get_pixel_count_by_pixel_values(dockwidget.QCBox_CategRaster_StraRS.currentLayer(),
                                                 int(dockwidget.QCBox_band_CategRaster_StraRS.currentText()),
-                                                srs_table["color_table"]["Pixel Value"]).values())
+                                                srs_table["color_table"]["Pixel Value"],
+                                                int(dockwidget.nodata_CategRaster_StraRS.value())).values())
             total_std_error = dockwidget.TotalExpectedSE.value()
             srs_table["On"] = [True] * srs_table["row_count"]
             srs_table["num_samples"] = get_num_samples_by_area_based_proportion(srs_table, total_std_error)

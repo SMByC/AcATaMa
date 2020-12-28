@@ -23,6 +23,10 @@ import multiprocessing
 import xml.etree.ElementTree as ET
 from osgeo import gdal, gdalnumeric
 
+from qgis.PyQt.QtCore import Qt, QCoreApplication
+from qgis.PyQt.QtWidgets import QProgressDialog
+from qgis.utils import iface
+
 from AcATaMa.utils.qgis_utils import get_file_path_of_layer
 from AcATaMa.utils.system_utils import wait_process
 
@@ -108,24 +112,74 @@ def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None):
         return dict(zip(pixel_values, pixel_counts))
 
 # --------------------------------------------------------------------------
+# compute pixels count by values
 
-
-def calc_pixel_count_by_value_lineal(layer, band, pixel_values):
-    raster_numpy = gdalnumeric.LoadFile(get_file_path_of_layer(layer))
-    if len(raster_numpy.shape) == 3:
-        raster_numpy = raster_numpy[band-1]
-
-    pixel_counts = [np.count_nonzero(raster_numpy == pixel_value)
-                    for pixel_value in pixel_values]
-
-    return pixel_counts
+total_count = 0
 
 
 @wait_process
-def get_pixel_count_by_pixel_values(layer, band, pixel_values=None):
+def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=-1):
+    app = QCoreApplication.instance()
+
+    nodata = nodata if nodata != -1 else None
     if pixel_values is None:
         pixel_values = get_pixel_values(layer, band)
 
-    pixel_counts = calc_pixel_count_by_value_lineal(layer, band, pixel_values)
+    # put nodata at the beginning, with the idea to include it for stopping
+    # the counting when reaching the total pixels, delete it at the end
+    if nodata is not None:
+        if nodata in pixel_values: pixel_values.remove(nodata)
+        pixel_values.insert(0, nodata)
 
+    try:
+        import xarray as xr
+        import dask.array as da
+        parallel = True
+    except:
+        parallel = False
+
+    if parallel:
+        dataset = xr.open_rasterio(get_file_path_of_layer(layer), chunks={'band': 1, 'x': 2000, 'y': 2000})
+    else:
+        dataset = gdalnumeric.LoadFile(get_file_path_of_layer(layer))
+
+    if len(dataset.shape) == 3:
+        if parallel:
+            dataset = dataset.sel(band=band)
+        else:
+            dataset = dataset[band - 1]
+
+    max_pixels = dataset.shape[-1] * dataset.shape[-2]
+
+    progress = QProgressDialog('AcATaMa is counting the number of pixels for each thematic value.\n'
+                               'Depending on the size of the image, it would take a few minutes.',
+                               None, 0, 100, iface.mainWindow())
+    progress.setWindowTitle("AcATaMa - Counting pixels by values... " + ("[parallel]" if parallel else "[not parallel!]"))
+    progress.setWindowModality(Qt.WindowModal)
+    progress.setValue(0)
+    progress.show()
+    app.processEvents()
+
+    global total_count
+    total_count = 0
+
+    def count_value(pixel_value):
+        global total_count
+        if total_count >= max_pixels:
+            return 0
+        if parallel:
+            count = da.count_nonzero(dataset == pixel_value).compute()
+        else:
+            count = np.count_nonzero(dataset == pixel_value)
+        total_count += count
+        progress.setValue(total_count * 100 / max_pixels)
+        return count
+
+    pixel_counts = [count_value(pixel_value) for pixel_value in pixel_values]
+
+    if nodata is not None:
+        pixel_values.pop(0)
+        pixel_counts.pop(0)
+
+    progress.accept()
     return dict(zip(pixel_values, pixel_counts))
