@@ -18,71 +18,13 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
-import tempfile
 from math import isnan
-from osgeo import gdal
-from subprocess import call
 import xml.etree.ElementTree as ET
 
-from qgis.core import QgsRaster, QgsPointXY, Qgis, QgsVectorFileWriter, QgsCoordinateReferenceSystem, \
-    QgsCoordinateTransform, QgsProject
-from qgis.utils import iface
+from qgis.core import QgsRaster, QgsPointXY
 from qgis.PyQt.QtWidgets import QMessageBox
 
 from AcATaMa.utils.others_utils import get_pixel_count_by_pixel_values
-from AcATaMa.utils.qgis_utils import get_file_path_of_layer
-from AcATaMa.utils.system_utils import wait_process
-
-
-@wait_process
-def do_clipping_with_shape(target_layer, shape_layer, out_path, dst_nodata=None):
-    target_file = get_file_path_of_layer(target_layer)
-    filename, ext = os.path.splitext(out_path)
-    tmp_file = filename + "_tmp" + ext
-    # set the nodata
-    dst_nodata = "-dstnodata {}".format(dst_nodata) if dst_nodata not in [None, -1] else ""
-    # set the file path for the area of interest
-    # check if the shape is a memory layer, then save and used it
-    if not os.path.isfile(get_file_path_of_layer(shape_layer)):
-        tmp_memory_fd, tmp_memory_file = tempfile.mkstemp(prefix='memory_layer_', suffix='.gpkg')
-        QgsVectorFileWriter.writeAsVectorFormat(shape_layer, tmp_memory_file, "System", shape_layer.crs(), "GPKG")
-        os.close(tmp_memory_fd)
-        shape_file = tmp_memory_file
-    else:
-        shape_file = get_file_path_of_layer(shape_layer)
-    # clipping in shape
-    return_code = call('gdalwarp -multi -wo NUM_THREADS=ALL_CPUS --config GDALWARP_IGNORE_BAD_CUTLINE YES'
-                       ' -cutline "{}" {} "{}" "{}"'.format(shape_file, dst_nodata, target_file, tmp_file), shell=True)
-    # create convert coordinates
-    crsSrc = QgsCoordinateReferenceSystem(shape_layer.crs())
-    crsDest = QgsCoordinateReferenceSystem(target_layer.crs())
-    xform = QgsCoordinateTransform(crsSrc, crsDest, QgsProject.instance())
-    # trim the boundaries using the maximum extent for all features
-    box = []
-    for f in shape_layer.getFeatures():
-        g = f.geometry()
-        g.transform(xform)
-        f.setGeometry(g)
-        if box:
-            box.combineExtentWith(f.geometry().boundingBox())
-        else:
-            box = f.geometry().boundingBox()
-    # intersect with the rater file extent
-    box = box.intersect(target_layer.extent())
-    # trim
-    gdal.Translate(out_path, tmp_file, projWin=[box.xMinimum(), box.yMaximum(), box.xMaximum(), box.yMinimum()])
-    # clean tmp file
-    if not os.path.isfile(get_file_path_of_layer(shape_layer)) and os.path.isfile(tmp_memory_file):
-        os.remove(tmp_memory_file)
-    if os.path.isfile(tmp_file):
-        os.remove(tmp_file)
-
-    if return_code == 0:  # successfully
-        return out_path
-    else:
-        iface.messageBar().pushMessage("AcATaMa", "Error while clipping the raster file with shape.",
-                                       level=Qgis.Warning)
 
 
 def get_nodata_value(layer, band=1):

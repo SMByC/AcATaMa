@@ -22,7 +22,6 @@ import os
 import tempfile
 import configparser
 import webbrowser
-from shutil import copyfile
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, Qt
@@ -33,11 +32,10 @@ from qgis.utils import iface
 from AcATaMa.core.accuracy_assessment import AccuracyAssessmentDialog
 from AcATaMa.core.classification import Classification
 from AcATaMa.core.sampling import do_simple_random_sampling, do_stratified_random_sampling, Sampling
-from AcATaMa.core.raster import do_clipping_with_shape, get_nodata_value
+from AcATaMa.core.raster import get_nodata_value
 from AcATaMa.gui.about_dialog import AboutDialog
 from AcATaMa.gui.classification_dialog import ClassificationDialog
-from AcATaMa.utils.qgis_utils import get_current_file_path_in, \
-    unload_layer, valid_file_selected_in, load_and_select_filepath_in, get_file_path_of_layer
+from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_filepath_in, get_file_path_of_layer
 from AcATaMa.utils.sampling_utils import update_stratified_sampling_table, fill_stratified_sampling_table
 from AcATaMa.utils.system_utils import error_handler, block_signals_to
 
@@ -93,29 +91,6 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
         # select and check the thematic raster
         self.QCBox_ThematicRaster.layerChanged.connect(self.select_thematic_raster)
-
-        # ######### shape area of interest ######### #
-        self.widget_AreaOfInterest.setHidden(True)
-        # set properties to QgsMapLayerComboBox
-        self.QCBox_AreaOfInterest.setCurrentIndex(-1)
-        self.QCBox_AreaOfInterest.setFilters(QgsMapLayerProxyModel.PolygonLayer)
-        # call to browse the shape area
-        self.QPBtn_browseAreaOfInterest.clicked.connect(lambda: self.browser_dialog_to_load_file(
-            self.QCBox_AreaOfInterest,
-            dialog_title=self.tr("Select the vector file"),
-            file_filters=self.tr("Vector files (*.gpkg *.shp);;All files (*.*)")))
-        # do clip
-        self.QPBtn_ClippingThematic.clicked.connect(self.clipping_thematic_raster)
-
-        # ######### create categorical  ######### # TODO
-        # self.widget_CategRaster.setHidden(True)
-        # # handle connect when the list of layers changed
-        # # call to browse the categorical raster
-        # self.browseCategRaster.clicked.connect(lambda: self.fileDialog_browse(
-        #     self.selectCategRaster,
-        #     dialog_title=self.tr("Select the categorical raster file"),
-        #     dialog_types=self.tr("Raster files (*.tif *.img);;All files (*.*)"),
-        #     layer_type="raster"))
 
         # ######### simple random sampling ######### #
         self.widget_SimpRSwithCR.setHidden(True)
@@ -353,44 +328,6 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QTableW_StraRS.setColumnCount(0)
         # clear select
         self.QCBox_StraRS_Method.setCurrentIndex(-1)
-
-    @pyqtSlot()
-    @error_handler
-    def clipping_thematic_raster(self):
-        # first check input files requirements
-        if not valid_file_selected_in(self.QCBox_ThematicRaster, "thematic raster"):
-            return
-        if not valid_file_selected_in(self.QCBox_AreaOfInterest, "area of interest shape"):
-            return
-
-        # first select the target dir for save the clipping file
-        filename, ext = os.path.splitext(get_current_file_path_in(self.QCBox_ThematicRaster))
-        ext = ext if ext in [".tif", ".TIF", ".img", ".IMG"] else ".tif"
-        suggested_filename = filename + "_clip" + ext
-
-        file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Select the output file to save the clipping file"),
-                                                  suggested_filename,
-                                                  self.tr("GeoTiff files (*.tif);;Img files (*.img);;All files (*.*)"))
-        if file_out == '':
-            return
-
-        # clipping
-        clip_file = do_clipping_with_shape(
-            self.QCBox_ThematicRaster.currentLayer(),
-            self.QCBox_AreaOfInterest.currentLayer(), file_out,
-            get_nodata_value(self.QCBox_ThematicRaster.currentLayer()))
-        # copy the style
-        thematic_basename = os.path.splitext(get_current_file_path_in(self.QCBox_ThematicRaster))[0]
-        if os.path.isfile(thematic_basename + ".qml"):
-            copyfile(thematic_basename + ".qml", os.path.splitext(file_out)[0] + ".qml")
-        # unload old thematic file
-        unload_layer(get_current_file_path_in(self.QCBox_ThematicRaster))
-        # load to qgis and update combobox list
-        load_and_select_filepath_in(self.QCBox_ThematicRaster, clip_file)
-        self.select_thematic_raster(self.QCBox_ThematicRaster.currentLayer())
-
-        iface.messageBar().pushMessage("AcATaMa", "Clipping the thematic raster with shape, completed",
-                                       level=Qgis.Success)
 
     @pyqtSlot()
     def update_generated_sampling_list_in(self, combo_box):
