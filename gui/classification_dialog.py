@@ -512,8 +512,9 @@ class ClassificationButtonsConfig(QDialog, FORM_CLASS):
                     item_table = QTableWidgetItem()
                     if m + 1 in self.buttons_config:
                         item_table.setBackground(QColor(self.buttons_config[m + 1]["color"]))
-                    item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                    item_table.setFlags(Qt.ItemIsEnabled)
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    item_table.setToolTip("Click to set/change the color of this classification button")
                     self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "Thematic Class":
                 for m, item in enumerate(self.table_buttons.values()):
@@ -522,17 +523,17 @@ class ClassificationButtonsConfig(QDialog, FORM_CLASS):
                             item_table = QTableWidgetItem(self.buttons_config[m + 1]["thematic_class"])
                         else:
                             item_table = QTableWidgetItem(str(item))
-                        item_table.setToolTip("Click to open the pixel value/color table of the thematic classes")
+                        item_table.setToolTip("Click to set/change the pixel color/value from the thematic raster")
                     else:
                         item_table = QTableWidgetItem("none")
-                        item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                         item_table.setForeground(QColor("lightGrey"))
-                        item_table.setToolTip("No thematic layer, if you want enable the thematic classes,\n"
-                                              "select first a valid thematic layer in thematic tab")
+                        item_table.setToolTip("No thematic raster layer selected, if you want enable the\n"
+                                              "thematic classes, select first a valid thematic raster file")
                         item_h = QTableWidgetItem(h)
                         item_h.setForeground(QColor("lightGrey"))
                         self.tableBtnsConfig.setHorizontalHeaderItem(2, item_h)
 
+                    item_table.setFlags(Qt.ItemIsEnabled)
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
                     self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "":
