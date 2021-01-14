@@ -196,7 +196,7 @@ def fill_stratified_sampling_table(dockwidget):
             # clear table
             dockwidget.QTableW_StraRS.setRowCount(0)
             dockwidget.QTableW_StraRS.setColumnCount(0)
-            # unselect
+            # deselect
             dockwidget.QCBox_StraRS_Method.setCurrentIndex(-1)
             return
         srs_table["row_count"] = len(list(srs_table["color_table"].values())[0])

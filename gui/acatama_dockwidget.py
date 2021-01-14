@@ -291,7 +291,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
     @pyqtSlot(QgsMapLayer)
     def select_categorical_raster_StraRS(self, layer):
-        # first unselect/clear sampling method
+        # first deselect/clear sampling method
         self.QCBox_StraRS_Method.setCurrentIndex(-1)
         # check
         if not valid_file_selected_in(self.QCBox_CategRaster_StraRS, "categorical raster"):
