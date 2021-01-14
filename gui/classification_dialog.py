@@ -595,6 +595,14 @@ class ClassificationButtonsConfig(QDialog, FORM_CLASS):
                       "thematic raster layer."
                 QMessageBox.warning(self, 'Error with the classification buttons', msg, QMessageBox.Ok)
                 return
+            # check if all button configured have a valid name
+            items_with_valid_names = [self.tableBtnsConfig.item(row, 0).text() != "" for row in
+                                      range(self.tableBtnsConfig.rowCount()) if self.tableBtnsConfig.item(row, 2).text() != ""]
+            if False in items_with_valid_names:
+                msg = "Invalid configuration:\n\nTo create the buttons for classify, they must have a valid name."
+                QMessageBox.warning(self, 'Error with the classification buttons', msg, QMessageBox.Ok)
+                return
+        # pass all checks
         self.accept()
 
 
