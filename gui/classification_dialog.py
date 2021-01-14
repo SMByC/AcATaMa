@@ -585,18 +585,16 @@ class ClassificationButtonsConfig(QDialog, FORM_CLASS):
     def check_before_accept(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         # check if all buttons are associated to thematic classes if it is working with thematic classes
-        sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile.currentLayer()
-        if sampling_layer and sampling_layer in Classification.instances:
-            if Classification.instances[sampling_layer].with_thematic_classes:
-                items_with_classes = [self.tableBtnsConfig.item(row, 2).text() != "" for row in
-                                      range(self.tableBtnsConfig.rowCount()) if self.tableBtnsConfig.item(row, 0).text() != ""]
-                if False in items_with_classes:
-                    msg = "A) If you are classifying with thematic classes, then you must configure " \
-                          "the thematic class value for all buttons. \n\nB) Or if you are classifying the " \
-                          "sampling without pairing with thematic classes, then unselected the thematic " \
-                          "raster in the thematic tab."
-                    QMessageBox.warning(self, 'Problems with the classification buttons', msg, QMessageBox.Ok)
-                    return
+        if valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicRaster, "thematic raster"):
+            items_with_classes = [self.tableBtnsConfig.item(row, 2).text() != "" for row in
+                                  range(self.tableBtnsConfig.rowCount()) if self.tableBtnsConfig.item(row, 0).text() != ""]
+            if False in items_with_classes:
+                msg = "Invalid configuration:\n\nA) If you are classifying with thematic classes, then " \
+                      "you must configure the thematic class value for all buttons. \n\nB) Or if you are " \
+                      "classifying the sampling without pairing with thematic classes, then deselect the " \
+                      "thematic raster layer."
+                QMessageBox.warning(self, 'Error with the classification buttons', msg, QMessageBox.Ok)
+                return
         self.accept()
 
 
