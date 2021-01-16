@@ -700,30 +700,6 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_5">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>9</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Classification of each sample into one of the following custom categories:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QWidget" name="widget_6" native="true">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <property name="leftMargin">
@@ -757,6 +733,9 @@
                <font>
                 <pointsize>9</pointsize>
                </font>
+              </property>
+              <property name="toolTip">
+               <string>Set all classification buttons for classify the samples</string>
               </property>
               <property name="text">
                <string>Set Classification</string>
