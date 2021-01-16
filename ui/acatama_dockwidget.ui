@@ -78,13 +78,6 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_26">
-            <property name="text">
-             <string>Band:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QComboBox" name="QCBox_band_ThematicRaster">
             <property name="maximumSize">
              <size>
@@ -92,12 +85,8 @@
               <height>16777215</height>
              </size>
             </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>Nodata:</string>
+            <property name="toolTip">
+             <string>Band</string>
             </property>
            </widget>
           </item>
@@ -110,7 +99,8 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>The nodata value set automatically from image if this has the nodata value set</string>
+             <string>Nodata Value.
+It set automatically from image if the layer has the nodata value set..</string>
             </property>
             <property name="specialValueText">
              <string>None</string>
@@ -407,19 +397,15 @@
                              </widget>
                             </item>
                             <item>
-                             <widget class="QLabel" name="label_27">
-                              <property name="text">
-                               <string>Band:</string>
-                              </property>
-                             </widget>
-                            </item>
-                            <item>
                              <widget class="QComboBox" name="QCBox_band_CategRaster_SimpRS">
                               <property name="maximumSize">
                                <size>
                                 <width>50</width>
                                 <height>16777215</height>
                                </size>
+                              </property>
+                              <property name="toolTip">
+                               <string>Band</string>
                               </property>
                              </widget>
                             </item>
@@ -606,13 +592,6 @@
                           </widget>
                          </item>
                          <item>
-                          <widget class="QLabel" name="label_31">
-                           <property name="text">
-                            <string>Band:</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
                           <widget class="QComboBox" name="QCBox_band_CategRaster_StraRS">
                            <property name="maximumSize">
                             <size>
@@ -620,12 +599,8 @@
                              <height>16777215</height>
                             </size>
                            </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <widget class="QLabel" name="label_6">
-                           <property name="text">
-                            <string>Nodata:</string>
+                           <property name="toolTip">
+                            <string>Band</string>
                            </property>
                           </widget>
                          </item>
@@ -638,7 +613,8 @@
                             </size>
                            </property>
                            <property name="toolTip">
-                            <string>The nodata value set automatically from image if this has the nodata value set</string>
+                            <string>Nodata Value.
+It set automatically from image if the layer has the nodata value set..</string>
                            </property>
                            <property name="specialValueText">
                             <string>None</string>
