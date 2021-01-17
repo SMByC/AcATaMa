@@ -311,9 +311,10 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         else:
             self.statusCurrentSample.setText("not classified")
             self.statusCurrentSample.setStyleSheet('QLabel {color: gray;}')
-        # update the total classified and not classified samples labels
-        self.totalClassified.setText(str(self.classification.total_classified))
-        self.totalUnclassified.setText(str(self.classification.total_unclassified))
+        # update the classification status bar
+        self.QPBar_ClassificationStatus.setMaximum(self.classification.num_points)
+        self.QPBar_ClassificationStatus.setValue(self.classification.total_classified)
+
         # update plugin with the current sampling status
         AcATaMa.dockwidget.update_the_status_of_classification()
 
