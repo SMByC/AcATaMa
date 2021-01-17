@@ -53,8 +53,9 @@ def error_handler(func):
                 msgBox = QMessageBox()
                 msgBox.setWindowTitle("AcATaMa - Error handler")
                 msgBox.setText("<i>{}</i>".format(error))
-                msgBox.setInformativeText("If you consider this as an error of AcATaMa, report it in "
-                                          "<a href='https://github.com/SMByC/AcATaMa/issues'>issue tracker</a>")
+                msgBox.setInformativeText("If you consider this as an AcATaMa error, report it in "
+                                          "<a href='https://github.com/SMByC/AcATaMa/issues'>issue tracker</a>"
+                                          " including the traceback below.")
                 msgBox.setDetailedText(more_details)
                 msgBox.setTextFormat(Qt.RichText)
                 msgBox.setStandardButtons(QMessageBox.Ok)
