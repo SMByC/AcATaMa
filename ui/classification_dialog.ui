@@ -310,6 +310,9 @@
                 <bold>false</bold>
                </font>
               </property>
+              <property name="toolTip">
+               <string>The sampling navigation bar (the order is random)</string>
+              </property>
               <property name="value">
                <number>24</number>
               </property>
@@ -962,6 +965,9 @@
             <font>
              <pointsize>9</pointsize>
             </font>
+           </property>
+           <property name="toolTip">
+            <string>classified / total</string>
            </property>
            <property name="minimum">
             <number>0</number>
