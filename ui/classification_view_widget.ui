@@ -42,25 +42,14 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="QLabel_ViewID">
-        <property name="font">
-         <font>
-          <pointsize>8</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>View N:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QLineEdit" name="QLabel_ViewName">
         <property name="font">
          <font>
-          <pointsize>8</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
+          <pointsize>9</pointsize>
          </font>
+        </property>
+        <property name="toolTip">
+         <string>Click to set the name for this view</string>
         </property>
         <property name="frame">
          <bool>false</bool>
@@ -79,6 +68,9 @@
    <item>
     <widget class="QWidget" name="widget_26" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_26">
+      <property name="spacing">
+       <number>3</number>
+      </property>
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -102,12 +94,12 @@
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>24</height>
+          <height>30</height>
          </size>
         </property>
         <property name="font">
          <font>
-          <pointsize>8</pointsize>
+          <pointsize>9</pointsize>
          </font>
         </property>
         <property name="allowEmptyLayer">
@@ -119,14 +111,17 @@
        <widget class="QToolButton" name="QCBox_browseRenderFile">
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
-          <height>24</height>
+          <width>30</width>
+          <height>30</height>
          </size>
         </property>
         <property name="font">
          <font>
-          <pointsize>8</pointsize>
+          <pointsize>9</pointsize>
          </font>
+        </property>
+        <property name="toolTip">
+         <string>Load file</string>
         </property>
         <property name="text">
          <string>...</string>
@@ -184,7 +179,7 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>8</pointsize>
+          <pointsize>9</pointsize>
          </font>
         </property>
         <property name="text">
@@ -202,11 +197,11 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>8</pointsize>
+          <pointsize>9</pointsize>
          </font>
         </property>
         <property name="toolTip">
-         <string>Scale factor for the current view</string>
+         <string>Scale factor for this view</string>
         </property>
         <property name="frame">
          <bool>false</bool>
@@ -257,11 +252,11 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>8</pointsize>
+          <pointsize>9</pointsize>
          </font>
         </property>
         <property name="toolTip">
-         <string>Open the style editor for this layer</string>
+         <string>Open the style editor for the layer selected</string>
         </property>
         <property name="text">
          <string>Style</string>
@@ -298,15 +293,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>QgsMapLayerComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qgis.gui</header>
+  </customwidget>
+  <customwidget>
    <class>RenderWidget</class>
    <extends>QWidget</extends>
    <header>AcATaMa.gui.classification_view_widget</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QgsMapLayerComboBox</class>
-   <extends>QComboBox</extends>
-   <header>qgis.gui</header>
   </customwidget>
  </customwidgets>
  <resources/>

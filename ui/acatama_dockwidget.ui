@@ -16,349 +16,117 @@
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout_22">
     <item>
+     <widget class="QGroupBox" name="QGBox_ThematicRaster">
+      <property name="title">
+       <string>Thematic Raster</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QWidget" name="widget_0" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_11">
+          <property name="spacing">
+           <number>3</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QgsMapLayerComboBox" name="QCBox_ThematicRaster">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::StrongFocus</enum>
+            </property>
+            <property name="frame">
+             <bool>true</bool>
+            </property>
+            <property name="allowEmptyLayer">
+             <bool>true</bool>
+            </property>
+            <property name="showCrs">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="QPBtn_browseThematicRaster">
+            <property name="maximumSize">
+             <size>
+              <width>30</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Load file</string>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="QCBox_band_ThematicRaster">
+            <property name="maximumSize">
+             <size>
+              <width>50</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Band</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="nodata_ThematicRaster">
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Nodata Value.
+It set automatically from image if the layer has the nodata value set..</string>
+            </property>
+            <property name="specialValueText">
+             <string>None</string>
+            </property>
+            <property name="minimum">
+             <number>-1</number>
+            </property>
+            <property name="maximum">
+             <number>999999</number>
+            </property>
+            <property name="value">
+             <number>-1</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="tab_thematic">
-       <attribute name="title">
-        <string>Thematic</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <property name="spacing">
-         <number>0</number>
-        </property>
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QScrollArea" name="scrollArea_T">
-          <property name="frameShape">
-           <enum>QFrame::NoFrame</enum>
-          </property>
-          <property name="lineWidth">
-           <number>0</number>
-          </property>
-          <property name="widgetResizable">
-           <bool>true</bool>
-          </property>
-          <widget class="QWidget" name="scrollAreaWidgetContents_T">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>736</width>
-             <height>1098</height>
-            </rect>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_2">
-            <item>
-             <widget class="QGroupBox" name="QGBox_ThematicRaster">
-              <property name="title">
-               <string>Thematic Raster</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_3">
-               <item>
-                <widget class="QLabel" name="label">
-                 <property name="text">
-                  <string>Select/browse the thematic raster for evaluate:</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QWidget" name="widget_0" native="true">
-                 <layout class="QHBoxLayout" name="horizontalLayout_11">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
-                  <item>
-                   <widget class="QgsMapLayerComboBox" name="QCBox_ThematicRaster">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="focusPolicy">
-                     <enum>Qt::StrongFocus</enum>
-                    </property>
-                    <property name="frame">
-                     <bool>true</bool>
-                    </property>
-                    <property name="allowEmptyLayer">
-                     <bool>true</bool>
-                    </property>
-                    <property name="showCrs">
-                     <bool>false</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QToolButton" name="QPBtn_browseThematicRaster">
-                    <property name="text">
-                     <string>...</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item>
-                <widget class="QWidget" name="widget_7" native="true">
-                 <layout class="QHBoxLayout" name="horizontalLayout_5">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
-                  <item>
-                   <spacer name="horizontalSpacer_8">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label_26">
-                    <property name="text">
-                     <string>Band:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QComboBox" name="QCBox_band_ThematicRaster"/>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label_2">
-                    <property name="text">
-                     <string>Nodata value:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QSpinBox" name="nodata_ThematicRaster">
-                    <property name="toolTip">
-                     <string>The nodata value set automatically from image if this has the nodata value set</string>
-                    </property>
-                    <property name="specialValueText">
-                     <string>None</string>
-                    </property>
-                    <property name="minimum">
-                     <number>-1</number>
-                    </property>
-                    <property name="maximum">
-                     <number>999999</number>
-                    </property>
-                    <property name="value">
-                     <number>-1</number>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_9">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="QGBox_AreaOfInterest">
-              <property name="title">
-               <string>Wor&amp;king alone in an area of interest (optional)</string>
-              </property>
-              <property name="checkable">
-               <bool>true</bool>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_7">
-               <item>
-                <widget class="QWidget" name="widget_AreaOfInterest" native="true">
-                 <layout class="QVBoxLayout" name="verticalLayout_12">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
-                  <item>
-                   <widget class="QLabel" name="label_7">
-                    <property name="font">
-                     <font>
-                      <italic>false</italic>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Select/browse the polygon or multipolygon vector file to define an area of interest for make the sampling only inside it (and adjust the area by classes):</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-                    </property>
-                    <property name="wordWrap">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QWidget" name="widget_22" native="true">
-                    <layout class="QHBoxLayout" name="horizontalLayout_21">
-                     <property name="leftMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="topMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="rightMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="bottomMargin">
-                      <number>0</number>
-                     </property>
-                     <item>
-                      <widget class="QgsMapLayerComboBox" name="QCBox_AreaOfInterest">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="focusPolicy">
-                        <enum>Qt::StrongFocus</enum>
-                       </property>
-                       <property name="allowEmptyLayer">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QToolButton" name="QPBtn_browseAreaOfInterest">
-                       <property name="text">
-                        <string>...</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QWidget" name="widget_3" native="true">
-                    <layout class="QHBoxLayout" name="horizontalLayout_3">
-                     <property name="spacing">
-                      <number>0</number>
-                     </property>
-                     <property name="leftMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="topMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="rightMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="bottomMargin">
-                      <number>0</number>
-                     </property>
-                     <item>
-                      <spacer name="horizontalSpacer">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>40</width>
-                         <height>20</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                     <item>
-                      <widget class="QPushButton" name="QPBtn_ClippingThematic">
-                       <property name="text">
-                        <string>Clipping</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <spacer name="verticalSpacer">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-        </item>
-       </layout>
-      </widget>
       <widget class="QWidget" name="tab_sampling">
        <attribute name="title">
         <string>Sampling</string>
@@ -395,8 +163,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>716</width>
-             <height>1292</height>
+             <width>715</width>
+             <height>1200</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -578,6 +346,9 @@
                          <item>
                           <widget class="QWidget" name="widget_24" native="true">
                            <layout class="QHBoxLayout" name="horizontalLayout_23">
+                            <property name="spacing">
+                             <number>3</number>
+                            </property>
                             <property name="leftMargin">
                              <number>0</number>
                             </property>
@@ -593,7 +364,7 @@
                             <item>
                              <widget class="QgsMapLayerComboBox" name="QCBox_CategRaster_SimpRS">
                               <property name="sizePolicy">
-                               <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+                               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                                 <horstretch>0</horstretch>
                                 <verstretch>0</verstretch>
                                </sizepolicy>
@@ -611,8 +382,30 @@
                             </item>
                             <item>
                              <widget class="QToolButton" name="QPBtn_browseCategRaster_SimpRS">
+                              <property name="maximumSize">
+                               <size>
+                                <width>30</width>
+                                <height>16777215</height>
+                               </size>
+                              </property>
+                              <property name="toolTip">
+                               <string>Load file</string>
+                              </property>
                               <property name="text">
                                <string>...</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QComboBox" name="QCBox_band_CategRaster_SimpRS">
+                              <property name="maximumSize">
+                               <size>
+                                <width>50</width>
+                                <height>16777215</height>
+                               </size>
+                              </property>
+                              <property name="toolTip">
+                               <string>Band</string>
                               </property>
                              </widget>
                             </item>
@@ -634,16 +427,6 @@
                             <property name="bottomMargin">
                              <number>0</number>
                             </property>
-                            <item>
-                             <widget class="QLabel" name="label_27">
-                              <property name="text">
-                               <string>Band:</string>
-                              </property>
-                             </widget>
-                            </item>
-                            <item>
-                             <widget class="QComboBox" name="QCBox_band_CategRaster_SimpRS"/>
-                            </item>
                             <item>
                              <widget class="QLabel" name="label_13">
                               <property name="text">
@@ -758,6 +541,9 @@
                       <item>
                        <widget class="QWidget" name="widget_25" native="true">
                         <layout class="QHBoxLayout" name="horizontalLayout_24">
+                         <property name="spacing">
+                          <number>3</number>
+                         </property>
                          <property name="leftMargin">
                           <number>0</number>
                          </property>
@@ -773,7 +559,7 @@
                          <item>
                           <widget class="QgsMapLayerComboBox" name="QCBox_CategRaster_StraRS">
                            <property name="sizePolicy">
-                            <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+                            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                              <horstretch>0</horstretch>
                              <verstretch>0</verstretch>
                             </sizepolicy>
@@ -791,63 +577,44 @@
                          </item>
                          <item>
                           <widget class="QToolButton" name="QPBtn_browseCategRaster_StraRS">
+                           <property name="maximumSize">
+                            <size>
+                             <width>30</width>
+                             <height>16777215</height>
+                            </size>
+                           </property>
+                           <property name="toolTip">
+                            <string>Load file</string>
+                           </property>
                            <property name="text">
                             <string>...</string>
                            </property>
                           </widget>
                          </item>
-                        </layout>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QWidget" name="widget_8" native="true">
-                        <layout class="QHBoxLayout" name="horizontalLayout_7">
-                         <property name="leftMargin">
-                          <number>0</number>
-                         </property>
-                         <property name="topMargin">
-                          <number>0</number>
-                         </property>
-                         <property name="rightMargin">
-                          <number>0</number>
-                         </property>
-                         <property name="bottomMargin">
-                          <number>0</number>
-                         </property>
                          <item>
-                          <spacer name="horizontalSpacer_11">
-                           <property name="orientation">
-                            <enum>Qt::Horizontal</enum>
-                           </property>
-                           <property name="sizeHint" stdset="0">
+                          <widget class="QComboBox" name="QCBox_band_CategRaster_StraRS">
+                           <property name="maximumSize">
                             <size>
-                             <width>40</width>
-                             <height>20</height>
+                             <width>50</width>
+                             <height>16777215</height>
                             </size>
                            </property>
-                          </spacer>
-                         </item>
-                         <item>
-                          <widget class="QLabel" name="label_31">
-                           <property name="text">
-                            <string>Band:</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <widget class="QComboBox" name="QCBox_band_CategRaster_StraRS"/>
-                         </item>
-                         <item>
-                          <widget class="QLabel" name="label_6">
-                           <property name="text">
-                            <string>Nodata value:</string>
+                           <property name="toolTip">
+                            <string>Band</string>
                            </property>
                           </widget>
                          </item>
                          <item>
                           <widget class="QSpinBox" name="nodata_CategRaster_StraRS">
+                           <property name="maximumSize">
+                            <size>
+                             <width>100</width>
+                             <height>16777215</height>
+                            </size>
+                           </property>
                            <property name="toolTip">
-                            <string>The nodata value set automatically from image if this has the nodata value set</string>
+                            <string>Nodata Value.
+It set automatically from image if the layer has the nodata value set..</string>
                            </property>
                            <property name="specialValueText">
                             <string>None</string>
@@ -862,19 +629,6 @@
                             <number>-1</number>
                            </property>
                           </widget>
-                         </item>
-                         <item>
-                          <spacer name="horizontalSpacer_12">
-                           <property name="orientation">
-                            <enum>Qt::Horizontal</enum>
-                           </property>
-                           <property name="sizeHint" stdset="0">
-                            <size>
-                             <width>40</width>
-                             <height>20</height>
-                            </size>
-                           </property>
-                          </spacer>
                          </item>
                         </layout>
                        </widget>
@@ -1119,7 +873,7 @@
              <x>0</x>
              <y>0</y>
              <width>736</width>
-             <height>1098</height>
+             <height>996</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_24">
@@ -1201,6 +955,15 @@
                   </item>
                   <item>
                    <widget class="QToolButton" name="QPBtn_browseSamplingFile">
+                    <property name="maximumSize">
+                     <size>
+                      <width>30</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="toolTip">
+                     <string>Load file</string>
+                    </property>
                     <property name="text">
                      <string>...</string>
                     </property>
@@ -1645,7 +1408,7 @@
              <x>0</x>
              <y>0</y>
              <width>736</width>
-             <height>1098</height>
+             <height>996</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -1904,22 +1667,6 @@
  </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>QGBox_AreaOfInterest</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>widget_AreaOfInterest</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>155</x>
-     <y>359</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>117</x>
-     <y>323</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>QGBox_SimpRSwithCR</sender>
    <signal>clicked(bool)</signal>

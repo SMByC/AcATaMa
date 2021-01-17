@@ -152,7 +152,7 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         for idx, view_widget in enumerate(ClassificationDialog.view_widgets): view_widget.id = idx
         # set the label names for each view
         for num_view, view_widget in enumerate(ClassificationDialog.view_widgets):
-            view_widget.QLabel_ViewID.setText("View {}:".format(num_view + 1))
+            view_widget.QLabel_ViewName.setPlaceholderText("View {}".format(num_view + 1))
         # restore view widgets status
         for config_id, view_config in self.classification.view_widgets_config.items():
             for view_widget in ClassificationDialog.view_widgets:
@@ -311,9 +311,10 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         else:
             self.statusCurrentSample.setText("not classified")
             self.statusCurrentSample.setStyleSheet('QLabel {color: gray;}')
-        # update the total classified and not classified samples labels
-        self.totalClassified.setText(str(self.classification.total_classified))
-        self.totalUnclassified.setText(str(self.classification.total_unclassified))
+        # update the classification status bar
+        self.QPBar_ClassificationStatus.setMaximum(self.classification.num_points)
+        self.QPBar_ClassificationStatus.setValue(self.classification.total_classified)
+
         # update plugin with the current sampling status
         AcATaMa.dockwidget.update_the_status_of_classification()
 
