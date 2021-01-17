@@ -99,7 +99,7 @@ class Raster(object):
 
     def get_total_pixels_by_value(self, pixel_value):
         if self.pixel_counts_by_value is None:
-            self.pixel_counts_by_value = get_pixel_count_by_pixel_values(self.qgs_layer, self.band, self.nodata)
+            self.pixel_counts_by_value = get_pixel_count_by_pixel_values(self.qgs_layer, self.band, None, self.nodata)
 
         if pixel_value in self.pixel_counts_by_value:
             return self.pixel_counts_by_value[pixel_value]
