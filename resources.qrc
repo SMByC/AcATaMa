@@ -14,5 +14,6 @@
         <file>icons/go.svg</file>
         <file>icons/open_in_ge.svg</file>
         <file>icons/trash.svg</file>
+        <file>icons/render_view_config.svg</file>
     </qresource>
 </RCC>

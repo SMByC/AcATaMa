@@ -1134,10 +1134,7 @@ It set automatically from image if the layer has the nodata value set..</string>
               <layout class="QVBoxLayout" name="verticalLayout_31">
                <item>
                 <widget class="QWidget" name="QGBox_GridSettings" native="true">
-                 <layout class="QHBoxLayout" name="horizontalLayout_8">
-                  <property name="spacing">
-                   <number>0</number>
-                  </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_3">
                   <property name="leftMargin">
                    <number>0</number>
                   </property>
@@ -1151,7 +1148,7 @@ It set automatically from image if the layer has the nodata value set..</string>
                    <number>0</number>
                   </property>
                   <item>
-                   <spacer name="horizontalSpacer_3">
+                   <spacer name="horizontalSpacer">
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
                     </property>
@@ -1164,101 +1161,112 @@ It set automatically from image if the layer has the nodata value set..</string>
                    </spacer>
                   </item>
                   <item>
-                   <widget class="QLabel" name="label_30">
-                    <property name="text">
-                     <string>Render views config:</string>
+                   <widget class="QLabel" name="label">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
                     </property>
-                    <property name="alignment">
-                     <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_13">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Fixed</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
+                    <property name="minimumSize">
                      <size>
-                      <width>12</width>
-                      <height>20</height>
+                      <width>64</width>
+                      <height>64</height>
                      </size>
                     </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label_29">
                     <property name="text">
-                     <string>Columns:</string>
+                     <string/>
                     </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QSpinBox" name="grid_columns">
+                    <property name="pixmap">
+                     <pixmap>:/plugins/thrase/icons/render_view_config.svg</pixmap>
+                    </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
                     </property>
-                    <property name="buttonSymbols">
-                     <enum>QAbstractSpinBox::PlusMinus</enum>
-                    </property>
-                    <property name="minimum">
-                     <number>1</number>
-                    </property>
-                    <property name="maximum">
-                     <number>30</number>
-                    </property>
-                    <property name="value">
-                     <number>2</number>
-                    </property>
                    </widget>
                   </item>
                   <item>
-                   <spacer name="horizontalSpacer_4">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Fixed</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>12</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label_28">
-                    <property name="text">
-                     <string>Rows:</string>
-                    </property>
+                   <widget class="QWidget" name="widget_3" native="true">
+                    <layout class="QGridLayout" name="gridLayout">
+                     <property name="topMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="bottomMargin">
+                      <number>0</number>
+                     </property>
+                     <item row="2" column="1">
+                      <widget class="QLabel" name="label_29">
+                       <property name="text">
+                        <string>columns:</string>
+                       </property>
+                       <property name="alignment">
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="1" colspan="4">
+                      <widget class="QLabel" name="label_30">
+                       <property name="text">
+                        <string>Set the render views grid:</string>
+                       </property>
+                       <property name="alignment">
+                        <set>Qt::AlignCenter</set>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="2" column="3">
+                      <widget class="QLabel" name="label_28">
+                       <property name="text">
+                        <string>rows:</string>
+                       </property>
+                       <property name="alignment">
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="2" column="2">
+                      <widget class="QSpinBox" name="grid_columns">
+                       <property name="alignment">
+                        <set>Qt::AlignCenter</set>
+                       </property>
+                       <property name="buttonSymbols">
+                        <enum>QAbstractSpinBox::PlusMinus</enum>
+                       </property>
+                       <property name="minimum">
+                        <number>1</number>
+                       </property>
+                       <property name="maximum">
+                        <number>30</number>
+                       </property>
+                       <property name="value">
+                        <number>2</number>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="2" column="4">
+                      <widget class="QSpinBox" name="grid_rows">
+                       <property name="alignment">
+                        <set>Qt::AlignCenter</set>
+                       </property>
+                       <property name="buttonSymbols">
+                        <enum>QAbstractSpinBox::PlusMinus</enum>
+                       </property>
+                       <property name="minimum">
+                        <number>1</number>
+                       </property>
+                       <property name="maximum">
+                        <number>30</number>
+                       </property>
+                       <property name="value">
+                        <number>2</number>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QSpinBox" name="grid_rows">
-                    <property name="alignment">
-                     <set>Qt::AlignCenter</set>
-                    </property>
-                    <property name="buttonSymbols">
-                     <enum>QAbstractSpinBox::PlusMinus</enum>
-                    </property>
-                    <property name="minimum">
-                     <number>1</number>
-                    </property>
-                    <property name="maximum">
-                     <number>30</number>
-                    </property>
-                    <property name="value">
-                     <number>2</number>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_5">
+                   <spacer name="horizontalSpacer_3">
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
                     </property>
