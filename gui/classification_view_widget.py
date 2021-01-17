@@ -195,7 +195,6 @@ class ClassificationViewWidget(QWidget, FORM_CLASS):
     def enable(self):
         with block_signals_to(self.render_widget):
             # activate some parts of this view
-            self.QLabel_ViewID.setEnabled(True)
             self.QLabel_ViewName.setEnabled(True)
             self.render_widget.setEnabled(True)
             self.scaleFactorLabel.setEnabled(True)
@@ -213,7 +212,6 @@ class ClassificationViewWidget(QWidget, FORM_CLASS):
             self.render_widget.canvas.refresh()
             self.render_widget.layer = None
             # deactivate some parts of this view
-            self.QLabel_ViewID.setDisabled(True)
             self.QLabel_ViewName.setDisabled(True)
             self.render_widget.setDisabled(True)
             self.scaleFactorLabel.setDisabled(True)
