@@ -466,7 +466,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             import yaml
             with open(file_path, 'r') as yaml_file:
                 try:
-                    yaml_config = yaml.load(yaml_file)
+                    yaml_config = yaml.load(yaml_file, Loader=yaml.FullLoader)
                 except yaml.YAMLError as err:
                     iface.messageBar().pushMessage("AcATaMa", "Error while read the yaml file classification config",
                                                    level=Qgis.Critical)
