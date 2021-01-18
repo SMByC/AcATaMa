@@ -172,7 +172,7 @@ def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=-1):
         else:
             count = np.count_nonzero(dataset == pixel_value)
         total_count += count
-        progress.setValue(total_count * 100 / max_pixels)
+        progress.setValue(int(total_count * 100 / max_pixels))
         return count
 
     pixel_counts = [count_value(pixel_value) for pixel_value in pixel_values]
