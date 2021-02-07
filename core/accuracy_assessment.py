@@ -49,9 +49,11 @@ class AccuracyAssessment(object):
         self.csv_separator = ";"
         self.csv_decimal = "."
         # define the base area unit based on the thematic raster distance unit
-        thematic_layer = AcATaMa.dockwidget.QCBox_ThematicRaster.currentLayer()
-        layer_dist_unit = thematic_layer.crs().mapUnits()
-        self.base_area_unit = QgsUnitTypes.distanceToAreaUnit(layer_dist_unit)
+        self.dist_unit = self.ThematicR.qgs_layer.crs().mapUnits()
+        if self.dist_unit == QgsUnitTypes.DistanceUnknownUnit:
+            # thematic raster with unknown map unit
+            self.dist_unit = QgsUnitTypes.DistanceMeters
+        self.base_area_unit = QgsUnitTypes.distanceToAreaUnit(self.dist_unit)
 
     @wait_process
     def compute(self):
@@ -142,7 +144,6 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
 
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile_AA.currentLayer()
-        thematic_layer = AcATaMa.dockwidget.QCBox_ThematicRaster.currentLayer()
 
         # get AccuracyAssessment or init new instance
         if sampling_layer:
@@ -162,7 +163,6 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
 
         # fill the area units
         self.area_unit.clear()
-        layer_dist_unit = thematic_layer.crs().mapUnits()
         for area_unit in AREA_UNITS:
             self.area_unit.addItem("{} ({})".format(QgsUnitTypes.toString(area_unit),
                                                     QgsUnitTypes.toAbbreviatedString(area_unit)))
@@ -170,8 +170,15 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
         if self.accuracy_assessment.area_unit is not None:
             self.area_unit.setCurrentIndex(self.accuracy_assessment.area_unit)
         else:
-            self.accuracy_assessment.area_unit = QgsUnitTypes.distanceToAreaUnit(layer_dist_unit)
+            self.accuracy_assessment.area_unit = QgsUnitTypes.distanceToAreaUnit(self.accuracy_assessment.dist_unit)
             self.area_unit.setCurrentIndex(self.accuracy_assessment.area_unit)
+            # thematic raster with unknown map unit
+            if self.accuracy_assessment.ThematicR.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
+                self.MsgBar.pushMessage(
+                    "The thematic raster \"{}\" does not have a valid map unit, considering \"{}\" as the base unit!".format(
+                        self.accuracy_assessment.ThematicR.qgs_layer.name(),
+                        QgsUnitTypes.toString(self.accuracy_assessment.dist_unit)),
+                    level=Qgis.Warning, duration=-1)
 
         self.area_unit.currentIndexChanged.connect(lambda: self.reload(msg_bar=False))
         self.z_score.valueChanged.connect(lambda: self.reload(msg_bar=False))
