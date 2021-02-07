@@ -26,7 +26,7 @@ from qgis.utils import iface
 from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.QtWidgets import QFileDialog
 from qgis.core import QgsGeometry, QgsField, QgsFields, QgsSpatialIndex, \
-    QgsFeature, Qgis, QgsVectorFileWriter, QgsWkbTypes
+    QgsFeature, Qgis, QgsVectorFileWriter, QgsWkbTypes, QgsUnitTypes
 
 from AcATaMa.core.point import RandomPoint
 from AcATaMa.core.raster import Raster
@@ -42,13 +42,23 @@ def do_simple_random_sampling(dockwidget):
     if dockwidget.QGBox_SimpRSwithCR.isChecked():
         if not valid_file_selected_in(dockwidget.QCBox_CategRaster_SimpRS, "categorical raster"):
             return
-    # get and define some variables
-    number_of_samples = int(dockwidget.numberOfSamples_SimpRS.value())
-    min_distance = float(dockwidget.minDistance_SimpRS.value())
 
     ThematicR = Raster(file_selected_combo_box=dockwidget.QCBox_ThematicRaster,
                        band=int(dockwidget.QCBox_band_ThematicRaster.currentText()),
                        nodata=int(dockwidget.nodata_ThematicRaster.value()))
+
+    # get and define some variables
+    number_of_samples = int(dockwidget.numberOfSamples_SimpRS.value())
+    min_distance = float(dockwidget.minDistance_SimpRS.value())
+
+    # check the thematic raster map unit to calculate the minimum distances
+    if min_distance > 0:
+        if ThematicR.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
+            iface.messageBar().pushMessage("AcATaMa",
+                "The thematic raster \"{}\" does not have a valid map unit, considering \"{}\" as the base unit to "
+                "calculate the minimum distances.".format(
+                    ThematicR.qgs_layer.name(), QgsUnitTypes.toString(QgsUnitTypes.DistanceMeters)),
+                level=Qgis.Warning, duration=-1)
 
     # simple random sampling in categorical raster
     if dockwidget.QGBox_SimpRSwithCR.isChecked():
