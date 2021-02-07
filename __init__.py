@@ -5,7 +5,7 @@
                                  A QGIS plugin
  AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
                              -------------------
-        copyright            : (C) 2017-2019 by Xavier Corredor Llano, SMByC
+        copyright            : (C) 2017-2021 by Xavier Corredor Llano, SMByC
         email                : xavier.corredor.llano@gmail.com
  ***************************************************************************/
 
