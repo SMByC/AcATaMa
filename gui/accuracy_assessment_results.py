@@ -325,11 +325,10 @@ def get_html(accu_asse):
         "<th >"+str(i)+"</th>" for i in labels])
     html += "</tr>"
     
-    user_accuracy_matrix = copy.deepcopy(accu_asse.error_matrix)
-    for idx_row, row in enumerate(accu_asse.error_matrix):
+    user_accuracy_matrix = copy.deepcopy(error_matrix_area_prop)
+    for idx_row, row in enumerate(error_matrix_area_prop):
         for idx_col, value in enumerate(row):
-            user_accuracy_matrix[idx_row][idx_col] = \
-                value/sum(row) if sum(row) > 0 else 0
+            user_accuracy_matrix[idx_row][idx_col] = value/sum(row) if sum(row) > 0 else 0
 
     for idx_row, value in enumerate(accu_asse.values):
         html += "<tr>"
@@ -574,11 +573,10 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
               for i in accu_asse.values]
     csv_rows.append(["", ""] + labels)
 
-    user_accuracy_matrix = copy.deepcopy(accu_asse.error_matrix)
-    for idx_row, row in enumerate(accu_asse.error_matrix):
+    user_accuracy_matrix = copy.deepcopy(error_matrix_area_prop)
+    for idx_row, row in enumerate(error_matrix_area_prop):
         for idx_col, value in enumerate(row):
-            user_accuracy_matrix[idx_row][idx_col] = \
-                value / sum(row) if sum(row) > 0 else 0
+            user_accuracy_matrix[idx_row][idx_col] = value / sum(row) if sum(row) > 0 else 0
 
     for idx_row, value in enumerate(accu_asse.values):
         r = []
