@@ -51,15 +51,6 @@ def do_simple_random_sampling(dockwidget):
     number_of_samples = int(dockwidget.numberOfSamples_SimpRS.value())
     min_distance = float(dockwidget.minDistance_SimpRS.value())
 
-    # check the thematic raster map unit to calculate the minimum distances
-    if min_distance > 0:
-        if ThematicR.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
-            iface.messageBar().pushMessage("AcATaMa",
-                "The thematic raster \"{}\" does not have a valid map unit, considering \"{}\" as the base unit to "
-                "calculate the minimum distances.".format(
-                    ThematicR.qgs_layer.name(), QgsUnitTypes.toString(QgsUnitTypes.DistanceMeters)),
-                level=Qgis.Warning, duration=-1)
-
     # simple random sampling in categorical raster
     if dockwidget.QGBox_SimpRSwithCR.isChecked():
         CategoricalR = Raster(file_selected_combo_box=dockwidget.QCBox_CategRaster_SimpRS,
@@ -114,23 +105,33 @@ def do_simple_random_sampling(dockwidget):
                                       dockwidget.widget_generate_SimpRS.QPBar_GenerateSampling,
                                       random_seed)
 
-    # success
-    if sampling.total_of_samples == number_of_samples:
-        load_layer(sampling.output_file)
-        iface.messageBar().pushMessage("AcATaMa", "Generate the simple random sampling, completed",
-                                       level=Qgis.Success)
-    # success but not completed
-    if number_of_samples > sampling.total_of_samples > 0:
-        load_layer(sampling.output_file)
-        iface.messageBar().pushMessage("AcATaMa", "Generated the simple random sampling, but can not generate requested number of "
-                                                  "random points {}/{}, attempts exceeded".format(sampling.total_of_samples, number_of_samples),
-                                       level=Qgis.Warning, duration=-1)
     # zero points
     if sampling.total_of_samples < number_of_samples and sampling.total_of_samples == 0:
         # delete instance where storage all sampling generated
         Sampling.samplings.pop(sampling.filename, None)
         iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any random points with this settings, "
                                                   "attempts exceeded", level=Qgis.Warning, duration=-1)
+        return
+
+    # success
+    if sampling.total_of_samples == number_of_samples:
+        qgslayer = load_layer(sampling.output_file)
+        iface.messageBar().pushMessage("AcATaMa", "Generate the simple random sampling, completed",
+                                       level=Qgis.Success)
+    # success but not completed
+    if number_of_samples > sampling.total_of_samples > 0:
+        qgslayer = load_layer(sampling.output_file)
+        iface.messageBar().pushMessage("AcATaMa", "Generated the simple random sampling, but can not generate requested number of "
+                                                  "random points {}/{}, attempts exceeded".format(sampling.total_of_samples, number_of_samples),
+                                       level=Qgis.Warning, duration=-1)
+    # check the thematic raster map unit to calculate the minimum distances
+    if min_distance > 0:
+        if ThematicR.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
+            iface.messageBar().pushMessage("AcATaMa",
+                "The thematic raster \"{}\" does not have a valid map unit, AcATaMa used \"{}\" as the base unit to "
+                "calculate the minimum distances.".format(
+                    ThematicR.qgs_layer.name(), QgsUnitTypes.toString(qgslayer.crs().mapUnits())),
+                level=Qgis.Warning, duration=-1)
 
 
 @error_handler
@@ -225,23 +226,34 @@ def do_stratified_random_sampling(dockwidget):
                                       dockwidget.widget_generate_StraRS.QPBar_GenerateSampling,
                                       random_seed)
 
-    # success
-    if sampling.total_of_samples == total_of_samples:
-        load_layer(sampling.output_file)
-        iface.messageBar().pushMessage("AcATaMa", "Generate the stratified random sampling, completed",
-                                       level=Qgis.Success)
-    # success but not completed
-    if sampling.total_of_samples < total_of_samples and sampling.total_of_samples > 0:
-        load_layer(sampling.output_file)
-        iface.messageBar().pushMessage("AcATaMa", "Generated the stratified random sampling, but can not generate requested number of "
-                                                  "random points {}/{}, attempts exceeded".format(sampling.total_of_samples, total_of_samples),
-                                       level=Qgis.Warning, duration=-1)
     # zero points
     if sampling.total_of_samples < total_of_samples and sampling.total_of_samples == 0:
         # delete instance where storage all sampling generated
         Sampling.samplings.pop(sampling.filename, None)
         iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any stratified random points with this settings, "
                                                   "attempts exceeded", level=Qgis.Warning, duration=-1)
+        return
+
+    # success
+    if sampling.total_of_samples == total_of_samples:
+        qgslayer = load_layer(sampling.output_file)
+        iface.messageBar().pushMessage("AcATaMa", "Generate the stratified random sampling, completed",
+                                       level=Qgis.Success)
+    # success but not completed
+    if sampling.total_of_samples < total_of_samples and sampling.total_of_samples > 0:
+        qgslayer = load_layer(sampling.output_file)
+        iface.messageBar().pushMessage("AcATaMa", "Generated the stratified random sampling, but can not generate requested number of "
+                                                  "random points {}/{}, attempts exceeded".format(sampling.total_of_samples, total_of_samples),
+                                       level=Qgis.Warning, duration=-1)
+    # check the thematic raster map unit to calculate the minimum distances
+    if min_distance > 0:
+        if ThematicR.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
+            iface.messageBar().pushMessage("AcATaMa",
+                "The thematic raster \"{}\" does not have a valid map unit, AcATaMa used \"{}\" as the base unit to "
+                "calculate the minimum distances.".format(
+                    ThematicR.qgs_layer.name(), QgsUnitTypes.toString(qgslayer.crs().mapUnits())),
+                level=Qgis.Warning, duration=-1)
+
 
 
 class Sampling(object):
