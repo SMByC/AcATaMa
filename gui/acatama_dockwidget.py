@@ -619,6 +619,11 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
     @pyqtSlot()
     def open_accuracy_assessment_results(self):
         if AccuracyAssessmentDialog.is_opened:
+            # an instance of Accuracy assessment dialog is already created
+            # brings that instance to front even if it is minimized
+            self.accuracy_assessment_dialog.setWindowState(self.accuracy_assessment_dialog.windowState()
+                                                           & ~Qt.WindowMinimized | Qt.WindowActive)
+            self.accuracy_assessment_dialog.raise_()
             self.accuracy_assessment_dialog.activateWindow()
             return
 
