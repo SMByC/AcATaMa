@@ -306,7 +306,7 @@ It set automatically from image if the layer has the nodata value set..</string>
                    <item>
                     <widget class="QGroupBox" name="QGBox_SimpRSwithCR">
                      <property name="title">
-                      <string>Sampling &amp;in categorical raster (optional)</string>
+                      <string>Post-stratify the random sampling (optional)</string>
                      </property>
                      <property name="checkable">
                       <bool>true</bool>
@@ -333,7 +333,7 @@ It set automatically from image if the layer has the nodata value set..</string>
                          <item>
                           <widget class="QLabel" name="label_12">
                            <property name="text">
-                            <string>Select/browse the categorical raster for make the random sampling only in the selected pixels values in it (e.g. it can be the same thematic file):</string>
+                            <string>Use a categorical raster (can be the same thematic file) to randomly sample only within the pixel values (set below) on the selected raster to get a simple random sampling post-stratified.</string>
                            </property>
                            <property name="alignment">
                             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
