@@ -333,7 +333,7 @@ It set automatically from image if the layer has the nodata value set..</string>
                          <item>
                           <widget class="QLabel" name="label_12">
                            <property name="text">
-                            <string>Use a categorical raster (can be the same thematic file) to randomly sample only within the pixel values (set below) on the selected raster to get a simple random sampling post-stratified.</string>
+                            <string>Use a categorical raster (can be the same thematic file) to randomly sample only within the pixel values set below of the selected raster to get a simple random sampling post-stratified.</string>
                            </property>
                            <property name="alignment">
                             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -1492,13 +1492,13 @@ It set automatically from image if the layer has the nodata value set..</string>
                <bool>false</bool>
               </property>
               <property name="title">
-               <string>Classification Accuracy Assessment</string>
+               <string>Accuracy Assessment Results</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_28">
                <item>
                 <widget class="QLabel" name="label_24">
                  <property name="text">
-                  <string>Compute the error matrix of mistakes of omission and commission with extra statistics for the current sampling file classified:</string>
+                  <string>Set the sampling type of the classified sampling file selected, the accuracy assessment results depend on this:</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -1506,6 +1506,28 @@ It set automatically from image if the layer has the nodata value set..</string>
                  <property name="wordWrap">
                   <bool>true</bool>
                  </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="QCBox_SamplingType_AA">
+                 <property name="currentIndex">
+                  <number>-1</number>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>Simple random sampling</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Simple random sampling post-stratified</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Stratified random sampling</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
                <item>
@@ -1519,6 +1541,9 @@ It set automatically from image if the layer has the nodata value set..</string>
                   </property>
                   <item>
                    <widget class="QPushButton" name="QPBtn_ComputeViewAccurasyAssessment">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
                     <property name="text">
                      <string>Open the accuracy assessment results</string>
                     </property>

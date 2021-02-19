@@ -190,6 +190,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QCBox_SamplingFile_AA.setFilters(QgsMapLayerProxyModel.PointLayer)
         # set and show the classification file status in AA
         self.QCBox_SamplingFile_AA.layerChanged.connect(self.set_sampling_file_accuracy_assessment)
+        # sampling type selection action
+        self.QCBox_SamplingType_AA.currentIndexChanged[int].connect(
+            lambda state: self.QPBtn_ComputeViewAccurasyAssessment.setEnabled(state != -1))
         # compute the AA and open the result dialog
         self.QPBtn_ComputeViewAccurasyAssessment.clicked.connect(self.open_accuracy_assessment_results)
 
