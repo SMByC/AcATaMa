@@ -1483,6 +1483,57 @@ It set automatically from image if the layer has the nodata value set..</string>
                  </property>
                 </widget>
                </item>
+               <item>
+                <widget class="QWidget" name="QGBox_SamplingType_AA" native="true">
+                 <layout class="QVBoxLayout" name="verticalLayout">
+                  <item>
+                   <widget class="QLabel" name="label_24">
+                    <property name="text">
+                     <string>Select the sampling type:</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+                    </property>
+                    <property name="wordWrap">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QComboBox" name="QCBox_SamplingType_AA">
+                    <property name="currentIndex">
+                     <number>-1</number>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string>Simple random sampling</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Simple random sampling post-stratified</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Stratified random sampling</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="label_2">
+                    <property name="text">
+                     <string>(the accuracy assessment results depend on it)</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
               </layout>
              </widget>
             </item>
@@ -1496,60 +1547,10 @@ It set automatically from image if the layer has the nodata value set..</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_28">
                <item>
-                <widget class="QLabel" name="label_24">
+                <widget class="QPushButton" name="QPBtn_ComputeViewAccurasyAssessment">
                  <property name="text">
-                  <string>Set the sampling type of the classified sampling file selected, the accuracy assessment results depend on this:</string>
+                  <string>Open the accuracy assessment results</string>
                  </property>
-                 <property name="alignment">
-                  <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QComboBox" name="QCBox_SamplingType_AA">
-                 <property name="currentIndex">
-                  <number>-1</number>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string>Simple random sampling</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Simple random sampling post-stratified</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Stratified random sampling</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item>
-                <widget class="QWidget" name="widget_13" native="true">
-                 <layout class="QHBoxLayout" name="horizontalLayout_10">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <item>
-                   <widget class="QPushButton" name="QPBtn_ComputeViewAccurasyAssessment">
-                    <property name="enabled">
-                     <bool>false</bool>
-                    </property>
-                    <property name="text">
-                     <string>Open the accuracy assessment results</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
                 </widget>
                </item>
               </layout>

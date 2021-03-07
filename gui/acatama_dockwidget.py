@@ -192,7 +192,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QCBox_SamplingFile_AA.layerChanged.connect(self.set_sampling_file_accuracy_assessment)
         # sampling type selection action
         self.QCBox_SamplingType_AA.currentIndexChanged[int].connect(
-            lambda state: self.QPBtn_ComputeViewAccurasyAssessment.setEnabled(state != -1))
+            lambda state: self.QGBox_AccuracyAssessment.setEnabled(state != -1))
         # compute the AA and open the result dialog
         self.QPBtn_ComputeViewAccurasyAssessment.clicked.connect(self.open_accuracy_assessment_results)
 
@@ -595,6 +595,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                 if not classification.with_thematic_classes:
                     self.QLabel_SamplingFileStatus_AA.setText("Classification was not made with thematic classes")
                     self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: red;}")
+                    self.QGBox_SamplingType_AA.setDisabled(True)
                     self.QGBox_AccuracyAssessment.setDisabled(True)
                     return
                 # check is the classification is completed and update in dockwidget status
@@ -608,15 +609,19 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                                                               format(classification.total_classified,
                                                                      classification.num_points))
                     self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: orange;}")
-                self.QGBox_AccuracyAssessment.setEnabled(True)
+                self.QGBox_SamplingType_AA.setEnabled(True)
+                self.QGBox_AccuracyAssessment.setEnabled(self.QCBox_SamplingType_AA.currentIndex() != -1)
+
             else:
                 self.QLabel_SamplingFileStatus_AA.setText("Sampling file not classified")
                 self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: red;}")
+                self.QGBox_SamplingType_AA.setDisabled(True)
                 self.QGBox_AccuracyAssessment.setDisabled(True)
         else:
             # not select sampling file
             self.QLabel_SamplingFileStatus_AA.setText("No sampling file selected")
             self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: gray;}")
+            self.QGBox_SamplingType_AA.setDisabled(True)
             self.QGBox_AccuracyAssessment.setDisabled(True)
 
     @pyqtSlot()
