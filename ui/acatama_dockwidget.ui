@@ -886,7 +886,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                <item>
                 <widget class="QLabel" name="label_22">
                  <property name="text">
-                  <string>Select/browse the sampling file (points shape) for make the classification:</string>
+                  <string>Select the sampling file to classify:</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignJustify|Qt::AlignVCenter</set>
