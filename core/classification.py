@@ -70,6 +70,12 @@ class Classification(object):
         self.total_unclassified = self.num_points
         # when all points are classified
         self.is_completed = False
+        # sampling type needs for accuracy assessment results
+        # -1 = None
+        #  0 = Simple random sampling
+        #  1 = Simple random sampling post-stratified
+        #  2 = Stratified random sampling
+        self.sampling_type = -1
         # for store the instance of the accuracy assessment results
         self.accuracy_assessment = None
 
@@ -153,9 +159,10 @@ class Classification(object):
         # save the samples order
         data["points_order"] = [p.shape_id for p in self.points]
 
-        # save sampling selected in accuracy assessment
+        # accuracy assessment
         data["accuracy_assessment_sampling_file"] = get_current_file_path_in(AcATaMa.dockwidget.QCBox_SamplingFile_AA,
                                                                              show_message=False)
+        data["accuracy_assessment_sampling_type"] = AcATaMa.dockwidget.QCBox_SamplingType_AA.currentIndex()
         # save config of the accuracy assessment dialog if exists
         if self.accuracy_assessment:
             data["accuracy_assessment_dialog"] = {
@@ -238,6 +245,9 @@ class Classification(object):
         if "accuracy_assessment_sampling_file" in yaml_config and yaml_config["accuracy_assessment_sampling_file"]:
             load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_SamplingFile_AA,
                                         yaml_config["accuracy_assessment_sampling_file"])
+        if "accuracy_assessment_sampling_type" in yaml_config:
+            AcATaMa.dockwidget.QCBox_SamplingType_AA.setCurrentIndex(yaml_config["accuracy_assessment_sampling_type"])
+
         if "accuracy_assessment_dialog" in yaml_config:
             from AcATaMa.core.accuracy_assessment import AccuracyAssessment
             accuracy_assessment = AccuracyAssessment(self)

@@ -191,8 +191,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # set and show the classification file status in AA
         self.QCBox_SamplingFile_AA.layerChanged.connect(self.set_sampling_file_accuracy_assessment)
         # sampling type selection action
-        self.QCBox_SamplingType_AA.currentIndexChanged[int].connect(
-            lambda state: self.QGBox_AccuracyAssessment.setEnabled(state != -1))
+        self.QCBox_SamplingType_AA.currentIndexChanged[int].connect(self.sampling_type_selection_action)
         # compute the AA and open the result dialog
         self.QPBtn_ComputeViewAccurasyAssessment.clicked.connect(self.open_accuracy_assessment_results)
 
@@ -611,6 +610,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                     self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: orange;}")
                 self.QGBox_SamplingType_AA.setEnabled(True)
                 self.QGBox_AccuracyAssessment.setEnabled(self.QCBox_SamplingType_AA.currentIndex() != -1)
+                self.QCBox_SamplingType_AA.setCurrentIndex(classification.sampling_type)
 
             else:
                 self.QLabel_SamplingFileStatus_AA.setText("Sampling file not classified")
@@ -623,6 +623,12 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: gray;}")
             self.QGBox_SamplingType_AA.setDisabled(True)
             self.QGBox_AccuracyAssessment.setDisabled(True)
+
+    @pyqtSlot(int)
+    def sampling_type_selection_action(self, type_id):
+        self.QGBox_AccuracyAssessment.setEnabled(type_id != -1)
+        # save the sampling type to classification instance
+        Classification.instances[self.QCBox_SamplingFile_AA.currentLayer()].sampling_type = type_id
 
     @pyqtSlot()
     def open_accuracy_assessment_results(self):

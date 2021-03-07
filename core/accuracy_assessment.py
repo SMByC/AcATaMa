@@ -40,7 +40,7 @@ class AccuracyAssessment(object):
         self.classification = classification
         self.ThematicR = Raster(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicRaster,
                                 band=int(AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText())
-                                    if AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText() else None,
+                                if AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText() else None,
                                 nodata=int(AcATaMa.dockwidget.nodata_ThematicRaster.value()))
         self.thematic_pixels_count = {}
         # dialog settings
