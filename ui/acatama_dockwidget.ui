@@ -100,7 +100,7 @@
             </property>
             <property name="toolTip">
              <string>Nodata Value.
-It set automatically from image if the layer has the nodata value set..</string>
+It set automatically from image if the layer has the nodata value set.</string>
             </property>
             <property name="specialValueText">
              <string>None</string>
@@ -614,7 +614,7 @@ It set automatically from image if the layer has the nodata value set..</string>
                            </property>
                            <property name="toolTip">
                             <string>Nodata Value.
-It set automatically from image if the layer has the nodata value set..</string>
+It set automatically from image if the layer has the nodata value set.</string>
                            </property>
                            <property name="specialValueText">
                             <string>None</string>
