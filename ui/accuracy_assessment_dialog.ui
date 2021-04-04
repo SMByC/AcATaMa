@@ -148,7 +148,7 @@ p, li { white-space: pre-wrap; }
                   <item row="2" column="1">
                    <widget class="QDoubleSpinBox" name="z_score">
                     <property name="toolTip">
-                     <string>The z-score is used for calculate the upper/lower limits in table 5</string>
+                     <string>The z-score is used for calculate the upper/lower limits in class area adjusted table</string>
                     </property>
                     <property name="minimum">
                      <double>0.000000000000000</double>
