@@ -176,8 +176,8 @@ transcompile:
 	@echo "----------------------------------------"
 	@echo "Compiled translation files to .qm files."
 	@echo "----------------------------------------"
-	@chmod +x scripts/compile-strings.sh
-	@scripts/compile-strings.sh $(LRELEASE) $(LOCALES)
+# 	@chmod +x scripts/compile-strings.sh
+# 	@scripts/compile-strings.sh $(LRELEASE) $(LOCALES)
 
 transclean:
 	@echo
