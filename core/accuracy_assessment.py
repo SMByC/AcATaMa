@@ -119,7 +119,7 @@ class AccuracyAssessment(object):
         self.pixel_area_unit = QgsUnitTypes.toAbbreviatedString(self.area_unit)
 
 
-# Qgis 3 ares units, int values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+# Qgis 3 areas units, int values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 AREA_UNITS = [QgsUnitTypes.AreaSquareMeters, QgsUnitTypes.AreaSquareKilometers, QgsUnitTypes.AreaSquareFeet,
               QgsUnitTypes.AreaSquareYards, QgsUnitTypes.AreaSquareMiles, QgsUnitTypes.AreaHectares,
               QgsUnitTypes.AreaAcres, QgsUnitTypes.AreaSquareNauticalMiles, QgsUnitTypes.AreaSquareDegrees,
@@ -196,7 +196,11 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
             return
 
         AccuracyAssessmentDialog.is_opened = True
-        # first compute the accuracy assessment
+        # first, set the accuracy assessment type based on the sampling type
+        self.accuracy_assessment.sampling_type = \
+            {0: 'Simple random sampling', 1: 'Simple random sampling post-stratified', 2: 'Stratified random sampling'}\
+            [AcATaMa.dockwidget.QCBox_SamplingType_AA.currentIndex()]
+        # second, compute the accuracy assessment
         self.accuracy_assessment.compute()
         # set content results in HTML
         self.ResultsHTML.setHtml(accuracy_assessment_results.get_html(self.accuracy_assessment))
