@@ -29,9 +29,6 @@ from AcATaMa.utils.system_utils import error_handler
 
 
 def rf(fv, r=5):
-    """
-    Round float
-    """
     return round(fv, r)
 
 
@@ -301,11 +298,11 @@ def get_html(accu_asse):
         if accu_asse.sampling_type == 'Stratified random sampling':
             u_accuracy = accuracy_table[idx_row][idx_row] / sum(accuracy_table[idx_row])
             producer_standard_error = \
-                (1 / (sum([n * row[idx_row] / total_row for total_row, row, n in
-                           zip([sum(r) for r in accu_asse.error_matrix], accu_asse.error_matrix,
-                               [accu_asse.thematic_pixels_count[v] for v in accu_asse.values])]) ** 2) *
-                 sum([n ** 2 * (1 - accuracy) ** 2 * u_accuracy * (1 - u_accuracy) / (total_row - 1) if idx == idx_row else
-                      accuracy ** 2 * n ** 2 * row[idx_row] / total_row * (1 - row[idx_row] / sum(list(zip(*accu_asse.error_matrix))[idx_row])) / (total_row - 1)
+                (1/(sum([n*row[idx_row]/total_row for total_row, row, n in
+                         zip([sum(r) for r in accu_asse.error_matrix], accu_asse.error_matrix,
+                             [accu_asse.thematic_pixels_count[v] for v in accu_asse.values])])**2) *
+                 sum([n**2*(1-accuracy)**2*u_accuracy*(1-u_accuracy)/(total_row-1) if idx == idx_row else
+                      accuracy**2*n**2*row[idx_row]/total_row*(1-row[idx_row]/sum(list(zip(*accu_asse.error_matrix))[idx_row]))/(total_row-1)
                       for idx, total_row, row, n in zip(range(len(accu_asse.error_matrix)),
                                                         [sum(r) for r in accu_asse.error_matrix], accu_asse.error_matrix,
                                                         [accu_asse.thematic_pixels_count[v] for v in accu_asse.values])]))**0.5

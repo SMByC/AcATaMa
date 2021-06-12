@@ -123,6 +123,7 @@ dclean:
 	@echo "-----------------------------------"
 	find $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME) -iname "*.pyc" -delete
 	find $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME) -iname ".git" -prune -exec rm -Rf {} \;
+	find $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME) -iname "__pycache__" -prune -exec rm -Rf {} \;
 
 
 derase:
