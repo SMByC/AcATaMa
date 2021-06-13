@@ -21,7 +21,7 @@
 import numpy as np
 import multiprocessing
 import xml.etree.ElementTree as ET
-from osgeo import gdal, gdalnumeric
+from osgeo import gdal, gdal_array
 
 from qgis.PyQt.QtCore import Qt, QCoreApplication
 from qgis.PyQt.QtWidgets import QProgressDialog
@@ -134,14 +134,11 @@ def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=-1):
     try:
         import xarray as xr
         import dask.array as da
+        dataset = xr.open_rasterio(get_file_path_of_layer(layer), chunks={'band': 1, 'x': 2000, 'y': 2000})
         parallel = True
     except:
+        dataset = gdal_array.LoadFile(get_file_path_of_layer(layer))
         parallel = False
-
-    if parallel:
-        dataset = xr.open_rasterio(get_file_path_of_layer(layer), chunks={'band': 1, 'x': 2000, 'y': 2000})
-    else:
-        dataset = gdalnumeric.LoadFile(get_file_path_of_layer(layer))
 
     if len(dataset.shape) == 3:
         if parallel:
