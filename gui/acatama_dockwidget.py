@@ -194,6 +194,11 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QCBox_SamplingType_AA.currentIndexChanged[int].connect(self.sampling_type_selection_action)
         # compute the AA and open the result dialog
         self.QPBtn_ComputeViewAccurasyAssessment.clicked.connect(self.open_accuracy_assessment_results)
+        # disable group box that depends of sampling file
+        self.QLabel_SamplingFileStatus_AA.setText("No sampling file selected")
+        self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: gray;}")
+        self.QGBox_SamplingType_AA.setDisabled(True)
+        self.QGBox_AccuracyAssessment.setDisabled(True)
 
     @pyqtSlot()
     def browser_dialog_to_load_file(self, combo_box, dialog_title, file_filters):
