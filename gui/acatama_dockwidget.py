@@ -170,8 +170,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # call to reload sampling file
         self.QPBtn_reloadSamplingFile.clicked.connect(self.reload_sampling_file)
         # call to load and save classification config
-        self.QPBtn_loadClassificationConfig.clicked.connect(self.fileDialog_loadClassificationConfig)
-        self.QPBtn_saveClassificationConfig.clicked.connect(self.fileDialog_saveClassificationConfig)
+        self.QPBtn_loadClassificationConfig.clicked.connect(self.fileDialog_RestoreAcatamaState)
+        self.QPBtn_saveClassificationConfig.clicked.connect(self.fileDialog_SaveAcatamaState)
         # save sampling + classification
         self.QPBtn_saveSamplingClassification.clicked.connect(self.fileDialog_saveSamplingClassification)
         # change grid config
@@ -459,8 +459,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     @error_handler
-    def fileDialog_loadClassificationConfig(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, self.tr("Restore the configuration and classification status"),
+    def fileDialog_RestoreAcatamaState(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, self.tr("Restore to a previous saved of AcATaMa configuration and state"),
                                                    "", self.tr("Yaml (*.yaml *.yml);;All files (*.*)"))
 
         if file_path != '' and os.path.isfile(file_path):
@@ -495,7 +495,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     @error_handler
-    def fileDialog_saveClassificationConfig(self):
+    def fileDialog_SaveAcatamaState(self):
         if not valid_file_selected_in(self.QCBox_SamplingFile):
             iface.messageBar().pushMessage("AcATaMa",
                                            "Error, please select a sampling file to save configuration",
@@ -508,7 +508,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             path = os.path.split(get_file_path_of_layer(self.QCBox_ThematicRaster.currentLayer()))[0]
         suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_acatama.yml" if filename else ""
 
-        file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save settings and classification status"),
+        file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save AcATaMa configuration and state"),
                                                   suggested_filename, self.tr("Yaml (*.yaml *.yml);;All files (*.*)"))
         if file_out != '':
             sampling_layer = self.QCBox_SamplingFile.currentLayer()
