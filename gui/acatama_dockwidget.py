@@ -501,17 +501,16 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
     @pyqtSlot()
     @error_handler
     def fileDialog_SaveAcatamaState(self):
-        if not valid_file_selected_in(self.QCBox_SamplingFile):
-            iface.messageBar().pushMessage("AcATaMa",
-                                           "Error, please select a sampling file to save configuration",
-                                           level=Qgis.Warning)
-            return
-        # get file path to suggest to save but not in tmp directory
-        file_path = get_file_path_of_layer(self.QCBox_SamplingFile.currentLayer())
-        path, filename = os.path.split(file_path)
-        if self.tmp_dir in path:
-            path = os.path.split(get_file_path_of_layer(self.QCBox_ThematicRaster.currentLayer()))[0]
-        suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_acatama.yml" if filename else ""
+        if valid_file_selected_in(self.QCBox_ThematicRaster) or valid_file_selected_in(self.QCBox_SamplingFile):
+            # get file path to suggest where to save
+            if valid_file_selected_in(self.QCBox_ThematicRaster):
+                file_path = get_file_path_of_layer(self.QCBox_ThematicRaster.currentLayer())
+            else:
+                file_path = get_file_path_of_layer(self.QCBox_SamplingFile.currentLayer())
+            path, filename = os.path.split(file_path)
+            suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_acatama.yml" if filename else "_acatama.yml"
+        else:
+            suggested_filename = "_acatama.yml"
 
         file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save AcATaMa configuration and state"),
                                                   suggested_filename, self.tr("Yaml (*.yaml *.yml);;All files (*.*)"))
