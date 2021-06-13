@@ -21,9 +21,10 @@ The official version control system repository of the plugin:
 
 The home plugin in plugins.qgis.org: [https://plugins.qgis.org/plugins/AcATaMa/](https://plugins.qgis.org/plugins/AcATaMa/)
 
-## Issue Tracker
+## Issue Tracker, QA and ideas
 
-Issues, ideas and enhancements: [https://github.com/SMByC/AcATaMa/issues](https://github.com/SMByC/AcATaMa/issues)
+Issues: [https://github.com/SMByC/AcATaMa/issues](https://github.com/SMByC/AcATaMa/issues)  
+QA and ideas: [https://github.com/SMByC/AcATaMa/discussions](https://github.com/SMByC/AcATaMa/discussions)
 
 ## About us
 
