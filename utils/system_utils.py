@@ -62,14 +62,12 @@ def error_handler(func):
                 msgBox.exec()
                 del msgBox
 
-            msg_error = "Ups! an error has occurred in AcATaMa plugin"
-            widget = msg_bar.createMessage("AcATaMa", msg_error)
-            error = err
+            widget = msg_bar.createMessage("AcATaMa", str(err))
             more_details = traceback.format_exc()
 
             button = QPushButton(widget)
             button.setText("Show details...")
-            button.pressed.connect(lambda: details_message_box(error, more_details))
+            button.pressed.connect(lambda: details_message_box(err, more_details))
             widget.layout().addWidget(button)
 
             msg_bar.pushWidget(widget, level=Qgis.Warning, duration=20)
