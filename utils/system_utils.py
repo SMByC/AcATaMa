@@ -62,12 +62,13 @@ def error_handler(func):
                 msgBox.exec()
                 del msgBox
 
-            widget = msg_bar.createMessage("AcATaMa", str(err))
+            error = str(err)
+            widget = msg_bar.createMessage("AcATaMa", error)
             more_details = traceback.format_exc()
 
             button = QPushButton(widget)
             button.setText("Show details...")
-            button.pressed.connect(lambda: details_message_box(err, more_details))
+            button.pressed.connect(lambda: details_message_box(error, more_details))
             widget.layout().addWidget(button)
 
             msg_bar.pushWidget(widget, level=Qgis.Warning, duration=20)
