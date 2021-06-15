@@ -69,6 +69,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.tmp_dir = tempfile.mkdtemp()
         # save instance
         AcATaMaDockWidget.dockwidget = self
+        # remember the latest save/restore configuration file
+        self.suggested_yml_file = None
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
@@ -472,12 +474,15 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         if file_path != '' and os.path.isfile(file_path):
             # restore configuration and classification status
             config.restore(file_path)
+            self.suggested_yml_file = file_path
             iface.messageBar().pushMessage("AcATaMa", "Configuration and state restored successfully", level=Qgis.Success)
 
     @pyqtSlot()
     @error_handler
     def file_dialog_save_acatama_state(self):
-        if valid_file_selected_in(self.QCBox_ThematicRaster) or valid_file_selected_in(self.QCBox_SamplingFile):
+        if self.suggested_yml_file:
+            suggested_filename = self.suggested_yml_file
+        elif valid_file_selected_in(self.QCBox_ThematicRaster) or valid_file_selected_in(self.QCBox_SamplingFile):
             # get file path to suggest where to save
             if valid_file_selected_in(self.QCBox_ThematicRaster):
                 file_path = get_file_path_of_layer(self.QCBox_ThematicRaster.currentLayer())
@@ -492,6 +497,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                                                   suggested_filename, self.tr("Yaml (*.yaml *.yml);;All files (*.*)"))
         if file_out != '':
             config.save(file_out)
+            self.suggested_yml_file = file_out
             iface.messageBar().pushMessage("AcATaMa", "Configuration file saved successfully", level=Qgis.Success)
 
     @pyqtSlot()
