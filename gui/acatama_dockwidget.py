@@ -29,6 +29,7 @@ from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QDockWidget
 from qgis.core import QgsProject, QgsVectorFileWriter, QgsMapLayerProxyModel, Qgis, QgsUnitTypes, QgsMapLayer
 from qgis.utils import iface
 
+from AcATaMa.core import config
 from AcATaMa.core.accuracy_assessment import AccuracyAssessmentDialog
 from AcATaMa.core.classification import Classification
 from AcATaMa.core.sampling import do_simple_random_sampling, do_stratified_random_sampling, Sampling
@@ -112,7 +113,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         iface.mapCanvas().layersChanged.connect(
             lambda: self.update_generated_sampling_list_in(self.widget_generate_SimpRS.QCBox_SamplingToSave))
         self.widget_generate_SimpRS.QPBtn_SaveSamplingConf.clicked.connect(
-            lambda: self.fileDialog_saveSamplingConf(self.widget_generate_SimpRS.QCBox_SamplingToSave))
+            lambda: self.file_dialog_save_samplingConf(self.widget_generate_SimpRS.QCBox_SamplingToSave))
         # generate sampling
         self.widget_generate_SimpRS.QPBtn_GenerateSampling.clicked.connect(lambda: do_simple_random_sampling(self))
         # update progress bar limits
@@ -149,7 +150,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         iface.mapCanvas().layersChanged.connect(
             lambda: self.update_generated_sampling_list_in(self.widget_generate_StraRS.QCBox_SamplingToSave))
         self.widget_generate_StraRS.QPBtn_SaveSamplingConf.clicked.connect(
-            lambda: self.fileDialog_saveSamplingConf(self.widget_generate_StraRS.QCBox_SamplingToSave))
+            lambda: self.file_dialog_save_samplingConf(self.widget_generate_StraRS.QCBox_SamplingToSave))
         # generate sampling
         self.widget_generate_StraRS.QPBtn_GenerateSampling.clicked.connect(lambda: do_stratified_random_sampling(self))
 
@@ -170,10 +171,10 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # call to reload sampling file
         self.QPBtn_reloadSamplingFile.clicked.connect(self.reload_sampling_file)
         # call to load and save classification config
-        self.QPBtn_loadClassificationConfig.clicked.connect(self.fileDialog_RestoreAcatamaState)
-        self.QPBtn_saveClassificationConfig.clicked.connect(self.fileDialog_SaveAcatamaState)
+        self.QPBtn_loadClassificationConfig.clicked.connect(self.file_dialog_restore_acatama_state)
+        self.QPBtn_saveClassificationConfig.clicked.connect(self.file_dialog_save_acatama_state)
         # save sampling + classification
-        self.QPBtn_saveSamplingClassification.clicked.connect(self.fileDialog_saveSamplingClassification)
+        self.QPBtn_saveSamplingClassification.clicked.connect(self.file_dialog_save_sampling_classification)
         # change grid config
         self.grid_columns.valueChanged.connect(lambda: self.set_grid_setting("column"))
         self.grid_rows.valueChanged.connect(lambda: self.set_grid_setting("row"))
@@ -349,7 +350,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     @error_handler
-    def fileDialog_saveSampling(self, combo_box):
+    def file_dialog_save_sampling(self, combo_box):
         if combo_box.currentText() not in Sampling.samplings:
             iface.messageBar().pushMessage("AcATaMa",
                                            "Error, please select a valid sampling file", level=Qgis.Warning)
@@ -368,7 +369,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     @error_handler
-    def fileDialog_saveSamplingConf(self, combo_box):
+    def file_dialog_save_samplingConf(self, combo_box):
         if combo_box.currentText() not in Sampling.samplings:
             iface.messageBar().pushMessage("AcATaMa",
                                            "Error, please select a valid sampling file", level=Qgis.Warning)
@@ -464,43 +465,18 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     @error_handler
-    def fileDialog_RestoreAcatamaState(self):
+    def file_dialog_restore_acatama_state(self):
         file_path, _ = QFileDialog.getOpenFileName(self, self.tr("Restore to a previous saved of AcATaMa configuration and state"),
                                                    "", self.tr("Yaml (*.yaml *.yml);;All files (*.*)"))
 
         if file_path != '' and os.path.isfile(file_path):
-            # load classification status from yaml file
-            import yaml
-            with open(file_path, 'r') as yaml_file:
-                try:
-                    yaml_config = yaml.load(yaml_file, Loader=yaml.FullLoader)
-                except yaml.YAMLError as err:
-                    iface.messageBar().pushMessage("AcATaMa", "Error while read the yaml file classification config",
-                                                   level=Qgis.Critical)
-                    return
-            # load the sampling file save in yaml config
-            sampling_filepath = yaml_config["sampling_layer"]
-            if not os.path.isfile(sampling_filepath):
-                iface.messageBar().pushMessage("AcATaMa",
-                                               "Error the sampling file saved in this config file, not exists",
-                                               level=Qgis.Critical)
-                # TODO: ask for new location of the sampling file
-                return
-
-            sampling_layer = load_and_select_filepath_in(self.QCBox_SamplingFile, sampling_filepath)
-
             # restore configuration and classification status
-            classification = Classification(sampling_layer)
-            classification.load_config(yaml_config)
-
-            # reload sampling file status in accuracy assessment
-            self.set_sampling_file_accuracy_assessment()
-
-            iface.messageBar().pushMessage("AcATaMa", "File loaded successfully", level=Qgis.Success)
+            config.restore(file_path)
+            iface.messageBar().pushMessage("AcATaMa", "Configuration and state restored successfully", level=Qgis.Success)
 
     @pyqtSlot()
     @error_handler
-    def fileDialog_SaveAcatamaState(self):
+    def file_dialog_save_acatama_state(self):
         if valid_file_selected_in(self.QCBox_ThematicRaster) or valid_file_selected_in(self.QCBox_SamplingFile):
             # get file path to suggest where to save
             if valid_file_selected_in(self.QCBox_ThematicRaster):
@@ -515,18 +491,12 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save AcATaMa configuration and state"),
                                                   suggested_filename, self.tr("Yaml (*.yaml *.yml);;All files (*.*)"))
         if file_out != '':
-            sampling_layer = self.QCBox_SamplingFile.currentLayer()
-            if sampling_layer in Classification.instances:
-                Classification.instances[sampling_layer].save_config(file_out)
-                iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=Qgis.Success)
-            else:
-                iface.messageBar().pushMessage("AcATaMa",
-                                               "Failed to save, there isn't any configuration to save",
-                                               level=Qgis.Warning)
+            config.save(file_out)
+            iface.messageBar().pushMessage("AcATaMa", "Configuration file saved successfully", level=Qgis.Success)
 
     @pyqtSlot()
     @error_handler
-    def fileDialog_saveSamplingClassification(self):
+    def file_dialog_save_sampling_classification(self):
         if not valid_file_selected_in(self.QCBox_SamplingFile):
             iface.messageBar().pushMessage("AcATaMa", "Error, please first select a sampling file",
                                            level=Qgis.Warning)

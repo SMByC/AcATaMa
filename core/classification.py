@@ -18,7 +18,6 @@
  *                                                                         *
  ***************************************************************************/
 """
-from collections import OrderedDict
 from random import shuffle
 
 from qgis.PyQt.QtCore import QVariant
@@ -28,7 +27,6 @@ from qgis.utils import iface
 
 from AcATaMa.core.point import ClassificationPoint
 from AcATaMa.core.raster import Raster
-from AcATaMa.utils.qgis_utils import get_current_file_path_in, get_file_path_of_layer, load_and_select_filepath_in
 from AcATaMa.utils.system_utils import wait_process
 
 
@@ -119,145 +117,6 @@ class Classification(object):
             points.append(ClassificationPoint(x, y, shape_id))
         self.num_points = len(points)
         return points
-
-    @wait_process
-    def save_config(self, file_out):
-        import yaml
-        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-
-        def setup_yaml():
-            """
-            Keep dump ordered with orderedDict
-            """
-            represent_dict_order = lambda self, data: self.represent_mapping('tag:yaml.org,2002:map',
-                                                                             list(data.items()))
-            yaml.add_representer(OrderedDict, represent_dict_order)
-
-        setup_yaml()
-
-        data = OrderedDict()
-        data["thematic_raster"] = \
-            {"path": get_current_file_path_in(AcATaMa.dockwidget.QCBox_ThematicRaster, show_message=False),
-             "band": int(AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText())
-                if AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText() else None,
-             "nodata": AcATaMa.dockwidget.nodata_ThematicRaster.value()}
-        data["sampling_layer"] = get_file_path_of_layer(self.sampling_layer)
-        data["dialog_size"] = self.dialog_size
-        data["grid_view_widgets"] = {"columns": self.grid_columns, "rows": self.grid_rows}
-        data["current_sample_idx"] = self.current_sample_idx
-        data["fit_to_sample"] = self.fit_to_sample
-        data["is_completed"] = self.is_completed
-        data["view_widgets_config"] = self.view_widgets_config
-        data["classification_buttons"] = self.buttons_config
-
-        # save samples status
-        points_config = {}
-        for pnt_idx, point in enumerate(self.points):
-            if point.is_classified:
-                points_config[pnt_idx] = {"classif_id": point.classif_id, "shape_id": point.shape_id}
-        data["points"] = points_config
-        # save the samples order
-        data["points_order"] = [p.shape_id for p in self.points]
-
-        # accuracy assessment
-        data["accuracy_assessment_sampling_file"] = get_current_file_path_in(AcATaMa.dockwidget.QCBox_SamplingFile_AA,
-                                                                             show_message=False)
-        data["accuracy_assessment_sampling_type"] = AcATaMa.dockwidget.QCBox_SamplingType_AA.currentIndex()
-        # save config of the accuracy assessment dialog if exists
-        if self.accuracy_assessment:
-            data["accuracy_assessment_dialog"] = {
-                "area_unit": QgsUnitTypes.toString(self.accuracy_assessment.area_unit),
-                "z_score": self.accuracy_assessment.z_score,
-                "csv_separator": self.accuracy_assessment.csv_separator,
-                "csv_decimal": self.accuracy_assessment.csv_decimal,
-            }
-
-        with open(file_out, 'w') as yaml_file:
-            yaml.dump(data, yaml_file)
-
-    @wait_process
-    def load_config(self, yaml_config):
-        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        # restore the thematic raster
-        if yaml_config["thematic_raster"]["path"]:
-            # thematic raster
-            load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_ThematicRaster,
-                                        yaml_config["thematic_raster"]["path"])
-            AcATaMa.dockwidget.select_thematic_raster(AcATaMa.dockwidget.QCBox_ThematicRaster.currentLayer())
-            # band number
-            if "band" in yaml_config["thematic_raster"]:
-                AcATaMa.dockwidget.QCBox_band_ThematicRaster.setCurrentIndex(yaml_config["thematic_raster"]["band"] - 1)
-            # nodata
-            AcATaMa.dockwidget.nodata_ThematicRaster.setValue(yaml_config["thematic_raster"]["nodata"])
-
-        # restore the classification settings
-        AcATaMa.dockwidget.grid_columns.setValue(yaml_config["grid_view_widgets"]["columns"])
-        AcATaMa.dockwidget.grid_rows.setValue(yaml_config["grid_view_widgets"]["rows"])
-        self.dialog_size = yaml_config["dialog_size"]
-        self.grid_columns = yaml_config["grid_view_widgets"]["columns"]
-        self.grid_rows = yaml_config["grid_view_widgets"]["rows"]
-        self.current_sample_idx = yaml_config["current_sample_idx"]
-        self.fit_to_sample = yaml_config["fit_to_sample"]
-        self.is_completed = yaml_config["is_completed"]
-        # restore the buttons config
-        self.buttons_config = yaml_config["classification_buttons"]
-        # restore the view widget config
-        self.view_widgets_config = yaml_config["view_widgets_config"]
-
-        # support load the old format of config file TODO: delete
-        for x in self.view_widgets_config.values():
-            if "render_file" in x:
-                x["render_file_path"] = x["render_file"]
-                del x["render_file"]
-            if "name" in x:
-                x["view_name"] = x["name"]
-                del x["name"]
-            if "layer_name" not in x:
-                x["layer_name"] = None
-
-        # restore the samples order
-        points_ordered = []
-        for shape_id in yaml_config["points_order"]:
-            # point saved exist in shape file
-            if shape_id in [p.shape_id for p in self.points]:
-                points_ordered.append([p for p in self.points if p.shape_id == shape_id][0])
-        # added new point inside shape file that not exists in yaml config
-        for new_point_id in set([p.shape_id for p in self.points]) - set(yaml_config["points_order"]):
-            points_ordered.append([p for p in self.points if p.shape_id == new_point_id][0])
-        # reassign points loaded and ordered
-        self.points = points_ordered
-        # restore point status classification
-        for status in yaml_config["points"].values():
-            if status["shape_id"] in [p.shape_id for p in self.points]:
-                point_to_restore = [p for p in self.points if p.shape_id == status["shape_id"]][0]
-                point_to_restore.classif_id = status["classif_id"]
-                if point_to_restore.classif_id is not None:
-                    point_to_restore.is_classified = True
-        # update the status and labels plugin with the current sampling classification
-        self.reload_classification_status()
-        AcATaMa.dockwidget.update_the_status_of_classification()
-        # define if this classification was made with thematic classes
-        if self.buttons_config and yaml_config["thematic_raster"]["path"] and \
-           True in [bc["thematic_class"] is not None and bc["thematic_class"] != "" for bc in self.buttons_config.values()]:
-            self.with_thematic_classes = True
-
-        # restore accuracy assessment conf
-        if "accuracy_assessment_sampling_file" in yaml_config and yaml_config["accuracy_assessment_sampling_file"]:
-            load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_SamplingFile_AA,
-                                        yaml_config["accuracy_assessment_sampling_file"])
-        if "accuracy_assessment_sampling_type" in yaml_config:
-            AcATaMa.dockwidget.QCBox_SamplingType_AA.setCurrentIndex(yaml_config["accuracy_assessment_sampling_type"])
-
-        if "accuracy_assessment_dialog" in yaml_config:
-            from AcATaMa.core.accuracy_assessment import AccuracyAssessment
-            accuracy_assessment = AccuracyAssessment(self)
-            area_unit, success = QgsUnitTypes.stringToAreaUnit(yaml_config["accuracy_assessment_dialog"]["area_unit"])
-            if success:
-                accuracy_assessment.area_unit = area_unit
-            accuracy_assessment.z_score = yaml_config["accuracy_assessment_dialog"]["z_score"]
-            accuracy_assessment.csv_separator = yaml_config["accuracy_assessment_dialog"]["csv_separator"]
-            accuracy_assessment.csv_decimal = yaml_config["accuracy_assessment_dialog"]["csv_decimal"]
-            self.accuracy_assessment = accuracy_assessment
 
     @wait_process
     def reload_sampling_file(self):
