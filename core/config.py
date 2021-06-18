@@ -51,6 +51,9 @@ def save(file_out):
          if AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText() else None,
          "nodata": AcATaMa.dockwidget.nodata_ThematicRaster.value()}
 
+    # ######### general configuration ######### #
+    data["general"] = {"tab_activated": AcATaMa.dockwidget.tabWidget.currentIndex()}
+
     # ######### classification configuration ######### #
     sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile.currentLayer()
     if sampling_layer in Classification.instances:
@@ -104,6 +107,10 @@ def restore(file_path):
             iface.messageBar().pushMessage("AcATaMa", "Error while read the AcATaMa configuration file: {}".format(err),
                                            level=Qgis.Critical)
             return
+
+    # ######### general configuration ######### #
+    if "general" in yaml_config:
+        AcATaMa.dockwidget.tabWidget.setCurrentIndex(yaml_config["general"]["tab_activated"])
 
     # restore the thematic raster
     if yaml_config["thematic_raster"]["path"]:
