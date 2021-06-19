@@ -204,6 +204,7 @@ def restore(file_path):
         accuracy_assessment.csv_separator = yaml_config["accuracy_assessment_dialog"]["csv_separator"]
         accuracy_assessment.csv_decimal = yaml_config["accuracy_assessment_dialog"]["csv_decimal"]
         classification.accuracy_assessment = accuracy_assessment
+    # support load the old format end here
 
     if "accuracy_assessment" in yaml_config and "sampling_file" in yaml_config["accuracy_assessment"]:
         load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_SamplingFile_AA,
@@ -211,7 +212,7 @@ def restore(file_path):
     if "accuracy_assessment" in yaml_config and "sampling_type" in yaml_config["accuracy_assessment"]:
         AcATaMa.dockwidget.QCBox_SamplingType_AA.setCurrentIndex(yaml_config["accuracy_assessment"]["sampling_type"])
 
-    if "accuracy_assessment_dialog" in yaml_config and "dialog" in yaml_config["accuracy_assessment"] and classification:
+    if "accuracy_assessment" in yaml_config and "dialog" in yaml_config["accuracy_assessment"] and classification:
         from AcATaMa.core.accuracy_assessment import AccuracyAssessment
         accuracy_assessment = AccuracyAssessment(classification)
         area_unit, success = QgsUnitTypes.stringToAreaUnit(yaml_config["accuracy_assessment"]["dialog"]["area_unit"])
