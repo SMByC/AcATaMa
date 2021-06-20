@@ -57,6 +57,7 @@ def save(file_out):
     # ######### classification configuration ######### #
     sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile.currentLayer()
     if sampling_layer in Classification.instances:
+        # data["classification"] = {}  # TODO
         classification = Classification.instances[sampling_layer]
         data["sampling_layer"] = get_file_path_of_layer(classification.sampling_layer)
         data["dialog_size"] = classification.dialog_size
@@ -80,7 +81,7 @@ def save(file_out):
     # ######### accuracy assessment ######### #
     data["accuracy_assessment"] = {}
     data["accuracy_assessment"]["sampling_file"] = get_current_file_path_in(AcATaMa.dockwidget.QCBox_SamplingFile_AA,
-                                                                         show_message=False)
+                                                                            show_message=False)
     data["accuracy_assessment"]["sampling_type"] = AcATaMa.dockwidget.QCBox_SamplingType_AA.currentIndex()
     # save config of the accuracy assessment dialog if exists
     if classification and classification.accuracy_assessment:

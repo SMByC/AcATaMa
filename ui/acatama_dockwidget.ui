@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>673</width>
-    <height>1226</height>
+    <width>700</width>
+    <height>1262</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -129,7 +129,7 @@ It set automatically from image if the layer has the nodata value set.</string>
       </property>
       <widget class="QWidget" name="tab_sampling">
        <attribute name="title">
-        <string>Sampling</string>
+        <string>Sampling design</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_5">
         <property name="spacing">
@@ -163,7 +163,7 @@ It set automatically from image if the layer has the nodata value set.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>628</width>
+             <width>655</width>
              <height>1231</height>
             </rect>
            </property>
@@ -872,8 +872,8 @@ It set automatically from image if the layer has the nodata value set.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>649</width>
-             <height>913</height>
+             <width>676</width>
+             <height>947</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_24">
@@ -1290,9 +1290,9 @@ It set automatically from image if the layer has the nodata value set.</string>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_accuracy_assessment">
+      <widget class="QWidget" name="tab_analysis">
        <attribute name="title">
-        <string>Accuracy Assessment</string>
+        <string>Analysis</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_9">
         <property name="spacing">
@@ -1326,8 +1326,8 @@ It set automatically from image if the layer has the nodata value set.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>649</width>
-             <height>913</height>
+             <width>676</width>
+             <height>947</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -1340,7 +1340,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                <item>
                 <widget class="QLabel" name="label_23">
                  <property name="text">
-                  <string>Classified sampling file for the classification accuracy assessment (it needs to have been classified totally or partially):</string>
+                  <string>Select the classified sampling file (fully or partially classified) to calculate the analysis:</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -1454,13 +1454,23 @@ It set automatically from image if the layer has the nodata value set.</string>
                <bool>false</bool>
               </property>
               <property name="title">
-               <string>Accuracy Assessment Results</string>
+               <string>Accuracy Assessment</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_28">
                <item>
-                <widget class="QPushButton" name="QPBtn_ComputeViewAccurasyAssessment">
+                <widget class="QLabel" name="label_6">
                  <property name="text">
-                  <string>Open the accuracy assessment results</string>
+                  <string>Estimating a measure of map accuracy using a sample of reference observations</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="QPBtn_ComputeTheAccurasyAssessment">
+                 <property name="text">
+                  <string>Compute the accuracy assessment</string>
                  </property>
                 </widget>
                </item>
@@ -1536,11 +1546,6 @@ It set automatically from image if the layer has the nodata value set.</string>
           </item>
           <item>
            <widget class="QLabel" name="label_3">
-            <property name="font">
-             <font>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
             <property name="text">
              <string>AcATaMa configuration:</string>
             </property>
@@ -1554,11 +1559,6 @@ It set automatically from image if the layer has the nodata value set.</string>
           </item>
           <item>
            <widget class="QPushButton" name="QPBtn_loadClassificationConfig">
-            <property name="font">
-             <font>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
             <property name="toolTip">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Restore to a previous saved of AcATaMa configuration and state&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
@@ -1573,11 +1573,6 @@ It set automatically from image if the layer has the nodata value set.</string>
           </item>
           <item>
            <widget class="QPushButton" name="QPBtn_saveClassificationConfig">
-            <property name="font">
-             <font>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
             <property name="toolTip">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Save all configuration and state of AcATaMa, such as: sampling classification, buttons, config dialogs, config of the classification views, navigation, sampling design, accuracy result settings, among others.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
@@ -1616,11 +1611,6 @@ It set automatically from image if the layer has the nodata value set.</string>
        </property>
        <item>
         <widget class="QPushButton" name="QPBtn_PluginDocs">
-         <property name="font">
-          <font>
-           <pointsize>9</pointsize>
-          </font>
-         </property>
          <property name="cursor">
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
@@ -1641,11 +1631,6 @@ It set automatically from image if the layer has the nodata value set.</string>
        </item>
        <item>
         <widget class="QPushButton" name="QPBtn_PluginClearReload">
-         <property name="font">
-          <font>
-           <pointsize>9</pointsize>
-          </font>
-         </property>
          <property name="cursor">
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
@@ -1679,11 +1664,6 @@ It set automatically from image if the layer has the nodata value set.</string>
        </item>
        <item>
         <widget class="QPushButton" name="QPBtn_PluginInfo">
-         <property name="font">
-          <font>
-           <pointsize>9</pointsize>
-          </font>
-         </property>
          <property name="cursor">
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>

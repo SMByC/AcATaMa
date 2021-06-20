@@ -196,7 +196,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # sampling type selection action
         self.QCBox_SamplingType_AA.currentIndexChanged[int].connect(self.sampling_type_selection_action)
         # compute the AA and open the result dialog
-        self.QPBtn_ComputeViewAccurasyAssessment.clicked.connect(self.open_accuracy_assessment_results)
+        self.QPBtn_ComputeTheAccurasyAssessment.clicked.connect(self.open_accuracy_assessment_results)
         # disable group box that depends of sampling file
         self.QLabel_SamplingFileStatus_AA.setText("No sampling file selected")
         self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: gray;}")

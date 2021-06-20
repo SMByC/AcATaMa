@@ -58,7 +58,7 @@ class AccuracyAssessment(object):
     @wait_process
     def compute(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText("Processing, please wait ...")
+        AcATaMa.dockwidget.QPBtn_ComputeTheAccurasyAssessment.setText("Processing, please wait ...")
         QApplication.processEvents()
 
         # get labels from classification buttons
@@ -206,7 +206,7 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
         self.ResultsHTML.setHtml(accuracy_assessment_results.get_html(self.accuracy_assessment))
         self.ResultsHTML.zoomOut()
 
-        AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText("Accuracy assessment is opened, click to show")
+        AcATaMa.dockwidget.QPBtn_ComputeTheAccurasyAssessment.setText("Accuracy assessment is opened, click to show")
         AcATaMa.dockwidget.QGBox_SamplingSelection_AA.setDisabled(True)
         super(AccuracyAssessmentDialog, self).show()
 
@@ -219,7 +219,7 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
         self.accuracy_assessment.compute()
         # set content results in HTML
         self.ResultsHTML.setHtml(accuracy_assessment_results.get_html(self.accuracy_assessment))
-        AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText("Accuracy assessment is opened, click to show")
+        AcATaMa.dockwidget.QPBtn_ComputeTheAccurasyAssessment.setText("Accuracy assessment is opened, click to show")
         if msg_bar:
             self.MsgBar.pushMessage(
                 "Reload successfully from classification status of \"{}\"".format(
@@ -258,7 +258,7 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
         """
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         AccuracyAssessmentDialog.is_opened = False
-        AcATaMa.dockwidget.QPBtn_ComputeViewAccurasyAssessment.setText("Open the accuracy assessment results")
+        AcATaMa.dockwidget.QPBtn_ComputeTheAccurasyAssessment.setText("Compute the accuracy assessment")
         AcATaMa.dockwidget.QGBox_SamplingSelection_AA.setEnabled(True)
         self.reject(is_ok_to_close=True)
 
