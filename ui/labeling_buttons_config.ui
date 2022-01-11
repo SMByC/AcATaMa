@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>277</width>
-    <height>574</height>
+    <width>544</width>
+    <height>550</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Thematic raster classes</string>
+   <string>Set the labeling buttons</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -22,7 +22,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Set the thematic raster class for the classification button:</string>
+      <string>To build the labeling buttons: Set the name (mandatory), color (optional) and thematic class if you are labeling with thematic classes.</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -33,7 +33,17 @@
     </widget>
    </item>
    <item>
-    <widget class="QTableWidget" name="tableOfClasses"/>
+    <widget class="QTableWidget" name="tableBtnsConfig"/>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

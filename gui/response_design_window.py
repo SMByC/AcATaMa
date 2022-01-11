@@ -28,20 +28,20 @@ from qgis.PyQt.QtWidgets import QTableWidgetItem, QSplitter, QColorDialog, QDial
 from qgis.PyQt.QtGui import QColor, QIcon
 from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, Qgis, QgsProject, QgsUnitTypes
 
-from AcATaMa.core.classification import Classification
+from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, get_current_file_path_in, \
     load_and_select_filepath_in
 from AcATaMa.core.raster import get_color_table
 from AcATaMa.utils.system_utils import open_file, block_signals_to, error_handler
-from AcATaMa.gui.classification_view_widget import ClassificationViewWidget
+from AcATaMa.gui.response_design_view_widget import LabelingViewWidget
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'classification_dialog.ui'))
+    plugin_folder, 'ui', 'response_design_window.ui'))
 
 
-class ClassificationDialog(QDialog, FORM_CLASS):
+class ResponseDesignWindow(QDialog, FORM_CLASS):
     is_opened = False
     view_widgets = []
     current_sample = None
@@ -51,30 +51,30 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         QDialog.__init__(self)
         self.sampling_layer = sampling_layer
         self.setupUi(self)
-        ClassificationDialog.instance = self
+        ResponseDesignWindow.instance = self
 
         # flags
         self.setWindowFlags(self.windowFlags() | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint)
 
-        # get classification or init new instance
-        if sampling_layer in Classification.instances:
-            self.classification = Classification.instances[sampling_layer]
+        # get response design done from sampling layer or init new instance
+        if sampling_layer in ResponseDesign.instances:
+            self.response_design = ResponseDesign.instances[sampling_layer]
         else:
-            self.classification = Classification(sampling_layer)
-            self.classification.grid_columns = columns
-            self.classification.grid_rows = rows
+            self.response_design = ResponseDesign(sampling_layer)
+            self.response_design.grid_columns = columns
+            self.response_design.grid_rows = rows
 
-        #### settings the classification dialog
+        #### setting up the response design window
 
         # set dialog title
-        self.setWindowTitle("Classification of samples for " + sampling_layer.name())
-        # resize the classification dialog
-        if self.classification.dialog_size:
-            self.resize(*self.classification.dialog_size)
+        self.setWindowTitle("Response Design Window - " + sampling_layer.name())
+        # resize the response design window
+        if self.response_design.dialog_size:
+            self.resize(*self.response_design.dialog_size)
 
         # disable enter action
-        self.QPBtn_SetClassification.setAutoDefault(False)
-        self.QPBtn_unclassifySampleButton.setAutoDefault(False)
+        self.QPBtn_LabelingSetup.setAutoDefault(False)
+        self.QPBtn_unlabelSampleButton.setAutoDefault(False)
 
         # go to sample ID action
         self.GoTo_ID_Button.clicked.connect(self.go_to_sample_id)
@@ -99,10 +99,10 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         self.radiusFitToSample.setSingleStep(
             0.0001 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
                                           QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
-        self.radiusFitToSample.setValue(self.classification.fit_to_sample)
+        self.radiusFitToSample.setValue(self.response_design.fit_to_sample)
 
         # set total samples
-        self.QPBar_SamplesNavigation.setMaximum(len(self.classification.points))
+        self.QPBar_SamplesNavigation.setMaximum(len(self.response_design.points))
 
         # actions for fit and go to current sample
         self.radiusFitToSample.valueChanged.connect(lambda: self.show_and_go_to_current_sample(highlight=False))
@@ -110,9 +110,9 @@ class ClassificationDialog(QDialog, FORM_CLASS):
 
         # move through samples
         self.nextSample.clicked.connect(self.next_sample)
-        self.nextSampleNotClassified.clicked.connect(self.next_sample_not_classified)
+        self.nextSampleNotLabeled.clicked.connect(self.next_sample_not_labeled)
         self.previousSample.clicked.connect(self.previous_sample)
-        self.previousSampleNotClassified.clicked.connect(self.previous_sample_not_classified)
+        self.previousSampleNotLabeled.clicked.connect(self.previous_sample_not_labeled)
 
         # dialog buttons box
         self.closeButton.rejected.connect(self.closing)
@@ -120,44 +120,44 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         self.closeButton.button(QDialogButtonBox.Close).setAutoDefault(False)
 
         # init current point
-        self.current_sample_idx = self.classification.current_sample_idx
+        self.current_sample_idx = self.response_design.current_sample_idx
         self.current_sample = None
         self.set_current_sample()
-        # set classification buttons
-        self.classification_btns_config = ClassificationButtonsConfig(self.classification.buttons_config)
-        self.create_classification_buttons(buttons_config=self.classification.buttons_config)
-        self.QPBtn_SetClassification.clicked.connect(self.open_set_classification_dialog)
-        self.QPBtn_unclassifySampleButton.clicked.connect(self.unclassify_sample)
+        # set labeling buttons
+        self.labeling_btns_config = LabelingButtonsConfig(self.response_design.buttons_config)
+        self.create_labeling_buttons(buttons_config=self.response_design.buttons_config)
+        self.QPBtn_LabelingSetup.clicked.connect(self.open_labeling_setup_dialog)
+        self.QPBtn_unlabelSampleButton.clicked.connect(self.unlabel_sample)
 
         # create dynamic size of the view render widgets windows
         # inside the grid with columns x rows divide by splitters
         h_splitters = []
         view_widgets = []
-        for row in range(self.classification.grid_rows):
+        for row in range(self.response_design.grid_rows):
             splitter = QSplitter(Qt.Horizontal)
-            for column in range(self.classification.grid_columns):
-                new_view_widget = ClassificationViewWidget()
+            for column in range(self.response_design.grid_columns):
+                new_view_widget = LabelingViewWidget()
                 splitter.addWidget(new_view_widget)
                 h_splitters.append(splitter)
                 view_widgets.append(new_view_widget)
         v_splitter = QSplitter(Qt.Vertical)
         for splitter in h_splitters:
             v_splitter.addWidget(splitter)
-        # add to classification dialog
+        # add to response design window
         self.widget_view_windows.layout().addWidget(v_splitter)
         # save instances
-        ClassificationDialog.view_widgets = view_widgets
+        ResponseDesignWindow.view_widgets = view_widgets
         # setup view widget
-        [view_widget.setup_view_widget(sampling_layer) for view_widget in ClassificationDialog.view_widgets]
-        for idx, view_widget in enumerate(ClassificationDialog.view_widgets): view_widget.id = idx
+        [view_widget.setup_view_widget(sampling_layer) for view_widget in ResponseDesignWindow.view_widgets]
+        for idx, view_widget in enumerate(ResponseDesignWindow.view_widgets): view_widget.id = idx
         # set the label names for each view
-        for num_view, view_widget in enumerate(ClassificationDialog.view_widgets):
+        for num_view, view_widget in enumerate(ResponseDesignWindow.view_widgets):
             view_widget.QLabel_ViewName.setPlaceholderText("View {}".format(num_view + 1))
         # restore view widgets status
-        for config_id, view_config in self.classification.view_widgets_config.items():
-            for view_widget in ClassificationDialog.view_widgets:
+        for config_id, view_config in self.response_design.view_widgets_config.items():
+            for view_widget in ResponseDesignWindow.view_widgets:
                 if config_id == view_widget.id:
-                    view_widget = ClassificationDialog.view_widgets[config_id]
+                    view_widget = ResponseDesignWindow.view_widgets[config_id]
                     # select the file for this view widget if exists and is loaded in Qgis
                     layer_name = view_config["layer_name"]
                     if not layer_name and view_config["render_file_path"]:
@@ -193,32 +193,32 @@ class ClassificationDialog(QDialog, FORM_CLASS):
 
     def show(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        ClassificationDialog.is_opened = True
-        # adjust some objects in the dockwidget while is classifying
+        ResponseDesignWindow.is_opened = True
+        # adjust some objects in the dockwidget while response design window is opened
         AcATaMa.dockwidget.QGBox_SamplingFile.setDisabled(True)
         AcATaMa.dockwidget.QGBox_GridSettings.setDisabled(True)
-        AcATaMa.dockwidget.QGBox_ClassificationStatus.setDisabled(True)
-        AcATaMa.dockwidget.QGBox_saveSamplingClassified.setDisabled(True)
-        AcATaMa.dockwidget.QPBtn_OpenClassificationDialog.setText("Classification in progress, click to show")
+        AcATaMa.dockwidget.QGBox_LabelingStatus.setDisabled(True)
+        AcATaMa.dockwidget.QGBox_saveSamplingLabeled.setDisabled(True)
+        AcATaMa.dockwidget.QPBtn_OpenResponseDesignWindow.setText("Response design is opened, click to show")
 
-        super(ClassificationDialog, self).show()
+        super(ResponseDesignWindow, self).show()
 
     def set_current_sample(self):
         # clear all message bar
         self.MsgBar.clearWidgets()
         # set the current sample
-        if self.current_sample_idx < len(self.classification.points):
-            self.current_sample = self.classification.points[self.current_sample_idx]
+        if self.current_sample_idx < len(self.response_design.points):
+            self.current_sample = self.response_design.points[self.current_sample_idx]
         else:
-            self.current_sample = self.classification.points[-1]
-            self.current_sample_idx = len(self.classification.points) - 1
-        ClassificationDialog.current_sample = self.current_sample
-        self.classification.current_sample_idx = self.current_sample_idx
+            self.current_sample = self.response_design.points[-1]
+            self.current_sample_idx = len(self.response_design.points) - 1
+        ResponseDesignWindow.current_sample = self.current_sample
+        self.response_design.current_sample_idx = self.current_sample_idx
         # update progress bar
         self.QPBar_SamplesNavigation.setValue(self.current_sample_idx + 1)
         # show the sample ID
         self.Sample_ID.setText(str(self.current_sample.shape_id))
-        # show the class assigned
+        # show the label assigned
         self.display_sample_status()
         # show and go to marker
         self.show_and_go_to_current_sample()
@@ -228,9 +228,9 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         try:
             shape_id = int(self.GoTo_ID.text())
             # find the sample point with ID
-            sample_point = next((x for x in self.classification.points if x.shape_id == shape_id), None)
+            sample_point = next((x for x in self.response_design.points if x.shape_id == shape_id), None)
             # go to sample
-            self.current_sample_idx = self.classification.points.index(sample_point)
+            self.current_sample_idx = self.response_design.points.index(sample_point)
             self.set_current_sample()
         except:
             self.GoTo_ID.setStyleSheet("color: red")
@@ -251,12 +251,12 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         point = xform.transform(self.current_sample.QgsPnt)
 
         # make file and save
-        description = "Classified as: <font color='{color}'><b> {class_name}</b></font><br/>" \
+        description = "Labeled as: <font color='{color}'><b> {label_name}</b></font><br/>" \
                       "Samp. file: <em> {samp_file} </em><br/>AcATaMa Qgis-plugin".format(
-            color=self.classification.buttons_config[self.current_sample.classif_id][
-                "color"] if self.current_sample.classif_id else "gray",
-            class_name=self.classification.buttons_config[self.current_sample.classif_id][
-                "name"] if self.current_sample.classif_id else "not classified",
+            color=self.response_design.buttons_config[self.current_sample.label_id][
+                "color"] if self.current_sample.label_id else "gray",
+            label_name=self.response_design.buttons_config[self.current_sample.label_id][
+                "name"] if self.current_sample.label_id else "not labeled",
             samp_file=self.sampling_layer.name())
         kml_raw = """<?xml version="1.0" encoding="UTF-8"?>
             <kml xmlns="http://www.opengis.net/kml/2.2">
@@ -276,17 +276,17 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         open_file(kml_file)
 
     @pyqtSlot(int)
-    def classify_sample(self, classif_id):
-        if classif_id:
-            self.classification.classify_the_current_sample(int(classif_id))
+    def label_sample(self, label_id):
+        if label_id:
+            self.response_design.label_the_current_sample(int(label_id))
             self.display_sample_status()
             if self.autoNextSample.isChecked():
                 # automatically follows the next sample
                 self.next_sample()
 
     @pyqtSlot()
-    def unclassify_sample(self):
-        self.classification.classify_the_current_sample(False)
+    def unlabel_sample(self):
+        self.response_design.label_the_current_sample(False)
         self.display_sample_status()
         if self.autoNextSample.isChecked():
             # automatically follows the next sample
@@ -294,33 +294,33 @@ class ClassificationDialog(QDialog, FORM_CLASS):
 
     def display_sample_status(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        if self.current_sample.is_classified:
-            if self.current_sample.classif_id in self.classification.buttons_config:
-                class_name = self.classification.buttons_config[self.current_sample.classif_id]["name"]
-                self.statusCurrentSample.setText(class_name)
+        if self.current_sample.is_labeled:
+            if self.current_sample.label_id in self.response_design.buttons_config:
+                label_name = self.response_design.buttons_config[self.current_sample.label_id]["name"]
+                self.statusCurrentSample.setText(label_name)
                 self.statusCurrentSample.setStyleSheet(
-                    'QLabel {color: ' + self.classification.buttons_config[self.current_sample.classif_id]["color"] + ';}')
+                    'QLabel {color: ' + self.response_design.buttons_config[self.current_sample.label_id]["color"] + ';}')
                 # clear all message bar
                 self.MsgBar.clearWidgets()
             else:
-                self.statusCurrentSample.setText("Invalid button {}".format(self.current_sample.classif_id))
+                self.statusCurrentSample.setText("Invalid button {}".format(self.current_sample.label_id))
                 self.statusCurrentSample.setStyleSheet('QLabel {color: red;}')
                 self.MsgBar.pushMessage(
-                    "This sample was classified with invalid/deleted item, fix the classification buttons "
-                    "or reclassify the sample", level=Qgis.Critical, duration=20)
+                    "This sample was labeled with invalid/deleted item, fix the labeling buttons "
+                    "or relabel the sample", level=Qgis.Critical, duration=20)
         else:
-            self.statusCurrentSample.setText("not classified")
+            self.statusCurrentSample.setText("not labeled")
             self.statusCurrentSample.setStyleSheet('QLabel {color: gray;}')
-        # update the classification status bar
-        self.QPBar_ClassificationStatus.setMaximum(self.classification.num_points)
-        self.QPBar_ClassificationStatus.setValue(self.classification.total_classified)
+        # update labeling status bar
+        self.QPBar_LabelingStatus.setMaximum(self.response_design.num_points)
+        self.QPBar_LabelingStatus.setValue(self.response_design.total_labeled)
 
         # update plugin with the current sampling status
-        AcATaMa.dockwidget.update_the_status_of_classification()
+        AcATaMa.dockwidget.update_response_design_state()
 
     @pyqtSlot(bool)
     def show_and_go_to_current_sample(self, highlight=True):
-        for view_widget in ClassificationDialog.view_widgets:
+        for view_widget in ResponseDesignWindow.view_widgets:
             if view_widget.is_active:
                 # fit to current point
                 self.current_sample.fit_to(view_widget, self.radiusFitToSample.value())
@@ -332,19 +332,19 @@ class ClassificationDialog(QDialog, FORM_CLASS):
 
     @pyqtSlot()
     def next_sample(self):
-        if self.current_sample_idx >= len(self.classification.points) - 1:
+        if self.current_sample_idx >= len(self.response_design.points) - 1:
             return
         self.current_sample_idx += 1
         self.set_current_sample()
 
     @pyqtSlot()
-    def next_sample_not_classified(self):
+    def next_sample_not_labeled(self):
         tmp_sample_idx = self.current_sample_idx + 1
-        while tmp_sample_idx < len(self.classification.points) and \
-                self.classification.points[tmp_sample_idx].is_classified:
+        while tmp_sample_idx < len(self.response_design.points) and \
+                self.response_design.points[tmp_sample_idx].is_labeled:
             tmp_sample_idx += 1
-        if tmp_sample_idx < len(self.classification.points) and \
-                not self.classification.points[tmp_sample_idx].is_classified:
+        if tmp_sample_idx < len(self.response_design.points) and \
+                not self.response_design.points[tmp_sample_idx].is_labeled:
             self.current_sample_idx = tmp_sample_idx
             self.set_current_sample()
 
@@ -356,32 +356,32 @@ class ClassificationDialog(QDialog, FORM_CLASS):
         self.set_current_sample()
 
     @pyqtSlot()
-    def previous_sample_not_classified(self):
+    def previous_sample_not_labeled(self):
         tmp_sample_idx = self.current_sample_idx - 1
-        while self.classification.points[tmp_sample_idx].is_classified \
+        while self.response_design.points[tmp_sample_idx].is_labeled \
                 and tmp_sample_idx >= 0:
             tmp_sample_idx -= 1
-        if not self.classification.points[tmp_sample_idx].is_classified and tmp_sample_idx >= 0:
+        if not self.response_design.points[tmp_sample_idx].is_labeled and tmp_sample_idx >= 0:
             self.current_sample_idx = tmp_sample_idx
             self.set_current_sample()
 
     @pyqtSlot()
-    def open_set_classification_dialog(self):
-        self.classification_btns_config.create_table()
-        if self.classification_btns_config.exec_():
+    def open_labeling_setup_dialog(self):
+        self.labeling_btns_config.create_table()
+        if self.labeling_btns_config.exec_():
             # ok button -> accept the new buttons config
-            self.create_classification_buttons(tableBtnsConfig=self.classification_btns_config.tableBtnsConfig)
+            self.create_labeling_buttons(tableBtnsConfig=self.labeling_btns_config.tableBtnsConfig)
         else:
             # cancel button -> restore the old button config
-            self.classification_btns_config = ClassificationButtonsConfig(self.classification.buttons_config)
+            self.labeling_btns_config = LabelingButtonsConfig(self.response_design.buttons_config)
 
     @error_handler
-    def create_classification_buttons(self, tableBtnsConfig=None, buttons_config=None):
+    def create_labeling_buttons(self, tableBtnsConfig=None, buttons_config=None):
         if not tableBtnsConfig and not buttons_config:
             return
         # clear layout
-        for i in range(self.gridButtonsClassification.count()):
-            self.gridButtonsClassification.itemAt(i).widget().close()
+        for i in range(self.Grid_LabelingButtons.count()):
+            self.Grid_LabelingButtons.itemAt(i).widget().close()
 
         buttons = {}
 
@@ -392,38 +392,38 @@ class ClassificationDialog(QDialog, FORM_CLASS):
             # create button
             QPButton = QPushButton(item_name)
             QPButton.setStyleSheet('QPushButton {color: ' + item_color + '}')
-            QPButton.clicked.connect(lambda state, classif_id=item_num: self.classify_sample(classif_id))
+            QPButton.clicked.connect(lambda state, classif_id=item_num: self.label_sample(classif_id))
             QPButton.setAutoDefault(False)
-            self.gridButtonsClassification.addWidget(QPButton, len(buttons) - 1, 0)
+            self.Grid_LabelingButtons.addWidget(QPButton, len(buttons) - 1, 0)
 
         # from tableBtnsConfig
         if tableBtnsConfig:
-            for row in range(self.classification_btns_config.tableBtnsConfig.rowCount()):
-                item_name = self.classification_btns_config.tableBtnsConfig.item(row, 0).text()
-                item_color = self.classification_btns_config.tableBtnsConfig.item(row, 1).background().color().name()
-                item_thematic_class = self.classification_btns_config.tableBtnsConfig.item(row, 2).text()
+            for row in range(self.labeling_btns_config.tableBtnsConfig.rowCount()):
+                item_name = self.labeling_btns_config.tableBtnsConfig.item(row, 0).text()
+                item_color = self.labeling_btns_config.tableBtnsConfig.item(row, 1).background().color().name()
+                item_thematic_class = self.labeling_btns_config.tableBtnsConfig.item(row, 2).text()
                 item_thematic_class = None if item_thematic_class == "none" else item_thematic_class
                 if item_name != "":
                     create_button(row + 1, item_name, item_color, item_thematic_class)
-                # define if this classification was made with thematic classes
+                # define if this labeling was made with thematic classes
                 if item_thematic_class is not None and item_thematic_class != "":
-                    self.classification.with_thematic_classes = True
+                    self.response_design.with_thematic_classes = True
             # save btns config
-            self.classification.buttons_config = buttons
-            self.classification_btns_config.buttons_config = buttons
+            self.response_design.buttons_config = buttons
+            self.labeling_btns_config.buttons_config = buttons
 
         # from buttons_config
         if buttons_config:
             for row in sorted(buttons_config.keys()):
                 create_button(row, buttons_config[row]["name"], buttons_config[row]["color"],
                               buttons_config[row]["thematic_class"])
-                # define if this classification was made with thematic classes
+                # define if this labeling was made with thematic classes
                 if buttons_config[row]["thematic_class"] is not None and buttons_config[row]["thematic_class"] != "":
-                    self.classification.with_thematic_classes = True
+                    self.response_design.with_thematic_classes = True
 
-        # reload sampling file status in accuracy assessment
+        # reload sampling file status in analysis tab
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        AcATaMa.dockwidget.set_sampling_file_accuracy_assessment()
+        AcATaMa.dockwidget.set_sampling_file_in_analysis()
         # reload the current sample status
         self.display_sample_status()
 
@@ -433,14 +433,14 @@ class ClassificationDialog(QDialog, FORM_CLASS):
 
     def closing(self):
         """
-        Do this before close the classification dialog
+        Do this before close the response design window
         """
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        # save some config of classification dialog for this sampling file
-        self.classification.fit_to_sample = self.radiusFitToSample.value()
+        # save some config of response design window for this sampling file
+        self.response_design.fit_to_sample = self.radiusFitToSample.value()
         # save view widgets status
         view_widgets_config = {}
-        for view_widget in ClassificationDialog.view_widgets:
+        for view_widget in ResponseDesignWindow.view_widgets:
             # {N: {"view_name", "layer_name", "render_file_path", "scale_factor"}, ...}
             view_widgets_config[view_widget.id] = \
                 {"view_name": view_widget.QLabel_ViewName.text(),
@@ -449,28 +449,28 @@ class ClassificationDialog(QDialog, FORM_CLASS):
                  # "view_size": (view_widget.size().width(), view_widget.size().height()),
                  "scale_factor": view_widget.current_scale_factor}
 
-        self.classification.view_widgets_config = view_widgets_config
-        self.classification.dialog_size = (self.size().width(), self.size().height())
+        self.response_design.view_widgets_config = view_widgets_config
+        self.response_design.dialog_size = (self.size().width(), self.size().height())
 
-        ClassificationDialog.is_opened = False
+        ResponseDesignWindow.is_opened = False
         # restore the states for some objects in the dockwidget
         AcATaMa.dockwidget.QGBox_SamplingFile.setEnabled(True)
         AcATaMa.dockwidget.QGBox_GridSettings.setEnabled(True)
-        AcATaMa.dockwidget.QGBox_ClassificationStatus.setEnabled(True)
-        AcATaMa.dockwidget.QGBox_saveSamplingClassified.setEnabled(True)
-        AcATaMa.dockwidget.QPBtn_OpenClassificationDialog.setText("Open the classification dialog")
+        AcATaMa.dockwidget.QGBox_LabelingStatus.setEnabled(True)
+        AcATaMa.dockwidget.QGBox_saveSamplingLabeled.setEnabled(True)
+        AcATaMa.dockwidget.QPBtn_OpenResponseDesignWindow.setText("Open response design window")
         self.reject(is_ok_to_close=True)
 
     def reject(self, is_ok_to_close=False):
         if is_ok_to_close:
-            super(ClassificationDialog, self).reject()
+            super(ResponseDesignWindow, self).reject()
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'classification_buttons_config.ui'))
+    plugin_folder, 'ui', 'labeling_buttons_config.ui'))
 
 
-class ClassificationButtonsConfig(QDialog, FORM_CLASS):
+class LabelingButtonsConfig(QDialog, FORM_CLASS):
     def __init__(self, buttons_config):
         QDialog.__init__(self)
         self.setupUi(self)
@@ -487,7 +487,7 @@ class ClassificationButtonsConfig(QDialog, FORM_CLASS):
     def create_table(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
 
-        header = ["Classification Name", "Color", "Thematic Class", ""]
+        header = ["Label Name", "Color", "Thematic Class", ""]
         # clear table
         self.tableBtnsConfig.clear()
         # init table
@@ -499,14 +499,14 @@ class ClassificationButtonsConfig(QDialog, FORM_CLASS):
         self.tableBtnsConfig.setHorizontalHeaderLabels(header)
         # insert items
         for n, h in enumerate(header):
-            if h == "Classification Name":
+            if h == "Label Name":
                 for m, (key, item) in enumerate(self.table_buttons.items()):
                     if m + 1 in self.buttons_config:
                         item_table = QTableWidgetItem(self.buttons_config[m + 1]["name"])
                     else:
                         item_table = QTableWidgetItem(str(item))
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                    item_table.setToolTip("Classification button ID: {}".format(key))
+                    item_table.setToolTip("Label button (ID: {})".format(key))
                     self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "Color":
                 for m, item in enumerate(self.table_buttons.values()):
@@ -515,7 +515,7 @@ class ClassificationButtonsConfig(QDialog, FORM_CLASS):
                         item_table.setBackground(QColor(self.buttons_config[m + 1]["color"]))
                     item_table.setFlags(Qt.ItemIsEnabled)
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                    item_table.setToolTip("Click to set/change the color of this classification button")
+                    item_table.setToolTip("Click to set/change the color of this label button")
                     self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "Thematic Class":
                 for m, item in enumerate(self.table_buttons.values()):
@@ -590,25 +590,25 @@ class ClassificationButtonsConfig(QDialog, FORM_CLASS):
             items_with_classes = [self.tableBtnsConfig.item(row, 2).text() != "" for row in
                                   range(self.tableBtnsConfig.rowCount()) if self.tableBtnsConfig.item(row, 0).text() != ""]
             if False in items_with_classes:
-                msg = "Invalid configuration:\n\nA) If you are classifying with thematic classes, then " \
+                msg = "Invalid configuration:\n\nA) If you are labeling with thematic classes, then " \
                       "you must configure the thematic class value for all buttons. \n\nB) Or if you are " \
-                      "classifying the sampling without pairing with thematic classes, then deselect the " \
+                      "labeling the sampling without pairing with thematic classes, then deselect the " \
                       "thematic raster layer."
-                QMessageBox.warning(self, 'Error with the classification buttons', msg, QMessageBox.Ok)
+                QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.Ok)
                 return
             # check if all button configured have a valid name
             items_with_valid_names = [self.tableBtnsConfig.item(row, 0).text() != "" for row in
                                       range(self.tableBtnsConfig.rowCount()) if self.tableBtnsConfig.item(row, 2).text() != ""]
             if False in items_with_valid_names:
-                msg = "Invalid configuration:\n\nTo create the buttons for classify, they must have a valid name."
-                QMessageBox.warning(self, 'Error with the classification buttons', msg, QMessageBox.Ok)
+                msg = "Invalid configuration:\n\nTo create the buttons for labeling, they must have a valid name."
+                QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.Ok)
                 return
         # pass all checks
         self.accept()
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'classification_thematic_raster_classes.ui'))
+    plugin_folder, 'ui', 'labeling_thematic_raster_classes.ui'))
 
 
 class ThematicRasterClasses(QDialog, FORM_CLASS):

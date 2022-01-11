@@ -30,12 +30,12 @@ from qgis.core import QgsProject, QgsVectorFileWriter, QgsMapLayerProxyModel, Qg
 from qgis.utils import iface
 
 from AcATaMa.core import config
-from AcATaMa.core.accuracy_assessment import AccuracyAssessmentDialog
-from AcATaMa.core.classification import Classification
-from AcATaMa.core.sampling import do_simple_random_sampling, do_stratified_random_sampling, Sampling
+from AcATaMa.core.analysis import AccuracyAssessmentWindow
+from AcATaMa.core.response_design import ResponseDesign
+from AcATaMa.core.sampling_design import do_simple_random_sampling, do_stratified_random_sampling, Sampling
 from AcATaMa.core.raster import get_nodata_value
 from AcATaMa.gui.about_dialog import AboutDialog
-from AcATaMa.gui.classification_dialog import ClassificationDialog
+from AcATaMa.gui.response_design_window import ResponseDesignWindow
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_filepath_in, get_file_path_of_layer
 from AcATaMa.utils.sampling_utils import update_stratified_sampling_table, fill_stratified_sampling_table
 from AcATaMa.utils.system_utils import error_handler, block_signals_to
@@ -93,7 +93,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             dialog_title=self.tr("Select the thematic raster image to evaluate"),
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
         # select and check the thematic raster
-        self.QCBox_ThematicRaster.layerChanged.connect(self.select_thematic_raster)
+        self.QCBox_ThematicRaster.layerChanged[QgsMapLayer].connect(self.select_thematic_raster)
 
         # ######### simple random sampling ######### #
         self.widget_SimpRSwithCR.setHidden(True)
@@ -159,48 +159,48 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # disable sampling tab at start
         self.scrollAreaWidgetContents_S.setDisabled(True)
 
-        # ######### Classification sampling tab ######### #
+        # ######### Response Design tab ######### #
         # set properties to QgsMapLayerComboBox
         self.QCBox_SamplingFile.setCurrentIndex(-1)
         self.QCBox_SamplingFile.setFilters(QgsMapLayerProxyModel.PointLayer)
-        # show the classification file settings in plugin when it is selected
-        self.QCBox_SamplingFile.layerChanged.connect(self.update_the_status_of_classification)
+        # show the response design state for the sampling file selected
+        self.QCBox_SamplingFile.layerChanged.connect(self.update_response_design_state)
         # call to browse the sampling file
         self.QPBtn_browseSamplingFile.clicked.connect(lambda: self.browser_dialog_to_load_file(
             self.QCBox_SamplingFile,
-            dialog_title=self.tr("Select the Sampling points file to classify"),
+            dialog_title=self.tr("Select the Sampling points file"),
             file_filters=self.tr("Vector files (*.gpkg *.shp);;All files (*.*)")))
         # call to reload sampling file
         self.QPBtn_reloadSamplingFile.clicked.connect(self.reload_sampling_file)
-        # call to load and save classification config
-        self.QPBtn_loadClassificationConfig.clicked.connect(self.file_dialog_restore_acatama_state)
-        self.QPBtn_saveClassificationConfig.clicked.connect(self.file_dialog_save_acatama_state)
-        # save sampling + classification
-        self.QPBtn_saveSamplingClassification.clicked.connect(self.file_dialog_save_sampling_classification)
+        # call to load and save Acatama state and config
+        self.QPBtn_RestoreAcatamaState.clicked.connect(self.file_dialog_restore_acatama_state)
+        self.QPBtn_SaveAcatamaState.clicked.connect(self.file_dialog_save_acatama_state)
+        # save sampling + labeling
+        self.QPBtn_saveSamplingLabeled.clicked.connect(self.file_dialog_save_sampling_labeled)
         # change grid config
         self.grid_columns.valueChanged.connect(lambda: self.set_grid_setting("column"))
         self.grid_rows.valueChanged.connect(lambda: self.set_grid_setting("row"))
         # disable group box that depends of sampling file
-        self.QGBox_SamplingClassification.setDisabled(True)
-        self.QGBox_saveSamplingClassified.setDisabled(True)
+        self.QGBox_ResponseDesignWindow.setDisabled(True)
+        self.QGBox_saveSamplingLabeled.setDisabled(True)
 
         # connect the action to the run method
-        self.QPBtn_OpenClassificationDialog.clicked.connect(self.open_classification_dialog)
+        self.QPBtn_OpenResponseDesignWindow.clicked.connect(self.open_response_design_window)
 
-        # ######### Accuracy Assessment tab ######### #
+        # ######### Analysis tab ######### #
         # set properties to QgsMapLayerComboBox
-        self.QCBox_SamplingFile_AA.setCurrentIndex(-1)
-        self.QCBox_SamplingFile_AA.setFilters(QgsMapLayerProxyModel.PointLayer)
-        # set and show the classification file status in AA
-        self.QCBox_SamplingFile_AA.layerChanged.connect(self.set_sampling_file_accuracy_assessment)
+        self.QCBox_SamplingFile_A.setCurrentIndex(-1)
+        self.QCBox_SamplingFile_A.setFilters(QgsMapLayerProxyModel.PointLayer)
+        # set and update the sampling file status in analysis tab
+        self.QCBox_SamplingFile_A.layerChanged.connect(self.set_sampling_file_in_analysis)
         # sampling type selection action
-        self.QCBox_SamplingType_AA.currentIndexChanged[int].connect(self.sampling_type_selection_action)
+        self.QCBox_SamplingType_A.currentIndexChanged[int].connect(self.sampling_type_selection_action)
         # compute the AA and open the result dialog
         self.QPBtn_ComputeTheAccurasyAssessment.clicked.connect(self.open_accuracy_assessment_results)
         # disable group box that depends of sampling file
-        self.QLabel_SamplingFileStatus_AA.setText("No sampling file selected")
-        self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: gray;}")
-        self.QGBox_SamplingType_AA.setDisabled(True)
+        self.QLabel_SamplingFileStatus_A.setText("No sampling file selected")
+        self.QLabel_SamplingFileStatus_A.setStyleSheet("QLabel {color: gray;}")
+        self.QGBox_SamplingType_A.setDisabled(True)
         self.QGBox_AccuracyAssessment.setDisabled(True)
 
     @pyqtSlot()
@@ -227,12 +227,12 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.minDistance_StraRS.setValue(0)
             # disable sampling tab
             self.scrollAreaWidgetContents_S.setDisabled(True)
-            # unset the thematic classes in classification instance
+            # unset the thematic classes in response design instance
             sampling_layer = self.QCBox_SamplingFile.currentLayer()
-            if sampling_layer and sampling_layer in Classification.instances:
-                Classification.instances[sampling_layer].with_thematic_classes = False
+            if sampling_layer and sampling_layer in ResponseDesign.instances:
+                ResponseDesign.instances[sampling_layer].with_thematic_classes = False
             # updated state of sampling file selected for accuracy assessment tab
-            self.set_sampling_file_accuracy_assessment()
+            self.set_sampling_file_in_analysis()
 
         # first check
         if not layer or not valid_file_selected_in(self.QCBox_ThematicRaster, "thematic raster"):
@@ -387,70 +387,70 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=Qgis.Success)
 
     @pyqtSlot(QgsMapLayer)
-    def update_the_status_of_classification(self, sampling_layer=None):
+    def update_response_design_state(self, sampling_layer=None):
         if sampling_layer is None:
             sampling_layer = self.QCBox_SamplingFile.currentLayer()
 
         if sampling_layer:
-            # classification status
-            if sampling_layer in Classification.instances:
-                classification = Classification.instances[sampling_layer]
-                self.QPBar_ClassificationStatus.setMaximum(classification.num_points)
-                self.QPBar_ClassificationStatus.setValue(classification.total_classified)
+            # response design state
+            if sampling_layer in ResponseDesign.instances:
+                response_design = ResponseDesign.instances[sampling_layer]
+                self.QPBar_LabelingStatus.setMaximum(response_design.num_points)
+                self.QPBar_LabelingStatus.setValue(response_design.total_labeled)
             else:
                 count_samples = len(list(sampling_layer.getFeatures()))
-                self.QPBar_ClassificationStatus.setMaximum(count_samples)
-                self.QPBar_ClassificationStatus.setValue(0)
-            self.QPBar_ClassificationStatus.setTextVisible(True)
-            # check if the classification is completed and update in dockwidget status
-            if sampling_layer in Classification.instances and Classification.instances[sampling_layer].is_completed:
-                self.QLabel_ClassificationStatus.setText("Classification completed")
-                self.QLabel_ClassificationStatus.setStyleSheet("QLabel {color: green;}")
+                self.QPBar_LabelingStatus.setMaximum(count_samples)
+                self.QPBar_LabelingStatus.setValue(0)
+            self.QPBar_LabelingStatus.setTextVisible(True)
+            # check if the response design is completed and update in dockwidget status
+            if sampling_layer in ResponseDesign.instances and ResponseDesign.instances[sampling_layer].is_completed:
+                self.QLabel_LabelingStatus.setText("Labeling completed")
+                self.QLabel_LabelingStatus.setStyleSheet("QLabel {color: green;}")
             else:
-                self.QLabel_ClassificationStatus.setText("Classification not completed")
-                self.QLabel_ClassificationStatus.setStyleSheet("QLabel {color: orange;}")
+                self.QLabel_LabelingStatus.setText("Labeling not completed")
+                self.QLabel_LabelingStatus.setStyleSheet("QLabel {color: orange;}")
             # grid settings
-            if sampling_layer in Classification.instances:
-                classification = Classification.instances[sampling_layer]
+            if sampling_layer in ResponseDesign.instances:
+                response_design = ResponseDesign.instances[sampling_layer]
                 with block_signals_to(self.QGBox_GridSettings):
-                    self.grid_columns.setValue(classification.grid_columns)
-                    self.grid_rows.setValue(classification.grid_rows)
+                    self.grid_columns.setValue(response_design.grid_columns)
+                    self.grid_rows.setValue(response_design.grid_rows)
             else:
                 with block_signals_to(self.QGBox_GridSettings):
                     self.grid_columns.setValue(2)
                     self.grid_rows.setValue(1)
-            if not ClassificationDialog.is_opened:
-                # enable group box that depends of sampling file
-                self.QGBox_SamplingClassification.setEnabled(True)
-                self.QGBox_saveSamplingClassified.setEnabled(True)
+            if not ResponseDesignWindow.is_opened:
+                # enable group box that depends on sampling file
+                self.QGBox_ResponseDesignWindow.setEnabled(True)
+                self.QGBox_saveSamplingLabeled.setEnabled(True)
         else:
             # return to default values
-            self.QPBar_ClassificationStatus.setTextVisible(False)
-            self.QPBar_ClassificationStatus.setValue(0)
-            self.QLabel_ClassificationStatus.setText("No sampling file selected")
-            self.QLabel_ClassificationStatus.setStyleSheet("QLabel {color: gray;}")
+            self.QPBar_LabelingStatus.setTextVisible(False)
+            self.QPBar_LabelingStatus.setValue(0)
+            self.QLabel_LabelingStatus.setText("No sampling file selected")
+            self.QLabel_LabelingStatus.setStyleSheet("QLabel {color: gray;}")
             self.grid_columns.setValue(2)
             self.grid_rows.setValue(1)
-            # disable group box that depends of sampling file
-            self.QGBox_SamplingClassification.setDisabled(True)
-            self.QGBox_saveSamplingClassified.setDisabled(True)
+            # disable group box that depends on sampling file
+            self.QGBox_ResponseDesignWindow.setDisabled(True)
+            self.QGBox_saveSamplingLabeled.setDisabled(True)
 
-        # updated state of sampling file selected for accuracy assessment tab
-        self.set_sampling_file_accuracy_assessment()
+        # update state of sampling file selected for accuracy assessment tab
+        self.set_sampling_file_in_analysis()
 
     @pyqtSlot()
     def reload_sampling_file(self):
         sampling_layer = self.QCBox_SamplingFile.currentLayer()
         if sampling_layer:
             # sampling file valid
-            if sampling_layer in Classification.instances:
-                classification = Classification.instances[sampling_layer]
-                classification.reload_sampling_file()
+            if sampling_layer in ResponseDesign.instances:
+                response_design = ResponseDesign.instances[sampling_layer]
+                response_design.reload_sampling_file()
             else:
-                classification = Classification(sampling_layer)
-                classification.reload_sampling_file()
+                response_design = ResponseDesign(sampling_layer)
+                response_design.reload_sampling_file()
             # updated state of sampling file selected for accuracy assessment tab
-            self.set_sampling_file_accuracy_assessment()
+            self.set_sampling_file_in_analysis()
         else:
             iface.messageBar().pushMessage("AcATaMa", "No sampling file selected",
                                            level=Qgis.Warning)
@@ -458,12 +458,12 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
     @pyqtSlot()
     def set_grid_setting(self, item):
         sampling_layer = self.QCBox_SamplingFile.currentLayer()
-        if sampling_layer in Classification.instances:
-            classification = Classification.instances[sampling_layer]
+        if sampling_layer in ResponseDesign.instances:
+            response_design = ResponseDesign.instances[sampling_layer]
             if item == "column":
-                classification.grid_columns = self.grid_columns.value()
+                response_design.grid_columns = self.grid_columns.value()
             if item == "row":
-                classification.grid_rows = self.grid_rows.value()
+                response_design.grid_rows = self.grid_rows.value()
 
     @pyqtSlot()
     @error_handler
@@ -472,7 +472,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                                                    "", self.tr("Yaml (*.yaml *.yml);;All files (*.*)"))
 
         if file_path != '' and os.path.isfile(file_path):
-            # restore configuration and classification status
+            # restore configuration and response design state
             config.restore(file_path)
             self.suggested_yml_file = file_path
             iface.messageBar().pushMessage("AcATaMa", "Configuration and state restored successfully", level=Qgis.Success)
@@ -502,117 +502,117 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     @error_handler
-    def file_dialog_save_sampling_classification(self):
+    def file_dialog_save_sampling_labeled(self):
         if not valid_file_selected_in(self.QCBox_SamplingFile):
             iface.messageBar().pushMessage("AcATaMa", "Error, please first select a sampling file",
                                            level=Qgis.Warning)
             return
         # get instance
         sampling_layer = self.QCBox_SamplingFile.currentLayer()
-        if sampling_layer in Classification.instances:
-            classification = Classification.instances[sampling_layer]
-            if not classification.is_completed:
-                quit_msg = "The classification for this sampling file is not completed, " \
-                           "the result will have all sampling partially classified." \
+        if sampling_layer in ResponseDesign.instances:
+            response_design = ResponseDesign.instances[sampling_layer]
+            if not response_design.is_completed:
+                quit_msg = "The labeling for this sampling file is not completed, " \
+                           "the result will have all sampling partially labeled." \
                            "\nDo you want to continue?"
-                reply = QMessageBox.question(None, 'The classification is not completed',
+                reply = QMessageBox.question(None, 'The labeling is not completed',
                                              quit_msg, QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
                 if reply == QMessageBox.No:
                     return
         else:
             iface.messageBar().pushMessage("AcATaMa",
-                                           "Error, the classification for the sampling selected has not been initiated",
+                                           "Error, the response design for the sampling selected has not been initiated",
                                            level=Qgis.Warning)
             return
-        # get file path to suggest to save but not in tmp directory
+        # get file path to suggest where to save but not in tmp directory
         file_path = get_file_path_of_layer(self.QCBox_SamplingFile.currentLayer())
         path, filename = os.path.split(file_path)
         if self.tmp_dir in path:
             path = os.path.split(get_file_path_of_layer(self.QCBox_ThematicRaster.currentLayer()))[0]
-        suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_classified.gpkg" if filename else ""
+        suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_labeled.gpkg" if filename else ""
 
-        file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save sampling file with the classification"),
+        file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save sampling file with the response_design"),
                                                   suggested_filename,
                                                   self.tr("GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"))
         if file_out != '':
-            classification.save_sampling_classification(file_out)
+            response_design.save_sampling_labeled(file_out)
             iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=Qgis.Success)
 
     @pyqtSlot()
     @error_handler
-    def open_classification_dialog(self):
-        if ClassificationDialog.is_opened:
-            # an instance of classification dialog is already created
+    def open_response_design_window(self):
+        if ResponseDesignWindow.is_opened:
+            # an instance of response design dialog is already created
             # brings that instance to front even if it is minimized
-            self.classification_dialog.setWindowState(self.classification_dialog.windowState()
-                                                      & ~Qt.WindowMinimized | Qt.WindowActive)
-            self.classification_dialog.raise_()
-            self.classification_dialog.activateWindow()
+            self.response_design_window.setWindowState(self.response_design_window.windowState()
+                                                       & ~Qt.WindowMinimized | Qt.WindowActive)
+            self.response_design_window.raise_()
+            self.response_design_window.activateWindow()
             return
         sampling_layer = self.QCBox_SamplingFile.currentLayer()
         if not sampling_layer:
-            iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid sampling file to classify",
+            iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid sampling file.",
                                            level=Qgis.Warning)
             return
 
-        self.classification_dialog = \
-            ClassificationDialog(sampling_layer, self.grid_columns.value(), self.grid_rows.value())
+        self.response_design_window = \
+            ResponseDesignWindow(sampling_layer, self.grid_columns.value(), self.grid_rows.value())
         # open dialog
-        self.classification_dialog.show()
+        self.response_design_window.show()
 
     @pyqtSlot(QgsMapLayer)
-    def set_sampling_file_accuracy_assessment(self, sampling_layer=None):
+    def set_sampling_file_in_analysis(self, sampling_layer=None):
         if sampling_layer is None:
-            sampling_layer = self.QCBox_SamplingFile_AA.currentLayer()
+            sampling_layer = self.QCBox_SamplingFile_A.currentLayer()
 
         if sampling_layer:
             # sampling file valid
-            if sampling_layer in Classification.instances:
-                # classification exists for this file
-                classification = Classification.instances[sampling_layer]
-                # define if this classification was made with thematic classes
-                if not classification.with_thematic_classes:
-                    self.QLabel_SamplingFileStatus_AA.setText("Classification was not made with thematic classes")
-                    self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: red;}")
-                    self.QGBox_SamplingType_AA.setDisabled(True)
+            if sampling_layer in ResponseDesign.instances:
+                # response_design exists for this file
+                response_design = ResponseDesign.instances[sampling_layer]
+                # define if this response_design was made with thematic classes
+                if not response_design.with_thematic_classes:
+                    self.QLabel_SamplingFileStatus_A.setText("Labeling was not made with thematic classes")
+                    self.QLabel_SamplingFileStatus_A.setStyleSheet("QLabel {color: red;}")
+                    self.QGBox_SamplingType_A.setDisabled(True)
                     self.QGBox_AccuracyAssessment.setDisabled(True)
                     return
-                # check is the classification is completed and update in dockwidget status
-                if classification.is_completed:
-                    self.QLabel_SamplingFileStatus_AA.setText("Classification completed ({}/{})".
-                                                              format(classification.total_classified,
-                                                                     classification.num_points))
-                    self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: green;}")
+                # check is the response_design is completed and update in dockwidget status
+                if response_design.is_completed:
+                    self.QLabel_SamplingFileStatus_A.setText("Labeling completed ({}/{})".
+                                                              format(response_design.total_labeled,
+                                                                     response_design.num_points))
+                    self.QLabel_SamplingFileStatus_A.setStyleSheet("QLabel {color: green;}")
                 else:
-                    self.QLabel_SamplingFileStatus_AA.setText("Classification not completed ({}/{})".
-                                                              format(classification.total_classified,
-                                                                     classification.num_points))
-                    self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: orange;}")
-                self.QGBox_SamplingType_AA.setEnabled(True)
-                self.QGBox_AccuracyAssessment.setEnabled(self.QCBox_SamplingType_AA.currentIndex() != -1)
-                self.QCBox_SamplingType_AA.setCurrentIndex(classification.sampling_type)
+                    self.QLabel_SamplingFileStatus_A.setText("Labeling not completed ({}/{})".
+                                                              format(response_design.total_labeled,
+                                                                     response_design.num_points))
+                    self.QLabel_SamplingFileStatus_A.setStyleSheet("QLabel {color: orange;}")
+                self.QGBox_SamplingType_A.setEnabled(True)
+                self.QGBox_AccuracyAssessment.setEnabled(self.QCBox_SamplingType_A.currentIndex() != -1)
+                self.QCBox_SamplingType_A.setCurrentIndex(response_design.sampling_type)
 
             else:
-                self.QLabel_SamplingFileStatus_AA.setText("Sampling file not classified")
-                self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: red;}")
-                self.QGBox_SamplingType_AA.setDisabled(True)
+                self.QLabel_SamplingFileStatus_A.setText("Sampling file not labeled")
+                self.QLabel_SamplingFileStatus_A.setStyleSheet("QLabel {color: red;}")
+                self.QGBox_SamplingType_A.setDisabled(True)
                 self.QGBox_AccuracyAssessment.setDisabled(True)
         else:
             # not select sampling file
-            self.QLabel_SamplingFileStatus_AA.setText("No sampling file selected")
-            self.QLabel_SamplingFileStatus_AA.setStyleSheet("QLabel {color: gray;}")
-            self.QGBox_SamplingType_AA.setDisabled(True)
+            self.QLabel_SamplingFileStatus_A.setText("No sampling file selected")
+            self.QLabel_SamplingFileStatus_A.setStyleSheet("QLabel {color: gray;}")
+            self.QGBox_SamplingType_A.setDisabled(True)
             self.QGBox_AccuracyAssessment.setDisabled(True)
 
     @pyqtSlot(int)
     def sampling_type_selection_action(self, type_id):
         self.QGBox_AccuracyAssessment.setEnabled(type_id != -1)
-        # save the sampling type to classification instance
-        Classification.instances[self.QCBox_SamplingFile_AA.currentLayer()].sampling_type = type_id
+        # save the sampling type to response design instance
+        ResponseDesign.instances[self.QCBox_SamplingFile_A.currentLayer()].sampling_type = type_id
 
     @pyqtSlot()
     def open_accuracy_assessment_results(self):
-        if AccuracyAssessmentDialog.is_opened:
+        if AccuracyAssessmentWindow.is_opened:
             # an instance of Accuracy assessment dialog is already created
             # brings that instance to front even if it is minimized
             self.accuracy_assessment_dialog.setWindowState(self.accuracy_assessment_dialog.windowState()
@@ -621,6 +621,6 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.accuracy_assessment_dialog.activateWindow()
             return
 
-        self.accuracy_assessment_dialog = AccuracyAssessmentDialog()
+        self.accuracy_assessment_dialog = AccuracyAssessmentWindow()
         # open dialog
         self.accuracy_assessment_dialog.show()

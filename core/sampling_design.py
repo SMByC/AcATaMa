@@ -345,7 +345,7 @@ class Sampling(object):
             # update progress bar
             progress_bar.setValue(int(nPoints))
 
-        # guarantee the random order for the classification
+        # guarantee the random order for response design process
         random.shuffle(points_generated)
         self.points = dict()  # restart
 

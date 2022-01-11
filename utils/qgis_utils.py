@@ -110,7 +110,7 @@ def unload_layer(layer_path):
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'classification_style_editor.ui'))
+    plugin_folder, 'ui', 'response_design_style_editor.ui'))
 
 
 class StyleEditorDialog(QDialog, FORM_CLASS):

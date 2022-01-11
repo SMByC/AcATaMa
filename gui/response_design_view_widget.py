@@ -125,22 +125,22 @@ class RenderWidget(QWidget):
             # set the sampling over the layer to view
             self.canvas.setLayers([self.parent_view.sampling_layer, layer])
             # set init extent from other view if any is activated else set layer extent
-            from AcATaMa.gui.classification_dialog import ClassificationDialog
+            from AcATaMa.gui.response_design_window import ResponseDesignWindow
             others_view = [(view_widget.render_widget.canvas.extent(), view_widget.current_scale_factor) for view_widget
-                           in ClassificationDialog.view_widgets if not view_widget.render_widget.canvas.extent().isEmpty()]
+                           in ResponseDesignWindow.view_widgets if not view_widget.render_widget.canvas.extent().isEmpty()]
             if others_view:
                 extent, scale = others_view[0]
                 extent.scale(1 / scale)
                 self.set_extents_and_scalefactor(extent)
-            elif ClassificationDialog.current_sample:
-                ClassificationDialog.current_sample.fit_to(
-                    self.parent_view, ClassificationDialog.instance.radiusFitToSample.value())
+            elif ResponseDesignWindow.current_sample:
+                ResponseDesignWindow.current_sample.fit_to(
+                    self.parent_view, ResponseDesignWindow.instance.radiusFitToSample.value())
 
             self.canvas.refresh()
             self.layer = layer
             # show marker
-            if ClassificationDialog.current_sample:
-                self.marker.show(ClassificationDialog.current_sample)
+            if ResponseDesignWindow.current_sample:
+                self.marker.show(ResponseDesignWindow.current_sample)
 
     def set_extents_and_scalefactor(self, extent):
         with block_signals_to(self.canvas):
@@ -158,10 +158,10 @@ class RenderWidget(QWidget):
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'classification_view_widget.ui'))
+    plugin_folder, 'ui', 'response_design_view_widget.ui'))
 
 
-class ClassificationViewWidget(QWidget, FORM_CLASS):
+class LabelingViewWidget(QWidget, FORM_CLASS):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self.id = None
@@ -241,12 +241,12 @@ class ClassificationViewWidget(QWidget, FORM_CLASS):
     @pyqtSlot()
     def canvas_changed(self):
         if self.is_active:
-            from AcATaMa.gui.classification_dialog import ClassificationDialog
+            from AcATaMa.gui.response_design_window import ResponseDesignWindow
             view_extent = self.render_widget.canvas.extent()
             view_extent.scale(1/self.current_scale_factor)
 
             # set extent and scale factor for all view activated except this view
-            for view_widget in ClassificationDialog.view_widgets:
+            for view_widget in ResponseDesignWindow.view_widgets:
                 if view_widget.is_active and view_widget != self:
                     view_widget.render_widget.set_extents_and_scalefactor(view_extent)
 

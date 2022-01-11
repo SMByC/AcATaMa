@@ -24,7 +24,7 @@ from collections import OrderedDict
 from qgis.core import Qgis, QgsUnitTypes
 from qgis.utils import iface
 
-from AcATaMa.core.classification import Classification
+from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.utils.system_utils import wait_process
 from AcATaMa.utils.qgis_utils import get_current_file_path_in, get_file_path_of_layer, load_and_select_filepath_in
 
@@ -54,42 +54,42 @@ def save(file_out):
     # ######### general configuration ######### #
     data["general"] = {"tab_activated": AcATaMa.dockwidget.tabWidget.currentIndex()}
 
-    # ######### classification configuration ######### #
+    # ######### response design configuration ######### #
     sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile.currentLayer()
-    if sampling_layer in Classification.instances:
+    if sampling_layer in ResponseDesign.instances:
         # data["classification"] = {}  # TODO
-        classification = Classification.instances[sampling_layer]
-        data["sampling_layer"] = get_file_path_of_layer(classification.sampling_layer)
-        data["dialog_size"] = classification.dialog_size
-        data["grid_view_widgets"] = {"columns": classification.grid_columns, "rows": classification.grid_rows}
-        data["current_sample_idx"] = classification.current_sample_idx
-        data["fit_to_sample"] = classification.fit_to_sample
-        data["is_completed"] = classification.is_completed
-        data["view_widgets_config"] = classification.view_widgets_config
-        data["classification_buttons"] = classification.buttons_config
+        response_design = ResponseDesign.instances[sampling_layer]
+        data["sampling_layer"] = get_file_path_of_layer(response_design.sampling_layer)
+        data["dialog_size"] = response_design.dialog_size
+        data["grid_view_widgets"] = {"columns": response_design.grid_columns, "rows": response_design.grid_rows}
+        data["current_sample_idx"] = response_design.current_sample_idx
+        data["fit_to_sample"] = response_design.fit_to_sample
+        data["is_completed"] = response_design.is_completed
+        data["view_widgets_config"] = response_design.view_widgets_config
+        data["classification_buttons"] = response_design.buttons_config  # TODO migration
         # save samples status
         points_config = {}
-        for pnt_idx, point in enumerate(classification.points):
-            if point.is_classified:
-                points_config[pnt_idx] = {"classif_id": point.classif_id, "shape_id": point.shape_id}
+        for pnt_idx, point in enumerate(response_design.points):
+            if point.is_labeled:
+                points_config[pnt_idx] = {"classif_id": point.label_id, "shape_id": point.shape_id}
         data["points"] = points_config
         # save the samples order
-        data["points_order"] = [p.shape_id for p in classification.points]
+        data["points_order"] = [p.shape_id for p in response_design.points]
     else:
-        classification = None
+        response_design = None
 
     # ######### accuracy assessment ######### #
     data["accuracy_assessment"] = {}
-    data["accuracy_assessment"]["sampling_file"] = get_current_file_path_in(AcATaMa.dockwidget.QCBox_SamplingFile_AA,
+    data["accuracy_assessment"]["sampling_file"] = get_current_file_path_in(AcATaMa.dockwidget.QCBox_SamplingFile_A,
                                                                             show_message=False)
-    data["accuracy_assessment"]["sampling_type"] = AcATaMa.dockwidget.QCBox_SamplingType_AA.currentIndex()
+    data["accuracy_assessment"]["sampling_type"] = AcATaMa.dockwidget.QCBox_SamplingType_A.currentIndex()
     # save config of the accuracy assessment dialog if exists
-    if classification and classification.accuracy_assessment:
+    if response_design and response_design.accuracy_assessment:
         data["accuracy_assessment"]["dialog"] = {
-            "area_unit": QgsUnitTypes.toString(classification.accuracy_assessment.area_unit),
-            "z_score": classification.accuracy_assessment.z_score,
-            "csv_separator": classification.accuracy_assessment.csv_separator,
-            "csv_decimal": classification.accuracy_assessment.csv_decimal,
+            "area_unit": QgsUnitTypes.toString(response_design.accuracy_assessment.area_unit),
+            "z_score": response_design.accuracy_assessment.z_score,
+            "csv_separator": response_design.accuracy_assessment.csv_separator,
+            "csv_decimal": response_design.accuracy_assessment.csv_decimal,
         }
 
     with open(file_out, 'w') as yaml_file:
@@ -126,29 +126,29 @@ def restore(file_path):
         # nodata
         AcATaMa.dockwidget.nodata_ThematicRaster.setValue(yaml_config["thematic_raster"]["nodata"])
 
-    # ######### classification configuration ######### #
-    # restore the classification settings
+    # ######### response_design configuration ######### #
+    # restore the response_design settings
     # load the sampling file save in yaml config
     sampling_filepath = yaml_config["sampling_layer"]
     if os.path.isfile(sampling_filepath):
         sampling_layer = load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_SamplingFile, sampling_filepath)
-        classification = Classification(sampling_layer)
+        response_design = ResponseDesign(sampling_layer)
 
         AcATaMa.dockwidget.grid_columns.setValue(yaml_config["grid_view_widgets"]["columns"])
         AcATaMa.dockwidget.grid_rows.setValue(yaml_config["grid_view_widgets"]["rows"])
-        classification.dialog_size = yaml_config["dialog_size"]
-        classification.grid_columns = yaml_config["grid_view_widgets"]["columns"]
-        classification.grid_rows = yaml_config["grid_view_widgets"]["rows"]
-        classification.current_sample_idx = yaml_config["current_sample_idx"]
-        classification.fit_to_sample = yaml_config["fit_to_sample"]
-        classification.is_completed = yaml_config["is_completed"]
+        response_design.dialog_size = yaml_config["dialog_size"]
+        response_design.grid_columns = yaml_config["grid_view_widgets"]["columns"]
+        response_design.grid_rows = yaml_config["grid_view_widgets"]["rows"]
+        response_design.current_sample_idx = yaml_config["current_sample_idx"]
+        response_design.fit_to_sample = yaml_config["fit_to_sample"]
+        response_design.is_completed = yaml_config["is_completed"]
         # restore the buttons config
-        classification.buttons_config = yaml_config["classification_buttons"]
+        response_design.buttons_config = yaml_config["classification_buttons"]  # TODO migration
         # restore the view widget config
-        classification.view_widgets_config = yaml_config["view_widgets_config"]
+        response_design.view_widgets_config = yaml_config["view_widgets_config"]
 
         # support load the old format of config file TODO: delete
-        for x in classification.view_widgets_config.values():
+        for x in response_design.view_widgets_config.values():
             if "render_file" in x:
                 x["render_file_path"] = x["render_file"]
                 del x["render_file"]
@@ -162,67 +162,67 @@ def restore(file_path):
         points_ordered = []
         for shape_id in yaml_config["points_order"]:
             # point saved exist in shape file
-            if shape_id in [p.shape_id for p in classification.points]:
-                points_ordered.append([p for p in classification.points if p.shape_id == shape_id][0])
+            if shape_id in [p.shape_id for p in response_design.points]:
+                points_ordered.append([p for p in response_design.points if p.shape_id == shape_id][0])
         # added new point inside shape file that not exists in yaml config
-        for new_point_id in set([p.shape_id for p in classification.points]) - set(yaml_config["points_order"]):
-            points_ordered.append([p for p in classification.points if p.shape_id == new_point_id][0])
+        for new_point_id in set([p.shape_id for p in response_design.points]) - set(yaml_config["points_order"]):
+            points_ordered.append([p for p in response_design.points if p.shape_id == new_point_id][0])
         # reassign points loaded and ordered
-        classification.points = points_ordered
-        # restore point status classification
+        response_design.points = points_ordered
+        # restore point status response_design
         for status in yaml_config["points"].values():
-            if status["shape_id"] in [p.shape_id for p in classification.points]:
-                point_to_restore = [p for p in classification.points if p.shape_id == status["shape_id"]][0]
-                point_to_restore.classif_id = status["classif_id"]
-                if point_to_restore.classif_id is not None:
-                    point_to_restore.is_classified = True
-        # update the status and labels plugin with the current sampling classification
-        classification.reload_classification_status()
-        AcATaMa.dockwidget.update_the_status_of_classification()
-        # define if this classification was made with thematic classes
-        if classification.buttons_config and yaml_config["thematic_raster"]["path"] and \
-                True in [bc["thematic_class"] is not None and bc["thematic_class"] != "" for bc in classification.buttons_config.values()]:
-            classification.with_thematic_classes = True
+            if status["shape_id"] in [p.shape_id for p in response_design.points]:
+                point_to_restore = [p for p in response_design.points if p.shape_id == status["shape_id"]][0]
+                point_to_restore.label_id = status["classif_id"]
+                if point_to_restore.label_id is not None:
+                    point_to_restore.is_labeled = True
+        # update the status and labels plugin with the current sampling response_design
+        response_design.reload_labeling_status()
+        AcATaMa.dockwidget.update_response_design_state()
+        # define if this response_design was made with thematic classes
+        if response_design.buttons_config and yaml_config["thematic_raster"]["path"] and \
+                True in [bc["thematic_class"] is not None and bc["thematic_class"] != "" for bc in response_design.buttons_config.values()]:
+            response_design.with_thematic_classes = True
     else:
-        classification = None
+        response_design = None
 
     # ######### accuracy assessment ######### #
     # restore accuracy assessment settings
     # support load the old format of config file TODO: delete
     if "accuracy_assessment_sampling_file" in yaml_config and yaml_config["accuracy_assessment_sampling_file"]:
-        load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_SamplingFile_AA,
+        load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_SamplingFile_A,
                                     yaml_config["accuracy_assessment_sampling_file"])
     if "accuracy_assessment_sampling_type" in yaml_config:
-        AcATaMa.dockwidget.QCBox_SamplingType_AA.setCurrentIndex(yaml_config["accuracy_assessment_sampling_type"])
+        AcATaMa.dockwidget.QCBox_SamplingType_A.setCurrentIndex(yaml_config["accuracy_assessment_sampling_type"])
 
-    if "accuracy_assessment_dialog" in yaml_config and classification:
-        from AcATaMa.core.accuracy_assessment import AccuracyAssessment
-        accuracy_assessment = AccuracyAssessment(classification)
+    if "accuracy_assessment_dialog" in yaml_config and response_design:
+        from AcATaMa.core.analysis import Analysis
+        accuracy_assessment = Analysis(response_design)
         area_unit, success = QgsUnitTypes.stringToAreaUnit(yaml_config["accuracy_assessment_dialog"]["area_unit"])
         if success:
             accuracy_assessment.area_unit = area_unit
         accuracy_assessment.z_score = yaml_config["accuracy_assessment_dialog"]["z_score"]
         accuracy_assessment.csv_separator = yaml_config["accuracy_assessment_dialog"]["csv_separator"]
         accuracy_assessment.csv_decimal = yaml_config["accuracy_assessment_dialog"]["csv_decimal"]
-        classification.accuracy_assessment = accuracy_assessment
+        response_design.accuracy_assessment = accuracy_assessment
     # support load the old format end here
 
     if "accuracy_assessment" in yaml_config and "sampling_file" in yaml_config["accuracy_assessment"]:
-        load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_SamplingFile_AA,
+        load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_SamplingFile_A,
                                     yaml_config["accuracy_assessment"]["sampling_file"])
     if "accuracy_assessment" in yaml_config and "sampling_type" in yaml_config["accuracy_assessment"]:
-        AcATaMa.dockwidget.QCBox_SamplingType_AA.setCurrentIndex(yaml_config["accuracy_assessment"]["sampling_type"])
+        AcATaMa.dockwidget.QCBox_SamplingType_A.setCurrentIndex(yaml_config["accuracy_assessment"]["sampling_type"])
 
-    if "accuracy_assessment" in yaml_config and "dialog" in yaml_config["accuracy_assessment"] and classification:
-        from AcATaMa.core.accuracy_assessment import AccuracyAssessment
-        accuracy_assessment = AccuracyAssessment(classification)
+    if "accuracy_assessment" in yaml_config and "dialog" in yaml_config["accuracy_assessment"] and response_design:
+        from AcATaMa.core.analysis import Analysis
+        accuracy_assessment = Analysis(response_design)
         area_unit, success = QgsUnitTypes.stringToAreaUnit(yaml_config["accuracy_assessment"]["dialog"]["area_unit"])
         if success:
             accuracy_assessment.area_unit = area_unit
         accuracy_assessment.z_score = yaml_config["accuracy_assessment"]["dialog"]["z_score"]
         accuracy_assessment.csv_separator = yaml_config["accuracy_assessment"]["dialog"]["csv_separator"]
         accuracy_assessment.csv_decimal = yaml_config["accuracy_assessment"]["dialog"]["csv_decimal"]
-        classification.accuracy_assessment = accuracy_assessment
+        response_design.accuracy_assessment = accuracy_assessment
 
     # reload sampling file status in accuracy assessment
-    AcATaMa.dockwidget.set_sampling_file_accuracy_assessment()
+    AcATaMa.dockwidget.set_sampling_file_in_analysis()

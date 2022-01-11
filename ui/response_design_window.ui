@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Classification of samples</string>
+   <string>Response Design Window</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
@@ -109,14 +109,14 @@
                 <number>0</number>
                </property>
                <item>
-                <widget class="QToolButton" name="previousSampleNotClassified">
+                <widget class="QToolButton" name="previousSampleNotLabeled">
                  <property name="font">
                   <font>
                    <pointsize>9</pointsize>
                   </font>
                  </property>
                  <property name="toolTip">
-                  <string>Go to the previous sample not classified</string>
+                  <string>Go to the previous sample not labeled</string>
                  </property>
                  <property name="text">
                   <string/>
@@ -268,14 +268,14 @@
                 </widget>
                </item>
                <item>
-                <widget class="QToolButton" name="nextSampleNotClassified">
+                <widget class="QToolButton" name="nextSampleNotLabeled">
                  <property name="font">
                   <font>
                    <pointsize>9</pointsize>
                   </font>
                  </property>
                  <property name="toolTip">
-                  <string>Go to the next sample not classified</string>
+                  <string>Go to the next sample not labeled</string>
                  </property>
                  <property name="layoutDirection">
                   <enum>Qt::RightToLeft</enum>
@@ -695,7 +695,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Classification</string>
+            <string>Labeling</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -731,17 +731,17 @@
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="QPBtn_SetClassification">
+             <widget class="QPushButton" name="QPBtn_LabelingSetup">
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
                </font>
               </property>
               <property name="toolTip">
-               <string>Set all classification buttons for classify the samples</string>
+               <string>Set the labeling buttons to label the samples</string>
               </property>
               <property name="text">
-               <string>Set Classification</string>
+               <string>Labeling setup</string>
               </property>
               <property name="autoDefault">
                <bool>false</bool>
@@ -797,7 +797,7 @@
               <x>0</x>
               <y>0</y>
               <width>254</width>
-              <height>358</height>
+              <height>397</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -814,7 +814,7 @@
               <number>0</number>
              </property>
              <item>
-              <layout class="QGridLayout" name="gridButtonsClassification">
+              <layout class="QGridLayout" name="Grid_LabelingButtons">
                <property name="leftMargin">
                 <number>0</number>
                </property>
@@ -863,12 +863,12 @@
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="QPBtn_unclassifySampleButton">
+          <widget class="QPushButton" name="QPBtn_unlabelSampleButton">
            <property name="styleSheet">
             <string notr="true">color: &quot;gray&quot;;</string>
            </property>
            <property name="text">
-            <string>unclassify sample</string>
+            <string>unlabel sample</string>
            </property>
            <property name="flat">
             <bool>true</bool>
@@ -952,7 +952,7 @@
             </font>
            </property>
            <property name="text">
-            <string>samples classified</string>
+            <string>samples labeled</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -960,14 +960,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QProgressBar" name="QPBar_ClassificationStatus">
+          <widget class="QProgressBar" name="QPBar_LabelingStatus">
            <property name="font">
             <font>
              <pointsize>9</pointsize>
             </font>
            </property>
            <property name="toolTip">
-            <string>classified / total</string>
+            <string>labeled / total</string>
            </property>
            <property name="minimum">
             <number>0</number>

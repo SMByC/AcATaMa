@@ -22,8 +22,8 @@
 # This script merge different AcATaMa yaml saved files.
 # The general purpose is when you have a big sample file,
 # you clip/divide it in multiples sample files with the idea
-# that different people can help to classify it. When all
-# individual files are ready (classified) run this script
+# that different people can help to label it. When all
+# individual files are ready (labeled) run this script
 # to merge all yamls files in one, then you can load it
 # again in AcATaMa and you can get the result of accuracy
 # assessment of the original yaml of the big sample file.
@@ -31,7 +31,7 @@
 # Example:
 # $ python acatama_yamls_merger.py original_yml.yml clip_01.yml clip_02.yml ...
 #                                         |              |           |
-#                                 (not classified) (individual files classified)
+#                                 (not labeled) (individual files labeled)
 
 import argparse
 import yaml

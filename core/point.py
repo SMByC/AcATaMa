@@ -133,16 +133,16 @@ class RandomPoint(Point):
         return False
 
 
-class ClassificationPoint(Point):
+class LabelingPoint(Point):
 
     def __init__(self, x, y, shape_id=None):
-        super(ClassificationPoint, self).__init__(x, y)
+        super(LabelingPoint, self).__init__(x, y)
         # shape id is the order of the points inside the shapefile
         self.shape_id = shape_id
-        # classification button id
-        self.classif_id = None
+        # label button id
+        self.label_id = None
         # status for this point
-        self.is_classified = False
+        self.is_labeled = False
 
     def fit_to(self, view_widget, radius):
         # fit to current sample with min radius of extent

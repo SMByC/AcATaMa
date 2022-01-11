@@ -96,13 +96,13 @@ def get_html(accu_asse):
         </head>
         <body>
         '''
-    html += "<h2>Classification accuracy assessment results</h2>"
+    html += "<h2>Analysis - Accuracy assessment results</h2>"
     html += "<p><strong>Thematic raster:</strong> {}</p>".format(os.path.basename(accu_asse.ThematicR.file_path))
     html += "<p><strong>Sampling file:</strong> {}</p>".format(
-        os.path.basename(get_file_path_of_layer(accu_asse.classification.sampling_layer)))
+        os.path.basename(get_file_path_of_layer(accu_asse.response_design.sampling_layer)))
     html += "<p><strong>Sampling type:</strong> {}</p>".format(accu_asse.sampling_type)
-    html += "<p><strong>Classification status:</strong> {}/{} samples classified</p>".format(
-        accu_asse.classification.total_classified, accu_asse.classification.num_points)
+    html += "<p><strong>Response design state:</strong> {}/{} samples labeled</p>".format(
+        accu_asse.response_design.total_labeled, accu_asse.response_design.num_points)
 
     # warning block if the thematic has a geographic units
     if accu_asse.base_area_unit == QgsUnitTypes.AreaSquareDegrees:
@@ -113,7 +113,7 @@ def get_html(accu_asse):
     # warning block for samples outside the thematic raster area or inside the no data values
     if accu_asse.samples_outside_the_thematic:
         html += "<p style='color:black;background-color:#ffc53a;white-space:pre;padding:4px'><strong>Warning!</strong><br/>" \
-                "There are {} samples classified that are outside the thematic raster area or inside the no data values:<br/>".format(
+                "There are {} samples labeled that are outside the thematic raster area or inside the no data values:<br/>".format(
             len(accu_asse.samples_outside_the_thematic))
         for idx, sample in enumerate(accu_asse.samples_outside_the_thematic):
             html += "    {}) Sample ID: {}, Coordinate: {},{}<br/>".format(idx+1, sample.shape_id, int(sample.QgsPnt.x()), int(sample.QgsPnt.y()))
@@ -598,11 +598,11 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows.append([os.path.basename(accu_asse.ThematicR.file_path)])
     csv_rows.append([])
     csv_rows.append(["Sampling file:"])
-    csv_rows.append([os.path.basename(get_file_path_of_layer(accu_asse.classification.sampling_layer))])
+    csv_rows.append([os.path.basename(get_file_path_of_layer(accu_asse.response_design.sampling_layer))])
     csv_rows.append([])
     csv_rows.append(["Classification status:"])
-    csv_rows.append(["{}/{} samples classified".format(accu_asse.classification.total_classified,
-                                                       accu_asse.classification.num_points)])
+    csv_rows.append(["{}/{} samples labeled".format(accu_asse.response_design.total_labeled,
+                                                    accu_asse.response_design.num_points)])
 
     ###########################################################################
     csv_rows.append([])

@@ -25,22 +25,22 @@ from qgis.PyQt.QtCore import NULL
 from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsVectorFileWriter, Qgis, QgsUnitTypes
 from qgis.utils import iface
 
-from AcATaMa.core.point import ClassificationPoint
+from AcATaMa.core.point import LabelingPoint
 from AcATaMa.core.raster import Raster
 from AcATaMa.utils.system_utils import wait_process
 
 
-class Classification(object):
+class ResponseDesign(object):
     # save instances for each sampling layer
     instances = {}
 
     def __init__(self, sampling_layer):
         self.sampling_layer = sampling_layer
-        # for store the classification buttons properties
-        # {classif_id: {"name", "color", "thematic_class"}}
+        # for store the label buttons properties
+        # {classif_id: {"name", "color", "thematic_class"}}  # TODO migration
         self.buttons_config = None
         # get all points from the layer
-        # [ClassificationPoint, ClassificationPoint, ...]
+        # [ClassificationPoint, ClassificationPoint, ...]  # TODO migration
         self.num_points = None
         self.points = self.get_points_from_shapefile()
         # save and init the current sample index
@@ -59,14 +59,14 @@ class Classification(object):
         # save views widget config
         # {N: {"view_name", "layer_name", "render_file_path", "render_activated", "scale_factor"}, ...}
         self.view_widgets_config = {}
-        # classification dialog size
+        # response design dialog size
         self.dialog_size = None
-        # if this classification was made with thematic classes
+        # if this response design was made with thematic classes
         self.with_thematic_classes = False
-        # init classification status
-        self.total_classified = 0
-        self.total_unclassified = self.num_points
-        # when all points are classified
+        # init label status
+        self.total_labeled = 0
+        self.total_unlabel = self.num_points
+        # when all points are labeled
         self.is_completed = False
         # sampling type needs for accuracy assessment results
         # -1 = None
@@ -80,28 +80,28 @@ class Classification(object):
         # shuffle the list items
         shuffle(self.points)
         # save instance
-        Classification.instances[sampling_layer] = self
+        ResponseDesign.instances[sampling_layer] = self
 
-    def classify_the_current_sample(self, classif_id):
+    def label_the_current_sample(self, classif_id):
         current_sample = self.points[self.current_sample_idx]
-        if classif_id:  # classify with valid integer class
-            if current_sample.is_classified is False:  # only when the classification is changed
-                self.total_classified += 1
-                self.total_unclassified -= 1 if self.total_unclassified > 0 else 0
-            current_sample.classif_id = classif_id
-            current_sample.is_classified = True
-        else:  # unclassify the sample
-            if current_sample.is_classified is True:  # only when the classification is changed
-                self.total_classified -= 1 if self.total_classified > 0 else 0
-                self.total_unclassified += 1
-            current_sample.classif_id = None
-            current_sample.is_classified = False
-        self.is_completed = True if self.total_unclassified == 0 else False
+        if classif_id:  # label with valid integer class
+            if current_sample.is_labeled is False:  # only when the label is changed
+                self.total_labeled += 1
+                self.total_unlabel -= 1 if self.total_unlabel > 0 else 0
+            current_sample.label_id = classif_id
+            current_sample.is_labeled = True
+        else:  # unlabel the sample
+            if current_sample.is_labeled is True:  # only when the sample label is changed
+                self.total_labeled -= 1 if self.total_labeled > 0 else 0
+                self.total_unlabel += 1
+            current_sample.label_id = None
+            current_sample.is_labeled = False
+        self.is_completed = True if self.total_unlabel == 0 else False
 
-    def reload_classification_status(self):
-        self.total_classified = sum(sample.is_classified for sample in self.points)
-        self.total_unclassified = sum(not sample.is_classified for sample in self.points)
-        self.is_completed = True if self.total_unclassified == 0 else False
+    def reload_labeling_status(self):
+        self.total_labeled = sum(sample.is_labeled for sample in self.points)
+        self.total_unlabel = sum(not sample.is_labeled for sample in self.points)
+        self.is_completed = True if self.total_unlabel == 0 else False
 
     def get_points_from_shapefile(self):
         points = []
@@ -114,22 +114,22 @@ class Classification(object):
             else:
                 shape_id = enum_id
             x, y = geom.asPoint()
-            points.append(ClassificationPoint(x, y, shape_id))
+            points.append(LabelingPoint(x, y, shape_id))
         self.num_points = len(points)
         return points
 
     @wait_process
     def reload_sampling_file(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        # update all points from file and restore its status classification
+        # update all points from file and restore its labels
         points_from_shapefile = self.get_points_from_shapefile()
         modified = 0
         for point in self.points:
             if point.shape_id in [p.shape_id for p in points_from_shapefile]:
                 point_to_restore = [p for p in points_from_shapefile if p.shape_id == point.shape_id][0]
-                point_to_restore.classif_id = point.classif_id
-                if point_to_restore.classif_id is not None:
-                    point_to_restore.is_classified = True
+                point_to_restore.label_id = point.label_id
+                if point_to_restore.label_id is not None:
+                    point_to_restore.is_labeled = True
                 if point.QgsPnt != point_to_restore.QgsPnt:
                     modified += 1
         # calc added/removed changes
@@ -146,16 +146,16 @@ class Classification(object):
             return
         # reassign points
         self.points = points_from_shapefile
-        # update the status and labels plugin with the current sampling classification
-        self.reload_classification_status()
-        AcATaMa.dockwidget.update_the_status_of_classification()
+        # update the status and labels for the current sampling file
+        self.reload_labeling_status()
+        AcATaMa.dockwidget.update_response_design_state()
         # notify
         iface.messageBar().pushMessage("AcATaMa", "Sampling file reloaded successfully: {} modified,"
                                                   "{} added and {} removed".format(modified, added, removed),
                                        level=Qgis.Success)
 
     @wait_process
-    def save_sampling_classification(self, file_out):
+    def save_sampling_labeled(self, file_out):
         crs = self.sampling_layer.crs().toWkt()
         # create layer
         vlayer = QgsVectorLayer("Point?crs=" + crs, "temporary_points", "memory")
@@ -163,14 +163,14 @@ class Classification(object):
         # add fields
         if self.with_thematic_classes:
             pr.addAttributes([QgsField("ID", QVariant.Int),
-                              QgsField("Class Name", QVariant.String),
-                              QgsField("Classified", QVariant.Int),
+                              QgsField("Label", QVariant.String),
+                              QgsField("Is labeled", QVariant.Int),
                               QgsField("Thematic Class", QVariant.Int),
                               QgsField("Match", QVariant.String)])
         else:
             pr.addAttributes([QgsField("ID", QVariant.Int),
-                              QgsField("Class Name", QVariant.String),
-                              QgsField("Classif ID", QVariant.Int)])
+                              QgsField("Label", QVariant.String),
+                              QgsField("Classif ID", QVariant.Int)])  # TODO migration
         vlayer.updateFields()  # tell the vector layer to fetch changes from the provider
 
         if self.with_thematic_classes:
@@ -184,16 +184,16 @@ class Classification(object):
             # add a feature
             feature = QgsFeature()
             feature.setGeometry(point.QgsGeom)
-            name = self.buttons_config[point.classif_id]["name"] if point.is_classified else NULL
+            name = self.buttons_config[point.label_id]["name"] if point.is_labeled else NULL
             if self.with_thematic_classes:
-                classified = int(
-                    self.buttons_config[point.classif_id]["thematic_class"]) if point.is_classified else NULL
-                thematic = int(ThematicR.get_pixel_value_from_pnt(point.QgsPnt)) \
-                    if point.is_classified and ThematicR.get_pixel_value_from_pnt(point.QgsPnt) else NULL
-                match = ('Yes' if thematic == classified else 'No') if point.is_classified else NULL
-                feature.setAttributes([point.shape_id, name, classified, thematic, match])
+                thematic_class = int(
+                    self.buttons_config[point.label_id]["thematic_class"]) if point.is_labeled else NULL
+                thematic_map_value = int(ThematicR.get_pixel_value_from_pnt(point.QgsPnt)) \
+                    if point.is_labeled and ThematicR.get_pixel_value_from_pnt(point.QgsPnt) else NULL
+                match = ('Yes' if thematic_map_value == thematic_class else 'No') if point.is_labeled else NULL
+                feature.setAttributes([point.shape_id, name, thematic_class, thematic_map_value, match])
             else:
-                feature.setAttributes([point.shape_id, name, point.classif_id])
+                feature.setAttributes([point.shape_id, name, point.label_id])
             pr.addFeatures([feature])
 
         vlayer.commitChanges()

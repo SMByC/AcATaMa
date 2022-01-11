@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Classification accuracy assessment results</string>
+   <string>Analysis - Accuracy assessment results</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">

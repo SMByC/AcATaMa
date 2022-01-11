@@ -25,10 +25,10 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication,
 from qgis.PyQt.QtWidgets import QAction, QMessageBox
 from qgis.PyQt.QtGui import QIcon
 
-from AcATaMa.core.accuracy_assessment import AccuracyAssessmentDialog
+from AcATaMa.core.analysis import AccuracyAssessmentWindow
 from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget
 from AcATaMa.gui.about_dialog import AboutDialog
-from AcATaMa.gui.classification_dialog import ClassificationDialog
+from AcATaMa.gui.response_design_window import ResponseDesignWindow
 from AcATaMa.utils.qgis_utils import unload_layer
 
 # Initialize Qt resources from file resources.py
@@ -141,11 +141,11 @@ class AcATaMa(object):
     def onClosePlugin(self):
         """Cleanup necessary items here when plugin dockwidget is closed"""
         print("** CLOSING AcATaMa")
-        if ClassificationDialog.is_opened:
-            self.dockwidget.classification_dialog.closing()
-            self.dockwidget.classification_dialog.reject(is_ok_to_close=True)
+        if ResponseDesignWindow.is_opened:
+            self.dockwidget.response_design_window.closing()
+            self.dockwidget.response_design_window.reject(is_ok_to_close=True)
 
-        if AccuracyAssessmentDialog.is_opened:
+        if AccuracyAssessmentWindow.is_opened:
             self.dockwidget.accuracy_assessment_dialog.closing()
             self.dockwidget.accuracy_assessment_dialog.reject(is_ok_to_close=True)
 
@@ -181,7 +181,7 @@ class AcATaMa(object):
 
     def clear_reload_plugin(self):
         # first prompt
-        quit_msg = "Are you sure you want to: clean tmp files, delete unsaved classification, " \
+        quit_msg = "Are you sure you want to: clean tmp files, delete unsaved labels, " \
                    "clean all fields and reload plugin?"
         reply = QMessageBox.question(None, 'Clear all and reload the AcATaMa plugin.',
                                      quit_msg, QMessageBox.Yes, QMessageBox.No)

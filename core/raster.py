@@ -53,6 +53,7 @@ def get_color_table(layer, band=1, nodata=None):
     check_int_values = [int(float(xml_item.get("value"))) == float(xml_item.get("value")) for xml_item in
                         xml_style_items]
 
+    # TODO: implement auto generation style
     if not xml_style_items or False in check_int_values:
         msg = "The selected layer \"{}\" {}doesn't have an appropriate colors/values style for AcATaMa, " \
               "it must be unique values or singleband pseudocolor with integer values. " \

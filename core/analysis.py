@@ -26,18 +26,18 @@ from qgis.core import Qgis, QgsUnitTypes
 from qgis.utils import iface
 
 from AcATaMa.core.raster import Raster
-from AcATaMa.core.classification import Classification
+from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.gui import accuracy_assessment_results
 from AcATaMa.utils.qgis_utils import get_file_path_of_layer
 from AcATaMa.utils.system_utils import wait_process
 
 
-class AccuracyAssessment(object):
+class Analysis(object):
 
-    def __init__(self, classification):
+    def __init__(self, response_design):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
 
-        self.classification = classification
+        self.response_design = response_design
         self.ThematicR = Raster(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicRaster,
                                 band=int(AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText())
                                 if AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText() else None,
@@ -61,30 +61,30 @@ class AccuracyAssessment(object):
         AcATaMa.dockwidget.QPBtn_ComputeTheAccurasyAssessment.setText("Processing, please wait ...")
         QApplication.processEvents()
 
-        # get labels from classification buttons
+        # get labels from labeling buttons
         labels = {}
-        for button_config in self.classification.buttons_config.values():
+        for button_config in self.response_design.buttons_config.values():
             labels[button_config["thematic_class"]] = button_config["name"]
 
-        # get the classified and thematic map values
-        thematic_map_values = []
-        classified_values = []
+        # get the labeled thematic classes and thematic map values
+        thematic_map_values = []  # thematic map values for the sampling points
+        thematic_classes = []  # thematic classes used in buttons
         samples_outside_the_thematic = []
-        classification_points = [point for point in self.classification.points if point.is_classified]
-        points_ordered = sorted(classification_points, key=lambda p: p.shape_id)
+        points_labeled = [point for point in self.response_design.points if point.is_labeled]
+        points_ordered = sorted(points_labeled, key=lambda p: p.shape_id)
         for point in points_ordered:
-            # classification from the pixel values in the thematic map
+            # response design labeling from the pixel values in the thematic map
             thematic_map_value = self.ThematicR.get_pixel_value_from_pnt(point.QgsPnt)
             if not thematic_map_value:
                 samples_outside_the_thematic.append(point)
                 continue
             thematic_map_values.append(int(thematic_map_value))
-            # classified value made/checked by user with classification buttons
-            classified_value = self.classification.buttons_config[point.classif_id]["thematic_class"]
-            classified_values.append(int(classified_value))
+            # thematic classes used in buttons
+            thematic_class = self.response_design.buttons_config[point.label_id]["thematic_class"]
+            thematic_classes.append(int(thematic_class))
 
         # all unique and sorted values
-        values = sorted(set(thematic_map_values + classified_values))
+        values = sorted(set(thematic_map_values + thematic_classes))
         # Construct a value->index dictionary
         indices = dict((val, i) for (i, val) in enumerate(values))
 
@@ -99,11 +99,11 @@ class AccuracyAssessment(object):
         #   a | L4 |    |    |    |    |
         #
         error_matrix = [[0 for column in values] for row in values]
-        for thematic, classified in zip(thematic_map_values, classified_values):
-            error_matrix[indices[thematic]][indices[classified]] += 1
+        for thematic_map_value, thematic_class in zip(thematic_map_values, thematic_classes):
+            error_matrix[indices[thematic_map_value]][indices[thematic_class]] += 1
 
-        # calculate the total number of pixel in the thematic raster
-        # by each thematic raster class used in the classification buttons
+        # calculate the total number of pixels in the thematic raster
+        # by each thematic raster class used in the label buttons
         for thematic_map_value in values:
             if thematic_map_value not in self.thematic_pixels_count:
                 self.thematic_pixels_count[thematic_map_value] = self.ThematicR.get_total_pixels_by_value(thematic_map_value)
@@ -128,10 +128,10 @@ AREA_UNITS = [QgsUnitTypes.AreaSquareMeters, QgsUnitTypes.AreaSquareKilometers, 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'accuracy_assessment_dialog.ui'))
+    plugin_folder, 'ui', 'accuracy_assessment_window.ui'))
 
 
-class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
+class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
     is_opened = False
 
     def __init__(self):
@@ -143,23 +143,23 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
         self.DialogButtons.button(QDialogButtonBox.Save).clicked.connect(self.export_to_csv)
 
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile_AA.currentLayer()
+        sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile_A.currentLayer()
 
         # get AccuracyAssessment or init new instance
         if sampling_layer:
             # sampling file valid
-            if sampling_layer in Classification.instances:
-                # classification exists for this file
-                classification = Classification.instances[sampling_layer]
-                if classification.accuracy_assessment:
-                    self.accuracy_assessment = classification.accuracy_assessment
-                    # restore config to dialog
+            if sampling_layer in ResponseDesign.instances:
+                # response design exists for this file
+                response_design = ResponseDesign.instances[sampling_layer]
+                if response_design.accuracy_assessment:
+                    self.accuracy_assessment = response_design.accuracy_assessment
+                    # restore config to window
                     self.z_score.setValue(self.accuracy_assessment.z_score)
                     self.CSV_separator.setText(self.accuracy_assessment.csv_separator)
                     self.CSV_decimal_sep.setText(self.accuracy_assessment.csv_decimal)
                 else:
-                    self.accuracy_assessment = AccuracyAssessment(classification)
-                    classification.accuracy_assessment = self.accuracy_assessment
+                    self.accuracy_assessment = Analysis(response_design)
+                    response_design.accuracy_assessment = self.accuracy_assessment
 
         # fill the area units
         self.area_unit.clear()
@@ -189,17 +189,17 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
     def show(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         # first check
-        if self.accuracy_assessment.classification.total_classified == 0:
+        if self.accuracy_assessment.response_design.total_labeled == 0:
             iface.messageBar().pushMessage("AcATaMa",
-                                           "The accuracy assessment needs at least one sample classified",
+                                           "The accuracy assessment needs at least one sample labeled",
                                            level=Qgis.Warning)
             return
 
-        AccuracyAssessmentDialog.is_opened = True
+        AccuracyAssessmentWindow.is_opened = True
         # first, set the accuracy assessment type based on the sampling type
         self.accuracy_assessment.sampling_type = \
             {0: 'Simple random sampling', 1: 'Simple random sampling post-stratified', 2: 'Stratified random sampling'}\
-            [AcATaMa.dockwidget.QCBox_SamplingType_AA.currentIndex()]
+            [AcATaMa.dockwidget.QCBox_SamplingType_A.currentIndex()]
         # second, compute the accuracy assessment
         self.accuracy_assessment.compute()
         # set content results in HTML
@@ -207,12 +207,12 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
         self.ResultsHTML.zoomOut()
 
         AcATaMa.dockwidget.QPBtn_ComputeTheAccurasyAssessment.setText("Accuracy assessment is opened, click to show")
-        AcATaMa.dockwidget.QGBox_SamplingSelection_AA.setDisabled(True)
-        super(AccuracyAssessmentDialog, self).show()
+        AcATaMa.dockwidget.QGBox_SamplingSelection_A.setDisabled(True)
+        super(AccuracyAssessmentWindow, self).show()
 
     def reload(self, msg_bar=True):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        # set adjust variables from dialog
+        # set adjust variables from window
         self.accuracy_assessment.z_score = self.z_score.value()
         self.accuracy_assessment.area_unit = AREA_UNITS[self.area_unit.currentIndex()]
         # first compute the accuracy assessment
@@ -222,13 +222,13 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
         AcATaMa.dockwidget.QPBtn_ComputeTheAccurasyAssessment.setText("Accuracy assessment is opened, click to show")
         if msg_bar:
             self.MsgBar.pushMessage(
-                "Reload successfully from classification status of \"{}\"".format(
-                    AcATaMa.dockwidget.QCBox_SamplingFile_AA.currentText()), level=Qgis.Success)
+                "Reload successfully from response design state for \"{}\"".format(
+                    AcATaMa.dockwidget.QCBox_SamplingFile_A.currentText()), level=Qgis.Success)
 
     def export_to_csv(self):
-        # get file path to suggest to save but not in tmp directory
+        # get file path to suggest where to save but not in tmp directory
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        file_path = get_file_path_of_layer(AcATaMa.dockwidget.QCBox_SamplingFile_AA.currentLayer())
+        file_path = get_file_path_of_layer(AcATaMa.dockwidget.QCBox_SamplingFile_A.currentLayer())
         path, filename = os.path.split(file_path)
         if AcATaMa.dockwidget.tmp_dir in path:
             path = os.path.split(get_file_path_of_layer(AcATaMa.dockwidget.QCBox_ThematicRaster.currentLayer()))[0]
@@ -254,14 +254,14 @@ class AccuracyAssessmentDialog(QDialog, FORM_CLASS):
 
     def closing(self):
         """
-        Do this before close the classification dialog
+        Do this before close the accuracy assessment windows
         """
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        AccuracyAssessmentDialog.is_opened = False
+        AccuracyAssessmentWindow.is_opened = False
         AcATaMa.dockwidget.QPBtn_ComputeTheAccurasyAssessment.setText("Compute the accuracy assessment")
-        AcATaMa.dockwidget.QGBox_SamplingSelection_AA.setEnabled(True)
+        AcATaMa.dockwidget.QGBox_SamplingSelection_A.setEnabled(True)
         self.reject(is_ok_to_close=True)
 
     def reject(self, is_ok_to_close=False):
         if is_ok_to_close:
-            super(AccuracyAssessmentDialog, self).reject()
+            super(AccuracyAssessmentWindow, self).reject()

@@ -125,9 +125,9 @@ It set automatically from image if the layer has the nodata value set.</string>
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
-      <widget class="QWidget" name="tab_sampling">
+      <widget class="QWidget" name="tab_sampling_design">
        <attribute name="title">
         <string>Sampling design</string>
        </attribute>
@@ -148,7 +148,7 @@ It set automatically from image if the layer has the nodata value set.</string>
          <number>0</number>
         </property>
         <item>
-         <widget class="QScrollArea" name="scrollArea_S">
+         <widget class="QScrollArea" name="scrollArea_SD">
           <property name="frameShape">
            <enum>QFrame::NoFrame</enum>
           </property>
@@ -836,9 +836,9 @@ It set automatically from image if the layer has the nodata value set.</string>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_classification">
+      <widget class="QWidget" name="tab_response_design">
        <attribute name="title">
-        <string>Classification</string>
+        <string>Response design</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_21">
         <property name="spacing">
@@ -857,7 +857,7 @@ It set automatically from image if the layer has the nodata value set.</string>
          <number>0</number>
         </property>
         <item>
-         <widget class="QScrollArea" name="scrollArea_C">
+         <widget class="QScrollArea" name="scrollArea_RD">
           <property name="frameShape">
            <enum>QFrame::NoFrame</enum>
           </property>
@@ -883,19 +883,6 @@ It set automatically from image if the layer has the nodata value set.</string>
                <string>Sampling File</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_23">
-               <item>
-                <widget class="QLabel" name="label_22">
-                 <property name="text">
-                  <string>Select the sampling file to classify:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
                <item>
                 <widget class="QWidget" name="widget_26" native="true">
                  <layout class="QHBoxLayout" name="horizontalLayout_26">
@@ -972,63 +959,63 @@ It set automatically from image if the layer has the nodata value set.</string>
                  </layout>
                 </widget>
                </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="QGBox_ClassificationStatus">
-              <property name="title">
-               <string>Classification Status</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_27">
                <item>
-                <widget class="QWidget" name="widget_4" native="true">
-                 <layout class="QVBoxLayout" name="verticalLayout_8">
-                  <property name="spacing">
-                   <number>0</number>
-                  </property>
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
+                <widget class="QGroupBox" name="QGBox_LabelingStatus">
+                 <property name="title">
+                  <string>Labeling Status</string>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_27">
                   <item>
-                   <widget class="QProgressBar" name="QPBar_ClassificationStatus">
-                    <property name="enabled">
-                     <bool>true</bool>
-                    </property>
-                    <property name="toolTip">
-                     <string>The status of the samples classification for this sampling file</string>
-                    </property>
-                    <property name="minimum">
-                     <number>0</number>
-                    </property>
-                    <property name="maximum">
-                     <number>1</number>
-                    </property>
-                    <property name="value">
-                     <number>0</number>
-                    </property>
-                    <property name="textVisible">
-                     <bool>false</bool>
-                    </property>
-                    <property name="format">
-                     <string>%v/%m samples classified</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="QLabel_ClassificationStatus">
-                    <property name="styleSheet">
-                     <string notr="true">color: &quot;gray&quot;;</string>
-                    </property>
-                    <property name="text">
-                     <string>No sampling file selected</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignHCenter|Qt::AlignTop</set>
-                    </property>
+                   <widget class="QWidget" name="widget_4" native="true">
+                    <layout class="QVBoxLayout" name="verticalLayout_8">
+                     <property name="spacing">
+                      <number>0</number>
+                     </property>
+                     <property name="leftMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="rightMargin">
+                      <number>0</number>
+                     </property>
+                     <item>
+                      <widget class="QProgressBar" name="QPBar_LabelingStatus">
+                       <property name="enabled">
+                        <bool>true</bool>
+                       </property>
+                       <property name="toolTip">
+                        <string>The status of the response design for this sampling file</string>
+                       </property>
+                       <property name="minimum">
+                        <number>0</number>
+                       </property>
+                       <property name="maximum">
+                        <number>1</number>
+                       </property>
+                       <property name="value">
+                        <number>0</number>
+                       </property>
+                       <property name="textVisible">
+                        <bool>false</bool>
+                       </property>
+                       <property name="format">
+                        <string>%v/%m samples labeled</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="QLabel_LabelingStatus">
+                       <property name="styleSheet">
+                        <string notr="true">color: &quot;gray&quot;;</string>
+                       </property>
+                       <property name="text">
+                        <string>No sampling file selected</string>
+                       </property>
+                       <property name="alignment">
+                        <set>Qt::AlignHCenter|Qt::AlignTop</set>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
                    </widget>
                   </item>
                  </layout>
@@ -1038,9 +1025,9 @@ It set automatically from image if the layer has the nodata value set.</string>
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="QGBox_SamplingClassification">
+             <widget class="QGroupBox" name="QGBox_ResponseDesignWindow">
               <property name="title">
-               <string>Sampling Classification</string>
+               <string>Response Design Window</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_31">
                <item>
@@ -1193,12 +1180,12 @@ It set automatically from image if the layer has the nodata value set.</string>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="QPBtn_OpenClassificationDialog">
+                <widget class="QPushButton" name="QPBtn_OpenResponseDesignWindow">
                  <property name="toolTip">
-                  <string>Classify the samples of the sampling file selected one by one</string>
+                  <string>To apply the response design for the sampling file selected</string>
                  </property>
                  <property name="text">
-                  <string>Open the classification dialog</string>
+                  <string>Open response design window</string>
                  </property>
                 </widget>
                </item>
@@ -1206,9 +1193,9 @@ It set automatically from image if the layer has the nodata value set.</string>
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="QGBox_saveSamplingClassified">
+             <widget class="QGroupBox" name="QGBox_saveSamplingLabeled">
               <property name="title">
-               <string>Save Sampling Classified</string>
+               <string>Save Sampling Labeled</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_30">
                <item>
@@ -1220,7 +1207,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                   </sizepolicy>
                  </property>
                  <property name="text">
-                  <string>Save the sampling file with the classification made:</string>
+                  <string>Save the sampling file with the labels made:</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -1259,9 +1246,9 @@ It set automatically from image if the layer has the nodata value set.</string>
                    </spacer>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="QPBtn_saveSamplingClassification">
+                   <widget class="QPushButton" name="QPBtn_saveSamplingLabeled">
                     <property name="text">
-                     <string>Save sampling+classification</string>
+                     <string>Save sampling labeled</string>
                     </property>
                    </widget>
                   </item>
@@ -1311,7 +1298,7 @@ It set automatically from image if the layer has the nodata value set.</string>
          <number>0</number>
         </property>
         <item>
-         <widget class="QScrollArea" name="scrollArea_AA">
+         <widget class="QScrollArea" name="scrollArea_A">
           <property name="frameShape">
            <enum>QFrame::NoFrame</enum>
           </property>
@@ -1321,7 +1308,7 @@ It set automatically from image if the layer has the nodata value set.</string>
           <property name="widgetResizable">
            <bool>true</bool>
           </property>
-          <widget class="QWidget" name="scrollAreaWidgetContents_AA">
+          <widget class="QWidget" name="scrollAreaWidgetContents_A">
            <property name="geometry">
             <rect>
              <x>0</x>
@@ -1332,15 +1319,15 @@ It set automatically from image if the layer has the nodata value set.</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_11">
             <item>
-             <widget class="QGroupBox" name="QGBox_SamplingSelection_AA">
+             <widget class="QGroupBox" name="QGBox_SamplingSelection_A">
               <property name="title">
-               <string>Sampling File Classified</string>
+               <string>Sampling File Labeled</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_25">
                <item>
                 <widget class="QLabel" name="label_23">
                  <property name="text">
-                  <string>Select the classified sampling file (fully or partially classified) to calculate the analysis:</string>
+                  <string>Select the sampling file labeled (fully or partially) to calculate the analysis:</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -1360,7 +1347,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QgsMapLayerComboBox" name="QCBox_SamplingFile_AA">
+                   <widget class="QgsMapLayerComboBox" name="QCBox_SamplingFile_A">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
                       <horstretch>0</horstretch>
@@ -1382,7 +1369,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="QLabel_SamplingFileStatus_AA">
+                <widget class="QLabel" name="QLabel_SamplingFileStatus_A">
                  <property name="styleSheet">
                   <string notr="true">color: &quot;gray&quot;;</string>
                  </property>
@@ -1395,7 +1382,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                 </widget>
                </item>
                <item>
-                <widget class="QWidget" name="QGBox_SamplingType_AA" native="true">
+                <widget class="QWidget" name="QGBox_SamplingType_A" native="true">
                  <layout class="QVBoxLayout" name="verticalLayout">
                   <item>
                    <widget class="QLabel" name="label_24">
@@ -1411,7 +1398,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QComboBox" name="QCBox_SamplingType_AA">
+                   <widget class="QComboBox" name="QCBox_SamplingType_A">
                     <property name="currentIndex">
                      <number>-1</number>
                     </property>
@@ -1558,7 +1545,7 @@ It set automatically from image if the layer has the nodata value set.</string>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="QPBtn_loadClassificationConfig">
+           <widget class="QPushButton" name="QPBtn_RestoreAcatamaState">
             <property name="toolTip">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Restore to a previous saved of AcATaMa configuration and state&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
@@ -1572,9 +1559,9 @@ It set automatically from image if the layer has the nodata value set.</string>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="QPBtn_saveClassificationConfig">
+           <widget class="QPushButton" name="QPBtn_SaveAcatamaState">
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Save all configuration and state of AcATaMa, such as: sampling classification, buttons, config dialogs, config of the classification views, navigation, sampling design, accuracy result settings, among others.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Save all configuration and state of AcATaMa, such as: sampling design, response design state, labels state, buttons, config dialogs, config of the response design views, navigation, analysis settings, among others.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
              <string>Save state</string>
@@ -1692,7 +1679,7 @@ It set automatically from image if the layer has the nodata value set.</string>
   <customwidget>
    <class>QgsMapLayerComboBox</class>
    <extends>QComboBox</extends>
-   <header>qgis.gui</header>
+   <header>qgsmaplayercombobox.h</header>
   </customwidget>
   <customwidget>
    <class>GenerateSamplingWidget</class>

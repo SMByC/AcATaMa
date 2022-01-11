@@ -40,9 +40,9 @@ def error_handler(func):
             QApplication.processEvents()
 
             # select the message bar
-            from AcATaMa.gui.classification_dialog import ClassificationDialog
-            if ClassificationDialog.is_opened:
-                msg_bar = ClassificationDialog.instance.MsgBar
+            from AcATaMa.gui.response_design_window import ResponseDesignWindow
+            if ResponseDesignWindow.is_opened:
+                msg_bar = ResponseDesignWindow.instance.MsgBar
             else:
                 msg_bar = iface.messageBar()
 
