@@ -93,7 +93,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             dialog_title=self.tr("Select the thematic raster image to evaluate"),
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
         # select and check the thematic raster
-        self.QCBox_ThematicRaster.layerChanged[QgsMapLayer].connect(self.select_thematic_raster)
+        self.QCBox_ThematicRaster.layerChanged.connect(self.select_thematic_raster)
 
         # ######### simple random sampling ######### #
         self.widget_SimpRSwithCR.setHidden(True)
@@ -210,7 +210,6 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             # load to qgis and update combobox list
             load_and_select_filepath_in(combo_box, file_path)
 
-    @pyqtSlot(QgsMapLayer)
     def select_thematic_raster(self, layer):
         def clear_and_unset_the_thematic_raster():
             with block_signals_to(self.QCBox_ThematicRaster):
@@ -282,7 +281,6 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # enable sampling tab
         self.scrollAreaWidgetContents_S.setEnabled(True)
 
-    @pyqtSlot(QgsMapLayer)
     def select_categorical_raster_SimpRS(self, layer):
         # first check
         if not valid_file_selected_in(self.QCBox_CategRaster_SimpRS, "categorical raster"):
@@ -299,7 +297,6 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QCBox_band_CategRaster_SimpRS.clear()
         self.QCBox_band_CategRaster_SimpRS.addItems([str(x) for x in range(1, layer.bandCount() + 1)])
 
-    @pyqtSlot(QgsMapLayer)
     def select_categorical_raster_StraRS(self, layer):
         # first deselect/clear sampling method
         self.QCBox_StraRS_Method.setCurrentIndex(-1)
@@ -386,7 +383,6 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             sampling_selected.save_config(file_out)
             iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=Qgis.Success)
 
-    @pyqtSlot(QgsMapLayer)
     def update_response_design_state(self, sampling_layer=None):
         if sampling_layer is None:
             sampling_layer = self.QCBox_SamplingFile.currentLayer()
@@ -560,7 +556,6 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # open dialog
         self.response_design_window.show()
 
-    @pyqtSlot(QgsMapLayer)
     def set_sampling_file_in_analysis(self, sampling_layer=None):
         if sampling_layer is None:
             sampling_layer = self.QCBox_SamplingFile_A.currentLayer()
