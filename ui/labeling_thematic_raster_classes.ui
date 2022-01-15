@@ -22,7 +22,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Assign the thematic map classes to the labeling buttons:</string>
+      <string>Assign a thematic map class to this labeling button:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignJustify|Qt::AlignVCenter</set>
