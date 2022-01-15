@@ -2,7 +2,7 @@
 
 ![](icons/acatama.svg)
 
-The AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps. It was designed mainly for: to assess the accuracy of thematic maps, to estimate areas of the map classes, sampling design/classification and others.
+The AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps. It was designed mainly for: to assess the accuracy of thematic maps, to estimate areas of the map classes, sampling design/labeling and others.
 
 ![](docs/img/overview.jpg)
 

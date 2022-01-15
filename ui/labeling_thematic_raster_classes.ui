@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Thematic raster classes</string>
+   <string>Thematic map classes</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -22,7 +22,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Assign the thematic raster classes to the labeling buttons:</string>
+      <string>Assign the thematic map classes to the labeling buttons:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignJustify|Qt::AlignVCenter</set>

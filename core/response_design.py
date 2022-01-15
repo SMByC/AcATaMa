@@ -186,12 +186,12 @@ class ResponseDesign(object):
             feature.setGeometry(point.QgsGeom)
             name = self.buttons_config[point.label_id]["name"] if point.is_labeled else NULL
             if self.with_thematic_classes:
-                thematic_class = int(
+                validation_in_sample = int(
                     self.buttons_config[point.label_id]["thematic_class"]) if point.is_labeled else NULL
-                thematic_map_value = int(ThematicR.get_pixel_value_from_pnt(point.QgsPnt)) \
+                thematic_map_in_sample = int(ThematicR.get_pixel_value_from_pnt(point.QgsPnt)) \
                     if point.is_labeled and ThematicR.get_pixel_value_from_pnt(point.QgsPnt) else NULL
-                match = ('Yes' if thematic_map_value == thematic_class else 'No') if point.is_labeled else NULL
-                feature.setAttributes([point.shape_id, name, thematic_class, thematic_map_value, match])
+                match = ('Yes' if thematic_map_in_sample == validation_in_sample else 'No') if point.is_labeled else NULL
+                feature.setAttributes([point.shape_id, name, validation_in_sample, thematic_map_in_sample, match])
             else:
                 feature.setAttributes([point.shape_id, name, point.label_id])
             pr.addFeatures([feature])

@@ -66,47 +66,47 @@ class Analysis(object):
         for button_config in self.response_design.buttons_config.values():
             labels[button_config["thematic_class"]] = button_config["name"]
 
-        # get the labeled thematic classes and thematic map values
-        thematic_map_values = []  # thematic map values for the sampling points
-        thematic_classes = []  # thematic classes used in buttons
+        # get the labeled thematic map classes and validation values
+        thematic_map = []  # map values for the sampling points
+        validation = []  # user validation - labeling
         samples_outside_the_thematic = []
         points_labeled = [point for point in self.response_design.points if point.is_labeled]
         points_ordered = sorted(points_labeled, key=lambda p: p.shape_id)
         for point in points_ordered:
             # response design labeling from the pixel values in the thematic map
-            thematic_map_value = self.ThematicR.get_pixel_value_from_pnt(point.QgsPnt)
-            if not thematic_map_value:
+            thematic_map_in_sample = self.ThematicR.get_pixel_value_from_pnt(point.QgsPnt)
+            if not thematic_map_in_sample:
                 samples_outside_the_thematic.append(point)
                 continue
-            thematic_map_values.append(int(thematic_map_value))
+            thematic_map.append(int(thematic_map_in_sample))
             # thematic classes used in buttons
-            thematic_class = self.response_design.buttons_config[point.label_id]["thematic_class"]
-            thematic_classes.append(int(thematic_class))
+            validation_in_sample = self.response_design.buttons_config[point.label_id]["thematic_class"]
+            validation.append(int(validation_in_sample))
 
         # all unique and sorted values
-        values = sorted(set(thematic_map_values + thematic_classes))
+        values = sorted(set(thematic_map + validation))
         # Construct a value->index dictionary
         indices = dict((val, i) for (i, val) in enumerate(values))
 
         # calculate the error/confusion matrix
         # https://github.com/nltk/nltk/blob/develop/nltk/metrics/confusionmatrix.py
         #
-        #             classified
-        #   t |    | L1 | L2 | L3 | L4 |
-        #   h | L1 |    |    |    |    |
-        #   e | L2 |    |    |    |    |
-        #   m | L3 |    |    |    |    |
-        #   a | L4 |    |    |    |    |
+        #                validation
+        #     |    | L1 | L2 | L3 | L4 |
+        #   m | L1 |    |    |    |    |
+        #   a | L2 |    |    |    |    |
+        #   p | L3 |    |    |    |    |
+        #     | L4 |    |    |    |    |
         #
         error_matrix = [[0 for column in values] for row in values]
-        for thematic_map_value, thematic_class in zip(thematic_map_values, thematic_classes):
-            error_matrix[indices[thematic_map_value]][indices[thematic_class]] += 1
+        for thematic_map_in_sample, validation_in_sample in zip(thematic_map, validation):
+            error_matrix[indices[thematic_map_in_sample]][indices[validation_in_sample]] += 1
 
         # calculate the total number of pixels in the thematic raster
-        # by each thematic raster class used in the label buttons
-        for thematic_map_value in values:
-            if thematic_map_value not in self.thematic_pixels_count:
-                self.thematic_pixels_count[thematic_map_value] = self.ThematicR.get_total_pixels_by_value(thematic_map_value)
+        # by each thematic map class used in the label buttons
+        for thematic_map_in_sample in values:
+            if thematic_map_in_sample not in self.thematic_pixels_count:
+                self.thematic_pixels_count[thematic_map_in_sample] = self.ThematicR.get_total_pixels_by_value(thematic_map_in_sample)
 
         # values necessary for results
         self.values = values

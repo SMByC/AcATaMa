@@ -2,7 +2,7 @@
 
 ![](img/acatama.svg)
 
-The AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps. It was designed mainly for: to assess the accuracy of thematic maps, to estimate areas of the map classes, sampling design/classification and others.
+The AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps. It was designed mainly for: to assess the accuracy of thematic maps, to estimate areas of the map classes, sampling design, response design and others.
 
 The AcATaMa plugin was designed mainly with these keys goals:
 
@@ -40,8 +40,6 @@ At the bottom of the plugin there are 3 buttons:
 ## 1. Thematic map
 
 The `Thematic` section you can set the thematic map (needed for some process, see more in [use cases](#use-cases)).
-
-Optionally you can clip the thematic raster selected in an area of interest. After clipping the new thematic raster cut is automatically loaded.
 
 <img src="img/1a.png" width="100%">
 
@@ -143,7 +141,7 @@ For the classification follow these steps:
 
 * In `Classification` tab select the sampling file
 * Set the `Grid setting` it depends on the number of images to compare
-* Click in `Open the classification dialog`
+* Click in `Open the labeling window`
 
 <img src="img/3a.png" width="90%">
 
@@ -162,17 +160,17 @@ For the classification follow these steps (in classification dialog):
 
 #### Configuration buttons
 
-The configuration buttons dialog you can set all buttons for classify the samples, you can set the name, the color and (optionally) the thematic raster class.
+The configuration buttons dialog you can set all buttons for classify the samples, you can set the name, the color and (optionally) the thematic map class.
 
-- `Without thematic raster classes`: You must define the classification name and the color (the color is not mandatory). This configuration is for some case of use like as sampling design and others that don't need the thematic raster.
+- `Without thematic map classes`: You must define the classification name and the color (the color is not mandatory). This configuration is for some case of use like as sampling design and others that don't need the thematic raster.
 
     <img src="img/3c.png" width="60%">
 
-- `With thematic raster classes`: You must define the classification name, thematic raster class and the color, the color is auto filled when you pick the thematic raster class, after that you can change it if you want.
+- `With thematic map classes`: You must define the classification name, thematic map class and the color, the color is auto filled when you pick the thematic map class, after that you can change it if you want.
 
     <img src="img/3d.png" width="80%">
 
-> *Important:* The column `Thematic raster class` is available only if you set the thematic raster in [Thematic](#1-thematic-map) tab before open the dialog. You must configure the thematic raster class for all buttons if you want accuracy assessment result.
+> *Important:* The column `Thematic raster class` is available only if you set the thematic raster in [Thematic](#1-thematic-map) tab before open the dialog. You must configure the thematic map class for all buttons if you want accuracy assessment result.
 
 ## 4. Accuracy Assessment
 
@@ -260,7 +258,7 @@ Here there are some examples of cases of use of AcATaMa:
 
 1. Load a sampling file (in tab *Sampling*) (or continue from case 3)
 2. Classification and labeling of the sample points using the classification dialog
-3. Save the sampling file classified
+3. Save the sampling file labeled
 
 ### Case 5: Visual-check the co-registration pixel to pixel
 
@@ -291,7 +289,7 @@ SMByC: *smbyc (a) ideam.gov.co*
 
 ## How to cite
 
-Llano, X. C. (2019). AcATaMa - QGIS plugin for Accuracy Assessment of Thematic Maps, version XX.XX, https://plugins.qgis.org/plugins/AcATaMa/.
+Llano, X. C. (2021). AcATaMa - QGIS plugin for Accuracy Assessment of Thematic Maps, version XX.XX, https://plugins.qgis.org/plugins/AcATaMa/.
 
 ## License
 

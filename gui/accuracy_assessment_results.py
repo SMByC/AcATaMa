@@ -97,7 +97,7 @@ def get_html(accu_asse):
         <body>
         '''
     html += "<h2>Analysis - Accuracy assessment results</h2>"
-    html += "<p><strong>Thematic raster:</strong> {}</p>".format(os.path.basename(accu_asse.ThematicR.file_path))
+    html += "<p><strong>Thematic map:</strong> {}</p>".format(os.path.basename(accu_asse.ThematicR.file_path))
     html += "<p><strong>Sampling file:</strong> {}</p>".format(
         os.path.basename(get_file_path_of_layer(accu_asse.response_design.sampling_layer)))
     html += "<p><strong>Sampling type:</strong> {}</p>".format(accu_asse.sampling_type)
@@ -130,7 +130,7 @@ def get_html(accu_asse):
         <tr>
         <td class="empty"></td>
         <td class="empty"></td>
-         <th colspan="{table_size}">Classified values</th>
+         <th colspan="{table_size}">Validation</th>
             <td class="empty"></td>
             <td class="empty"></td>
             <td class="empty"></td>
@@ -326,7 +326,7 @@ def get_html(accu_asse):
             <tr>
             <td class="empty"></td>
             <td class="empty"></td>
-             <th colspan="{table_size}">Classified values</th>
+             <th colspan="{table_size}">Validation</th>
             </tr>
             <tr>
             <td class="empty"></td>
@@ -367,7 +367,7 @@ def get_html(accu_asse):
             <tr>
             <td class="empty"></td>
             <td class="empty"></td>
-             <th colspan="{table_size}">Classified values</th>
+             <th colspan="{table_size}">Validation</th>
             </tr>
             <tr>
             <td class="empty"></td>
@@ -414,7 +414,7 @@ def get_html(accu_asse):
             <tr>
             <td class="empty"></td>
             <td class="empty"></td>
-             <th colspan="{table_size}">Classified values</th>
+             <th colspan="{table_size}">Validation</th>
                 <td class="empty"></td>
             </tr>
             <tr>
@@ -471,7 +471,7 @@ def get_html(accu_asse):
             <tr>
             <td class="empty"></td>
             <td class="empty"></td>
-             <th colspan="{table_size}">Classified values</th>
+             <th colspan="{table_size}">Validation</th>
             </tr>
             <tr>
             <td class="empty"></td>
@@ -592,22 +592,22 @@ def get_html(accu_asse):
 @error_handler
 def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows = []
-    csv_rows.append(["Classification accuracy assessment results"])
+    csv_rows.append(["Analysis - Accuracy assessment results"])
     csv_rows.append([])
-    csv_rows.append(["Thematic raster:"])
+    csv_rows.append(["Thematic map:"])
     csv_rows.append([os.path.basename(accu_asse.ThematicR.file_path)])
     csv_rows.append([])
     csv_rows.append(["Sampling file:"])
     csv_rows.append([os.path.basename(get_file_path_of_layer(accu_asse.response_design.sampling_layer))])
     csv_rows.append([])
-    csv_rows.append(["Classification status:"])
+    csv_rows.append(["Response design state:"])
     csv_rows.append(["{}/{} samples labeled".format(accu_asse.response_design.total_labeled,
                                                     accu_asse.response_design.num_points)])
 
     ###########################################################################
     csv_rows.append([])
     csv_rows.append(["1) Error matrix:"])
-    csv_rows.append(["", "", "Classified values"])
+    csv_rows.append(["", "", "Validation"])
     labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
     csv_rows.append(["", ""] + labels + ["Total", "User accuracy",
@@ -616,7 +616,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     for idx_row, value in enumerate(accu_asse.values):
         r = []
         if idx_row == 0:
-            r.append("Thematic raster classes")
+            r.append("Classification")
         else:
             r.append("")
         r.append(value)
@@ -639,7 +639,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     ###########################################################################
     csv_rows.append([])
     csv_rows.append(["2) Error matrix of estimated area proportion:"])
-    csv_rows.append(["", "", "Classified values"])
+    csv_rows.append(["", "", "Validation"])
     labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
     csv_rows.append(["", ""] + labels + ["Wi"])
@@ -654,7 +654,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     for idx_row, value in enumerate(accu_asse.values):
         r = []
         if idx_row == 0:
-            r.append("Thematic raster classes")
+            r.append("Classification")
         else:
             r.append("")
         r.append(value)
@@ -667,7 +667,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     ###########################################################################
     csv_rows.append([])
     csv_rows.append(["3) Quadratic error matrix of estimated area proportion:"])
-    csv_rows.append(["", "", "Classified values"])
+    csv_rows.append(["", "", "Validation"])
     labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
     csv_rows.append(["", ""] + labels)
@@ -683,7 +683,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     for idx_row, value in enumerate(accu_asse.values):
         r = []
         if idx_row == 0:
-            r.append("Thematic raster classes")
+            r.append("Classification")
         else:
             r.append("")
         r.append(value)
@@ -697,7 +697,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows.append(["4) Accuracy matrices:"])
     csv_rows.append([])
     csv_rows.append(["User's accuracy matrix of estimated area proportion:"])
-    csv_rows.append(["", "", "Classified values"])
+    csv_rows.append(["", "", "Validation"])
     labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
     csv_rows.append(["", ""] + labels)
@@ -710,7 +710,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     for idx_row, value in enumerate(accu_asse.values):
         r = []
         if idx_row == 0:
-            r.append("Thematic raster classes")
+            r.append("Classification")
         else:
             r.append("")
         r.append(value)
@@ -719,7 +719,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
 
     csv_rows.append([])
     csv_rows.append(["Producer's accuracy matrix of estimated area proportion:"])
-    csv_rows.append(["", "", "Classified values"])
+    csv_rows.append(["", "", "Validation"])
     labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
     csv_rows.append(["", ""] + labels)
@@ -732,7 +732,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     for idx_row, value in enumerate(accu_asse.values):
         r = []
         if idx_row == 0:
-            r.append("Thematic raster classes")
+            r.append("Classification")
         else:
             r.append("")
         r.append(value)
