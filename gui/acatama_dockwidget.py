@@ -33,7 +33,7 @@ from AcATaMa.core import config
 from AcATaMa.core.analysis import AccuracyAssessmentWindow
 from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.core.sampling_design import do_simple_random_sampling, do_stratified_random_sampling, Sampling
-from AcATaMa.core.raster import get_nodata_value
+from AcATaMa.core.map import get_nodata_value
 from AcATaMa.gui.about_dialog import AboutDialog
 from AcATaMa.gui.response_design_window import ResponseDesignWindow
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_filepath_in, get_file_path_of_layer
@@ -83,30 +83,30 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QPBtn_PluginInfo.clicked.connect(self.about_dialog.show)
         self.QPBtn_PluginDocs.clicked.connect(lambda: webbrowser.open("https://smbyc.github.io/AcATaMa"))
 
-        # ######### load thematic raster image ######### #
+        # ######### load thematic map image ######### #
         # set properties to QgsMapLayerComboBox
-        self.QCBox_ThematicRaster.setCurrentIndex(-1)
-        self.QCBox_ThematicRaster.setFilters(QgsMapLayerProxyModel.RasterLayer)
-        # call to browse the thematic raster file
-        self.QPBtn_browseThematicRaster.clicked.connect(lambda: self.browser_dialog_to_load_file(
-            self.QCBox_ThematicRaster,
-            dialog_title=self.tr("Select the thematic raster image to evaluate"),
+        self.QCBox_ThematicMap.setCurrentIndex(-1)
+        self.QCBox_ThematicMap.setFilters(QgsMapLayerProxyModel.RasterLayer)
+        # call to browse the thematic map file
+        self.QPBtn_browseThematicMap.clicked.connect(lambda: self.browser_dialog_to_load_file(
+            self.QCBox_ThematicMap,
+            dialog_title=self.tr("Select the thematic map to evaluate"),
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
-        # select and check the thematic raster
-        self.QCBox_ThematicRaster.layerChanged.connect(self.select_thematic_raster)
+        # select and check the thematic map
+        self.QCBox_ThematicMap.layerChanged.connect(self.select_thematic_map)
 
         # ######### simple random sampling ######### #
         self.widget_SimpRSwithCR.setHidden(True)
         # set properties to QgsMapLayerComboBox
-        self.QCBox_CategRaster_SimpRS.setCurrentIndex(-1)
-        self.QCBox_CategRaster_SimpRS.setFilters(QgsMapLayerProxyModel.RasterLayer)
-        # call to browse the categorical raster
-        self.QPBtn_browseCategRaster_SimpRS.clicked.connect(lambda: self.browser_dialog_to_load_file(
-            self.QCBox_CategRaster_SimpRS,
-            dialog_title=self.tr("Select the categorical raster file"),
+        self.QCBox_CategMap_SimpRS.setCurrentIndex(-1)
+        self.QCBox_CategMap_SimpRS.setFilters(QgsMapLayerProxyModel.RasterLayer)
+        # call to browse the categorical map
+        self.QPBtn_browseCategMap_SimpRS.clicked.connect(lambda: self.browser_dialog_to_load_file(
+            self.QCBox_CategMap_SimpRS,
+            dialog_title=self.tr("Select the categorical map"),
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
-        # select and check the categorical raster
-        self.QCBox_CategRaster_SimpRS.layerChanged.connect(self.select_categorical_raster_SimpRS)
+        # select and check the categorical map
+        self.QCBox_CategMap_SimpRS.layerChanged.connect(self.select_categorical_map_SimpRS)
         # generate and random sampling options
         self.widget_generate_SimpRS.generate_sampling_widget_options.setHidden(True)
         self.widget_generate_SimpRS.random_sampling_widget_options.setHidden(True)
@@ -125,20 +125,20 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
         # ######### stratified random sampling ######### #
         # set properties to QgsMapLayerComboBox
-        self.QCBox_CategRaster_StraRS.setCurrentIndex(-1)
-        self.QCBox_CategRaster_StraRS.setFilters(QgsMapLayerProxyModel.RasterLayer)
+        self.QCBox_CategMap_StraRS.setCurrentIndex(-1)
+        self.QCBox_CategMap_StraRS.setFilters(QgsMapLayerProxyModel.RasterLayer)
         # call to browse the categorical raster
-        self.QPBtn_browseCategRaster_StraRS.clicked.connect(lambda: self.browser_dialog_to_load_file(
-            self.QCBox_CategRaster_StraRS,
-            dialog_title=self.tr("Select the categorical raster file"),
+        self.QPBtn_browseCategMap_StraRS.clicked.connect(lambda: self.browser_dialog_to_load_file(
+            self.QCBox_CategMap_StraRS,
+            dialog_title=self.tr("Select the categorical map"),
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
-        # select and check the categorical raster
-        self.QCBox_CategRaster_StraRS.layerChanged.connect(self.select_categorical_raster_StraRS)
-        self.QCBox_band_CategRaster_StraRS.currentIndexChanged.connect(self.reset_StraRS_method)
-        self.nodata_CategRaster_StraRS.valueChanged.connect(self.reset_StraRS_method)
+        # select and check the categorical map
+        self.QCBox_CategMap_StraRS.layerChanged.connect(self.select_categorical_map_StraRS)
+        self.QCBox_band_CategMap_StraRS.currentIndexChanged.connect(self.reset_StraRS_method)
+        self.nodata_CategMap_StraRS.valueChanged.connect(self.reset_StraRS_method)
         # init variable for save tables content
         self.srs_tables = {}
-        # fill table of categorical raster
+        # fill table of categorical map
         self.widget_TotalExpectedSE.setHidden(True)
         self.QCBox_StraRS_Method.currentIndexChanged.connect(lambda: fill_stratified_sampling_table(self))
         # for each item changed in table, save and update it
@@ -210,12 +210,12 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             # load to qgis and update combobox list
             load_and_select_filepath_in(combo_box, file_path)
 
-    def select_thematic_raster(self, layer):
-        def clear_and_unset_the_thematic_raster():
-            with block_signals_to(self.QCBox_ThematicRaster):
-                self.QCBox_ThematicRaster.setCurrentIndex(-1)
-            self.QCBox_band_ThematicRaster.clear()
-            self.nodata_ThematicRaster.setValue(-1)
+    def select_thematic_map(self, layer):
+        def clear_and_unset_the_thematic_map():
+            with block_signals_to(self.QCBox_ThematicMap):
+                self.QCBox_ThematicMap.setCurrentIndex(-1)
+            self.QCBox_band_ThematicMap.clear()
+            self.nodata_ThematicMap.setValue(-1)
             # SimpRS
             self.minDistance_SimpRS.setSuffix("")
             self.minDistance_SimpRS.setToolTip("")
@@ -234,30 +234,30 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.set_sampling_file_in_analysis()
 
         # first check
-        if not layer or not valid_file_selected_in(self.QCBox_ThematicRaster, "thematic raster"):
-            clear_and_unset_the_thematic_raster()
+        if not layer or not valid_file_selected_in(self.QCBox_ThematicMap, "thematic map"):
+            clear_and_unset_the_thematic_map()
             return
-        # check if thematic raster data type is integer or byte
+        # check if thematic map data type is integer or byte
         if layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
-            clear_and_unset_the_thematic_raster()
-            iface.messageBar().pushMessage("AcATaMa", "Error, thematic raster must be byte or integer as data type.",
+            clear_and_unset_the_thematic_map()
+            iface.messageBar().pushMessage("AcATaMa", "Error, thematic map must be byte or integer as data type.",
                                            level=Qgis.Warning)
             return
         # set band count
-        self.QCBox_band_ThematicRaster.clear()
-        self.QCBox_band_ThematicRaster.addItems([str(x) for x in range(1, layer.bandCount() + 1)])
-        # set nodata value of thematic raster in nodata field
-        self.nodata_ThematicRaster.setValue(get_nodata_value(layer))
+        self.QCBox_band_ThematicMap.clear()
+        self.QCBox_band_ThematicMap.addItems([str(x) for x in range(1, layer.bandCount() + 1)])
+        # set nodata value of thematic map in nodata field
+        self.nodata_ThematicMap.setValue(get_nodata_value(layer))
         # set/update the units in minimum distance items in sampling tab
         layer_dist_unit = layer.crs().mapUnits()
         str_unit = QgsUnitTypes.toString(layer_dist_unit)
         abbr_unit = QgsUnitTypes.toAbbreviatedString(layer_dist_unit)
-        # Set the properties of the QdoubleSpinBox based on the QgsUnitTypes of the thematic raster
+        # Set the properties of the QdoubleSpinBox based on the QgsUnitTypes of the thematic map
         # https://qgis.org/api/classQgsUnitTypes.html
         # SimpRS
         self.minDistance_SimpRS.setSuffix(" {}".format(abbr_unit))
         self.minDistance_SimpRS.setToolTip(
-            "Minimum distance in {} (units based on thematic raster selected)".format(str_unit))
+            "Minimum distance in {} (units based on thematic map selected)".format(str_unit))
         self.minDistance_SimpRS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
         self.minDistance_SimpRS.setDecimals(
             4 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
@@ -269,7 +269,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # StraRS
         self.minDistance_StraRS.setSuffix(" {}".format(abbr_unit))
         self.minDistance_StraRS.setToolTip(
-            "Minimum distance in {} (units based on thematic raster selected)".format(str_unit))
+            "Minimum distance in {} (units based on thematic map selected)".format(str_unit))
         self.minDistance_StraRS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
         self.minDistance_StraRS.setDecimals(
             4 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
@@ -281,50 +281,50 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # enable sampling tab
         self.scrollAreaWidgetContents_S.setEnabled(True)
 
-    def select_categorical_raster_SimpRS(self, layer):
+    def select_categorical_map_SimpRS(self, layer):
         # first check
-        if not valid_file_selected_in(self.QCBox_CategRaster_SimpRS, "categorical raster"):
-            self.QCBox_band_CategRaster_SimpRS.clear()
+        if not valid_file_selected_in(self.QCBox_CategMap_SimpRS, "categorical map"):
+            self.QCBox_band_CategMap_SimpRS.clear()
             return
-        # check if categorical raster data type is integer or byte
+        # check if categorical map data type is integer or byte
         if layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
-            self.QCBox_CategRaster_SimpRS.setCurrentIndex(-1)
-            self.QCBox_band_CategRaster_SimpRS.clear()
-            iface.messageBar().pushMessage("AcATaMa", "Error, categorical raster must be byte or integer as data type.",
+            self.QCBox_CategMap_SimpRS.setCurrentIndex(-1)
+            self.QCBox_band_CategMap_SimpRS.clear()
+            iface.messageBar().pushMessage("AcATaMa", "Error, categorical map must be byte or integer as data type.",
                                            level=Qgis.Warning)
             return
         # set band count
-        self.QCBox_band_CategRaster_SimpRS.clear()
-        self.QCBox_band_CategRaster_SimpRS.addItems([str(x) for x in range(1, layer.bandCount() + 1)])
+        self.QCBox_band_CategMap_SimpRS.clear()
+        self.QCBox_band_CategMap_SimpRS.addItems([str(x) for x in range(1, layer.bandCount() + 1)])
 
-    def select_categorical_raster_StraRS(self, layer):
+    def select_categorical_map_StraRS(self, layer):
         # first deselect/clear sampling method
         self.QCBox_StraRS_Method.setCurrentIndex(-1)
         # check
-        if not valid_file_selected_in(self.QCBox_CategRaster_StraRS, "categorical raster"):
-            self.QCBox_band_CategRaster_StraRS.clear()
-            self.nodata_CategRaster_StraRS.setValue(-1)
+        if not valid_file_selected_in(self.QCBox_CategMap_StraRS, "categorical map"):
+            self.QCBox_band_CategMap_StraRS.clear()
+            self.nodata_CategMap_StraRS.setValue(-1)
             self.QGBox_Sampling_Method.setEnabled(False)
             return
-        # check if categorical raster data type is integer or byte
+        # check if categorical map data type is integer or byte
         if layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
-            self.QCBox_CategRaster_StraRS.setCurrentIndex(-1)
-            self.QCBox_band_CategRaster_StraRS.clear()
-            self.nodata_CategRaster_StraRS.setValue(-1)
+            self.QCBox_CategMap_StraRS.setCurrentIndex(-1)
+            self.QCBox_band_CategMap_StraRS.clear()
+            self.nodata_CategMap_StraRS.setValue(-1)
             self.QGBox_Sampling_Method.setEnabled(False)
             iface.messageBar().pushMessage("AcATaMa",
-                                           "Error, categorical raster must be byte or integer as data type.",
+                                           "Error, categorical map must be byte or integer as data type.",
                                            level=Qgis.Warning)
             return
         # set band count
-        self.QCBox_band_CategRaster_StraRS.clear()
-        self.QCBox_band_CategRaster_StraRS.addItems([str(x) for x in range(1, layer.bandCount() + 1)])
+        self.QCBox_band_CategMap_StraRS.clear()
+        self.QCBox_band_CategMap_StraRS.addItems([str(x) for x in range(1, layer.bandCount() + 1)])
         self.QGBox_Sampling_Method.setEnabled(True)
-        # set the same nodata value if select the thematic raster
-        if layer == self.QCBox_ThematicRaster.currentLayer():
-            self.nodata_CategRaster_StraRS.setValue(self.nodata_ThematicRaster.value())
+        # set the same nodata value if select the thematic map
+        if layer == self.QCBox_ThematicMap.currentLayer():
+            self.nodata_CategMap_StraRS.setValue(self.nodata_ThematicMap.value())
             return
-        self.nodata_CategRaster_StraRS.setValue(get_nodata_value(layer))
+        self.nodata_CategMap_StraRS.setValue(get_nodata_value(layer))
 
     @pyqtSlot()
     def reset_StraRS_method(self):
@@ -354,7 +354,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             iface.messageBar().pushMessage("AcATaMa",
                                            "Error, please select a valid sampling file", level=Qgis.Warning)
             return
-        suggested_filename = os.path.splitext(Sampling.samplings[combo_box.currentText()].ThematicR.file_path)[0] \
+        suggested_filename = os.path.splitext(Sampling.samplings[combo_box.currentText()].thematic_map.file_path)[0] \
                              + "_sampling.gpkg"
         file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save sampling file"),
                                                   suggested_filename,
@@ -374,7 +374,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                                            "Error, please select a valid sampling file", level=Qgis.Warning)
             return
         sampling_selected = Sampling.samplings[combo_box.currentText()]
-        suggested_filename = os.path.splitext(sampling_selected.ThematicR.file_path)[0] \
+        suggested_filename = os.path.splitext(sampling_selected.thematic_map.file_path)[0] \
                              + "_sampling.ini"
         file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save sampling configuration"),
                                                   suggested_filename,
@@ -478,10 +478,10 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
     def file_dialog_save_acatama_state(self):
         if self.suggested_yml_file:
             suggested_filename = self.suggested_yml_file
-        elif valid_file_selected_in(self.QCBox_ThematicRaster) or valid_file_selected_in(self.QCBox_SamplingFile):
+        elif valid_file_selected_in(self.QCBox_ThematicMap) or valid_file_selected_in(self.QCBox_SamplingFile):
             # get file path to suggest where to save
-            if valid_file_selected_in(self.QCBox_ThematicRaster):
-                file_path = get_file_path_of_layer(self.QCBox_ThematicRaster.currentLayer())
+            if valid_file_selected_in(self.QCBox_ThematicMap):
+                file_path = get_file_path_of_layer(self.QCBox_ThematicMap.currentLayer())
             else:
                 file_path = get_file_path_of_layer(self.QCBox_SamplingFile.currentLayer())
             path, filename = os.path.split(file_path)
@@ -524,7 +524,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         file_path = get_file_path_of_layer(self.QCBox_SamplingFile.currentLayer())
         path, filename = os.path.split(file_path)
         if self.tmp_dir in path:
-            path = os.path.split(get_file_path_of_layer(self.QCBox_ThematicRaster.currentLayer()))[0]
+            path = os.path.split(get_file_path_of_layer(self.QCBox_ThematicMap.currentLayer()))[0]
         suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_labeled.gpkg" if filename else ""
 
         file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save sampling file with the response_design"),

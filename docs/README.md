@@ -45,11 +45,11 @@ The `Thematic` section you can set the thematic map (needed for some process, se
 
 > *Important:* Clip the thematic map in an area of interest (or load the thematic map clipped) can be (or not) very important for the sampling design and the accuracy assessment result, because the area by classes changes and some parts of AcATaMa depend on the area by classes.
 
-### Types of thematic rasters accepted in AcATaMa
+### Types of thematic maps accepted in AcATaMa
 
 It must be a categorical thematic layer **with byte or integer as data type** with a specific pixel-value/color associated. There are two types, respect to pixel-value/color associated, accepted in AcATaMa:
 
-1. **Raster with pseudocolor style**:
+1. **Map with pseudocolor style**:
 
     You can use any raster (of byte or integer as data type) with specific style so that AcATaMa acquire the categorical information from the raster. Go to `properties` of the raster, then go to `style`, select `singleband pseudocolor` and generate the desired pixel-value/color associated (manually or generated automatically using the several options that Qgis have to do this) with only one requirement: **the pixel-values associated must be integers**.
 
@@ -61,7 +61,7 @@ It must be a categorical thematic layer **with byte or integer as data type** wi
 
     (Optional) Alternative (or additional) to the above, you can save all layers style and config saving it in a Qgis project.
 
-2. **Raster with color table**:
+2. **Map with color table**:
 
     You can use any raster (of byte or integer as data type) with pixel-values/color associated through a color table inside it as metadata. You can see it using `gdalinfo` or in `style` in layer `properties` this is shown as `paletted`.
 
@@ -77,8 +77,8 @@ The sampling design defines how to select the sampled for the accuracy assessmen
 
 In the `simple random sampling`, every points (each x, y coordinates combination) has an equal chance of being selected. The size sample (number of points) that you define (Field: *"Number of samples"*), will be created pick randomly coordinates into the area of the thematic map, without taking into account the class or category to which it belongs. You can restrain the sites where the points will be crated with the follow options:
 
-* Indicating the value in the thematic raster of the No Data pixels (Tab: *"Thematic"*), AcATaMa will not generate point on these pixels
-* Selecting the classes in the thematic raster. If you define some classes in the: *"Tab Sampling / Simple Random Sampling / Sampling in categorical raster"* (Field: "Set pixel values") AcATaMa only will create points into the pixels that belongs to these classes
+* Indicating the value in the thematic map of the No Data pixels (Tab: *"Thematic"*), AcATaMa will not generate point on these pixels
+* Selecting the classes in the thematic map. If you define some classes in the: *"Tab Sampling / Simple Random Sampling / Sampling in categorical raster"* (Field: "Set pixel values") AcATaMa only will create points into the pixels that belongs to these classes
 
 <img src="img/2a.png" width="90%">
 
@@ -89,7 +89,7 @@ In the `stratified random sampling` you divide the area of interest into smaller
 
 According to Olofsson et al. (2013, 2014), the stratiﬁcation is recommended to improve the precision of the accuracy and area estimates. When strata are created for the objective of reporting accuracy by strata, the stratiﬁed design allows ensuring that a precise estimate is obtained for each stratum. In this way, a land change or other category that occupies a small proportion of the landscape can be identiﬁed and the sample size allocated to this stratum can be large enough to produce a small standard error for the user's accuracy estimate.
 
-In the basic case, each stratum could be a class or category of the thematic map; for this option you should select the thematic raster in the drop-down menu in *"Categorical raster"* block. If you want generate a stratified sample using other criteria (geographical sub-regions for example), you have to include an additional thematic raster layer with classes representing the strata and select it in the drop-down menu.
+In the basic case, each stratum could be a class or category of the thematic map; for this option you should select the thematic map in the drop-down menu in *"Categorical raster"* block. If you want generate a stratified sample using other criteria (geographical sub-regions for example), you have to include an additional thematic map layer with classes representing the strata and select it in the drop-down menu.
 
 The stratified random may be:
 
@@ -115,7 +115,7 @@ Optionally, in any type of sampling you can restrain the allocation of the point
 
 <img src="img/2d.png" width="65%">
 
- - In `Sampling options` you can set the minimum distance between the point generated respect to all points generated (units based on thematic raster selected)
+ - In `Sampling options` you can set the minimum distance between the point generated respect to all points generated (units based on thematic map selected)
  - In `With neighbors aggregation` you can set the number of nearest neighbors pixels that belong to the same class:
     - *Number of neighbors*: It is the number of neighbors that AcATaMa evaluate to decide if a point can be included or not in the sample
     - *Min neighbors with the same class*: It is the minimum number of neighbors (according to the number of neighbors selected above) that must belong to the same class so that a point can be included in the sample
@@ -162,7 +162,7 @@ For the classification follow these steps (in classification dialog):
 
 The configuration buttons dialog you can set all buttons for classify the samples, you can set the name, the color and (optionally) the thematic map class.
 
-- `Without thematic map classes`: You must define the classification name and the color (the color is not mandatory). This configuration is for some case of use like as sampling design and others that don't need the thematic raster.
+- `Without thematic map classes`: You must define the classification name and the color (the color is not mandatory). This configuration is for some case of use like as sampling design and others that don't need the thematic map.
 
     <img src="img/3c.png" width="60%">
 
@@ -170,7 +170,7 @@ The configuration buttons dialog you can set all buttons for classify the sample
 
     <img src="img/3d.png" width="80%">
 
-> *Important:* The column `Thematic raster class` is available only if you set the thematic raster in [Thematic](#1-thematic-map) tab before open the dialog. You must configure the thematic map class for all buttons if you want accuracy assessment result.
+> *Important:* The column `Thematic map class` is available only if you set the thematic map in [Thematic](#1-thematic-map) before open the dialog. You must configure the thematic map class for all buttons if you want accuracy assessment result.
 
 ## 4. Accuracy Assessment
 
@@ -196,11 +196,11 @@ AcATaMa calculated the accuracy assessment using the formulas included in Olofss
 
 4. `Accuracy Matrices`:
 
-    * `User´s accuracy matrix of estimated area proportion`: User´s accuracy is the proportion of the area mapped as a particular category that is actually that category "on the ground" where the reference classification is the best assessment of ground condition. User's accuracy is the complement of the probability of commission error (Olofsson et al. 2013). The user´s accuracy is calculated by the equation (2) in Olofsson et al. (2014). In the report, the user´s accuracy for each class or category correspond to the diagonal of the matrix, that means, the fields in which the class of the thematic raster map and the classified category (reference) are equals.
+    * `User´s accuracy matrix of estimated area proportion`: User´s accuracy is the proportion of the area mapped as a particular category that is actually that category "on the ground" where the reference classification is the best assessment of ground condition. User's accuracy is the complement of the probability of commission error (Olofsson et al. 2013). The user´s accuracy is calculated by the equation (2) in Olofsson et al. (2014). In the report, the user´s accuracy for each class or category correspond to the diagonal of the matrix, that means, the fields in which the class of the thematic map and the classified category (reference) are equals.
 
         <img src="img/4f.png" width="60%">
 
-    * `Producer´s accuracy matrix of estimated area proportion`: Producer's accuracy is the proportion of the area that is a particular category on the ground that is also mapped as that category. Producer's accuracy is the complement of the probability of omission error (Olofsson et al. 2013). The producer's accuracy is calculated by the equation (3) in Olofsson et al. (2014). In the report, the accuracy for each class or category correspond to the diagonal of the matrix, the fields in which the class of the thematic raster map and the classified category (reference) are equals.
+    * `Producer´s accuracy matrix of estimated area proportion`: Producer's accuracy is the proportion of the area that is a particular category on the ground that is also mapped as that category. Producer's accuracy is the complement of the probability of omission error (Olofsson et al. 2013). The producer's accuracy is calculated by the equation (3) in Olofsson et al. (2014). In the report, the accuracy for each class or category correspond to the diagonal of the matrix, the fields in which the class of the thematic map and the classified category (reference) are equals.
 
         <img src="img/4g.png" width="60%">
 

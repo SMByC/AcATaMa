@@ -25,7 +25,7 @@ from qgis.PyQt.QtWidgets import QApplication, QDialogButtonBox, QDialog, QFileDi
 from qgis.core import Qgis, QgsUnitTypes
 from qgis.utils import iface
 
-from AcATaMa.core.raster import Raster
+from AcATaMa.core.map import Map
 from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.gui import accuracy_assessment_results
 from AcATaMa.utils.qgis_utils import get_file_path_of_layer
@@ -38,20 +38,20 @@ class Analysis(object):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
 
         self.response_design = response_design
-        self.ThematicR = Raster(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicRaster,
-                                band=int(AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText())
-                                if AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText() else None,
-                                nodata=int(AcATaMa.dockwidget.nodata_ThematicRaster.value()))
+        self.thematic_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicMap,
+                             band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
+                                if AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText() else None,
+                             nodata=int(AcATaMa.dockwidget.nodata_ThematicMap.value()))
         self.thematic_pixels_count = {}
         # dialog settings
         self.area_unit = None
         self.z_score = 1.96
         self.csv_separator = ";"
         self.csv_decimal = "."
-        # define the base area unit based on the thematic raster distance unit
-        self.dist_unit = self.ThematicR.qgs_layer.crs().mapUnits()
+        # define the base area unit based on the thematic map distance unit
+        self.dist_unit = self.thematic_map.qgs_layer.crs().mapUnits()
         if self.dist_unit == QgsUnitTypes.DistanceUnknownUnit:
-            # thematic raster with unknown map unit
+            # thematic map with unknown map unit
             self.dist_unit = QgsUnitTypes.DistanceMeters
         self.base_area_unit = QgsUnitTypes.distanceToAreaUnit(self.dist_unit)
 
@@ -74,7 +74,7 @@ class Analysis(object):
         points_ordered = sorted(points_labeled, key=lambda p: p.shape_id)
         for point in points_ordered:
             # response design labeling from the pixel values in the thematic map
-            thematic_map_in_sample = self.ThematicR.get_pixel_value_from_pnt(point.QgsPnt)
+            thematic_map_in_sample = self.thematic_map.get_pixel_value_from_pnt(point.QgsPnt)
             if not thematic_map_in_sample:
                 samples_outside_the_thematic.append(point)
                 continue
@@ -102,11 +102,11 @@ class Analysis(object):
         for thematic_map_in_sample, validation_in_sample in zip(thematic_map, validation):
             error_matrix[indices[thematic_map_in_sample]][indices[validation_in_sample]] += 1
 
-        # calculate the total number of pixels in the thematic raster
+        # calculate the total number of pixels in the thematic map
         # by each thematic map class used in the label buttons
         for thematic_map_in_sample in values:
             if thematic_map_in_sample not in self.thematic_pixels_count:
-                self.thematic_pixels_count[thematic_map_in_sample] = self.ThematicR.get_total_pixels_by_value(thematic_map_in_sample)
+                self.thematic_pixels_count[thematic_map_in_sample] = self.thematic_map.get_total_pixels_by_value(thematic_map_in_sample)
 
         # values necessary for results
         self.values = values
@@ -114,7 +114,7 @@ class Analysis(object):
         self.error_matrix = error_matrix
         self.samples_outside_the_thematic = samples_outside_the_thematic
         # set area by pixel
-        self.pixel_area_base = self.ThematicR.qgs_layer.rasterUnitsPerPixelX() * self.ThematicR.qgs_layer.rasterUnitsPerPixelY()
+        self.pixel_area_base = self.thematic_map.qgs_layer.rasterUnitsPerPixelX() * self.thematic_map.qgs_layer.rasterUnitsPerPixelY()
         self.pixel_area_value = self.pixel_area_base * QgsUnitTypes.fromUnitToUnitFactor(self.base_area_unit, self.area_unit)
         self.pixel_area_unit = QgsUnitTypes.toAbbreviatedString(self.area_unit)
 
@@ -172,11 +172,11 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
         else:
             self.accuracy_assessment.area_unit = QgsUnitTypes.distanceToAreaUnit(self.accuracy_assessment.dist_unit)
             self.area_unit.setCurrentIndex(self.accuracy_assessment.area_unit)
-            # thematic raster with unknown map unit
-            if self.accuracy_assessment.ThematicR.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
+            # thematic map with unknown map unit
+            if self.accuracy_assessment.thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
                 self.MsgBar.pushMessage(
-                    "The thematic raster \"{}\" does not have a valid map unit, considering \"{}\" as the base unit!".format(
-                        self.accuracy_assessment.ThematicR.qgs_layer.name(),
+                    "The thematic map \"{}\" does not have a valid map unit, considering \"{}\" as the base unit!".format(
+                        self.accuracy_assessment.thematic_map.qgs_layer.name(),
                         QgsUnitTypes.toString(self.accuracy_assessment.dist_unit)),
                     level=Qgis.Warning, duration=-1)
 
@@ -231,7 +231,7 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
         file_path = get_file_path_of_layer(AcATaMa.dockwidget.QCBox_SamplingFile_A.currentLayer())
         path, filename = os.path.split(file_path)
         if AcATaMa.dockwidget.tmp_dir in path:
-            path = os.path.split(get_file_path_of_layer(AcATaMa.dockwidget.QCBox_ThematicRaster.currentLayer()))[0]
+            path = os.path.split(get_file_path_of_layer(AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer()))[0]
         suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_results.csv" if filename else ""
 
         file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Export accuracy assessment results to csv"),

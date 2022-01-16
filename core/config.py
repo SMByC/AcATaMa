@@ -45,11 +45,12 @@ def save(file_out):
     setup_yaml()
 
     data = OrderedDict()
+    # TODO migration
     data["thematic_raster"] = \
-        {"path": get_current_file_path_in(AcATaMa.dockwidget.QCBox_ThematicRaster, show_message=False),
-         "band": int(AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText())
-         if AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText() else None,
-         "nodata": AcATaMa.dockwidget.nodata_ThematicRaster.value()}
+        {"path": get_current_file_path_in(AcATaMa.dockwidget.QCBox_ThematicMap, show_message=False),
+         "band": int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
+         if AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText() else None,
+         "nodata": AcATaMa.dockwidget.nodata_ThematicMap.value()}
 
     # ######### general configuration ######### #
     data["general"] = {"tab_activated": AcATaMa.dockwidget.tabWidget.currentIndex()}
@@ -114,17 +115,17 @@ def restore(file_path):
     if "general" in yaml_config:
         AcATaMa.dockwidget.tabWidget.setCurrentIndex(yaml_config["general"]["tab_activated"])
 
-    # restore the thematic raster
+    # restore the thematic map
     if yaml_config["thematic_raster"]["path"]:
-        # thematic raster
-        load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_ThematicRaster,
+        # thematic map
+        load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_ThematicMap,
                                     yaml_config["thematic_raster"]["path"])
-        AcATaMa.dockwidget.select_thematic_raster(AcATaMa.dockwidget.QCBox_ThematicRaster.currentLayer())
+        AcATaMa.dockwidget.select_thematic_map(AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer())
         # band number
         if "band" in yaml_config["thematic_raster"]:
-            AcATaMa.dockwidget.QCBox_band_ThematicRaster.setCurrentIndex(yaml_config["thematic_raster"]["band"] - 1)
+            AcATaMa.dockwidget.QCBox_band_ThematicMap.setCurrentIndex(yaml_config["thematic_raster"]["band"] - 1)
         # nodata
-        AcATaMa.dockwidget.nodata_ThematicRaster.setValue(yaml_config["thematic_raster"]["nodata"])
+        AcATaMa.dockwidget.nodata_ThematicMap.setValue(yaml_config["thematic_raster"]["nodata"])
 
     # ######### response_design configuration ######### #
     # restore the response_design settings

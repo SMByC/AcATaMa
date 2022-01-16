@@ -80,7 +80,7 @@ def get_color_table(layer, band=1, nodata=None):
     return color_table
 
 
-class Raster(object):
+class Map(object):
     def __init__(self, file_selected_combo_box, band=1, nodata=None):
         from AcATaMa.utils.qgis_utils import get_current_file_path_in
         self.file_path = get_current_file_path_in(file_selected_combo_box)

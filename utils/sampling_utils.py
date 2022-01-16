@@ -163,7 +163,7 @@ def update_srs_table_content(dockwidget, srs_table):
 def fill_stratified_sampling_table(dockwidget):
     try:
         # check the current selected file
-        dockwidget.QCBox_CategRaster_StraRS.currentLayer().dataProvider()
+        dockwidget.QCBox_CategMap_StraRS.currentLayer().dataProvider()
         # check sampling method selected
         if not dockwidget.QCBox_StraRS_Method.currentText():
             raise Exception
@@ -180,17 +180,17 @@ def fill_stratified_sampling_table(dockwidget):
         srs_method = "area based proportion"
         dockwidget.widget_TotalExpectedSE.setVisible(True)
 
-    if dockwidget.QCBox_CategRaster_StraRS.currentText() in dockwidget.srs_tables.keys() and \
-        srs_method in dockwidget.srs_tables[dockwidget.QCBox_CategRaster_StraRS.currentText()].keys():
+    if dockwidget.QCBox_CategMap_StraRS.currentText() in dockwidget.srs_tables.keys() and \
+        srs_method in dockwidget.srs_tables[dockwidget.QCBox_CategMap_StraRS.currentText()].keys():
         # restore values saved for number of samples configured for selected categorical file
-        srs_table = dockwidget.srs_tables[dockwidget.QCBox_CategRaster_StraRS.currentText()][srs_method]
+        srs_table = dockwidget.srs_tables[dockwidget.QCBox_CategMap_StraRS.currentText()][srs_method]
     else:
-        from AcATaMa.core.raster import get_color_table
+        from AcATaMa.core.map import get_color_table
         # init a new stratified random sampling table
         srs_table = {"color_table": get_color_table(
-            dockwidget.QCBox_CategRaster_StraRS.currentLayer(),
-            band=int(dockwidget.QCBox_band_CategRaster_StraRS.currentText()),
-            nodata=int(dockwidget.nodata_CategRaster_StraRS.value()))}
+            dockwidget.QCBox_CategMap_StraRS.currentLayer(),
+            band=int(dockwidget.QCBox_band_CategMap_StraRS.currentText()),
+            nodata=int(dockwidget.nodata_CategMap_StraRS.value()))}
 
         if not srs_table["color_table"]:
             # clear table
@@ -212,18 +212,18 @@ def fill_stratified_sampling_table(dockwidget):
             srs_table["column_count"] = len(srs_table["header"])
             srs_table["std_dev"] = [str(0.01)]*srs_table["row_count"]
             srs_table["pixel_count"] = list(
-                get_pixel_count_by_pixel_values(dockwidget.QCBox_CategRaster_StraRS.currentLayer(),
-                                                int(dockwidget.QCBox_band_CategRaster_StraRS.currentText()),
+                get_pixel_count_by_pixel_values(dockwidget.QCBox_CategMap_StraRS.currentLayer(),
+                                                int(dockwidget.QCBox_band_CategMap_StraRS.currentText()),
                                                 srs_table["color_table"]["Pixel Value"],
-                                                int(dockwidget.nodata_CategRaster_StraRS.value())).values())
+                                                int(dockwidget.nodata_CategMap_StraRS.value())).values())
             total_std_error = dockwidget.TotalExpectedSE.value()
             srs_table["On"] = [True] * srs_table["row_count"]
             srs_table["num_samples"] = get_num_samples_by_area_based_proportion(srs_table, total_std_error)
 
         # save srs table
-        if dockwidget.QCBox_CategRaster_StraRS.currentText() not in dockwidget.srs_tables.keys():
-            dockwidget.srs_tables[dockwidget.QCBox_CategRaster_StraRS.currentText()] = {}
-        dockwidget.srs_tables[dockwidget.QCBox_CategRaster_StraRS.currentText()][srs_method] = srs_table
+        if dockwidget.QCBox_CategMap_StraRS.currentText() not in dockwidget.srs_tables.keys():
+            dockwidget.srs_tables[dockwidget.QCBox_CategMap_StraRS.currentText()] = {}
+        dockwidget.srs_tables[dockwidget.QCBox_CategMap_StraRS.currentText()][srs_method] = srs_table
 
     # update content
     update_srs_table_content(dockwidget, srs_table)
@@ -234,7 +234,7 @@ def update_stratified_sampling_table(dockwidget, changes_from):
         srs_method = "fixed values"
     if dockwidget.QCBox_StraRS_Method.currentText().startswith("Area based proportion"):
         srs_method = "area based proportion"
-    srs_table = dockwidget.srs_tables[dockwidget.QCBox_CategRaster_StraRS.currentText()][srs_method]
+    srs_table = dockwidget.srs_tables[dockwidget.QCBox_CategMap_StraRS.currentText()][srs_method]
 
     if changes_from == "TotalExpectedSE":
         srs_table["num_samples"] = \
@@ -270,5 +270,5 @@ def update_stratified_sampling_table(dockwidget, changes_from):
     # update content
     update_srs_table_content(dockwidget, srs_table)
     # save srs table
-    dockwidget.srs_tables[dockwidget.QCBox_CategRaster_StraRS.currentText()][srs_method] = srs_table
+    dockwidget.srs_tables[dockwidget.QCBox_CategMap_StraRS.currentText()][srs_method] = srs_table
 

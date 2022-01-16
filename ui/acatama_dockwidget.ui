@@ -16,9 +16,9 @@
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout_22">
     <item>
-     <widget class="QGroupBox" name="QGBox_ThematicRaster">
+     <widget class="QGroupBox" name="QGBox_ThematicMap">
       <property name="title">
-       <string>Thematic Raster</string>
+       <string>Thematic Map</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
@@ -40,7 +40,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QgsMapLayerComboBox" name="QCBox_ThematicRaster">
+           <widget class="QgsMapLayerComboBox" name="QCBox_ThematicMap">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -62,7 +62,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="QPBtn_browseThematicRaster">
+           <widget class="QToolButton" name="QPBtn_browseThematicMap">
             <property name="maximumSize">
              <size>
               <width>30</width>
@@ -78,7 +78,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="QCBox_band_ThematicRaster">
+           <widget class="QComboBox" name="QCBox_band_ThematicMap">
             <property name="maximumSize">
              <size>
               <width>50</width>
@@ -91,7 +91,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="nodata_ThematicRaster">
+           <widget class="QSpinBox" name="nodata_ThematicMap">
             <property name="maximumSize">
              <size>
               <width>100</width>
@@ -228,7 +228,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                    <item>
                     <widget class="QLabel" name="label_8">
                      <property name="text">
-                      <string>Generate n number of sampling points inside only valid thematic data and optionally only inside in valid pixel values in categorical raster and/or with neighbors aggregation and minimum distance
+                      <string>Generate n number of sampling points inside only valid thematic data and optionally only inside in valid pixel values in categorical map and/or with neighbors aggregation and minimum distance
 </string>
                      </property>
                      <property name="alignment">
@@ -333,7 +333,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                          <item>
                           <widget class="QLabel" name="label_12">
                            <property name="text">
-                            <string>Use a categorical raster (can be the same thematic file) to randomly sample only within the pixel values set below of the selected raster to get a simple random sampling post-stratified.</string>
+                            <string>Use a categorical map (can be the same thematic file) to randomly sample only within the pixel values set below of the selected raster to get a simple random sampling post-stratified.</string>
                            </property>
                            <property name="alignment">
                             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -362,7 +362,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                              <number>0</number>
                             </property>
                             <item>
-                             <widget class="QgsMapLayerComboBox" name="QCBox_CategRaster_SimpRS">
+                             <widget class="QgsMapLayerComboBox" name="QCBox_CategMap_SimpRS">
                               <property name="sizePolicy">
                                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                                 <horstretch>0</horstretch>
@@ -381,7 +381,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                              </widget>
                             </item>
                             <item>
-                             <widget class="QToolButton" name="QPBtn_browseCategRaster_SimpRS">
+                             <widget class="QToolButton" name="QPBtn_browseCategMap_SimpRS">
                               <property name="maximumSize">
                                <size>
                                 <width>30</width>
@@ -397,7 +397,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                              </widget>
                             </item>
                             <item>
-                             <widget class="QComboBox" name="QCBox_band_CategRaster_SimpRS">
+                             <widget class="QComboBox" name="QCBox_band_CategMap_SimpRS">
                               <property name="maximumSize">
                                <size>
                                 <width>50</width>
@@ -435,7 +435,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                              </widget>
                             </item>
                             <item>
-                             <widget class="QLineEdit" name="pixelsValuesCategRaster">
+                             <widget class="QLineEdit" name="pixelsValuesCategMap">
                               <property name="toolTip">
                                <string>Enter multiple pixel values separated by comma</string>
                               </property>
@@ -522,13 +522,13 @@ It set automatically from image if the layer has the nodata value set.</string>
                    <item>
                     <widget class="QGroupBox" name="QGBox_2">
                      <property name="title">
-                      <string>Categorical Raster</string>
+                      <string>Categorical Map</string>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_18">
                       <item>
                        <widget class="QLabel" name="label_17">
                         <property name="text">
-                         <string>Select/browse the categorical raster for stratified the random sampling (e.g. it can be the same thematic file):</string>
+                         <string>Select/browse the categorical map for stratified the random sampling (e.g. it can be the same thematic file):</string>
                         </property>
                         <property name="alignment">
                          <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -557,7 +557,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                           <number>0</number>
                          </property>
                          <item>
-                          <widget class="QgsMapLayerComboBox" name="QCBox_CategRaster_StraRS">
+                          <widget class="QgsMapLayerComboBox" name="QCBox_CategMap_StraRS">
                            <property name="sizePolicy">
                             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                              <horstretch>0</horstretch>
@@ -576,7 +576,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                           </widget>
                          </item>
                          <item>
-                          <widget class="QToolButton" name="QPBtn_browseCategRaster_StraRS">
+                          <widget class="QToolButton" name="QPBtn_browseCategMap_StraRS">
                            <property name="maximumSize">
                             <size>
                              <width>30</width>
@@ -592,7 +592,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                           </widget>
                          </item>
                          <item>
-                          <widget class="QComboBox" name="QCBox_band_CategRaster_StraRS">
+                          <widget class="QComboBox" name="QCBox_band_CategMap_StraRS">
                            <property name="maximumSize">
                             <size>
                              <width>50</width>
@@ -605,7 +605,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                           </widget>
                          </item>
                          <item>
-                          <widget class="QSpinBox" name="nodata_CategRaster_StraRS">
+                          <widget class="QSpinBox" name="nodata_CategMap_StraRS">
                            <property name="maximumSize">
                             <size>
                              <width>100</width>

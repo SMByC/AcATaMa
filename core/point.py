@@ -50,14 +50,14 @@ class RandomPoint(Point):
         ry = extent.yMinimum() + (extent.yMaximum() - extent.yMinimum()) * random.random()
         self.set_qgis_pnt(rx, ry)
 
-    def in_valid_data(self, ThematicR):
-        """Check if the point is in valid data in thematic raster
+    def in_valid_data(self, thematic_map):
+        """Check if the point is in valid data in thematic map
         """
         try:
-            point_value_in_thematic = int(ThematicR.get_pixel_value_from_pnt(self.QgsPnt))
+            point_value_in_thematic = int(thematic_map.get_pixel_value_from_pnt(self.QgsPnt))
         except:
             return False
-        if point_value_in_thematic == ThematicR.nodata:
+        if point_value_in_thematic == thematic_map.nodata:
             return False
         return True
 
@@ -81,34 +81,34 @@ class RandomPoint(Point):
             return True
         return False
 
-    def in_categorical_raster_SimpRS(self, pixel_values, CategoricalR):
-        """Check if point is at least in one pixel values set in the categorical raster
+    def in_categorical_map_SimpRS(self, pixel_values, categorical_map):
+        """Check if point is at least in one pixel values set in the categorical map
         """
         if pixel_values is not None:
-            point_value_in_categ_raster = int(CategoricalR.get_pixel_value_from_pnt(self.QgsPnt))
-            if point_value_in_categ_raster not in pixel_values:
+            point_value_in_categ_map = int(categorical_map.get_pixel_value_from_pnt(self.QgsPnt))
+            if point_value_in_categ_map not in pixel_values:
                 return False
         return True
 
-    def in_categorical_raster_StraRS(self, pixel_values, number_of_samples, CategoricalR, nPointsInCategories):
+    def in_categorical_map_StraRS(self, pixel_values, number_of_samples, categorical_map, nPointsInCategories):
         """Check if point pass the number of samples in the category or is nodata
         """
-        pixel_value_in_categ_raster = int(CategoricalR.get_pixel_value_from_pnt(self.QgsPnt))
-        if pixel_value_in_categ_raster == CategoricalR.nodata or pixel_value_in_categ_raster not in pixel_values:
+        pixel_value_in_categ_map = int(categorical_map.get_pixel_value_from_pnt(self.QgsPnt))
+        if pixel_value_in_categ_map == categorical_map.nodata or pixel_value_in_categ_map not in pixel_values:
             return False
-        self.index_pixel_value = pixel_values.index(pixel_value_in_categ_raster)
+        self.index_pixel_value = pixel_values.index(pixel_value_in_categ_map)
         if nPointsInCategories[self.index_pixel_value] >= number_of_samples[self.index_pixel_value]:
             return False
         return True
 
-    def check_neighbors_aggregation(self, ThematicR, num_neighbors, min_with_same_class):
+    def check_neighbors_aggregation(self, thematic_map, num_neighbors, min_with_same_class):
         """Check if the pixel have at least the minimum the neighbors with the
         same class of the pixel
         """
-        pixel_class_value = int(ThematicR.get_pixel_value_from_pnt(self.QgsPnt))
+        pixel_class_value = int(thematic_map.get_pixel_value_from_pnt(self.QgsPnt))
 
-        pixel_size_x = ThematicR.qgs_layer.rasterUnitsPerPixelX()
-        pixel_size_y = ThematicR.qgs_layer.rasterUnitsPerPixelY()
+        pixel_size_x = thematic_map.qgs_layer.rasterUnitsPerPixelX()
+        pixel_size_y = thematic_map.qgs_layer.rasterUnitsPerPixelY()
 
         if num_neighbors == 8:
             x_list = [pixel_size_x*mul+self.QgsPnt.x() for mul in range(-1, 2)]
@@ -123,7 +123,7 @@ class RandomPoint(Point):
         neighbors = []
         for x, y in ((_x, _y) for _x in x_list for _y in y_list):
             try:
-                neighbors.append(int(ThematicR.get_pixel_value_from_xy(x, y)))
+                neighbors.append(int(thematic_map.get_pixel_value_from_xy(x, y)))
             except:
                 continue
 

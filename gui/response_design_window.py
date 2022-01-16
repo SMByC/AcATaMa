@@ -31,7 +31,7 @@ from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, Qgis
 from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, get_current_file_path_in, \
     load_and_select_filepath_in
-from AcATaMa.core.raster import get_color_table
+from AcATaMa.core.map import get_color_table
 from AcATaMa.utils.system_utils import open_file, block_signals_to, error_handler
 from AcATaMa.gui.response_design_view_widget import LabelingViewWidget
 
@@ -519,17 +519,17 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
                     self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "Thematic Class":
                 for m, item in enumerate(self.table_buttons.values()):
-                    if valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicRaster):
+                    if valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicMap):
                         if m + 1 in self.buttons_config and self.buttons_config[m + 1]["thematic_class"] is not None:
                             item_table = QTableWidgetItem(self.buttons_config[m + 1]["thematic_class"])
                         else:
                             item_table = QTableWidgetItem(str(item))
-                        item_table.setToolTip("Click to set/change the pixel color/value from the thematic raster")
+                        item_table.setToolTip("Click to set/change the pixel color/value from the thematic map")
                     else:
                         item_table = QTableWidgetItem("none")
                         item_table.setForeground(QColor("lightGrey"))
-                        item_table.setToolTip("No thematic raster layer selected, if you want enable the\n"
-                                              "thematic classes, select first a valid thematic raster file")
+                        item_table.setToolTip("No thematic map selected, if you want enable the\n"
+                                              "thematic classes, select first a valid thematic map file")
                         item_h = QTableWidgetItem(h)
                         item_h.setForeground(QColor("lightGrey"))
                         self.tableBtnsConfig.setHorizontalHeaderItem(2, item_h)
@@ -571,10 +571,10 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
                 self.tableBtnsConfig.clearSelection()
         # set the thematic class
         if tableItem.column() == 2:
-            thematic_raster_class = ThematicRasterClasses()
-            if thematic_raster_class.exec_():
-                tableItem.setText(thematic_raster_class.pix_value)
-                self.tableBtnsConfig.item(tableItem.row(), 1).setBackground(thematic_raster_class.color)
+            thematic_map_class = ThematicMapClasses()
+            if thematic_map_class.exec_():
+                tableItem.setText(thematic_map_class.pix_value)
+                self.tableBtnsConfig.item(tableItem.row(), 1).setBackground(thematic_map_class.color)
         # clean the current row clicked in the trash icon
         if tableItem.column() == 3:
             self.tableBtnsConfig.item(tableItem.row(), 0).setText("")
@@ -586,14 +586,14 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
     def check_before_accept(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         # check if all buttons are associated to thematic classes if it is working with thematic classes
-        if valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicRaster, "thematic raster"):
+        if valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicMap, "thematic map"):
             items_with_classes = [self.tableBtnsConfig.item(row, 2).text() != "" for row in
                                   range(self.tableBtnsConfig.rowCount()) if self.tableBtnsConfig.item(row, 0).text() != ""]
             if False in items_with_classes:
                 msg = "Invalid configuration:\n\nA) If you are labeling with thematic classes, then " \
                       "you must configure the thematic class value for all buttons. \n\nB) Or if you are " \
                       "labeling the sampling without pairing with thematic classes, then deselect the " \
-                      "thematic raster layer."
+                      "thematic map."
                 QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.Ok)
                 return
             # check if all button configured have a valid name
@@ -608,10 +608,10 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'labeling_thematic_raster_classes.ui'))
+    plugin_folder, 'ui', 'labeling_thematic_map_classes.ui'))
 
 
-class ThematicRasterClasses(QDialog, FORM_CLASS):
+class ThematicMapClasses(QDialog, FORM_CLASS):
     def __init__(self):
         QDialog.__init__(self)
         self.setupUi(self)
@@ -625,9 +625,9 @@ class ThematicRasterClasses(QDialog, FORM_CLASS):
         header = ["Pix Val", "Color", "Select"]
         # get color table from raster
         thematic_table = {"color_table": get_color_table(
-            AcATaMa.dockwidget.QCBox_ThematicRaster.currentLayer(),
-            band=int(AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText()),
-            nodata=int(AcATaMa.dockwidget.nodata_ThematicRaster.value()))}
+            AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer(),
+            band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
+            nodata=int(AcATaMa.dockwidget.nodata_ThematicMap.value()))}
 
         if not thematic_table["color_table"]:
             # clear table

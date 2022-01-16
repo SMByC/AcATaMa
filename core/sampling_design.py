@@ -29,7 +29,7 @@ from qgis.core import QgsGeometry, QgsField, QgsFields, QgsSpatialIndex, \
     QgsFeature, Qgis, QgsVectorFileWriter, QgsWkbTypes, QgsUnitTypes
 
 from AcATaMa.core.point import RandomPoint
-from AcATaMa.core.raster import Raster
+from AcATaMa.core.map import Map
 from AcATaMa.utils.qgis_utils import load_layer, valid_file_selected_in
 from AcATaMa.utils.system_utils import wait_process, error_handler
 
@@ -37,32 +37,32 @@ from AcATaMa.utils.system_utils import wait_process, error_handler
 @error_handler
 def do_simple_random_sampling(dockwidget):
     # first check input files requirements
-    if not valid_file_selected_in(dockwidget.QCBox_ThematicRaster, "thematic raster"):
+    if not valid_file_selected_in(dockwidget.QCBox_ThematicMap, "thematic map"):
         return
     if dockwidget.QGBox_SimpRSwithCR.isChecked():
-        if not valid_file_selected_in(dockwidget.QCBox_CategRaster_SimpRS, "categorical raster"):
+        if not valid_file_selected_in(dockwidget.QCBox_CategMap_SimpRS, "categorical map"):
             return
 
-    ThematicR = Raster(file_selected_combo_box=dockwidget.QCBox_ThematicRaster,
-                       band=int(dockwidget.QCBox_band_ThematicRaster.currentText()),
-                       nodata=int(dockwidget.nodata_ThematicRaster.value()))
+    thematic_map = Map(file_selected_combo_box=dockwidget.QCBox_ThematicMap,
+                    band=int(dockwidget.QCBox_band_ThematicMap.currentText()),
+                    nodata=int(dockwidget.nodata_ThematicMap.value()))
 
     # get and define some variables
     number_of_samples = int(dockwidget.numberOfSamples_SimpRS.value())
     min_distance = float(dockwidget.minDistance_SimpRS.value())
 
-    # simple random sampling in categorical raster
+    # simple random sampling in categorical map
     if dockwidget.QGBox_SimpRSwithCR.isChecked():
-        CategoricalR = Raster(file_selected_combo_box=dockwidget.QCBox_CategRaster_SimpRS,
-                              band=int(dockwidget.QCBox_band_CategRaster_SimpRS.currentText()))
+        categorical_map = Map(file_selected_combo_box=dockwidget.QCBox_CategMap_SimpRS,
+                           band=int(dockwidget.QCBox_band_CategMap_SimpRS.currentText()))
         try:
-            pixel_values = [int(p) for p in dockwidget.pixelsValuesCategRaster.text().split(",")]
+            pixel_values = [int(p) for p in dockwidget.pixelsValuesCategMap.text().split(",")]
         except:
             iface.messageBar().pushMessage("AcATaMa", "Error, wrong pixel values, set only integers and separated by commas",
                                            level=Qgis.Warning)
             return
     else:
-        CategoricalR = None
+        categorical_map = None
         pixel_values = None
 
     # check neighbors aggregation
@@ -80,7 +80,7 @@ def do_simple_random_sampling(dockwidget):
         attempts_by_sampling = None
 
     # first select the target dir for save the sampling file
-    suggested_filename = os.path.join(os.path.dirname(ThematicR.file_path), "random_sampling.gpkg")
+    suggested_filename = os.path.join(os.path.dirname(thematic_map.file_path), "random_sampling.gpkg")
     output_file, _ = QFileDialog.getSaveFileName(dockwidget,
                                                  dockwidget.tr("Select the output file to save the sampling"),
                                                  suggested_filename,
@@ -99,7 +99,7 @@ def do_simple_random_sampling(dockwidget):
         random_seed = None
 
     # process
-    sampling = Sampling("simple", ThematicR, CategoricalR, output_file=output_file)
+    sampling = Sampling("simple", thematic_map, categorical_map, output_file=output_file)
     sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
                                       neighbor_aggregation, attempts_by_sampling,
                                       dockwidget.widget_generate_SimpRS.QPBar_GenerateSampling,
@@ -124,31 +124,31 @@ def do_simple_random_sampling(dockwidget):
         iface.messageBar().pushMessage("AcATaMa", "Generated the simple random sampling, but can not generate requested number of "
                                                   "random points {}/{}, attempts exceeded".format(sampling.total_of_samples, number_of_samples),
                                        level=Qgis.Warning, duration=-1)
-    # check the thematic raster map unit to calculate the minimum distances
+    # check the thematic map unit to calculate the minimum distances
     if min_distance > 0:
-        if ThematicR.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
+        if thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
             iface.messageBar().pushMessage("AcATaMa",
-                "The thematic raster \"{}\" does not have a valid map unit, AcATaMa used \"{}\" as the base unit to "
+                "The thematic map \"{}\" does not have a valid map unit, AcATaMa used \"{}\" as the base unit to "
                 "calculate the minimum distances.".format(
-                    ThematicR.qgs_layer.name(), QgsUnitTypes.toString(qgslayer.crs().mapUnits())),
+                    thematic_map.qgs_layer.name(), QgsUnitTypes.toString(qgslayer.crs().mapUnits())),
                 level=Qgis.Warning, duration=-1)
 
 
 @error_handler
 def do_stratified_random_sampling(dockwidget):
     # first check input files requirements
-    if not valid_file_selected_in(dockwidget.QCBox_ThematicRaster, "thematic raster"):
+    if not valid_file_selected_in(dockwidget.QCBox_ThematicMap, "thematic map"):
         return
-    if not valid_file_selected_in(dockwidget.QCBox_CategRaster_StraRS, "categorical raster"):
+    if not valid_file_selected_in(dockwidget.QCBox_Categmap_StraRS, "categorical map"):
         return
     # get and define some variables
     min_distance = float(dockwidget.minDistance_StraRS.value())
-    ThematicR = Raster(file_selected_combo_box=dockwidget.QCBox_ThematicRaster,
-                       band=int(dockwidget.QCBox_band_ThematicRaster.currentText()),
-                       nodata=int(dockwidget.nodata_ThematicRaster.value()))
-    CategoricalR = Raster(file_selected_combo_box=dockwidget.QCBox_CategRaster_StraRS,
-                          band=int(dockwidget.QCBox_band_CategRaster_StraRS.currentText()),
-                          nodata=int(dockwidget.nodata_CategRaster_StraRS.value()))
+    thematic_map = Map(file_selected_combo_box=dockwidget.QCBox_ThematicMap,
+                    band=int(dockwidget.QCBox_band_ThematicMap.currentText()),
+                    nodata=int(dockwidget.nodata_ThematicMap.value()))
+    categorical_map = Map(file_selected_combo_box=dockwidget.QCBox_CategMap_StraRS,
+                       band=int(dockwidget.QCBox_band_CategMap_StraRS.currentText()),
+                       nodata=int(dockwidget.nodata_CategMap_StraRS.value()))
 
     # get values from category table  #########
     pixel_values = []
@@ -200,7 +200,7 @@ def do_stratified_random_sampling(dockwidget):
             srs_config["std_dev"].append(float(dockwidget.QTableW_StraRS.item(row, 3).text()))
 
     # first select the target dir for save the sampling file
-    suggested_filename = os.path.join(os.path.dirname(ThematicR.file_path), "stratified_random_sampling.gpkg")
+    suggested_filename = os.path.join(os.path.dirname(thematic_map.file_path), "stratified_random_sampling.gpkg")
     output_file, _ = QFileDialog.getSaveFileName(dockwidget,
                                                  dockwidget.tr("Select the output file to save the sampling"),
                                                  suggested_filename,
@@ -219,7 +219,7 @@ def do_stratified_random_sampling(dockwidget):
         random_seed = None
 
     # process
-    sampling = Sampling("stratified", ThematicR, CategoricalR, sampling_method,
+    sampling = Sampling("stratified", thematic_map, categorical_map, sampling_method,
                         srs_config=srs_config, output_file=output_file)
     sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
                                       neighbor_aggregation, attempts_by_sampling,
@@ -245,13 +245,13 @@ def do_stratified_random_sampling(dockwidget):
         iface.messageBar().pushMessage("AcATaMa", "Generated the stratified random sampling, but can not generate requested number of "
                                                   "random points {}/{}, attempts exceeded".format(sampling.total_of_samples, total_of_samples),
                                        level=Qgis.Warning, duration=-1)
-    # check the thematic raster map unit to calculate the minimum distances
+    # check the thematic map unit to calculate the minimum distances
     if min_distance > 0:
-        if ThematicR.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
+        if thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
             iface.messageBar().pushMessage("AcATaMa",
-                "The thematic raster \"{}\" does not have a valid map unit, AcATaMa used \"{}\" as the base unit to "
+                "The thematic map \"{}\" does not have a valid map unit, AcATaMa used \"{}\" as the base unit to "
                 "calculate the minimum distances.".format(
-                    ThematicR.qgs_layer.name(), QgsUnitTypes.toString(qgslayer.crs().mapUnits())),
+                    thematic_map.qgs_layer.name(), QgsUnitTypes.toString(qgslayer.crs().mapUnits())),
                 level=Qgis.Warning, duration=-1)
 
 
@@ -260,13 +260,13 @@ class Sampling(object):
     # for save all instances
     samplings = dict()  # {name_in_qgis: class instance}
 
-    def __init__(self, sampling_type, ThematicR, CategoricalR, sampling_method=None, srs_config=None, output_file=None):
+    def __init__(self, sampling_type, thematic_map, categorical_map, sampling_method=None, srs_config=None, output_file=None):
         # set and init variables
         # sampling_type => "simple" (simple random sampling),
         #                  "stratified" (stratified random sampling)
         self.sampling_type = sampling_type
-        self.ThematicR = ThematicR
-        self.CategoricalR = CategoricalR
+        self.thematic_map = thematic_map
+        self.categorical_map = categorical_map
         # for stratified sampling
         self.sampling_method = sampling_method
         # save some stratified sampling configuration
@@ -292,11 +292,11 @@ class Sampling(object):
         self.neighbor_aggregation = neighbor_aggregation
         progress_bar.setValue(0)  # init progress bar
 
-        self.ThematicR_boundaries = QgsGeometry().fromRect(self.ThematicR.extent())
+        self.ThematicR_boundaries = QgsGeometry().fromRect(self.thematic_map.extent())
 
         fields = QgsFields()
         fields.append(QgsField('id', QVariant.Int, '', 10, 0))
-        thematic_CRS = self.ThematicR.qgs_layer.crs()
+        thematic_CRS = self.thematic_map.qgs_layer.crs()
         file_format = \
             "GPKG" if self.output_file.endswith(".gpkg") else "ESRI Shapefile" if self.output_file.endswith(".shp") else None
         writer = QgsVectorFileWriter(self.output_file, "System", fields, QgsWkbTypes.Point, thematic_CRS, file_format)
@@ -322,7 +322,7 @@ class Sampling(object):
         points_generated = []
         while nIterations < maxIterations and nPoints < total_of_samples:
 
-            random_sampling_point = RandomPoint(self.ThematicR.extent())
+            random_sampling_point = RandomPoint(self.thematic_map.extent())
 
             # checks to the sampling point, else discard and continue
             if not self.check_sampling_point(random_sampling_point):
@@ -366,7 +366,7 @@ class Sampling(object):
     def check_sampling_point(self, sampling_point):
         """Make several checks to the sampling point, else discard
         """
-        if not sampling_point.in_valid_data(self.ThematicR):
+        if not sampling_point.in_valid_data(self.thematic_map):
             return False
 
         if not sampling_point.in_extent(self.ThematicR_boundaries):
@@ -376,15 +376,15 @@ class Sampling(object):
             return False
 
         if self.sampling_type == "simple":
-            if not sampling_point.in_categorical_raster_SimpRS(self.pixel_values, self.CategoricalR):
+            if not sampling_point.in_categorical_map_SimpRS(self.pixel_values, self.categorical_map):
                 return False
         if self.sampling_type == "stratified":
-            if not sampling_point.in_categorical_raster_StraRS(self.pixel_values, self.number_of_samples,
-                                                               self.CategoricalR, self.samples_in_categories):
+            if not sampling_point.in_categorical_map_StraRS(self.pixel_values, self.number_of_samples,
+                                                            self.categorical_map, self.samples_in_categories):
                 return False
 
         if self.neighbor_aggregation and \
-                not sampling_point.check_neighbors_aggregation(self.ThematicR, *self.neighbor_aggregation):
+                not sampling_point.check_neighbors_aggregation(self.thematic_map, *self.neighbor_aggregation):
             return False
 
         return True
@@ -395,9 +395,9 @@ class Sampling(object):
         config = configparser.RawConfigParser()
 
         config.add_section('thematic')
-        config.set('thematic', 'thematic_raster', self.ThematicR.file_path)
-        config.set('thematic', 'thematic_raster_band', str(self.ThematicR.band))
-        config.set('thematic', 'thematic_raster_nodata', str(self.ThematicR.nodata))
+        config.set('thematic', 'thematic_raster', self.thematic_map.file_path)
+        config.set('thematic', 'thematic_raster_band', str(self.thematic_map.band))
+        config.set('thematic', 'thematic_raster_nodata', str(self.thematic_map.nodata))
 
         config.add_section('sampling')
         config.set('sampling', 'type', '{} random sampling'.format(self.sampling_type))
@@ -407,9 +407,9 @@ class Sampling(object):
             config.set('sampling options', 'min_distance', self.min_distance)
 
             config.add_section('sampling in categorical raster')
-            if isinstance(self.CategoricalR, Raster):
-                config.set('sampling in categorical raster', 'categorical_raster', self.CategoricalR.file_path)
-                config.set('sampling in categorical raster', 'categorical_raster_band', self.CategoricalR.band)
+            if isinstance(self.categorical_map, Map):
+                config.set('sampling in categorical raster', 'categorical_raster', self.categorical_map.file_path)
+                config.set('sampling in categorical raster', 'categorical_raster_band', self.categorical_map.band)
             else:
                 config.set('sampling in categorical raster', 'categorical_raster', 'None')
                 config.set('sampling in categorical raster', 'categorical_raster_band', 'None')
@@ -418,10 +418,10 @@ class Sampling(object):
 
         if self.sampling_type == "stratified":
             config.add_section('categorical raster')
-            if isinstance(self.CategoricalR, Raster):
-                config.set('categorical raster', 'categorical_raster', self.CategoricalR.file_path)
-                config.set('categorical raster', 'categorical_raster_band', self.CategoricalR.band)
-                config.set('categorical raster', 'categorical_raster_nodata', self.CategoricalR.nodata)
+            if isinstance(self.categorical_map, Map):
+                config.set('categorical raster', 'categorical_raster', self.categorical_map.file_path)
+                config.set('categorical raster', 'categorical_raster_band', self.categorical_map.band)
+                config.set('categorical raster', 'categorical_raster_nodata', self.categorical_map.nodata)
             else:
                 config.set('categorical raster', 'categorical_raster', 'None')
                 config.set('categorical raster', 'categorical_raster_band', 'None')

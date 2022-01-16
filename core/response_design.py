@@ -26,7 +26,7 @@ from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsVectorFileWriter,
 from qgis.utils import iface
 
 from AcATaMa.core.point import LabelingPoint
-from AcATaMa.core.raster import Raster
+from AcATaMa.core.map import Map
 from AcATaMa.utils.system_utils import wait_process
 
 
@@ -175,9 +175,9 @@ class ResponseDesign(object):
 
         if self.with_thematic_classes:
             from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-            ThematicR = Raster(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicRaster,
-                               band=int(AcATaMa.dockwidget.QCBox_band_ThematicRaster.currentText()),
-                               nodata=int(AcATaMa.dockwidget.nodata_ThematicRaster.value()))
+            thematic_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicMap,
+                            band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
+                            nodata=int(AcATaMa.dockwidget.nodata_ThematicMap.value()))
 
         points_ordered = sorted(self.points, key=lambda p: p.shape_id)
         for point in points_ordered:
@@ -188,8 +188,8 @@ class ResponseDesign(object):
             if self.with_thematic_classes:
                 validation_in_sample = int(
                     self.buttons_config[point.label_id]["thematic_class"]) if point.is_labeled else NULL
-                thematic_map_in_sample = int(ThematicR.get_pixel_value_from_pnt(point.QgsPnt)) \
-                    if point.is_labeled and ThematicR.get_pixel_value_from_pnt(point.QgsPnt) else NULL
+                thematic_map_in_sample = int(thematic_map.get_pixel_value_from_pnt(point.QgsPnt)) \
+                    if point.is_labeled and thematic_map.get_pixel_value_from_pnt(point.QgsPnt) else NULL
                 match = ('Yes' if thematic_map_in_sample == validation_in_sample else 'No') if point.is_labeled else NULL
                 feature.setAttributes([point.shape_id, name, validation_in_sample, thematic_map_in_sample, match])
             else:

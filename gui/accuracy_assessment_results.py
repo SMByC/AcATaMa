@@ -97,7 +97,7 @@ def get_html(accu_asse):
         <body>
         '''
     html += "<h2>Analysis - Accuracy assessment results</h2>"
-    html += "<p><strong>Thematic map:</strong> {}</p>".format(os.path.basename(accu_asse.ThematicR.file_path))
+    html += "<p><strong>Thematic map:</strong> {}</p>".format(os.path.basename(accu_asse.thematic_map.file_path))
     html += "<p><strong>Sampling file:</strong> {}</p>".format(
         os.path.basename(get_file_path_of_layer(accu_asse.response_design.sampling_layer)))
     html += "<p><strong>Sampling type:</strong> {}</p>".format(accu_asse.sampling_type)
@@ -107,13 +107,13 @@ def get_html(accu_asse):
     # warning block if the thematic has a geographic units
     if accu_asse.base_area_unit == QgsUnitTypes.AreaSquareDegrees:
         html += "<p style='color:black;background-color:#ffc53a;white-space:pre;padding:4px'><strong>Warning!</strong><br/>" \
-                "The thematic raster has a geographic coordinate system, therefore all area values are not accurate.<br/>" \
+                "The thematic map has a geographic coordinate system, therefore all area values are not accurate.<br/>" \
                 "For fix that use the UTM coordinate system.</p>"
 
-    # warning block for samples outside the thematic raster area or inside the no data values
+    # warning block for samples outside the thematic map area or inside the no data values
     if accu_asse.samples_outside_the_thematic:
         html += "<p style='color:black;background-color:#ffc53a;white-space:pre;padding:4px'><strong>Warning!</strong><br/>" \
-                "There are {} samples labeled that are outside the thematic raster area or inside the no data values:<br/>".format(
+                "There are {} samples labeled that are outside the thematic map area or inside the no data values:<br/>".format(
             len(accu_asse.samples_outside_the_thematic))
         for idx, sample in enumerate(accu_asse.samples_outside_the_thematic):
             html += "    {}) Sample ID: {}, Coordinate: {},{}<br/>".format(idx+1, sample.shape_id, int(sample.QgsPnt.x()), int(sample.QgsPnt.y()))
@@ -155,7 +155,7 @@ def get_html(accu_asse):
         html += "<tr>"
         if idx_row == 0:
             html += '''
-                <th  class="th-rows" rowspan="{table_size}">Thematic raster<br />classes</th>
+                <th  class="th-rows" rowspan="{table_size}">Thematic map<br />classes</th>
                 '''.format(table_size=len(accu_asse.values))
 
         html += "<th>{value}</th>".format(value=value)
@@ -347,7 +347,7 @@ def get_html(accu_asse):
             html += "<tr>"
             if idx_row == 0:
                 html += '''
-                    <th  class="th-rows" rowspan="{table_size}">Thematic raster<br />classes</th>
+                    <th  class="th-rows" rowspan="{table_size}">Thematic map<br />classes</th>
                     '''.format(table_size=len(accu_asse.values))
 
             html += "<th>{value}</th>".format(value=value)
@@ -388,7 +388,7 @@ def get_html(accu_asse):
             html += "<tr>"
             if idx_row == 0:
                 html += '''
-                    <th  class="th-rows" rowspan="{table_size}">Thematic raster<br />classes</th>
+                    <th  class="th-rows" rowspan="{table_size}">Thematic map<br />classes</th>
                     '''.format(table_size=len(accu_asse.values))
 
             html += "<th>{value}</th>".format(value=value)
@@ -433,7 +433,7 @@ def get_html(accu_asse):
             html += "<tr>"
             if idx_row == 0:
                 html += '''
-                    <th  class="th-rows" rowspan="{table_size}">Thematic raster<br />classes</th>
+                    <th  class="th-rows" rowspan="{table_size}">Thematic map<br />classes</th>
                     '''.format(table_size=len(accu_asse.values))
 
             html += "<th>{value}</th>".format(value=value)
@@ -487,7 +487,7 @@ def get_html(accu_asse):
             html += "<tr>"
             if idx_row == 0:
                 html += '''
-                    <th  class="th-rows" rowspan="{table_size}">Thematic raster<br />classes</th>
+                    <th  class="th-rows" rowspan="{table_size}">Thematic map<br />classes</th>
                     '''.format(table_size=len(accu_asse.values))
 
             html += "<th>{value}</th>".format(value=value)
@@ -595,7 +595,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows.append(["Analysis - Accuracy assessment results"])
     csv_rows.append([])
     csv_rows.append(["Thematic map:"])
-    csv_rows.append([os.path.basename(accu_asse.ThematicR.file_path)])
+    csv_rows.append([os.path.basename(accu_asse.thematic_map.file_path)])
     csv_rows.append([])
     csv_rows.append(["Sampling file:"])
     csv_rows.append([os.path.basename(get_file_path_of_layer(accu_asse.response_design.sampling_layer))])
