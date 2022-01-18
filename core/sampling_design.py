@@ -395,9 +395,9 @@ class Sampling(object):
         config = configparser.RawConfigParser()
 
         config.add_section('thematic')
-        config.set('thematic', 'thematic_raster', self.thematic_map.file_path)
-        config.set('thematic', 'thematic_raster_band', str(self.thematic_map.band))
-        config.set('thematic', 'thematic_raster_nodata', str(self.thematic_map.nodata))
+        config.set('thematic', 'thematic_map', self.thematic_map.file_path)
+        config.set('thematic', 'thematic_map_band', str(self.thematic_map.band))
+        config.set('thematic', 'thematic_map_nodata', str(self.thematic_map.nodata))
 
         config.add_section('sampling')
         config.set('sampling', 'type', '{} random sampling'.format(self.sampling_type))

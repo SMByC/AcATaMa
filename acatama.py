@@ -146,8 +146,8 @@ class AcATaMa(object):
             self.dockwidget.response_design_window.reject(is_ok_to_close=True)
 
         if AccuracyAssessmentWindow.is_opened:
-            self.dockwidget.accuracy_assessment_dialog.closing()
-            self.dockwidget.accuracy_assessment_dialog.reject(is_ok_to_close=True)
+            self.dockwidget.accuracy_assessment_window.closing()
+            self.dockwidget.accuracy_assessment_window.reject(is_ok_to_close=True)
 
         self.removes_temporary_files()
 

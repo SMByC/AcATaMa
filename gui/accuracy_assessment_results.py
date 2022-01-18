@@ -116,7 +116,7 @@ def get_html(accu_asse):
                 "There are {} samples labeled that are outside the thematic map area or inside the no data values:<br/>".format(
             len(accu_asse.samples_outside_the_thematic))
         for idx, sample in enumerate(accu_asse.samples_outside_the_thematic):
-            html += "    {}) Sample ID: {}, Coordinate: {},{}<br/>".format(idx+1, sample.shape_id, int(sample.QgsPnt.x()), int(sample.QgsPnt.y()))
+            html += "    {}) Sample ID: {}, Coordinate: {},{}<br/>".format(idx+1, sample.sample_id, int(sample.QgsPnt.x()), int(sample.QgsPnt.y()))
         html += "These samples will be ignored for accuracy assessment results.</p>"
 
     ###########################################################################

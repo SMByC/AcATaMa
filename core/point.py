@@ -135,10 +135,10 @@ class RandomPoint(Point):
 
 class LabelingPoint(Point):
 
-    def __init__(self, x, y, shape_id=None):
+    def __init__(self, x, y, sample_id=None):
         super(LabelingPoint, self).__init__(x, y)
         # shape id is the order of the points inside the shapefile
-        self.shape_id = shape_id
+        self.sample_id = sample_id
         # label button id
         self.label_id = None
         # status for this point

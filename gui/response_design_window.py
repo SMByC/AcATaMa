@@ -217,7 +217,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         # update progress bar
         self.QPBar_SamplesNavigation.setValue(self.current_sample_idx + 1)
         # show the sample ID
-        self.Sample_ID.setText(str(self.current_sample.shape_id))
+        self.Sample_ID.setText(str(self.current_sample.sample_id))
         # show the label assigned
         self.display_sample_status()
         # show and go to marker
@@ -226,9 +226,9 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
     @pyqtSlot()
     def go_to_sample_id(self):
         try:
-            shape_id = int(self.GoTo_ID.text())
+            sample_id = int(self.GoTo_ID.text())
             # find the sample point with ID
-            sample_point = next((x for x in self.response_design.points if x.shape_id == shape_id), None)
+            sample_point = next((x for x in self.response_design.points if x.sample_id == sample_id), None)
             # go to sample
             self.current_sample_idx = self.response_design.points.index(sample_point)
             self.set_current_sample()
@@ -241,7 +241,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         # create temp file
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         kml_file = tempfile.mktemp(
-            prefix="point_id_{}_{}_".format(self.current_sample.shape_id, self.sampling_layer.name()),
+            prefix="point_id_{}_{}_".format(self.current_sample.sample_id, self.sampling_layer.name()),
             suffix=".kml", dir=AcATaMa.dockwidget.tmp_dir)
         # convert coordinates
         crsSrc = QgsCoordinateReferenceSystem(self.sampling_layer.crs())
@@ -267,7 +267,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
                   <coordinates>{lon},{lat}</coordinates>
                 </Point>
               </Placemark>
-            </kml>""".format(name="Sampling Point ID {}".format(self.current_sample.shape_id),
+            </kml>""".format(name="Sampling Point ID {}".format(self.current_sample.sample_id),
                              desc=description, lon=point.x(), lat=point.y())
         outfile = open(kml_file, "w")
         outfile.writelines(kml_raw)
@@ -392,7 +392,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             # create button
             QPButton = QPushButton(item_name)
             QPButton.setStyleSheet('QPushButton {color: ' + item_color + '}')
-            QPButton.clicked.connect(lambda state, classif_id=item_num: self.label_sample(classif_id))
+            QPButton.clicked.connect(lambda state, label_id=item_num: self.label_sample(label_id))
             QPButton.setAutoDefault(False)
             self.Grid_LabelingButtons.addWidget(QPButton, len(buttons) - 1, 0)
 

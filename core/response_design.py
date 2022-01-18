@@ -37,10 +37,9 @@ class ResponseDesign(object):
     def __init__(self, sampling_layer):
         self.sampling_layer = sampling_layer
         # for store the label buttons properties
-        # {classif_id: {"name", "color", "thematic_class"}}  # TODO migration
+        # {label_id: {"name", "color", "thematic_class"}}
         self.buttons_config = None
         # get all points from the layer
-        # [ClassificationPoint, ClassificationPoint, ...]  # TODO migration
         self.num_points = None
         self.points = self.get_points_from_shapefile()
         # save and init the current sample index
@@ -74,21 +73,21 @@ class ResponseDesign(object):
         #  1 = Simple random sampling post-stratified
         #  2 = Stratified random sampling
         self.sampling_type = -1
-        # for store the instance of the accuracy assessment results
-        self.accuracy_assessment = None
+        # for store the instance of the analysis results
+        self.analysis = None
 
         # shuffle the list items
         shuffle(self.points)
         # save instance
         ResponseDesign.instances[sampling_layer] = self
 
-    def label_the_current_sample(self, classif_id):
+    def label_the_current_sample(self, label_id):
         current_sample = self.points[self.current_sample_idx]
-        if classif_id:  # label with valid integer class
+        if label_id:  # label with valid integer class
             if current_sample.is_labeled is False:  # only when the label is changed
                 self.total_labeled += 1
                 self.total_unlabel -= 1 if self.total_unlabel > 0 else 0
-            current_sample.label_id = classif_id
+            current_sample.label_id = label_id
             current_sample.is_labeled = True
         else:  # unlabel the sample
             if current_sample.is_labeled is True:  # only when the sample label is changed
@@ -110,11 +109,11 @@ class ResponseDesign(object):
             # get the id from shape file using column name "id" else use auto-enumeration
             attr_id = self.sampling_layer.fields().lookupField('id')
             if attr_id != -1:
-                shape_id = qgs_feature.attributes()[attr_id]
+                sample_id = qgs_feature.attributes()[attr_id]
             else:
-                shape_id = enum_id
+                sample_id = enum_id
             x, y = geom.asPoint()
-            points.append(LabelingPoint(x, y, shape_id))
+            points.append(LabelingPoint(x, y, sample_id))
         self.num_points = len(points)
         return points
 
@@ -125,19 +124,19 @@ class ResponseDesign(object):
         points_from_shapefile = self.get_points_from_shapefile()
         modified = 0
         for point in self.points:
-            if point.shape_id in [p.shape_id for p in points_from_shapefile]:
-                point_to_restore = [p for p in points_from_shapefile if p.shape_id == point.shape_id][0]
+            if point.sample_id in [p.sample_id for p in points_from_shapefile]:
+                point_to_restore = [p for p in points_from_shapefile if p.sample_id == point.sample_id][0]
                 point_to_restore.label_id = point.label_id
                 if point_to_restore.label_id is not None:
                     point_to_restore.is_labeled = True
                 if point.QgsPnt != point_to_restore.QgsPnt:
                     modified += 1
         # calc added/removed changes
-        added = len(set([p.shape_id for p in points_from_shapefile]) - set([p.shape_id for p in self.points]))
-        removed = len(set([p.shape_id for p in self.points]) - set([p.shape_id for p in points_from_shapefile]))
+        added = len(set([p.sample_id for p in points_from_shapefile]) - set([p.sample_id for p in self.points]))
+        removed = len(set([p.sample_id for p in self.points]) - set([p.sample_id for p in points_from_shapefile]))
         # adjust the current sample id if some points are eliminated and its located before it
-        for rm_shape_id in set([p.shape_id for p in self.points]) - set([p.shape_id for p in points_from_shapefile]):
-            if [p.shape_id for p in self.points].index(rm_shape_id) <= self.current_sample_idx:
+        for rm_sample_id in set([p.sample_id for p in self.points]) - set([p.sample_id for p in points_from_shapefile]):
+            if [p.sample_id for p in self.points].index(rm_sample_id) <= self.current_sample_idx:
                 self.current_sample_idx -= 1
         # check if sampling has not changed
         if modified == 0 and added == 0 and removed == 0:
@@ -170,16 +169,16 @@ class ResponseDesign(object):
         else:
             pr.addAttributes([QgsField("ID", QVariant.Int),
                               QgsField("Label", QVariant.String),
-                              QgsField("Classif ID", QVariant.Int)])  # TODO migration
+                              QgsField("Label ID", QVariant.Int)])
         vlayer.updateFields()  # tell the vector layer to fetch changes from the provider
 
         if self.with_thematic_classes:
             from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
             thematic_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicMap,
-                            band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
-                            nodata=int(AcATaMa.dockwidget.nodata_ThematicMap.value()))
+                               band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
+                               nodata=int(AcATaMa.dockwidget.nodata_ThematicMap.value()))
 
-        points_ordered = sorted(self.points, key=lambda p: p.shape_id)
+        points_ordered = sorted(self.points, key=lambda p: p.sample_id)
         for point in points_ordered:
             # add a feature
             feature = QgsFeature()
@@ -191,9 +190,9 @@ class ResponseDesign(object):
                 thematic_map_in_sample = int(thematic_map.get_pixel_value_from_pnt(point.QgsPnt)) \
                     if point.is_labeled and thematic_map.get_pixel_value_from_pnt(point.QgsPnt) else NULL
                 match = ('Yes' if thematic_map_in_sample == validation_in_sample else 'No') if point.is_labeled else NULL
-                feature.setAttributes([point.shape_id, name, validation_in_sample, thematic_map_in_sample, match])
+                feature.setAttributes([point.sample_id, name, validation_in_sample, thematic_map_in_sample, match])
             else:
-                feature.setAttributes([point.shape_id, name, point.label_id])
+                feature.setAttributes([point.sample_id, name, point.label_id])
             pr.addFeatures([feature])
 
         vlayer.commitChanges()
