@@ -125,7 +125,7 @@ It set automatically from image if the layer has the nodata value set.</string>
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_sampling_design">
        <attribute name="title">
@@ -164,7 +164,7 @@ It set automatically from image if the layer has the nodata value set.</string>
              <x>0</x>
              <y>0</y>
              <width>655</width>
-             <height>1231</height>
+             <height>1079</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -873,7 +873,7 @@ It set automatically from image if the layer has the nodata value set.</string>
              <x>0</x>
              <y>0</y>
              <width>676</width>
-             <height>947</height>
+             <height>977</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_24">
@@ -1313,8 +1313,8 @@ It set automatically from image if the layer has the nodata value set.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>676</width>
-             <height>947</height>
+             <width>456</width>
+             <height>538</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_11">
