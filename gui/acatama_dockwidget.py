@@ -108,8 +108,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # select and check the categorical map
         self.QCBox_CategMap_SimpRS.layerChanged.connect(self.select_categorical_map_SimpRS)
         # generate and random sampling options
-        self.widget_generate_SimpRS.generate_sampling_widget_options.setHidden(True)
-        self.widget_generate_SimpRS.random_sampling_widget_options.setHidden(True)
+        self.widget_generate_SimpRS.widget_generation_options.setHidden(True)
+        self.widget_generate_SimpRS.widget_random_sampling_options.setHidden(True)
         # save config
         self.widget_generate_SimpRS.widget_save_sampling_config.setHidden(True)
         iface.mapCanvas().layersChanged.connect(
@@ -117,11 +117,11 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.widget_generate_SimpRS.QPBtn_SaveSamplingConf.clicked.connect(
             lambda: self.file_dialog_save_samplingConf(self.widget_generate_SimpRS.QCBox_SamplingToSave))
         # generation options
-        self.widget_generate_SimpRS.QPBtn_GenerateSampling.clicked.connect(lambda: do_simple_random_sampling(self))
+        self.widget_generate_SimpRS.QPBtn_GenerateSamples.clicked.connect(lambda: do_simple_random_sampling(self))
         # update progress bar limits
         self.numberOfSamples_SimpRS.valueChanged.connect(
-            lambda: self.widget_generate_SimpRS.QPBar_GenerateSampling.setValue(0))
-        self.numberOfSamples_SimpRS.valueChanged.connect(self.widget_generate_SimpRS.QPBar_GenerateSampling.setMaximum)
+            lambda: self.widget_generate_SimpRS.QPBar_GenerateSamples.setValue(0))
+        self.numberOfSamples_SimpRS.valueChanged.connect(self.widget_generate_SimpRS.QPBar_GenerateSamples.setMaximum)
 
         # ######### stratified random sampling ######### #
         # set properties to QgsMapLayerComboBox
@@ -145,8 +145,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.TotalExpectedSE.valueChanged.connect(lambda: update_stratified_sampling_table(self, "TotalExpectedSE"))
         self.QTableW_StraRS.itemChanged.connect(lambda: update_stratified_sampling_table(self, "TableContent"))
         # generate and random sampling options
-        self.widget_generate_StraRS.generate_sampling_widget_options.setHidden(True)
-        self.widget_generate_StraRS.random_sampling_widget_options.setHidden(True)
+        self.widget_generate_StraRS.widget_generation_options.setHidden(True)
+        self.widget_generate_StraRS.widget_random_sampling_options.setHidden(True)
         # save config
         self.widget_generate_StraRS.widget_save_sampling_config.setHidden(True)
         iface.mapCanvas().layersChanged.connect(
@@ -154,7 +154,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.widget_generate_StraRS.QPBtn_SaveSamplingConf.clicked.connect(
             lambda: self.file_dialog_save_samplingConf(self.widget_generate_StraRS.QCBox_SamplingToSave))
         # generation options
-        self.widget_generate_StraRS.QPBtn_GenerateSampling.clicked.connect(lambda: do_stratified_random_sampling(self))
+        self.widget_generate_StraRS.QPBtn_GenerateSamples.clicked.connect(lambda: do_stratified_random_sampling(self))
 
         # disable sampling tab at start
         self.scrollAreaWidgetContents_S.setDisabled(True)

@@ -27,7 +27,7 @@ from qgis.PyQt.QtCore import pyqtSlot
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'generate_sampling_widget.ui'))
+    plugin_folder, 'ui', 'generate_samples_widget.ui'))
 
 
 class GenerateSamplingWidget(QWidget, FORM_CLASS):

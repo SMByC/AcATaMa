@@ -102,7 +102,7 @@ def do_simple_random_sampling(dockwidget):
     sampling = Sampling("simple", thematic_map, categorical_map, output_file=output_file)
     sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
                                       neighbor_aggregation, attempts_by_sampling,
-                                      dockwidget.widget_generate_SimpRS.QPBar_GenerateSampling,
+                                      dockwidget.widget_generate_SimpRS.QPBar_GenerateSamples,
                                       random_seed)
 
     # zero points
@@ -223,7 +223,7 @@ def do_stratified_random_sampling(dockwidget):
                         srs_config=srs_config, output_file=output_file)
     sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
                                       neighbor_aggregation, attempts_by_sampling,
-                                      dockwidget.widget_generate_StraRS.QPBar_GenerateSampling,
+                                      dockwidget.widget_generate_StraRS.QPBar_GenerateSamples,
                                       random_seed)
 
     # zero points
