@@ -135,7 +135,7 @@
       <item>
        <widget class="QGroupBox" name="QGBox_generate_sampling_options">
         <property name="title">
-         <string>&amp;Generate sampling options</string>
+         <string>&amp;Generation options</string>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -275,7 +275,7 @@ impossible complete the sampling set configured.</string>
       <item>
        <widget class="QPushButton" name="QPBtn_GenerateSampling">
         <property name="text">
-         <string>Generate the sampling</string>
+         <string>Generate samples</string>
         </property>
        </widget>
       </item>

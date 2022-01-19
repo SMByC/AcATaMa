@@ -119,7 +119,8 @@ def update_srs_table_content(dockwidget, srs_table):
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
                     item_table.setToolTip("Total number of samples for this class, this is generated\n"
                                           "automatically based on the area proportion by the activated\n"
-                                          "classes, overall standard error and its standard deviation.")
+                                          "classes, overall expected standard error and its standard\n"
+                                          "deviation.")
                     if not srs_table["On"][m]:
                         item_table.setForeground(QColor("lightGrey"))
                         item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)

@@ -116,7 +116,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             lambda: self.update_generated_sampling_list_in(self.widget_generate_SimpRS.QCBox_SamplingToSave))
         self.widget_generate_SimpRS.QPBtn_SaveSamplingConf.clicked.connect(
             lambda: self.file_dialog_save_samplingConf(self.widget_generate_SimpRS.QCBox_SamplingToSave))
-        # generate sampling
+        # generation options
         self.widget_generate_SimpRS.QPBtn_GenerateSampling.clicked.connect(lambda: do_simple_random_sampling(self))
         # update progress bar limits
         self.numberOfSamples_SimpRS.valueChanged.connect(
@@ -153,7 +153,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             lambda: self.update_generated_sampling_list_in(self.widget_generate_StraRS.QCBox_SamplingToSave))
         self.widget_generate_StraRS.QPBtn_SaveSamplingConf.clicked.connect(
             lambda: self.file_dialog_save_samplingConf(self.widget_generate_StraRS.QCBox_SamplingToSave))
-        # generate sampling
+        # generation options
         self.widget_generate_StraRS.QPBtn_GenerateSampling.clicked.connect(lambda: do_stratified_random_sampling(self))
 
         # disable sampling tab at start

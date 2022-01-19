@@ -126,7 +126,7 @@ Both `Simple Random Sampling` and `Stratified Random Sampling` at bottom has the
 
 <img src="img/2e.png" width="65%">
 
- - `Generate sampling options`: Set the number of attempts for to do the sampling, the difficulty of making the sampling depend on some conditions suck as; minimum distance, neighbors aggregations, total number of samples and the area for do this.
+ - `Generation options`: Set the number of attempts for to do the sampling, the difficulty of making the sampling depend on some conditions suck as; minimum distance, neighbors aggregations, total number of samples and the area for do this.
   - `Random sampling options`: Set the seed random value for generating sampling points, with the purpose of generate reproducible sampling. Set the seed random number as an integer value. It is possible to use strings, bytes, or bytearray but all of them get converted to an int and all of its bits are used. 
  
 ### Save config
@@ -262,7 +262,7 @@ Here there are some examples of cases of use of AcATaMa:
 
 ### Case 5: Visual-check the co-registration pixel to pixel
 
-1. Generate the sampling points
+1. Generate samples
 2. Using the classification dialog for load the two or more image to check, set the fit the sample very closely a pixel dimension
 3. Check pixel by pixel
 
