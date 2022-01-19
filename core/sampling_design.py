@@ -44,8 +44,8 @@ def do_simple_random_sampling(dockwidget):
             return
 
     thematic_map = Map(file_selected_combo_box=dockwidget.QCBox_ThematicMap,
-                    band=int(dockwidget.QCBox_band_ThematicMap.currentText()),
-                    nodata=int(dockwidget.nodata_ThematicMap.value()))
+                       band=int(dockwidget.QCBox_band_ThematicMap.currentText()),
+                       nodata=int(dockwidget.nodata_ThematicMap.value()))
 
     # get and define some variables
     number_of_samples = int(dockwidget.numberOfSamples_SimpRS.value())
@@ -54,7 +54,7 @@ def do_simple_random_sampling(dockwidget):
     # simple random sampling in categorical map
     if dockwidget.QGBox_SimpRSwithCR.isChecked():
         categorical_map = Map(file_selected_combo_box=dockwidget.QCBox_CategMap_SimpRS,
-                           band=int(dockwidget.QCBox_band_CategMap_SimpRS.currentText()))
+                              band=int(dockwidget.QCBox_band_CategMap_SimpRS.currentText()))
         try:
             pixel_values = [int(p) for p in dockwidget.pixelsValuesCategMap.text().split(",")]
         except:
@@ -144,11 +144,11 @@ def do_stratified_random_sampling(dockwidget):
     # get and define some variables
     min_distance = float(dockwidget.minDistance_StraRS.value())
     thematic_map = Map(file_selected_combo_box=dockwidget.QCBox_ThematicMap,
-                    band=int(dockwidget.QCBox_band_ThematicMap.currentText()),
-                    nodata=int(dockwidget.nodata_ThematicMap.value()))
+                       band=int(dockwidget.QCBox_band_ThematicMap.currentText()),
+                       nodata=int(dockwidget.nodata_ThematicMap.value()))
     categorical_map = Map(file_selected_combo_box=dockwidget.QCBox_CategMap_StraRS,
-                       band=int(dockwidget.QCBox_band_CategMap_StraRS.currentText()),
-                       nodata=int(dockwidget.nodata_CategMap_StraRS.value()))
+                          band=int(dockwidget.QCBox_band_CategMap_StraRS.currentText()),
+                          nodata=int(dockwidget.nodata_CategMap_StraRS.value()))
 
     # get values from category table  #########
     pixel_values = []
