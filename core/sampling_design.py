@@ -244,12 +244,12 @@ def do_stratified_random_sampling(dockwidget):
 
     # success
     if sampling.total_of_samples == total_of_samples:
-        qgslayer = load_layer(sampling.output_file)
+        sampling_layer_generated = load_layer(sampling.output_file)
         iface.messageBar().pushMessage("AcATaMa", "Generate the stratified random sampling, completed",
                                        level=Qgis.Success)
     # success but not completed
     if sampling.total_of_samples < total_of_samples and sampling.total_of_samples > 0:
-        qgslayer = load_layer(sampling.output_file)
+        sampling_layer_generated = load_layer(sampling.output_file)
         iface.messageBar().pushMessage("AcATaMa", "Generated the stratified random sampling, but can not generate requested number of "
                                                   "random points {}/{}, attempts exceeded".format(sampling.total_of_samples, total_of_samples),
                                        level=Qgis.Warning, duration=-1)
@@ -259,9 +259,15 @@ def do_stratified_random_sampling(dockwidget):
             iface.messageBar().pushMessage("AcATaMa",
                 "The thematic map \"{}\" does not have a valid map unit, AcATaMa used \"{}\" as the base unit to "
                 "calculate the minimum distances.".format(
-                    thematic_map.qgs_layer.name(), QgsUnitTypes.toString(qgslayer.crs().mapUnits())),
+                    thematic_map.qgs_layer.name(), QgsUnitTypes.toString(sampling_layer_generated.crs().mapUnits())),
                 level=Qgis.Warning, duration=-1)
-
+    # select the sampling file generated in respond design and analysis tab
+    dockwidget.QCBox_SamplingFile.setLayer(sampling_layer_generated)
+    if sampling_layer_generated not in ResponseDesign.instances:
+        ResponseDesign(sampling_layer_generated)
+    dockwidget.QCBox_SamplingFile_A.setLayer(sampling_layer_generated)
+    dockwidget.QCBox_SamplingType_A.setCurrentIndex(-1)
+    dockwidget.QCBox_SamplingType_A.setCurrentIndex(2)
 
 
 class Sampling(object):
