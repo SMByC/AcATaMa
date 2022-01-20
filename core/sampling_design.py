@@ -147,7 +147,7 @@ def do_stratified_random_sampling(dockwidget):
     # first check input files requirements
     if not valid_file_selected_in(dockwidget.QCBox_ThematicMap, "thematic map"):
         return
-    if not valid_file_selected_in(dockwidget.QCBox_Categmap_StraRS, "categorical map"):
+    if not valid_file_selected_in(dockwidget.QCBox_CategMap_StraRS, "categorical map"):
         return
     # get and define some variables
     min_distance = float(dockwidget.minDistance_StraRS.value())
