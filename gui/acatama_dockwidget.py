@@ -247,7 +247,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QCBox_band_ThematicMap.clear()
         self.QCBox_band_ThematicMap.addItems([str(x) for x in range(1, layer.bandCount() + 1)])
         # set nodata value of thematic map in nodata field
-        self.nodata_ThematicMap.setValue(get_nodata_value(layer))
+        self.nodata_ThematicMap.setValue(int(get_nodata_value(layer)))
         # set/update the units in minimum distance items in sampling tab
         layer_dist_unit = layer.crs().mapUnits()
         str_unit = QgsUnitTypes.toString(layer_dist_unit)
@@ -324,7 +324,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         if layer == self.QCBox_ThematicMap.currentLayer():
             self.nodata_CategMap_StraRS.setValue(self.nodata_ThematicMap.value())
             return
-        self.nodata_CategMap_StraRS.setValue(get_nodata_value(layer))
+        self.nodata_CategMap_StraRS.setValue(int(get_nodata_value(layer)))
 
     @pyqtSlot()
     def reset_StraRS_method(self):
