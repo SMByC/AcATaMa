@@ -20,6 +20,11 @@
 """
 import os
 from collections import OrderedDict
+import yaml
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
 
 from qgis.core import Qgis, QgsUnitTypes
 from qgis.utils import iface
@@ -31,7 +36,6 @@ from AcATaMa.utils.qgis_utils import get_current_file_path_in, get_file_path_of_
 
 @wait_process
 def save(file_out):
-    import yaml
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
 
     def setup_yaml():
@@ -92,7 +96,7 @@ def save(file_out):
         }
 
     with open(file_out, 'w') as yaml_file:
-        yaml.dump(data, yaml_file)
+        yaml.dump(data, yaml_file, Dumper=Dumper)
 
 
 @wait_process
@@ -100,10 +104,9 @@ def restore(file_path):
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
 
     # load the yaml file
-    import yaml
     with open(file_path, 'r') as yaml_file:
         try:
-            yaml_config = yaml.load(yaml_file, Loader=yaml.FullLoader)
+            yaml_config = yaml.load(yaml_file, Loader=Loader)
         except yaml.YAMLError as err:
             iface.messageBar().pushMessage("AcATaMa", "Error while read the AcATaMa configuration file: {}".format(err),
                                            level=Qgis.Critical)

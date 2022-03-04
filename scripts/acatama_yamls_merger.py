@@ -34,8 +34,12 @@
 #                                 (not labeled) (individual files labeled)
 
 import argparse
-import yaml
 import os
+import yaml
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
 
 
 def script():
@@ -61,7 +65,7 @@ def script():
     yml_template = None
     for yaml_file_path in yaml_files:
         with open(yaml_file_path, 'r') as yaml_file:
-            yaml_config = yaml.load(yaml_file, Loader=yaml.FullLoader)
+            yaml_config = yaml.load(yaml_file, Loader=Loader)
 
             if yml_template is None:
                 yml_template = yaml_config
@@ -76,7 +80,7 @@ def script():
     yml_template["points_order"] = points_order
 
     with open(os.path.splitext(yaml_files[0])[0] + "_merged.yml", 'w') as yaml_file:
-        yaml.dump(yml_template, yaml_file)
+        yaml.dump(yml_template, yaml_file, Dumper=Dumper)
 
     print("saving: ", os.path.splitext(yaml_files[0])[0] + "_merged.yml")
     print("\nDONE")

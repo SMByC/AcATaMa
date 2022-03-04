@@ -32,9 +32,13 @@
 #                             (not labeled) (individual files labeled)
 
 import argparse
-import yaml
 import os
 import itertools
+import yaml
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
 
 
 def script():
@@ -59,7 +63,7 @@ def script():
     yml_template = None
     for yaml_file_path in yaml_files:
         with open(yaml_file_path, 'r') as yaml_file:
-            yaml_config = yaml.load(yaml_file, Loader=yaml.FullLoader)
+            yaml_config = yaml.load(yaml_file, Loader=Loader)
             if yml_template is None:
                 yml_template = yaml_config
                 continue
@@ -83,7 +87,7 @@ def script():
     yml_template["samples"] = {x: p for x, p in zip(range(len(samples_consolidated)), samples_consolidated)}
 
     with open(os.path.splitext(yaml_files[0])[0] + "_consolidated.yml", 'w') as yaml_file:
-        yaml.dump(yml_template, yaml_file)
+        yaml.dump(yml_template, yaml_file, Dumper=Dumper)
 
     print("saving: ", os.path.splitext(yaml_files[0])[0] + "_consolidated.yml")
     print("\nDONE")
