@@ -99,7 +99,7 @@ def update_srs_table_content(dockwidget, srs_table):
         # enter data onto Table
         for n, key in enumerate(srs_table["header"]):
             if key == "Pix Val":
-                for m, item in enumerate(srs_table["color_table"]["Pixel Value"]):
+                for m, item in enumerate(srs_table["values_and_colors_table"]["Pixel Value"]):
                     item_table = QTableWidgetItem(str(item))
                     item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
@@ -108,10 +108,10 @@ def update_srs_table_content(dockwidget, srs_table):
                 for m in range(srs_table["row_count"]):
                     item_table = QTableWidgetItem()
                     item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-                    item_table.setBackground(QColor(srs_table["color_table"]["Red"][m],
-                                                    srs_table["color_table"]["Green"][m],
-                                                    srs_table["color_table"]["Blue"][m],
-                                                    srs_table["color_table"]["Alpha"][m]))
+                    item_table.setBackground(QColor(srs_table["values_and_colors_table"]["Red"][m],
+                                                    srs_table["values_and_colors_table"]["Green"][m],
+                                                    srs_table["values_and_colors_table"]["Blue"][m],
+                                                    srs_table["values_and_colors_table"]["Alpha"][m]))
                     dockwidget.QTableW_StraRS.setItem(m, n, item_table)
             if key == "Num Samples":
                 for m in range(srs_table["row_count"]):
@@ -186,21 +186,21 @@ def fill_stratified_sampling_table(dockwidget):
         # restore values saved for number of samples configured for selected categorical file
         srs_table = dockwidget.srs_tables[dockwidget.QCBox_CategMap_StraRS.currentText()][srs_method]
     else:
-        from AcATaMa.core.map import get_color_table
+        from AcATaMa.core.map import get_values_and_colors_table
         # init a new stratified random sampling table
-        srs_table = {"color_table": get_color_table(
+        srs_table = {"values_and_colors_table": get_values_and_colors_table(
             dockwidget.QCBox_CategMap_StraRS.currentLayer(),
             band=int(dockwidget.QCBox_band_CategMap_StraRS.currentText()),
             nodata=int(dockwidget.nodata_CategMap_StraRS.value()))}
 
-        if not srs_table["color_table"]:
+        if not srs_table["values_and_colors_table"]:
             # clear table
             dockwidget.QTableW_StraRS.setRowCount(0)
             dockwidget.QTableW_StraRS.setColumnCount(0)
             # deselect
             dockwidget.QCBox_StraRS_Method.setCurrentIndex(-1)
             return
-        srs_table["row_count"] = len(list(srs_table["color_table"].values())[0])
+        srs_table["row_count"] = len(list(srs_table["values_and_colors_table"].values())[0])
 
         if srs_method == "fixed values":
             srs_table["header"] = ["Pix Val", "Color", "Num Samples"]
@@ -215,7 +215,7 @@ def fill_stratified_sampling_table(dockwidget):
             srs_table["pixel_count"] = list(
                 get_pixel_count_by_pixel_values(dockwidget.QCBox_CategMap_StraRS.currentLayer(),
                                                 int(dockwidget.QCBox_band_CategMap_StraRS.currentText()),
-                                                srs_table["color_table"]["Pixel Value"],
+                                                srs_table["values_and_colors_table"]["Pixel Value"],
                                                 int(dockwidget.nodata_CategMap_StraRS.value())).values())
             total_std_error = dockwidget.TotalExpectedSE.value()
             srs_table["On"] = [True] * srs_table["row_count"]

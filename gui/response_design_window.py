@@ -31,7 +31,7 @@ from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, Qgis
 from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, get_current_file_path_in, \
     load_and_select_filepath_in
-from AcATaMa.core.map import get_color_table
+from AcATaMa.core.map import get_values_and_colors_table
 from AcATaMa.utils.system_utils import open_file, block_signals_to, error_handler
 from AcATaMa.gui.response_design_view_widget import LabelingViewWidget
 
@@ -624,17 +624,17 @@ class ThematicMapClasses(QDialog, FORM_CLASS):
 
         header = ["Pix Val", "Color", "Select"]
         # get color table from raster
-        thematic_table = {"color_table": get_color_table(
+        thematic_table = {"values_and_colors_table": get_values_and_colors_table(
             AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer(),
             band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
             nodata=int(AcATaMa.dockwidget.nodata_ThematicMap.value()))}
 
-        if not thematic_table["color_table"]:
+        if not thematic_table["values_and_colors_table"]:
             # clear table
             self.tableOfClasses.setRowCount(0)
             self.tableOfClasses.setColumnCount(0)
             return
-        thematic_table["row_count"] = len(list(thematic_table["color_table"].values())[0])
+        thematic_table["row_count"] = len(list(thematic_table["values_and_colors_table"].values())[0])
         # init table
         self.tableOfClasses.setRowCount(thematic_table["row_count"])
         self.tableOfClasses.setColumnCount(3)
@@ -646,7 +646,7 @@ class ThematicMapClasses(QDialog, FORM_CLASS):
         # insert items
         for n, h in enumerate(header):
             if h == "Pix Val":
-                for m, item in enumerate(thematic_table["color_table"]["Pixel Value"]):
+                for m, item in enumerate(thematic_table["values_and_colors_table"]["Pixel Value"]):
                     item_table = QTableWidgetItem(str(item))
                     item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
@@ -655,10 +655,10 @@ class ThematicMapClasses(QDialog, FORM_CLASS):
                 for m in range(thematic_table["row_count"]):
                     item_table = QTableWidgetItem()
                     item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-                    item_table.setBackground(QColor(thematic_table["color_table"]["Red"][m],
-                                                    thematic_table["color_table"]["Green"][m],
-                                                    thematic_table["color_table"]["Blue"][m],
-                                                    thematic_table["color_table"]["Alpha"][m]))
+                    item_table.setBackground(QColor(thematic_table["values_and_colors_table"]["Red"][m],
+                                                    thematic_table["values_and_colors_table"]["Green"][m],
+                                                    thematic_table["values_and_colors_table"]["Blue"][m],
+                                                    thematic_table["values_and_colors_table"]["Alpha"][m]))
                     self.tableOfClasses.setItem(m, n, item_table)
             if h == "Select":
                 for m in range(thematic_table["row_count"]):

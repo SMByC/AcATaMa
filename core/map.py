@@ -19,12 +19,34 @@
  ***************************************************************************/
 """
 from math import isnan
+from random import randrange
 import xml.etree.ElementTree as ET
 
-from qgis.core import QgsRaster, QgsPointXY
+from qgis.core import QgsRaster, QgsPointXY, QgsPalettedRasterRenderer
+from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QMessageBox
 
-from AcATaMa.utils.others_utils import get_pixel_count_by_pixel_values
+from AcATaMa.utils.others_utils import get_pixel_count_by_pixel_values, wait_process
+
+
+@wait_process
+def auto_symbology_classification_render(layer, band):
+    # get the unique values in the band
+    rows = layer.height()
+    cols = layer.width()
+    provider = layer.dataProvider()
+    bl = provider.block(band, provider.extent(), cols, rows)
+    unique_values = list(set([bl.value(r, c) for r in range(rows) for c in range(cols)]))
+
+    # fill categories
+    categories = []
+    for unique_value in unique_values:
+        categories.append(QgsPalettedRasterRenderer.Class(
+            unique_value, QColor(randrange(0, 256), randrange(0, 256), randrange(0, 256)), str(unique_value)))
+
+    renderer = QgsPalettedRasterRenderer(layer.dataProvider(), band, categories)
+    layer.setRenderer(renderer)
+    layer.triggerRepaint()
 
 
 def get_nodata_value(layer, band=1):
@@ -37,7 +59,7 @@ def get_nodata_value(layer, band=1):
     return nodata_value
 
 
-def get_color_table(layer, band=1, nodata=None):
+def get_xml_style(layer, band):
     current_style = layer.styleManager().currentStyle()
     layer_style = layer.styleManager().style(current_style)
     xml_style_str = layer_style.xmlData()
@@ -53,31 +75,43 @@ def get_color_table(layer, band=1, nodata=None):
     check_int_values = [int(float(xml_item.get("value"))) == float(xml_item.get("value")) for xml_item in
                         xml_style_items]
 
-    # TODO: implement auto generation style
     if not xml_style_items or False in check_int_values:
-        msg = "The selected layer \"{}\" {}doesn't have an appropriate colors/values style for AcATaMa, " \
-              "it must be unique values or singleband pseudocolor with integer values. " \
+        msg = "The selected layer \"{layer}\"{band} doesn't have an appropriate symbology for AcATaMa, " \
+              "it must be set with unique/exact colors-values. " \
               "<a href='https://smbyc.github.io/AcATaMa/#types-of-thematic-rasters-accepted-in-acatama'>" \
-              "See more</a>.".format(layer.name(), "in the band {} ".format(band) if layer.bandCount() > 1 else "")
-        QMessageBox.warning(None, 'Reading the symbology layer style...', msg)
+              "See more</a>.<br/><br/>" \
+              "Allow AcATaMa apply an automatic classification symbology to this layer{band}?" \
+            .format(layer=layer.name(), band=" in the band {}".format(band) if layer.bandCount() > 1 else "")
+        reply = QMessageBox.question(None, 'Reading the symbology layer style...', msg, QMessageBox.Apply, QMessageBox.Cancel)
+        if reply == QMessageBox.Apply:
+            auto_symbology_classification_render(layer, band)
+            return get_xml_style(layer, band)
+        else:
+            return
+    return xml_style_items
+
+
+def get_values_and_colors_table(layer, band=1, nodata=None):
+    xml_style_items = get_xml_style(layer, band)
+    if not xml_style_items:
         return
 
-    color_table = {"Pixel Value": [], "Red": [], "Green": [], "Blue": [], "Alpha": []}
+    values_and_colors_table = {"Pixel Value": [], "Red": [], "Green": [], "Blue": [], "Alpha": []}
     for item in xml_style_items:
         if nodata is not None and int(item.get("value")) == int(nodata):
             continue
 
-        color_table["Pixel Value"].append(int(item.get("value")))
+        values_and_colors_table["Pixel Value"].append(int(item.get("value")))
 
         item_color = item.get("color").lstrip('#')
         item_color = tuple(int(item_color[i:i+2], 16) for i in (0, 2, 4))
 
-        color_table["Red"].append(item_color[0])
-        color_table["Green"].append(item_color[1])
-        color_table["Blue"].append(item_color[2])
-        color_table["Alpha"].append(int(item.get("alpha")))
+        values_and_colors_table["Red"].append(item_color[0])
+        values_and_colors_table["Green"].append(item_color[1])
+        values_and_colors_table["Blue"].append(item_color[2])
+        values_and_colors_table["Alpha"].append(int(item.get("alpha")))
 
-    return color_table
+    return values_and_colors_table
 
 
 class Map(object):
