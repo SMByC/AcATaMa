@@ -73,6 +73,16 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.suggested_yml_file = None
 
     def closeEvent(self, event):
+        # first warn before exit if at least exist one response design instance created
+        if ResponseDesign.instances:
+            quit_msg = "Are you sure you want close the AcATaMa plugin?"
+            reply = QMessageBox.question(None, 'Closing the AcATaMa plugin',
+                                         quit_msg, QMessageBox.Yes, QMessageBox.No)
+            if reply == QMessageBox.No:
+                # don't close
+                event.ignore()
+                return
+        # close
         self.closingPlugin.emit()
         event.accept()
 
