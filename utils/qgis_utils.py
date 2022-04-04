@@ -62,6 +62,11 @@ def get_current_file_path_in(combo_box, show_message=True):
     return None
 
 
+def select_item_in(combo_box, item):
+    selected_index = combo_box.findText(item, Qt.MatchFixedString)
+    combo_box.setCurrentIndex(selected_index)
+
+
 def load_and_select_filepath_in(combo_box, file_path, layer_name=None):
     if not file_path:
         return
@@ -72,8 +77,7 @@ def load_and_select_filepath_in(combo_box, file_path, layer_name=None):
     if not layer:
         load_layer(file_path, name=layer_name)
     # select the sampling file in combobox
-    selected_index = combo_box.findText(layer_name, Qt.MatchFixedString)
-    combo_box.setCurrentIndex(selected_index)
+    select_item_in(combo_box, layer_name)
 
     return get_layer_by_name(layer_name)
 
