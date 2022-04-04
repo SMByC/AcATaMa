@@ -63,6 +63,8 @@ def get_current_file_path_in(combo_box, show_message=True):
 
 
 def load_and_select_filepath_in(combo_box, file_path, layer_name=None):
+    if not file_path:
+        return
     if not layer_name:
         layer_name = os.path.splitext(os.path.basename(file_path))[0]
     layer = get_layer_by_name(layer_name)
