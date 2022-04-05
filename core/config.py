@@ -30,8 +30,10 @@ from qgis.core import Qgis, QgsUnitTypes
 from qgis.utils import iface
 
 from AcATaMa.core.response_design import ResponseDesign
-from AcATaMa.utils.system_utils import wait_process
-from AcATaMa.utils.qgis_utils import get_current_file_path_in, get_file_path_of_layer, load_and_select_filepath_in
+from AcATaMa.utils.system_utils import wait_process, block_signals_to
+from AcATaMa.utils.sampling_utils import fill_stratified_sampling_table
+from AcATaMa.utils.qgis_utils import get_current_file_path_in, get_file_path_of_layer, load_and_select_filepath_in, \
+    select_item_in
 
 
 @wait_process
@@ -52,17 +54,78 @@ def save(file_out):
     data["thematic_map"] = \
         {"path": get_current_file_path_in(AcATaMa.dockwidget.QCBox_ThematicMap, show_message=False),
          "band": int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
-         if AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText() else None,
+            if AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText() != '' else -1,
          "nodata": AcATaMa.dockwidget.nodata_ThematicMap.value()}
 
     # ######### general configuration ######### #
     data["general"] = {"tab_activated": AcATaMa.dockwidget.tabWidget.currentIndex()}
+
+    # ######### sampling design ######### #
+    data["sampling_design"] = {}
+    data["sampling_design"]["tab_activated"] = AcATaMa.dockwidget.tabs_SamplingStrategy.currentIndex()
+    # simple random sampling
+    data["sampling_design"]["simple_random_sampling"] = {
+        "num_samples": AcATaMa.dockwidget.numberOfSamples_SimpRS.value(),
+        "min_distance": AcATaMa.dockwidget.minDistance_SimpRS.value(),
+        "post_stratify": AcATaMa.dockwidget.QGBox_SimpRSwithCR.isChecked(),
+        "categ_map_path": get_current_file_path_in(AcATaMa.dockwidget.QCBox_CategMap_SimpRS, show_message=False),
+        "categ_map_band": int(AcATaMa.dockwidget.QCBox_band_CategMap_SimpRS.currentText())
+            if AcATaMa.dockwidget.QCBox_band_CategMap_SimpRS.currentText() != '' else -1,
+        "pixel_values_categ_map": AcATaMa.dockwidget.pixelValuesCategMap.text(),
+
+        "with_neighbors_aggregation": AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_neighbour_aggregation.isChecked(),
+        "num_neighbors": AcATaMa.dockwidget.widget_generate_SimpRS.QCBox_NumberOfNeighbors.currentText(),
+        "min_neighbors_with_the_same_class": AcATaMa.dockwidget.widget_generate_SimpRS.QCBox_SameClassOfNeighbors.currentText(),
+        "generation_options": AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_generation_options.isChecked(),
+        "with_attempts_by_sampling": AcATaMa.dockwidget.widget_generate_SimpRS.button_attempts_by_sampling.isChecked(),
+        "attempts_by_sampling": AcATaMa.dockwidget.widget_generate_SimpRS.attempts_by_sampling.value(),
+        "until_sampling_number": AcATaMa.dockwidget.widget_generate_SimpRS.button_until_sampling_number.isChecked(),
+        "random_sampling_options": AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_random_sampling_options.isChecked(),
+        "automatic_random_seed": AcATaMa.dockwidget.widget_generate_SimpRS.automatic_random_seed.isChecked(),
+        "with_random_seed_by_user": AcATaMa.dockwidget.widget_generate_SimpRS.with_random_seed_by_user.isChecked(),
+        "random_seed_by_user": AcATaMa.dockwidget.widget_generate_SimpRS.random_seed_by_user.text(),
+    }
+    # stratified random sampling
+    srs_method = "fixed values" if AcATaMa.dockwidget.QCBox_StraRS_Method.currentText().startswith("Fixed values") \
+        else "area based proportion"
+    with_srs_table = AcATaMa.dockwidget.QCBox_CategMap_StraRS.currentText() in AcATaMa.dockwidget.srs_tables and \
+        srs_method in AcATaMa.dockwidget.srs_tables[AcATaMa.dockwidget.QCBox_CategMap_StraRS.currentText()]
+    data["sampling_design"]["stratified_random_sampling"] = {
+        "categ_map_path": get_current_file_path_in(AcATaMa.dockwidget.QCBox_CategMap_StraRS, show_message=False),
+        "categ_map_band": int(AcATaMa.dockwidget.QCBox_band_CategMap_StraRS.currentText())
+            if AcATaMa.dockwidget.QCBox_band_CategMap_StraRS.currentText() != '' else -1,
+        "categ_map_nodata": AcATaMa.dockwidget.nodata_CategMap_StraRS.value(),
+
+        "sampling_random_method": AcATaMa.dockwidget.QCBox_StraRS_Method.currentText(),
+        "overall_std_error": AcATaMa.dockwidget.TotalExpectedSE.value(),
+        "stratified_random_sampling_table": AcATaMa.dockwidget.srs_tables
+            [AcATaMa.dockwidget.QCBox_CategMap_StraRS.currentText()][srs_method] if with_srs_table else None,
+
+        # TODO:
+        # save the values color table of the QCBox_CategMap_StraRS
+
+        "min_distance": AcATaMa.dockwidget.minDistance_StraRS.value(),
+        "with_neighbors_aggregation": AcATaMa.dockwidget.widget_generate_StraRS.QGBox_neighbour_aggregation.isChecked(),
+        "num_neighbors": AcATaMa.dockwidget.widget_generate_StraRS.QCBox_NumberOfNeighbors.currentText(),
+        "min_neighbors_with_the_same_class": AcATaMa.dockwidget.widget_generate_StraRS.QCBox_SameClassOfNeighbors.currentText(),
+        "generation_options": AcATaMa.dockwidget.widget_generate_StraRS.QGBox_generation_options.isChecked(),
+        "with_attempts_by_sampling": AcATaMa.dockwidget.widget_generate_StraRS.button_attempts_by_sampling.isChecked(),
+        "attempts_by_sampling": AcATaMa.dockwidget.widget_generate_StraRS.attempts_by_sampling.value(),
+        "until_sampling_number": AcATaMa.dockwidget.widget_generate_StraRS.button_until_sampling_number.isChecked(),
+        "random_sampling_options": AcATaMa.dockwidget.widget_generate_StraRS.QGBox_random_sampling_options.isChecked(),
+        "automatic_random_seed": AcATaMa.dockwidget.widget_generate_StraRS.automatic_random_seed.isChecked(),
+        "with_random_seed_by_user": AcATaMa.dockwidget.widget_generate_StraRS.with_random_seed_by_user.isChecked(),
+        "random_seed_by_user": AcATaMa.dockwidget.widget_generate_StraRS.random_seed_by_user.text(),
+    }
 
     # ######### response design configuration ######### #
     sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile.currentLayer()
     if sampling_layer in ResponseDesign.instances:
         response_design = ResponseDesign.instances[sampling_layer]
         data["sampling_layer"] = get_file_path_of_layer(response_design.sampling_layer)
+        # TODO:
+        # save sampling_layer style
+
         data["dialog_size"] = response_design.dialog_size
         data["grid_view_widgets"] = {"columns": response_design.grid_columns, "rows": response_design.grid_rows}
         data["current_sample_idx"] = response_design.current_sample_idx
@@ -116,7 +179,7 @@ def restore(file_path):
     if "general" in yaml_config:
         AcATaMa.dockwidget.tabWidget.setCurrentIndex(yaml_config["general"]["tab_activated"])
 
-    # support load the old format of config file TODO: delete
+    # support load the old format of config file TODO: deprecated, legacy config input
     if "thematic_raster" in yaml_config:
         yaml_config["thematic_map"] = yaml_config.pop("thematic_raster")
     if "classification_buttons" in yaml_config:
@@ -142,13 +205,121 @@ def restore(file_path):
         # nodata
         AcATaMa.dockwidget.nodata_ThematicMap.setValue(yaml_config["thematic_map"]["nodata"])
 
+    # ######### sampling design configuration ######### #
+    if "sampling_design" in yaml_config:
+        AcATaMa.dockwidget.tabs_SamplingStrategy.setCurrentIndex(yaml_config["sampling_design"]["tab_activated"])
+
+        # simple random sampling
+        AcATaMa.dockwidget.numberOfSamples_SimpRS.setValue(
+            yaml_config["sampling_design"]["simple_random_sampling"]['num_samples'])
+        AcATaMa.dockwidget.minDistance_SimpRS.setValue(
+            yaml_config["sampling_design"]["simple_random_sampling"]['min_distance'])
+        AcATaMa.dockwidget.QGBox_SimpRSwithCR.setChecked(
+            yaml_config["sampling_design"]["simple_random_sampling"]['post_stratify'])
+        AcATaMa.dockwidget.widget_SimpRSwithCR.setVisible(
+            yaml_config["sampling_design"]["simple_random_sampling"]['post_stratify'])
+        load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_CategMap_SimpRS,
+                                    yaml_config["sampling_design"]["simple_random_sampling"]['categ_map_path'])
+        AcATaMa.dockwidget.select_categorical_map_SimpRS(AcATaMa.dockwidget.QCBox_CategMap_SimpRS.currentLayer())
+        AcATaMa.dockwidget.QCBox_band_CategMap_SimpRS.setCurrentIndex(
+            yaml_config["sampling_design"]["simple_random_sampling"]['categ_map_band'] - 1)
+        AcATaMa.dockwidget.pixelValuesCategMap.setText(
+            yaml_config["sampling_design"]["simple_random_sampling"]['pixel_values_categ_map'])
+
+        AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_neighbour_aggregation.setChecked(
+            yaml_config["sampling_design"]["simple_random_sampling"]['with_neighbors_aggregation'])
+        AcATaMa.dockwidget.widget_generate_SimpRS.widget_neighbour_aggregation.setVisible(
+            yaml_config["sampling_design"]["simple_random_sampling"]['with_neighbors_aggregation'])
+        select_item_in(AcATaMa.dockwidget.widget_generate_SimpRS.QCBox_NumberOfNeighbors,
+                       yaml_config["sampling_design"]["simple_random_sampling"]['num_neighbors'])
+        select_item_in(AcATaMa.dockwidget.widget_generate_SimpRS.QCBox_SameClassOfNeighbors,
+                       yaml_config["sampling_design"]["simple_random_sampling"]['min_neighbors_with_the_same_class'])
+        AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_generation_options.setChecked(
+            yaml_config["sampling_design"]["simple_random_sampling"]['generation_options'])
+        AcATaMa.dockwidget.widget_generate_SimpRS.widget_generation_options.setVisible(
+            yaml_config["sampling_design"]["simple_random_sampling"]['generation_options'])
+        AcATaMa.dockwidget.widget_generate_SimpRS.button_attempts_by_sampling.setChecked(
+            yaml_config["sampling_design"]["simple_random_sampling"]['with_attempts_by_sampling'])
+        AcATaMa.dockwidget.widget_generate_SimpRS.attempts_by_sampling.setValue(
+            yaml_config["sampling_design"]["simple_random_sampling"]['attempts_by_sampling'])
+        AcATaMa.dockwidget.widget_generate_SimpRS.button_until_sampling_number.setChecked(
+            yaml_config["sampling_design"]["simple_random_sampling"]['until_sampling_number'])
+        AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_random_sampling_options.setChecked(
+            yaml_config["sampling_design"]["simple_random_sampling"]['random_sampling_options'])
+        AcATaMa.dockwidget.widget_generate_SimpRS.widget_random_sampling_options.setVisible(
+            yaml_config["sampling_design"]["simple_random_sampling"]['random_sampling_options'])
+        AcATaMa.dockwidget.widget_generate_SimpRS.automatic_random_seed.setChecked(
+            yaml_config["sampling_design"]["simple_random_sampling"]['automatic_random_seed'])
+        AcATaMa.dockwidget.widget_generate_SimpRS.with_random_seed_by_user.setChecked(
+            yaml_config["sampling_design"]["simple_random_sampling"]['with_random_seed_by_user'])
+        AcATaMa.dockwidget.widget_generate_SimpRS.random_seed_by_user.setText(
+            yaml_config["sampling_design"]["simple_random_sampling"]['random_seed_by_user'])
+
+        # stratified random sampling
+        load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_CategMap_StraRS,
+                                    yaml_config["sampling_design"]["stratified_random_sampling"]['categ_map_path'])
+        AcATaMa.dockwidget.select_categorical_map_StraRS(AcATaMa.dockwidget.QCBox_CategMap_StraRS.currentLayer())
+        AcATaMa.dockwidget.QCBox_band_CategMap_StraRS.setCurrentIndex(
+            yaml_config["sampling_design"]["stratified_random_sampling"]['categ_map_band'] - 1)
+        AcATaMa.dockwidget.nodata_CategMap_StraRS.setValue(
+            yaml_config["sampling_design"]["stratified_random_sampling"]["categ_map_nodata"])
+
+        with block_signals_to(AcATaMa.dockwidget.QCBox_StraRS_Method):
+            select_item_in(AcATaMa.dockwidget.QCBox_StraRS_Method,
+                           yaml_config["sampling_design"]["stratified_random_sampling"]['sampling_random_method'])
+        with block_signals_to(AcATaMa.dockwidget.TotalExpectedSE):
+            AcATaMa.dockwidget.TotalExpectedSE.setValue(
+                yaml_config["sampling_design"]["stratified_random_sampling"]['overall_std_error'])
+
+        srs_table = yaml_config["sampling_design"]["stratified_random_sampling"]['stratified_random_sampling_table']
+        srs_method = "fixed values" if AcATaMa.dockwidget.QCBox_StraRS_Method.currentText().startswith("Fixed values") \
+            else "area based proportion"
+        AcATaMa.dockwidget.srs_tables[AcATaMa.dockwidget.QCBox_CategMap_StraRS.currentText()] = {}
+        AcATaMa.dockwidget.srs_tables[AcATaMa.dockwidget.QCBox_CategMap_StraRS.currentText()][srs_method] = srs_table
+        fill_stratified_sampling_table(AcATaMa.dockwidget)
+
+        # TODO:
+        # restore the values color table of the QCBox_CategMap_StraRS saved
+
+        AcATaMa.dockwidget.minDistance_StraRS.setValue(
+            yaml_config["sampling_design"]["stratified_random_sampling"]['min_distance'])
+        AcATaMa.dockwidget.widget_generate_StraRS.QGBox_neighbour_aggregation.setChecked(
+            yaml_config["sampling_design"]["stratified_random_sampling"]['with_neighbors_aggregation'])
+        AcATaMa.dockwidget.widget_generate_StraRS.widget_neighbour_aggregation.setVisible(
+            yaml_config["sampling_design"]["stratified_random_sampling"]['with_neighbors_aggregation'])
+        select_item_in(AcATaMa.dockwidget.widget_generate_StraRS.QCBox_NumberOfNeighbors,
+                       yaml_config["sampling_design"]["stratified_random_sampling"]['num_neighbors'])
+        select_item_in(AcATaMa.dockwidget.widget_generate_StraRS.QCBox_SameClassOfNeighbors,
+                       yaml_config["sampling_design"]["stratified_random_sampling"]['min_neighbors_with_the_same_class'])
+        AcATaMa.dockwidget.widget_generate_StraRS.QGBox_generation_options.setChecked(
+            yaml_config["sampling_design"]["stratified_random_sampling"]['generation_options'])
+        AcATaMa.dockwidget.widget_generate_StraRS.widget_generation_options.setVisible(
+            yaml_config["sampling_design"]["stratified_random_sampling"]['generation_options'])
+        AcATaMa.dockwidget.widget_generate_StraRS.button_attempts_by_sampling.setChecked(
+            yaml_config["sampling_design"]["stratified_random_sampling"]['with_attempts_by_sampling'])
+        AcATaMa.dockwidget.widget_generate_StraRS.attempts_by_sampling.setValue(
+            yaml_config["sampling_design"]["stratified_random_sampling"]['attempts_by_sampling'])
+        AcATaMa.dockwidget.widget_generate_StraRS.button_until_sampling_number.setChecked(
+            yaml_config["sampling_design"]["stratified_random_sampling"]['until_sampling_number'])
+        AcATaMa.dockwidget.widget_generate_StraRS.QGBox_random_sampling_options.setChecked(
+            yaml_config["sampling_design"]["stratified_random_sampling"]['random_sampling_options'])
+        AcATaMa.dockwidget.widget_generate_StraRS.widget_random_sampling_options.setVisible(
+            yaml_config["sampling_design"]["stratified_random_sampling"]['random_sampling_options'])
+        AcATaMa.dockwidget.widget_generate_StraRS.automatic_random_seed.setChecked(
+            yaml_config["sampling_design"]["stratified_random_sampling"]['automatic_random_seed'])
+        AcATaMa.dockwidget.widget_generate_StraRS.with_random_seed_by_user.setChecked(
+            yaml_config["sampling_design"]["stratified_random_sampling"]['with_random_seed_by_user'])
+        AcATaMa.dockwidget.widget_generate_StraRS.random_seed_by_user.setText(
+            yaml_config["sampling_design"]["stratified_random_sampling"]['random_seed_by_user'])
+
     # ######### response_design configuration ######### #
     # restore the response_design settings
     # load the sampling file save in yaml config
-    sampling_filepath = yaml_config["sampling_layer"]
-    if os.path.isfile(sampling_filepath):
-        sampling_layer = load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_SamplingFile, sampling_filepath)
+    if "sampling_layer" in yaml_config and os.path.isfile(yaml_config["sampling_layer"]):
+        sampling_layer = load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_SamplingFile, yaml_config["sampling_layer"])
         response_design = ResponseDesign(sampling_layer)
+        # TODO:
+        # restore sampling_layer style
 
         AcATaMa.dockwidget.grid_columns.setValue(yaml_config["grid_view_widgets"]["columns"])
         AcATaMa.dockwidget.grid_rows.setValue(yaml_config["grid_view_widgets"]["rows"])
@@ -163,7 +334,7 @@ def restore(file_path):
         # restore the view widget config
         response_design.view_widgets_config = yaml_config["view_widgets_config"]
 
-        # support load the old format of config file TODO: delete
+        # support load the old format of config file TODO: deprecated, legacy config input
         for x in response_design.view_widgets_config.values():
             if "render_file" in x:
                 x["render_file_path"] = x["render_file"]
@@ -173,7 +344,7 @@ def restore(file_path):
                 del x["name"]
             if "layer_name" not in x:
                 x["layer_name"] = None
-        # support load the old format of config file TODO: delete
+        # support load the old format of config file TODO: deprecated, legacy config input
         for sample in yaml_config["samples"].values():
             if "classif_id" in sample:
                 sample["label_id"] = sample["classif_id"]
@@ -212,7 +383,7 @@ def restore(file_path):
 
     # ######### accuracy assessment ######### #
     # restore accuracy assessment settings
-    # support load the old format of config file TODO: delete
+    # support load the old format of config file TODO: deprecated, legacy config input
     if "accuracy_assessment_sampling_file" in yaml_config and yaml_config["accuracy_assessment_sampling_file"]:
         load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_SamplingFile_A,
                                     yaml_config["accuracy_assessment_sampling_file"])

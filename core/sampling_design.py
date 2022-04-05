@@ -57,7 +57,7 @@ def do_simple_random_sampling(dockwidget):
         categorical_map = Map(file_selected_combo_box=dockwidget.QCBox_CategMap_SimpRS,
                               band=int(dockwidget.QCBox_band_CategMap_SimpRS.currentText()))
         try:
-            pixel_values = [int(p) for p in dockwidget.pixelsValuesCategMap.text().split(",")]
+            pixel_values = [int(p) for p in dockwidget.pixelValuesCategMap.text().split(",")]
         except:
             iface.messageBar().pushMessage("AcATaMa", "Error, wrong pixel values, set only integers and separated by commas",
                                            level=Qgis.Warning)
@@ -90,7 +90,7 @@ def do_simple_random_sampling(dockwidget):
         return
 
     # define the random seed
-    if dockwidget.widget_generate_SimpRS.button_random_seed_by_user.isChecked():
+    if dockwidget.widget_generate_SimpRS.with_random_seed_by_user.isChecked():
         random_seed = dockwidget.widget_generate_SimpRS.random_seed_by_user.text()
         try:
             random_seed = int(random_seed)
@@ -217,7 +217,7 @@ def do_stratified_random_sampling(dockwidget):
         return
 
     # define the random seed
-    if dockwidget.widget_generate_StraRS.button_random_seed_by_user.isChecked():
+    if dockwidget.widget_generate_StraRS.with_random_seed_by_user.isChecked():
         random_seed = dockwidget.widget_generate_StraRS.random_seed_by_user.text()
         try:
             random_seed = int(random_seed)

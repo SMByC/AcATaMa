@@ -194,7 +194,7 @@ impossible complete the sampling set configured.</string>
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="groupBox_2">
+       <widget class="QGroupBox" name="QGBox_random_sampling_options">
         <property name="title">
          <string>Random sampling options</string>
         </property>
@@ -209,7 +209,7 @@ impossible complete the sampling set configured.</string>
           <widget class="QWidget" name="widget_random_sampling_options" native="true">
            <layout class="QGridLayout" name="gridLayout_3">
             <item row="1" column="0">
-             <widget class="QRadioButton" name="button_random_seed_by_user">
+             <widget class="QRadioButton" name="with_random_seed_by_user">
               <property name="text">
                <string>Set the random seed:</string>
               </property>
@@ -223,7 +223,7 @@ impossible complete the sampling set configured.</string>
              </widget>
             </item>
             <item row="0" column="0" colspan="2">
-             <widget class="QRadioButton" name="radioButton">
+             <widget class="QRadioButton" name="automatic_random_seed">
               <property name="text">
                <string>Automatic random seed</string>
               </property>
@@ -435,7 +435,7 @@ impossible complete the sampling set configured.</string>
    </hints>
   </connection>
   <connection>
-   <sender>groupBox_2</sender>
+   <sender>QGBox_random_sampling_options</sender>
    <signal>clicked(bool)</signal>
    <receiver>widget_random_sampling_options</receiver>
    <slot>setVisible(bool)</slot>
@@ -453,7 +453,7 @@ impossible complete the sampling set configured.</string>
   <connection>
    <sender>random_seed_by_user</sender>
    <signal>textEdited(QString)</signal>
-   <receiver>button_random_seed_by_user</receiver>
+   <receiver>with_random_seed_by_user</receiver>
    <slot>toggle()</slot>
    <hints>
     <hint type="sourcelabel">

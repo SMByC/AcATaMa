@@ -435,7 +435,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                              </widget>
                             </item>
                             <item>
-                             <widget class="QLineEdit" name="pixelsValuesCategMap">
+                             <widget class="QLineEdit" name="pixelValuesCategMap">
                               <property name="toolTip">
                                <string>Enter multiple pixel values separated by comma</string>
                               </property>
