@@ -50,8 +50,8 @@ Dependency = namedtuple('Dep', ['name', 'min', 'install'])
 #   install: fix/exact version number or None
 #   min: minimum version number or None
 DEPS = [
+    Dependency('rioxarray', install=None, min=None),
     Dependency('dask', install=None, min=None),
-    Dependency('xarray', install=None, min=None),
 ]
 
 # Use a custom folder for the packages to avoid polluting the per-user site-packages.
@@ -209,7 +209,7 @@ class WaitDialog(IgnoreKeyPressesDialog):
         self.setWindowTitle(title)
         self.setLayout(vbox)
         self.setMaximumHeight(0)
-        self.setFixedWidth(parent.width() * 0.25)
+        self.setFixedWidth(int(parent.width() * 0.25))
         self.show()
 
     def update_progress(self, progress: float) -> None:
