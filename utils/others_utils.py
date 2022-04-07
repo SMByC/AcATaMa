@@ -132,9 +132,12 @@ def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=-1):
         pixel_values.insert(0, nodata)
 
     try:
-        import xarray as xr
+        # libs for parallel process
+        #   - rioxarray (requires rasterio)
+        #   - dask
+        import rioxarray
         import dask.array as da
-        dataset = xr.open_rasterio(get_file_path_of_layer(layer), chunks={'band': 1, 'x': 2000, 'y': 2000})
+        dataset = rioxarray.open_rasterio(get_file_path_of_layer(layer), chunks={'band': 1, 'x': 3000, 'y': 3000})
         parallel = True
     except:
         dataset = gdal_array.LoadFile(get_file_path_of_layer(layer))
