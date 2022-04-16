@@ -63,8 +63,6 @@ class AcATaMa(object):
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
 
-        print("** INITIALIZING AcATaMa")
-
         self.menu_name_plugin = self.tr("Accuracy Assessment of Thematic Maps")
         self.pluginIsActive = False
         self.dockwidget = None
@@ -140,7 +138,6 @@ class AcATaMa(object):
 
     def onClosePlugin(self):
         """Cleanup necessary items here when plugin dockwidget is closed"""
-        print("** CLOSING AcATaMa")
         if ResponseDesignWindow.is_opened:
             self.dockwidget.response_design_window.closing()
             self.dockwidget.response_design_window.reject(is_ok_to_close=True)
@@ -169,7 +166,6 @@ class AcATaMa(object):
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
-        print("** UNLOAD AcATaMa")
         self.removes_temporary_files()
         # Remove the plugin menu item and icon
         self.iface.removePluginMenu(self.menu_name_plugin, self.dockable_action)
