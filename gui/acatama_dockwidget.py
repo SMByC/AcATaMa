@@ -121,11 +121,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.widget_generate_SimpRS.widget_generation_options.setHidden(True)
         self.widget_generate_SimpRS.widget_random_sampling_options.setHidden(True)
         # save config
-        self.widget_generate_SimpRS.widget_save_sampling_config.setHidden(True)
         iface.mapCanvas().layersChanged.connect(
             lambda: self.update_generated_sampling_list_in(self.widget_generate_SimpRS.QCBox_SamplingToSave))
-        self.widget_generate_SimpRS.QPBtn_SaveSamplingConf.clicked.connect(
-            lambda: self.file_dialog_save_samplingConf(self.widget_generate_SimpRS.QCBox_SamplingToSave))
         # generation options
         self.widget_generate_SimpRS.QPBtn_GenerateSamples.clicked.connect(lambda: do_simple_random_sampling(self))
         # update progress bar limits
@@ -158,11 +155,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.widget_generate_StraRS.widget_generation_options.setHidden(True)
         self.widget_generate_StraRS.widget_random_sampling_options.setHidden(True)
         # save config
-        self.widget_generate_StraRS.widget_save_sampling_config.setHidden(True)
         iface.mapCanvas().layersChanged.connect(
             lambda: self.update_generated_sampling_list_in(self.widget_generate_StraRS.QCBox_SamplingToSave))
-        self.widget_generate_StraRS.QPBtn_SaveSamplingConf.clicked.connect(
-            lambda: self.file_dialog_save_samplingConf(self.widget_generate_StraRS.QCBox_SamplingToSave))
         # generation options
         self.widget_generate_StraRS.QPBtn_GenerateSamples.clicked.connect(lambda: do_stratified_random_sampling(self))
 
@@ -374,23 +368,6 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             file_format = \
                 "GPKG" if file_out.endswith(".gpkg") else "ESRI Shapefile" if file_out.endswith(".shp") else None
             QgsVectorFileWriter.writeAsVectorFormat(layer, file_out, "System", layer.crs(), file_format)
-            iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=Qgis.Success)
-
-    @pyqtSlot()
-    @error_handler
-    def file_dialog_save_samplingConf(self, combo_box):
-        if combo_box.currentText() not in Sampling.samplings:
-            iface.messageBar().pushMessage("AcATaMa",
-                                           "Error, please select a valid sampling file", level=Qgis.Warning)
-            return
-        sampling_selected = Sampling.samplings[combo_box.currentText()]
-        suggested_filename = os.path.splitext(sampling_selected.thematic_map.file_path)[0] \
-                             + "_sampling.ini"
-        file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save sampling configuration"),
-                                                  suggested_filename,
-                                                  self.tr("Ini files (*.ini);;All files (*.*)"))
-        if file_out != '':
-            sampling_selected.save_config(file_out)
             iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=Qgis.Success)
 
     def update_response_design_state(self, sampling_layer=None):
