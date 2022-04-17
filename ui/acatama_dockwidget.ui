@@ -1544,34 +1544,6 @@ It set automatically from image if the layer has the nodata value set.</string>
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QPushButton" name="QPBtn_RestoreAcatamaState">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Restore to a previous saved of AcATaMa configuration and state. It is recommended to &lt;span style=&quot; font-style:italic;&quot;&gt;Clear/Reload&lt;/span&gt; before it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Restore state</string>
-            </property>
-            <property name="icon">
-             <iconset>
-              <normaloff>:/plugins/AcATaMa/icons/open.svg</normaloff>:/plugins/AcATaMa/icons/open.svg</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="QPBtn_SaveAcatamaState">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Save all configuration and state of AcATaMa, such as: sampling design, response design state, labels state, buttons, config dialogs, config of the response design views, navigation, analysis settings, among others.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Save state</string>
-            </property>
-            <property name="icon">
-             <iconset>
-              <normaloff>:/plugins/AcATaMa/icons/save.svg</normaloff>:/plugins/AcATaMa/icons/save.svg</iconset>
-            </property>
-           </widget>
-          </item>
          </layout>
         </widget>
        </item>
@@ -1648,6 +1620,34 @@ It set automatically from image if the layer has the nodata value set.</string>
           </size>
          </property>
         </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="QPBtn_RestoreAcatamaState">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Restore to a previous saved of AcATaMa configuration and state. It is recommended to &lt;span style=&quot; font-style:italic;&quot;&gt;Clear/Reload&lt;/span&gt; before it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Restore state</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>:/plugins/AcATaMa/icons/open.svg</normaloff>:/plugins/AcATaMa/icons/open.svg</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="QPBtn_SaveAcatamaState">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Save all configuration and state of AcATaMa, such as: sampling design, response design state, labels state, buttons, config dialogs, config of the response design views, navigation, analysis settings, among others.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Save state</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>:/plugins/AcATaMa/icons/save.svg</normaloff>:/plugins/AcATaMa/icons/save.svg</iconset>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

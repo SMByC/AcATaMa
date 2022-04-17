@@ -34,6 +34,7 @@ class AboutDialog(QDialog, FORM_CLASS):
         QDialog.__init__(self)
         self.setupUi(self)
         about_file = os.path.join(plugin_folder, 'gui', 'about.html')
-        html_text = open(about_file).read()
+        from AcATaMa.gui.acatama_dockwidget import VERSION
+        html_text = open(about_file).read().replace('VERSION', "v{}".format(VERSION))
         self.about_html.setHtml(html_text)
         self.about_html.setOpenExternalLinks(True)
