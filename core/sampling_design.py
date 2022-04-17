@@ -19,7 +19,6 @@
  ***************************************************************************/
 """
 import os
-import configparser
 import random
 
 from qgis.utils import iface

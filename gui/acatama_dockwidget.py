@@ -21,12 +21,11 @@
 import os
 import tempfile
 import configparser
-import webbrowser
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, Qt
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QDockWidget
-from qgis.core import QgsProject, QgsVectorFileWriter, QgsMapLayerProxyModel, Qgis, QgsUnitTypes, QgsMapLayer
+from qgis.core import QgsProject, QgsVectorFileWriter, QgsMapLayerProxyModel, Qgis, QgsUnitTypes
 from qgis.utils import iface
 
 from AcATaMa.core import config
