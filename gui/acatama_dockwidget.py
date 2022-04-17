@@ -55,7 +55,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
     closingPlugin = pyqtSignal()
     dockwidget = None
 
-    def __init__(self, parent=None, plugin_instance=None):
+    def __init__(self, parent=None):
         """Constructor."""
         super(AcATaMaDockWidget, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -63,7 +63,6 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
-        self.plugin_instance = plugin_instance  # AcATaMa class
         self.setupUi(self)
         self.setup_gui()
         # tmp dir for all process and intermediate files
@@ -479,8 +478,6 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                                                    "", self.tr("Yaml (*.yaml *.yml);;All files (*.*)"))
 
         if file_path != '' and os.path.isfile(file_path):
-            # clear and reload the plugin before restore
-            self.plugin_instance.clear_reload_plugin(force=True)
             # restore configuration and response design state
             config.restore(file_path)
             self.suggested_yml_file = file_path

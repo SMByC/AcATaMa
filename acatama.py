@@ -122,7 +122,7 @@ class AcATaMa(object):
             #    removed on close (see self.onClosePlugin method)
             if self.dockwidget == None:
                 # Create the dockwidget (after translation) and keep reference
-                self.dockwidget = AcATaMaDockWidget(plugin_instance=self)
+                self.dockwidget = AcATaMaDockWidget()
 
             # connect to provide cleanup on closing of dockwidget
             self.dockwidget.closingPlugin.connect(self.onClosePlugin)
@@ -175,15 +175,14 @@ class AcATaMa(object):
         if self.dockwidget:
             self.iface.removeDockWidget(self.dockwidget)
 
-    def clear_reload_plugin(self, force=False):
+    def clear_reload_plugin(self):
         # first prompt
-        if not force:
-            quit_msg = "Are you sure you want to: clean tmp files, delete unsaved labels, " \
-                       "clean all fields and reload plugin?"
-            reply = QMessageBox.question(None, 'Clear all and reload the AcATaMa plugin.',
-                                         quit_msg, QMessageBox.Yes, QMessageBox.No)
-            if reply == QMessageBox.No:
-                return
+        quit_msg = "Are you sure you want to: clean tmp files, delete unsaved labels, " \
+                   "clean all fields and reload plugin?"
+        reply = QMessageBox.question(None, 'Clear all and reload the AcATaMa plugin.',
+                                     quit_msg, QMessageBox.Yes, QMessageBox.No)
+        if reply == QMessageBox.No:
+            return
 
         self.onClosePlugin()
         from qgis.utils import plugins
