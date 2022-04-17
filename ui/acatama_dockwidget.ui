@@ -164,7 +164,7 @@ It set automatically from image if the layer has the nodata value set.</string>
              <x>0</x>
              <y>0</y>
              <width>655</width>
-             <height>1079</height>
+             <height>1231</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -873,7 +873,7 @@ It set automatically from image if the layer has the nodata value set.</string>
              <x>0</x>
              <y>0</y>
              <width>676</width>
-             <height>977</height>
+             <height>947</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_24">
@@ -1313,8 +1313,8 @@ It set automatically from image if the layer has the nodata value set.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>456</width>
-             <height>538</height>
+             <width>676</width>
+             <height>947</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -1597,19 +1597,19 @@ It set automatically from image if the layer has the nodata value set.</string>
         <number>0</number>
        </property>
        <item>
-        <widget class="QPushButton" name="QPBtn_PluginDocs">
+        <widget class="QPushButton" name="QPBtn_PluginInfo">
          <property name="cursor">
           <cursorShape>WhatsThisCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>Open the AcATaMa documentation</string>
+          <string>About</string>
          </property>
          <property name="text">
-          <string>Docs</string>
+          <string>AcATaMa version</string>
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>:/plugins/AcATaMa/icons/about.svg</normaloff>:/plugins/AcATaMa/icons/about.svg</iconset>
+           <normaloff>:/plugins/AcATaMa/icons/acatama.svg</normaloff>:/plugins/AcATaMa/icons/acatama.svg</iconset>
          </property>
          <property name="flat">
           <bool>true</bool>
@@ -1648,26 +1648,6 @@ It set automatically from image if the layer has the nodata value set.</string>
           </size>
          </property>
         </spacer>
-       </item>
-       <item>
-        <widget class="QPushButton" name="QPBtn_PluginInfo">
-         <property name="cursor">
-          <cursorShape>WhatsThisCursor</cursorShape>
-         </property>
-         <property name="toolTip">
-          <string>About</string>
-         </property>
-         <property name="text">
-          <string>AcATaMa version</string>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/plugins/AcATaMa/icons/acatama.svg</normaloff>:/plugins/AcATaMa/icons/acatama.svg</iconset>
-         </property>
-         <property name="flat">
-          <bool>true</bool>
-         </property>
-        </widget>
        </item>
       </layout>
      </widget>
