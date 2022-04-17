@@ -1547,7 +1547,7 @@ It set automatically from image if the layer has the nodata value set.</string>
           <item>
            <widget class="QPushButton" name="QPBtn_RestoreAcatamaState">
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Restore to a previous saved of AcATaMa configuration and state&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Restore to a previous saved of AcATaMa configuration and state. It is recommended to &lt;span style=&quot; font-style:italic;&quot;&gt;Clear/Reload&lt;/span&gt; before it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
              <string>Restore state</string>
