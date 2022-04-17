@@ -118,9 +118,6 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # generate and random sampling options
         self.widget_generate_SimpRS.widget_generation_options.setHidden(True)
         self.widget_generate_SimpRS.widget_random_sampling_options.setHidden(True)
-        # save config
-        iface.mapCanvas().layersChanged.connect(
-            lambda: self.update_generated_sampling_list_in(self.widget_generate_SimpRS.QCBox_SamplingToSave))
         # generation options
         self.widget_generate_SimpRS.QPBtn_GenerateSamples.clicked.connect(lambda: do_simple_random_sampling(self))
         # update progress bar limits
@@ -152,9 +149,6 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # generate and random sampling options
         self.widget_generate_StraRS.widget_generation_options.setHidden(True)
         self.widget_generate_StraRS.widget_random_sampling_options.setHidden(True)
-        # save config
-        iface.mapCanvas().layersChanged.connect(
-            lambda: self.update_generated_sampling_list_in(self.widget_generate_StraRS.QCBox_SamplingToSave))
         # generation options
         self.widget_generate_StraRS.QPBtn_GenerateSamples.clicked.connect(lambda: do_stratified_random_sampling(self))
 
