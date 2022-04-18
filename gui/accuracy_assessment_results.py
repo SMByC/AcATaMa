@@ -280,7 +280,7 @@ def get_html(accu_asse):
         try:
             html += '''<td>{}</th>'''.format(rf((accuracy*(1-accuracy)/(sum(accu_asse.error_matrix[idx_row])-1))**0.5))
         except ZeroDivisionError:
-            html += '''<td>{}</th>'''.format(np.NaN)
+            html += '''<td>{}</th>'''.format("-")
         html += "</tr>"
     html += '''
             </tbody>
