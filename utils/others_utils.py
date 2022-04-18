@@ -114,14 +114,20 @@ def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None):
 # --------------------------------------------------------------------------
 # compute pixels count by values
 
+
+storage_pixel_count_by_pixel_values = {}  # storage the pixel/values computed by layer, band and nodata
 total_count = 0
 
 
 @wait_process
 def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=-1):
-    app = QCoreApplication.instance()
-
     nodata = nodata if nodata != -1 else None
+
+    # check if it was already computed, then return it
+    if (layer, band, nodata) in storage_pixel_count_by_pixel_values:
+        return storage_pixel_count_by_pixel_values[(layer, band, nodata)]
+
+    app = QCoreApplication.instance()
     if pixel_values is None:
         pixel_values = get_pixel_values(layer, band)
 
@@ -182,4 +188,6 @@ def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=-1):
         pixel_counts.pop(0)
 
     progress.accept()
-    return dict(zip(pixel_values, pixel_counts))
+    pairing_values_and_counts = dict(zip(pixel_values, pixel_counts))
+    storage_pixel_count_by_pixel_values[(layer, band, nodata)] = pairing_values_and_counts
+    return pairing_values_and_counts

@@ -121,7 +121,6 @@ class Map(object):
         self.qgs_layer = file_selected_combo_box.currentLayer()
         self.band = band
         self.nodata = nodata if nodata != -1 else None
-        self.pixel_counts_by_value = None
 
     def extent(self):
         return self.qgs_layer.extent()
@@ -133,8 +132,6 @@ class Map(object):
         return self.qgs_layer.dataProvider().identify(point, QgsRaster.IdentifyFormatValue).results()[self.band]
 
     def get_total_pixels_by_value(self, pixel_value):
-        if self.pixel_counts_by_value is None:
-            self.pixel_counts_by_value = get_pixel_count_by_pixel_values(self.qgs_layer, self.band, None, self.nodata)
-
-        if pixel_value in self.pixel_counts_by_value:
-            return self.pixel_counts_by_value[pixel_value]
+        pixel_counts_by_value = get_pixel_count_by_pixel_values(self.qgs_layer, self.band, None, self.nodata)
+        if pixel_value in pixel_counts_by_value:
+            return pixel_counts_by_value[pixel_value]
