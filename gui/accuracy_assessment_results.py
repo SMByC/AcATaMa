@@ -21,6 +21,7 @@
 import csv
 import os
 import copy
+import numpy as np
 
 from qgis.core import QgsUnitTypes
 
@@ -29,6 +30,8 @@ from AcATaMa.utils.system_utils import error_handler
 
 
 def rf(fv, r=5):
+    if np.isnan(fv):
+        return "-"
     return round(fv, r)
 
 
@@ -223,10 +226,13 @@ def get_html(accu_asse):
     if accu_asse.sampling_type == 'Stratified random sampling':
         # overall
         overall_accuracy = sum([row[idx_row] for idx_row, row in enumerate(error_matrix_area_prop)])
-        overall_variance = sum([((accu_asse.thematic_pixels_count[value]/total_pixels_classes)**2) *
-                                (accu_asse.error_matrix[idx_row][idx_row]/sum(accu_asse.error_matrix[idx_row])) *
-                                (1-(accu_asse.error_matrix[idx_row][idx_row]/sum(accu_asse.error_matrix[idx_row]))) /
-                                (sum(accu_asse.error_matrix[idx_row])-1) for idx_row, value in enumerate(accu_asse.values)])
+        try:
+            overall_variance = sum([((accu_asse.thematic_pixels_count[value]/total_pixels_classes)**2) *
+                                    (accu_asse.error_matrix[idx_row][idx_row]/sum(accu_asse.error_matrix[idx_row])) *
+                                    (1-(accu_asse.error_matrix[idx_row][idx_row]/sum(accu_asse.error_matrix[idx_row]))) /
+                                    (sum(accu_asse.error_matrix[idx_row])-1) for idx_row, value in enumerate(accu_asse.values)])
+        except ZeroDivisionError:
+            overall_variance = np.NaN
         standard_deviation = overall_variance ** 0.5
 
     html += "<p style='font-size:2px'><br/></p>"
@@ -265,10 +271,16 @@ def get_html(accu_asse):
         html += "<tr>"
         html += "<th >{} ({})</th>".format(value, accu_asse.labels[str(value)] if str(value) in accu_asse.labels else "-")
         # accuracy
-        accuracy = accuracy_table[idx_row][idx_row] / sum(accuracy_table[idx_row])
+        try:
+            accuracy = accuracy_table[idx_row][idx_row] / sum(accuracy_table[idx_row])
+        except ZeroDivisionError:
+            accuracy = np.NaN
         html += '''<td class="highlight">{}</th>'''.format(rf(accuracy))
         # standard error
-        html += '''<td>{}</th>'''.format(rf((accuracy*(1-accuracy)/(sum(accu_asse.error_matrix[idx_row])-1))**0.5))
+        try:
+            html += '''<td>{}</th>'''.format(rf((accuracy*(1-accuracy)/(sum(accu_asse.error_matrix[idx_row])-1))**0.5))
+        except ZeroDivisionError:
+            html += '''<td>{}</th>'''.format(np.NaN)
         html += "</tr>"
     html += '''
             </tbody>
@@ -290,22 +302,28 @@ def get_html(accu_asse):
         html += "<tr>"
         html += "<th >{} ({})</th>".format(value, accu_asse.labels[str(value)] if str(value) in accu_asse.labels else "-")
         # accuracy
-        accuracy = accuracy_table[idx_row][idx_row] / sum(list(zip(*accuracy_table))[idx_row])
+        try:
+            accuracy = accuracy_table[idx_row][idx_row] / sum(list(zip(*accuracy_table))[idx_row])
+        except ZeroDivisionError:
+            accuracy = np.NaN
         html += '''<td class="highlight">{}</th>'''.format(rf(accuracy))
         # standard error
-        if accu_asse.sampling_type in ['Simple random sampling', 'Simple random sampling post-stratified']:
-            producer_standard_error = (accuracy*(1-accuracy)/(sum(list(zip(*accu_asse.error_matrix))[idx_row])-1))**0.5
-        if accu_asse.sampling_type == 'Stratified random sampling':
-            u_accuracy = accuracy_table[idx_row][idx_row] / sum(accuracy_table[idx_row])
-            producer_standard_error = \
-                (1/(sum([n*row[idx_row]/total_row for total_row, row, n in
-                         zip([sum(r) for r in accu_asse.error_matrix], accu_asse.error_matrix,
-                             [accu_asse.thematic_pixels_count[v] for v in accu_asse.values])])**2) *
-                 sum([n**2*(1-accuracy)**2*u_accuracy*(1-u_accuracy)/(total_row-1) if idx == idx_row else
-                      accuracy**2*n**2*row[idx_row]/total_row*(1-row[idx_row]/sum(list(zip(*accu_asse.error_matrix))[idx_row]))/(total_row-1)
-                      for idx, total_row, row, n in zip(range(len(accu_asse.error_matrix)),
-                                                        [sum(r) for r in accu_asse.error_matrix], accu_asse.error_matrix,
-                                                        [accu_asse.thematic_pixels_count[v] for v in accu_asse.values])]))**0.5
+        try:
+            if accu_asse.sampling_type in ['Simple random sampling', 'Simple random sampling post-stratified']:
+                producer_standard_error = (accuracy*(1-accuracy)/(sum(list(zip(*accu_asse.error_matrix))[idx_row])-1))**0.5
+            if accu_asse.sampling_type == 'Stratified random sampling':
+                u_accuracy = accuracy_table[idx_row][idx_row] / sum(accuracy_table[idx_row])
+                producer_standard_error = \
+                    (1/(sum([n*row[idx_row]/total_row for total_row, row, n in
+                             zip([sum(r) for r in accu_asse.error_matrix], accu_asse.error_matrix,
+                                 [accu_asse.thematic_pixels_count[v] for v in accu_asse.values])])**2) *
+                     sum([n**2*(1-accuracy)**2*u_accuracy*(1-u_accuracy)/(total_row-1) if idx == idx_row else
+                          accuracy**2*n**2*row[idx_row]/total_row*(1-row[idx_row]/sum(list(zip(*accu_asse.error_matrix))[idx_row]))/(total_row-1)
+                          for idx, total_row, row, n in zip(range(len(accu_asse.error_matrix)),
+                                                            [sum(r) for r in accu_asse.error_matrix], accu_asse.error_matrix,
+                                                            [accu_asse.thematic_pixels_count[v] for v in accu_asse.values])]))**0.5
+        except ZeroDivisionError:
+            producer_standard_error = np.NaN
         html += '''<td>{}</th>'''.format(rf(producer_standard_error))
         html += "</tr>"
     html += '''
