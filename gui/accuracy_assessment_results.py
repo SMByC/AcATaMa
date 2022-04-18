@@ -547,7 +547,8 @@ def get_html(accu_asse):
 
     # the error for post-stratified
     if accu_asse.sampling_type == 'Simple random sampling post-stratified':
-        std_dev_table = [[(1-i/total_row)**2*i/(total_row-1) for i in row] for total_row, row in
+        std_dev_table = [[(1-i/total_row)**2*i/(total_row-1) if total_row not in [0, 1] else np.NaN
+                          for i in row] for total_row, row in
                          zip([sum(r) for r in accu_asse.error_matrix], accu_asse.error_matrix)]
         wi = [accu_asse.thematic_pixels_count[value]/total_pixels_classes
               for value in accu_asse.values]
