@@ -16,11 +16,6 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="label">
-     <property name="font">
-      <font>
-       <pointsize>9</pointsize>
-      </font>
-     </property>
      <property name="text">
       <string>To build the labeling buttons: Set the name (mandatory), color (optional) and thematic class if you are labeling with thematic classes.</string>
      </property>

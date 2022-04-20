@@ -197,7 +197,6 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
             # activate some parts of this view
             self.QLabel_ViewName.setEnabled(True)
             self.render_widget.setEnabled(True)
-            self.scaleFactorLabel.setEnabled(True)
             self.scaleFactor.setEnabled(True)
             self.layerStyleEditor.setEnabled(True)
             self.render_widget.canvas.setCanvasColor(QColor(255, 255, 255))
@@ -214,7 +213,6 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
             # deactivate some parts of this view
             self.QLabel_ViewName.setDisabled(True)
             self.render_widget.setDisabled(True)
-            self.scaleFactorLabel.setDisabled(True)
             self.scaleFactor.setDisabled(True)
             self.layerStyleEditor.setDisabled(True)
             self.render_widget.canvas.setCanvasColor(QColor(245, 245, 245))
