@@ -278,13 +278,14 @@ def restore(file_path):
         AcATaMa.dockwidget.srs_tables[AcATaMa.dockwidget.QCBox_CategMap_StraRS.currentText()][srs_method] = srs_table
         fill_stratified_sampling_table(AcATaMa.dockwidget)
         # restore the pixel count by pixel value
-        from AcATaMa.utils.others_utils import storage_pixel_count_by_pixel_values
-        global storage_pixel_count_by_pixel_values
-        storage_pixel_count_by_pixel_values[(AcATaMa.dockwidget.QCBox_CategMap_StraRS.currentLayer(),
-                                             int(AcATaMa.dockwidget.QCBox_band_CategMap_StraRS.currentText()),
-                                             AcATaMa.dockwidget.nodata_CategMap_StraRS.value() if
-                                             AcATaMa.dockwidget.nodata_CategMap_StraRS.value() != -1 else None)] = \
-            dict(zip(srs_table['values_and_colors_table']['Pixel Value'], srs_table['pixel_count']))
+        if srs_table:
+            from AcATaMa.utils.others_utils import storage_pixel_count_by_pixel_values
+            global storage_pixel_count_by_pixel_values
+            storage_pixel_count_by_pixel_values[(AcATaMa.dockwidget.QCBox_CategMap_StraRS.currentLayer(),
+                                                 int(AcATaMa.dockwidget.QCBox_band_CategMap_StraRS.currentText()),
+                                                 AcATaMa.dockwidget.nodata_CategMap_StraRS.value() if
+                                                 AcATaMa.dockwidget.nodata_CategMap_StraRS.value() != -1 else None)] = \
+                dict(zip(srs_table['values_and_colors_table']['Pixel Value'], srs_table['pixel_count']))
 
         # TODO:
         # restore the values color table of the QCBox_CategMap_StraRS saved
