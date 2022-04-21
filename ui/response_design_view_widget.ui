@@ -119,29 +119,6 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QToolButton" name="layerStyleEditor">
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>30</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Open the style editor for the layer selected</string>
-        </property>
-        <property name="text">
-         <string>Style</string>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>:/plugins/AcATaMa/icons/layer_properties.svg</normaloff>:/plugins/AcATaMa/icons/layer_properties.svg</iconset>
-        </property>
-        <property name="autoRaise">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QgsMapLayerComboBox" name="QCBox_RenderFile">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Maximum">
@@ -176,6 +153,26 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QToolButton" name="layerStyleEditor">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Open the style editor for the layer selected</string>
+        </property>
+        <property name="text">
+         <string>Style</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>:/plugins/AcATaMa/icons/layer_properties.svg</normaloff>:/plugins/AcATaMa/icons/layer_properties.svg</iconset>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -195,7 +192,7 @@
   <customwidget>
    <class>QgsMapLayerComboBox</class>
    <extends>QComboBox</extends>
-   <header>qgis.gui</header>
+   <header>qgsmaplayercombobox.h</header>
   </customwidget>
   <customwidget>
    <class>RenderWidget</class>
