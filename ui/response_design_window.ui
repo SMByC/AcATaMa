@@ -198,6 +198,9 @@
                   </item>
                   <item>
                    <widget class="QLabel" name="statusCurrentSample">
+                    <property name="toolTip">
+                     <string>Current label for this sample</string>
+                    </property>
                     <property name="text">
                      <string/>
                     </property>
