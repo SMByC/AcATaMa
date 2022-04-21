@@ -69,6 +69,7 @@ def select_item_in(combo_box, item):
 
 def load_and_select_filepath_in(combo_box, file_path, layer_name=None):
     if not file_path:
+        combo_box.setCurrentIndex(-1)
         return
     if not layer_name:
         layer_name = os.path.splitext(os.path.basename(file_path))[0]

@@ -580,6 +580,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
     @pyqtSlot(int)
     def sampling_type_selection_action(self, type_id):
+        if not self.QCBox_SamplingFile_A.currentLayer():
+            return
         self.QGBox_AccuracyAssessment.setEnabled(type_id != -1)
         # save the sampling type to response design instance
         ResponseDesign.instances[self.QCBox_SamplingFile_A.currentLayer()].sampling_type = type_id
