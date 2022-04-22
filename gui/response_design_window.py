@@ -292,15 +292,18 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             # automatically follows the next sample
             self.next_sample()
 
-    def update_labeling_button_activation(self, label_id):
+    def update_labeling_button_activation(self):
         # restore labeling button checked status based on the label of the current sample
-        if label_id is None:
+        if self.current_sample.label_id is None or self.current_sample.label_id not in self.response_design.buttons_config:
             for i in range(self.Grid_LabelingButtons.count()):
                 self.Grid_LabelingButtons.itemAtPosition(i, 0).widget().setChecked(False)
             return
+
+        label_name = self.response_design.buttons_config[self.current_sample.label_id]["name"]
         for i in range(self.Grid_LabelingButtons.count()):
             if self.Grid_LabelingButtons.itemAtPosition(i, 0):
-                self.Grid_LabelingButtons.itemAtPosition(i, 0).widget().setChecked(i == label_id - 1)
+                self.Grid_LabelingButtons.itemAtPosition(i, 0).widget().setChecked(
+                    label_name == self.Grid_LabelingButtons.itemAtPosition(i, 0).widget().text())
 
     def update_sample_status(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
@@ -325,7 +328,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         self.QPBar_LabelingStatus.setMaximum(self.response_design.num_points)
         self.QPBar_LabelingStatus.setValue(self.response_design.total_labeled)
         # update checked status of the labeling button
-        self.update_labeling_button_activation(self.current_sample.label_id)
+        self.update_labeling_button_activation()
         # update plugin with the current sampling status
         AcATaMa.dockwidget.update_response_design_state()
 
