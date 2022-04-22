@@ -614,13 +614,23 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
                       "thematic map."
                 QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.Ok)
                 return
-            # check if all button configured have a valid name
-            items_with_valid_names = [self.tableBtnsConfig.item(row, 0).text() != "" for row in
-                                      range(self.tableBtnsConfig.rowCount()) if self.tableBtnsConfig.item(row, 2).text() != ""]
-            if False in items_with_valid_names:
-                msg = "Invalid configuration:\n\nTo create the buttons for labeling, they must have a valid name."
-                QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.Ok)
-                return
+        # check if all button configured have a valid name
+        items_with_valid_names = [self.tableBtnsConfig.item(row, 0).text() != "" for row in
+                                  range(self.tableBtnsConfig.rowCount()) if
+                                  self.tableBtnsConfig.item(row, 1).background().color().name() not in ["#ffffff", '#000000'] or
+                                  self.tableBtnsConfig.item(row, 2).text() not in ["none", ""]]
+        if False in items_with_valid_names:
+            msg = "Invalid configuration:\n\nTo create the buttons for labeling, they must have a valid name."
+            QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.Ok)
+            return
+        # check if button name exist (not allow duplicate labels with the same names)
+        items_with_valid_names = [self.tableBtnsConfig.item(row, 0).text() for row in
+                                  range(self.tableBtnsConfig.rowCount()) if
+                                  self.tableBtnsConfig.item(row, 0).text() != ""]
+        if len(items_with_valid_names) != len(set(items_with_valid_names)):
+            msg = "Invalid configuration:\n\nTo create the buttons for labeling, the labeling names must be unique."
+            QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.Ok)
+            return
         # pass all checks
         self.accept()
 
