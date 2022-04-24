@@ -84,14 +84,14 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         # open in Google Earth
         self.QPBtn_OpenInGE.clicked.connect(self.open_current_point_in_google_engine)
 
-        # set properties and default value for the fit to sample spinBox based on sampling file
+        # set properties and default value for zoom to the sample spinBox based on sampling file
         layer_dist_unit = self.sampling_layer.crs().mapUnits()
         str_unit = QgsUnitTypes.toString(layer_dist_unit)
         abbr_unit = QgsUnitTypes.toAbbreviatedString(layer_dist_unit)
         self.radiusFitToSample.setSuffix(" {}".format(abbr_unit))
         self.radiusFitToSample.setToolTip(
-            "Units in {} for set the zoom radius to the current sample\n"
-            "(units based on sampling file selected)".format(str_unit))
+            "Set the default zoom radius for samples\n"
+            "(units in {} based on sampling file selected)".format(str_unit))
         self.radiusFitToSample.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
         self.radiusFitToSample.setDecimals(
             4 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
