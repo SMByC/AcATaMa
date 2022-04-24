@@ -493,12 +493,12 @@
                  <property name="toolTip">
                   <string>Open the current point in Google Earth (KML)</string>
                  </property>
-                 <property name="text">
-                  <string/>
-                 </property>
                  <property name="icon">
                   <iconset>
                    <normaloff>:/plugins/AcATaMa/icons/open_in_ge.svg</normaloff>:/plugins/AcATaMa/icons/open_in_ge.svg</iconset>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
                  </property>
                  <property name="autoRaise">
                   <bool>true</bool>
@@ -563,12 +563,12 @@
                  <property name="toolTip">
                   <string>Go to ID set in the box</string>
                  </property>
-                 <property name="text">
-                  <string/>
-                 </property>
                  <property name="icon">
                   <iconset>
                    <normaloff>:/plugins/AcATaMa/icons/go.svg</normaloff>:/plugins/AcATaMa/icons/go.svg</iconset>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
                  </property>
                  <property name="autoRaise">
                   <bool>true</bool>
