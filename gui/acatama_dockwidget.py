@@ -116,7 +116,6 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # select and check the categorical map
         self.QCBox_CategMap_SimpRS.layerChanged.connect(self.select_categorical_map_SimpRS)
         # generate and random sampling options
-        self.widget_generate_SimpRS.widget_generation_options.setHidden(True)
         self.widget_generate_SimpRS.widget_random_sampling_options.setHidden(True)
         # generation options
         self.widget_generate_SimpRS.QPBtn_GenerateSamples.clicked.connect(lambda: do_simple_random_sampling(self))
@@ -147,7 +146,6 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.TotalExpectedSE.valueChanged.connect(lambda: update_stratified_sampling_table(self, "TotalExpectedSE"))
         self.QTableW_StraRS.itemChanged.connect(lambda: update_stratified_sampling_table(self, "TableContent"))
         # generate and random sampling options
-        self.widget_generate_StraRS.widget_generation_options.setHidden(True)
         self.widget_generate_StraRS.widget_random_sampling_options.setHidden(True)
         # generation options
         self.widget_generate_StraRS.QPBtn_GenerateSamples.clicked.connect(lambda: do_stratified_random_sampling(self))

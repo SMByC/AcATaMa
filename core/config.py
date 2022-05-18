@@ -76,10 +76,6 @@ def save(file_out):
         "with_neighbors_aggregation": AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_neighbour_aggregation.isChecked(),
         "num_neighbors": AcATaMa.dockwidget.widget_generate_SimpRS.QCBox_NumberOfNeighbors.currentText(),
         "min_neighbors_with_the_same_class": AcATaMa.dockwidget.widget_generate_SimpRS.QCBox_SameClassOfNeighbors.currentText(),
-        "generation_options": AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_generation_options.isChecked(),
-        "with_attempts_by_sampling": AcATaMa.dockwidget.widget_generate_SimpRS.button_attempts_by_sampling.isChecked(),
-        "attempts_by_sampling": AcATaMa.dockwidget.widget_generate_SimpRS.attempts_by_sampling.value(),
-        "until_sampling_number": AcATaMa.dockwidget.widget_generate_SimpRS.button_until_sampling_number.isChecked(),
         "random_sampling_options": AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_random_sampling_options.isChecked(),
         "automatic_random_seed": AcATaMa.dockwidget.widget_generate_SimpRS.automatic_random_seed.isChecked(),
         "with_random_seed_by_user": AcATaMa.dockwidget.widget_generate_SimpRS.with_random_seed_by_user.isChecked(),
@@ -108,10 +104,6 @@ def save(file_out):
         "with_neighbors_aggregation": AcATaMa.dockwidget.widget_generate_StraRS.QGBox_neighbour_aggregation.isChecked(),
         "num_neighbors": AcATaMa.dockwidget.widget_generate_StraRS.QCBox_NumberOfNeighbors.currentText(),
         "min_neighbors_with_the_same_class": AcATaMa.dockwidget.widget_generate_StraRS.QCBox_SameClassOfNeighbors.currentText(),
-        "generation_options": AcATaMa.dockwidget.widget_generate_StraRS.QGBox_generation_options.isChecked(),
-        "with_attempts_by_sampling": AcATaMa.dockwidget.widget_generate_StraRS.button_attempts_by_sampling.isChecked(),
-        "attempts_by_sampling": AcATaMa.dockwidget.widget_generate_StraRS.attempts_by_sampling.value(),
-        "until_sampling_number": AcATaMa.dockwidget.widget_generate_StraRS.button_until_sampling_number.isChecked(),
         "random_sampling_options": AcATaMa.dockwidget.widget_generate_StraRS.QGBox_random_sampling_options.isChecked(),
         "automatic_random_seed": AcATaMa.dockwidget.widget_generate_StraRS.automatic_random_seed.isChecked(),
         "with_random_seed_by_user": AcATaMa.dockwidget.widget_generate_StraRS.with_random_seed_by_user.isChecked(),
@@ -234,16 +226,6 @@ def restore(file_path):
                        yaml_config["sampling_design"]["simple_random_sampling"]['num_neighbors'])
         select_item_in(AcATaMa.dockwidget.widget_generate_SimpRS.QCBox_SameClassOfNeighbors,
                        yaml_config["sampling_design"]["simple_random_sampling"]['min_neighbors_with_the_same_class'])
-        AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_generation_options.setChecked(
-            yaml_config["sampling_design"]["simple_random_sampling"]['generation_options'])
-        AcATaMa.dockwidget.widget_generate_SimpRS.widget_generation_options.setVisible(
-            yaml_config["sampling_design"]["simple_random_sampling"]['generation_options'])
-        AcATaMa.dockwidget.widget_generate_SimpRS.button_attempts_by_sampling.setChecked(
-            yaml_config["sampling_design"]["simple_random_sampling"]['with_attempts_by_sampling'])
-        AcATaMa.dockwidget.widget_generate_SimpRS.attempts_by_sampling.setValue(
-            yaml_config["sampling_design"]["simple_random_sampling"]['attempts_by_sampling'])
-        AcATaMa.dockwidget.widget_generate_SimpRS.button_until_sampling_number.setChecked(
-            yaml_config["sampling_design"]["simple_random_sampling"]['until_sampling_number'])
         AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_random_sampling_options.setChecked(
             yaml_config["sampling_design"]["simple_random_sampling"]['random_sampling_options'])
         AcATaMa.dockwidget.widget_generate_SimpRS.widget_random_sampling_options.setVisible(
@@ -300,16 +282,6 @@ def restore(file_path):
                        yaml_config["sampling_design"]["stratified_random_sampling"]['num_neighbors'])
         select_item_in(AcATaMa.dockwidget.widget_generate_StraRS.QCBox_SameClassOfNeighbors,
                        yaml_config["sampling_design"]["stratified_random_sampling"]['min_neighbors_with_the_same_class'])
-        AcATaMa.dockwidget.widget_generate_StraRS.QGBox_generation_options.setChecked(
-            yaml_config["sampling_design"]["stratified_random_sampling"]['generation_options'])
-        AcATaMa.dockwidget.widget_generate_StraRS.widget_generation_options.setVisible(
-            yaml_config["sampling_design"]["stratified_random_sampling"]['generation_options'])
-        AcATaMa.dockwidget.widget_generate_StraRS.button_attempts_by_sampling.setChecked(
-            yaml_config["sampling_design"]["stratified_random_sampling"]['with_attempts_by_sampling'])
-        AcATaMa.dockwidget.widget_generate_StraRS.attempts_by_sampling.setValue(
-            yaml_config["sampling_design"]["stratified_random_sampling"]['attempts_by_sampling'])
-        AcATaMa.dockwidget.widget_generate_StraRS.button_until_sampling_number.setChecked(
-            yaml_config["sampling_design"]["stratified_random_sampling"]['until_sampling_number'])
         AcATaMa.dockwidget.widget_generate_StraRS.QGBox_random_sampling_options.setChecked(
             yaml_config["sampling_design"]["stratified_random_sampling"]['random_sampling_options'])
         AcATaMa.dockwidget.widget_generate_StraRS.widget_random_sampling_options.setVisible(
