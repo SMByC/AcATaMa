@@ -22,11 +22,13 @@ import os
 import tempfile
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import Qt, pyqtSlot
+from qgis.PyQt.QtCore import Qt, pyqtSlot, QEventLoop, QTimer
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QSplitter, QColorDialog, QDialog, QDialogButtonBox, QPushButton, \
     QMessageBox
 from qgis.PyQt.QtGui import QColor, QIcon
-from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, Qgis, QgsProject, QgsUnitTypes
+from qgis.gui import QgsRubberBand
+from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, Qgis, QgsProject, QgsUnitTypes, \
+    QgsRectangle, QgsPointXY, QgsGeometry
 
 from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, get_current_file_path_in, \
@@ -122,6 +124,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         # init current point
         self.current_sample_idx = self.response_design.current_sample_idx
         self.current_sample = None
+        self.pixel_tile = None
         self.set_current_sample()
         # set labeling buttons
         self.labeling_btns_config = LabelingButtonsConfig(self.response_design.buttons_config)
@@ -202,6 +205,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         AcATaMa.dockwidget.QPBtn_OpenResponseDesignWindow.setText("Response design is opened, click to show")
 
         super(ResponseDesignWindow, self).show()
+        self.show_and_go_to_current_sample()
 
     def set_current_sample(self):
         # clear all message bar
@@ -280,6 +284,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         if label_id:
             self.response_design.label_the_current_sample(int(label_id))
             self.update_sample_status()
+            self.highlight_thematic_pixel()
             if self.autoNextSample.isChecked():
                 # automatically follows the next sample
                 self.next_sample()
@@ -288,6 +293,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
     def unlabel_sample(self):
         self.response_design.label_the_current_sample(False)
         self.update_sample_status()
+        self.highlight_thematic_pixel()
         if self.autoNextSample.isChecked():
             # automatically follows the next sample
             self.next_sample()
@@ -332,6 +338,26 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         # update plugin with the current sampling status
         AcATaMa.dockwidget.update_response_design_state()
 
+    def highlight_thematic_pixel(self):
+        # highlight thematic pixel respectively of the current sampling point
+        thematic_pixel = self.current_sample.get_thematic_pixel()
+        if thematic_pixel and self.current_sample.label_id:
+            fill_color = QColor(self.response_design.buttons_config[self.current_sample.label_id]["color"])
+            highlight_pixel_tile = \
+                Tile(*thematic_pixel, QColor("black"), fill_color=fill_color)
+            highlight_pixel_tile.show()
+        # wait
+        loop = QEventLoop()
+        QTimer.singleShot(300, loop.quit)
+        loop.exec_()
+        # delete
+        if thematic_pixel and self.current_sample.label_id:
+            highlight_pixel_tile.hide()
+        # wait
+        loop = QEventLoop()
+        QTimer.singleShot(150, loop.quit)
+        loop.exec_()
+
     @pyqtSlot(bool)
     def show_and_go_to_current_sample(self, highlight=True):
         for view_widget in ResponseDesignWindow.view_widgets:
@@ -343,6 +369,14 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
                 if highlight and view_widget.render_widget.canvas.renderFlag():
                     # highlight to marker
                     view_widget.render_widget.marker.highlight()
+        # show the edges of the thematic pixel of the current sample
+        if self.pixel_tile:
+            self.pixel_tile.hide()
+        thematic_pixel = self.current_sample.get_thematic_pixel()
+        if thematic_pixel:
+            self.pixel_tile = Tile(*thematic_pixel, QColor("black"))
+            self.pixel_tile.show()
+
 
     @pyqtSlot()
     def next_sample(self):
@@ -710,3 +744,34 @@ class ThematicMapClasses(QDialog, FORM_CLASS):
         self.color = self.tableOfClasses.item(row, 1).background().color()
 
         self.accept()
+
+
+class Tile(object):
+    def __init__(self, xmin, xmax, ymin, ymax, tile_color, fill_color=None):
+        self.rbs_in_response_design_window = []
+        self.extent = QgsRectangle(xmin, ymin, xmax, ymax)
+        self.xmin, self.xmax, self.ymin, self.ymax = xmin, xmax, ymin, ymax
+        self.tile_color = tile_color
+        self.fill_color = fill_color
+
+    def create(self, canvas, line_width=1):
+        """Create the tile as a rubber band inside the canvas given"""
+        rubber_band = QgsRubberBand(canvas)
+        points = [QgsPointXY(self.xmin, self.ymax), QgsPointXY(self.xmax, self.ymax),
+                  QgsPointXY(self.xmax, self.ymin), QgsPointXY(self.xmin, self.ymin)]
+        rubber_band.setToGeometry(QgsGeometry.fromPolygonXY([points]), None)
+        rubber_band.setColor(self.tile_color)
+        rubber_band.setFillColor(self.fill_color if self.fill_color else QColor(0, 0, 0, 0))
+        rubber_band.setWidth(line_width)
+        rubber_band.show()
+        self.rbs_in_response_design_window.append(rubber_band)
+
+    def show(self):
+        """Show/draw the tile in all view widgets in main dialog"""
+        self.hide()
+        for view_widget in ResponseDesignWindow.view_widgets:
+            if view_widget.is_active:
+                self.create(view_widget.render_widget.canvas)
+
+    def hide(self):
+        [rubber_band.reset() for rubber_band in self.rbs_in_response_design_window]

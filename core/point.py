@@ -19,9 +19,11 @@
  ***************************************************************************/
 """
 import random
+from math import floor
 
 from qgis.core import QgsGeometry, QgsPointXY, QgsRectangle
 
+from AcATaMa.utils.qgis_utils import valid_file_selected_in
 from AcATaMa.utils.sampling_utils import check_min_distance
 from AcATaMa.utils.system_utils import block_signals_to
 
@@ -150,3 +152,29 @@ class LabelingPoint(Point):
                                   self.QgsPnt.x()+radius, self.QgsPnt.y()+radius)
         with block_signals_to(view_widget.render_widget.canvas):
             view_widget.render_widget.set_extents_and_scalefactor(fit_extent)
+
+    def get_thematic_pixel(self):
+        """Get the edges of the thematic pixel respectively of the current labeling point"""
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        if not valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicMap):
+            return
+        thematic_layer = AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer()
+        data_provider = thematic_layer.dataProvider()
+        if not data_provider.capabilities() or not data_provider.Size:
+            return
+        extent = data_provider.extent()
+        width = data_provider.xSize()
+        height = data_provider.ySize()
+        xres = extent.width() / width
+        yres = extent.height() / height
+
+        if extent.xMinimum() <= self.QgsPnt.x() <= extent.xMaximum() and \
+                extent.yMinimum() <= self.QgsPnt.y() <= extent.yMaximum():
+            col = int(floor((self.QgsPnt.x() - extent.xMinimum()) / xres))
+            row = int(floor((extent.yMaximum() - self.QgsPnt.y()) / yres))
+            xmin = extent.xMinimum() + col * xres
+            xmax = xmin + xres
+            ymax = extent.yMaximum() - row * yres
+            ymin = ymax - yres
+
+            return xmin, xmax, ymin, ymax
