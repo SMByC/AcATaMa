@@ -67,7 +67,7 @@ def select_item_in(combo_box, item):
     combo_box.setCurrentIndex(selected_index)
 
 
-def load_and_select_filepath_in(combo_box, file_path, layer_name=None, relative_path_to=None):
+def load_and_select_filepath_in(combo_box, file_path, layer_name=None):
     if not file_path:
         combo_box.setCurrentIndex(-1)
         return
@@ -76,7 +76,7 @@ def load_and_select_filepath_in(combo_box, file_path, layer_name=None, relative_
     layer = get_layer_by_name(layer_name)
     # load
     if not layer:
-        load_layer(file_path, name=layer_name, relative_path_to=relative_path_to)
+        load_layer(file_path, name=layer_name)
     # select the sampling file in combobox
     select_item_in(combo_box, layer_name)
 
@@ -87,16 +87,9 @@ def add_layer(layer, add_to_legend=True):
     QgsProject.instance().addMapLayer(layer, add_to_legend)
 
 
-def load_layer(file_path, name=None, add_to_legend=True, relative_path_to=None):
+def load_layer(file_path, name=None, add_to_legend=True):
     # first unload layer from qgis if exists
     unload_layer(file_path)
-    # check if the file path exists or try using relative path to file (e.g. yml file)
-    if not os.path.isfile(file_path) and relative_path_to:
-        file_path = os.path.join(os.path.dirname(relative_path_to), file_path)
-    if not os.path.isfile(file_path):
-        iface.messageBar().pushMessage("AcATaMa", "File not exists: {}".format(file_path),
-                                       level=Qgis.Warning, duration=-1)
-        return
 
     name = name or os.path.splitext(os.path.basename(file_path))[0]
     # vector
@@ -109,9 +102,7 @@ def load_layer(file_path, name=None, add_to_legend=True, relative_path_to=None):
     if qgslayer.isValid():
         add_layer(qgslayer, add_to_legend)
     else:
-        iface.messageBar().pushMessage("AcATaMa", "Could not load layer: {}".format(file_path),
-                                       level=Qgis.Warning, duration=-1)
-        return
+        iface.messageBar().pushMessage("AcATaMa", "Could not load layer: {}".format(file_path))
 
     return qgslayer
 
