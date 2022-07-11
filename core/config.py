@@ -196,8 +196,10 @@ def restore(yml_file_path):
     # restore the thematic map
     if yaml_config["thematic_map"]["path"]:
         # thematic map
-        load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_ThematicMap,
-                                    get_restore_path(yaml_config["thematic_map"]["path"]))
+        load_status = load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_ThematicMap,
+                                                  get_restore_path(yaml_config["thematic_map"]["path"]))
+        if not load_status:
+            return
         AcATaMa.dockwidget.select_thematic_map(AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer())
         # band number
         if "band" in yaml_config["thematic_map"]:
@@ -307,6 +309,8 @@ def restore(yml_file_path):
     if "sampling_layer" in yaml_config and os.path.isfile(get_restore_path(yaml_config["sampling_layer"])):
         sampling_layer = load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_SamplingFile,
                                                      get_restore_path(yaml_config["sampling_layer"]))
+        if not sampling_layer:
+            return
         response_design = ResponseDesign(sampling_layer)
         # TODO:
         # restore sampling_layer style

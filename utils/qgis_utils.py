@@ -76,7 +76,8 @@ def load_and_select_filepath_in(combo_box, file_path, layer_name=None):
     layer = get_layer_by_name(layer_name)
     # load
     if not layer:
-        load_layer(file_path, name=layer_name)
+        if not load_layer(file_path, name=layer_name).isValid():
+            return
     # select the sampling file in combobox
     select_item_in(combo_box, layer_name)
 
