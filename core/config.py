@@ -155,17 +155,25 @@ def save(file_out):
 
 
 @wait_process
-def restore(file_path):
+def restore(yml_file_path):
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
 
     # load the yaml file
-    with open(file_path, 'r') as yaml_file:
+    with open(yml_file_path, 'r') as yaml_file:
         try:
             yaml_config = yaml.load(yaml_file, Loader=Loader)
         except yaml.YAMLError as err:
             iface.messageBar().pushMessage("AcATaMa", "Error while read the AcATaMa configuration file: {}".format(err),
                                            level=Qgis.Critical)
             return
+
+    def get_restore_path(_path):
+        """check if the file path exists or try using relative path to the yml file"""
+        if _path is None:
+            return None
+        if not os.path.isfile(_path):
+            _path = os.path.join(os.path.dirname(yml_file_path), _path)
+        return os.path.abspath(_path)
 
     # ######### general configuration ######### #
     if "general" in yaml_config:
@@ -189,7 +197,7 @@ def restore(file_path):
     if yaml_config["thematic_map"]["path"]:
         # thematic map
         load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_ThematicMap,
-                                    yaml_config["thematic_map"]["path"])
+                                    get_restore_path(yaml_config["thematic_map"]["path"]))
         AcATaMa.dockwidget.select_thematic_map(AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer())
         # band number
         if "band" in yaml_config["thematic_map"]:
@@ -211,7 +219,7 @@ def restore(file_path):
         AcATaMa.dockwidget.widget_SimpRSwithCR.setVisible(
             yaml_config["sampling_design"]["simple_random_sampling"]['post_stratify'])
         load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_CategMap_SimpRS,
-                                    yaml_config["sampling_design"]["simple_random_sampling"]['categ_map_path'])
+                                    get_restore_path(yaml_config["sampling_design"]["simple_random_sampling"]['categ_map_path']))
         AcATaMa.dockwidget.select_categorical_map_SimpRS(AcATaMa.dockwidget.QCBox_CategMap_SimpRS.currentLayer())
         AcATaMa.dockwidget.QCBox_band_CategMap_SimpRS.setCurrentIndex(
             yaml_config["sampling_design"]["simple_random_sampling"]['categ_map_band'] - 1)
@@ -239,7 +247,7 @@ def restore(file_path):
 
         # stratified random sampling
         load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_CategMap_StraRS,
-                                    yaml_config["sampling_design"]["stratified_random_sampling"]['categ_map_path'])
+                                    get_restore_path(yaml_config["sampling_design"]["stratified_random_sampling"]['categ_map_path']))
         AcATaMa.dockwidget.select_categorical_map_StraRS(AcATaMa.dockwidget.QCBox_CategMap_StraRS.currentLayer())
         AcATaMa.dockwidget.QCBox_band_CategMap_StraRS.setCurrentIndex(
             yaml_config["sampling_design"]["stratified_random_sampling"]['categ_map_band'] - 1)
@@ -296,8 +304,9 @@ def restore(file_path):
     # ######### response_design configuration ######### #
     # restore the response_design settings
     # load the sampling file save in yaml config
-    if "sampling_layer" in yaml_config and os.path.isfile(yaml_config["sampling_layer"]):
-        sampling_layer = load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_SamplingFile, yaml_config["sampling_layer"])
+    if "sampling_layer" in yaml_config and os.path.isfile(get_restore_path(yaml_config["sampling_layer"])):
+        sampling_layer = load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_SamplingFile,
+                                                     get_restore_path(yaml_config["sampling_layer"]))
         response_design = ResponseDesign(sampling_layer)
         # TODO:
         # restore sampling_layer style
@@ -367,7 +376,7 @@ def restore(file_path):
     # support load the old format of config file TODO: deprecated, legacy config input
     if "accuracy_assessment_sampling_file" in yaml_config and yaml_config["accuracy_assessment_sampling_file"]:
         load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_SamplingFile_A,
-                                    yaml_config["accuracy_assessment_sampling_file"])
+                                    get_restore_path(yaml_config["accuracy_assessment_sampling_file"]))
     if "accuracy_assessment_sampling_type" in yaml_config:
         AcATaMa.dockwidget.QCBox_SamplingType_A.setCurrentIndex(yaml_config["accuracy_assessment_sampling_type"])
 
@@ -385,7 +394,7 @@ def restore(file_path):
 
     if "analysis" in yaml_config and "sampling_file" in yaml_config["analysis"]:
         load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_SamplingFile_A,
-                                    yaml_config["analysis"]["sampling_file"])
+                                    get_restore_path(yaml_config["analysis"]["sampling_file"]))
     if "analysis" in yaml_config and "sampling_type" in yaml_config["analysis"]:
         AcATaMa.dockwidget.QCBox_SamplingType_A.setCurrentIndex(-1)
         AcATaMa.dockwidget.QCBox_SamplingType_A.setCurrentIndex(yaml_config["analysis"]["sampling_type"])
