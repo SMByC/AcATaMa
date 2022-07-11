@@ -37,6 +37,14 @@ class Analysis(object):
     def __init__(self, response_design):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
 
+        self.values = None
+        self.labels = None
+        self.error_matrix = None
+        self.samples_outside_the_thematic = None
+        self.pixel_area_base = None
+        self.pixel_area_value = None
+        self.pixel_area_unit = None
+
         self.response_design = response_design
         self.thematic_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicMap,
                                 band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
