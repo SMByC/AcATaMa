@@ -153,7 +153,7 @@ class LabelingPoint(Point):
         with block_signals_to(view_widget.render_widget.canvas):
             view_widget.render_widget.set_extents_and_scalefactor(fit_extent)
 
-    def get_thematic_pixel(self):
+    def get_thematic_pixel(self, with_buffer=0):
         """Get the edges of the thematic pixel respectively of the current labeling point"""
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         if not valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicMap):
@@ -172,9 +172,9 @@ class LabelingPoint(Point):
                 extent.yMinimum() <= self.QgsPnt.y() <= extent.yMaximum():
             col = int(floor((self.QgsPnt.x() - extent.xMinimum()) / xres))
             row = int(floor((extent.yMaximum() - self.QgsPnt.y()) / yres))
-            xmin = extent.xMinimum() + col * xres
-            xmax = xmin + xres
-            ymax = extent.yMaximum() - row * yres
-            ymin = ymax - yres
+            xmin = extent.xMinimum() + col * xres - with_buffer * xres
+            xmax = xmin + xres + 2*(with_buffer * xres)
+            ymax = extent.yMaximum() - row * yres + with_buffer * yres
+            ymin = ymax - yres - 2*(with_buffer * yres)
 
             return xmin, xmax, ymin, ymax

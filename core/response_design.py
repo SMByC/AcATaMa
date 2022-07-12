@@ -22,6 +22,7 @@ from random import shuffle
 
 from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.QtCore import NULL
+from qgis.PyQt.QtGui import QColor
 from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsVectorFileWriter, Qgis, QgsUnitTypes
 from qgis.utils import iface
 
@@ -47,6 +48,9 @@ class ResponseDesign(object):
         # grid config
         self.grid_columns = 2
         self.grid_rows = 1
+        # sample unit
+        self.sample_unit_pixel_buffer = 0
+        self.sample_unit_color = QColor("red")
         # default radius to fit the sample based on the units of the sampling file selected
         layer_dist_unit = self.sampling_layer.crs().mapUnits()
         fit_to_sample_list = {QgsUnitTypes.DistanceMeters: 120, QgsUnitTypes.DistanceKilometers: 0.120,
