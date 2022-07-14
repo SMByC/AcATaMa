@@ -1,0 +1,140 @@
+
+        <head>
+        
+        <style type="text/css">
+        table {
+          table-layout: fixed;
+          white-space: normal!important;
+          background: #ffffff;
+          margin: 4px;
+        }
+        th {
+          word-wrap: break-word;
+          padding: 4px 6px;
+          background: #efefef;
+          valign: middle;
+        }
+        td {
+          word-wrap: break-word;
+          padding: 4px 6px;
+          background: #efefef;
+        }
+        .highlight {
+          background: #dddddd;
+        }
+        .th-rows {
+          max-width: 120px;
+        }
+        .empty {
+          background: #f9f9f9;
+        }
+        </style>
+        </head>
+        <body>
+        <h2>Analysis - Accuracy assessment results</h2><p><strong>Thematic map:</strong> stack.tif</p><p><strong>Sampling file:</strong> stratified_random_sampling.shp</p><p><strong>Sampling type:</strong> Simple random sampling</p><p><strong>Response design state:</strong> 2/2 samples labeled</p><p style='font-size:2px'><br/></p><h3>1) Error matrix:</h3>
+        <table>
+        <tbody>
+        <tr>
+        <td class="empty"></td>
+        <td class="empty"></td>
+         <th colspan="1">Validation</th>
+            <td class="empty"></td>
+            <td class="empty"></td>
+            <td class="empty"></td>
+            <td class="empty"></td>
+        </tr>
+        <tr>
+        <td class="empty"></td>
+        <td class="empty"></td>
+        <th >36 (orange)</th>
+        <th>Total</th>
+        <th>User accuracy</th>
+        <th>Total class area (m²)</th>
+        <th>Wi</th>
+        </tr>
+        <tr>
+                <th  class="th-rows" rowspan="1">Thematic map<br />classes</th>
+                <th>36</th>
+            <td class="highlight">2</td>
+            
+            <td>2</td>
+            <td>1.0</td>
+            <td>5224025.10391</td>
+            <td>1.0</td>
+            </tr>
+                
+        <tr>
+        <td class="empty"></td>
+          <th>Total</th>
+        
+                <td>2</td>
+                
+        <td>2</td>
+        
+        <td class="empty"></td>
+        
+        <td>5224025.10391</td>
+        
+        <td class="empty"></td>
+        </tr>
+        <tr>
+        <td class="empty"></td>
+          <th>Producer accuracy</th>
+        
+            <td>1.0</td>
+            
+        <td class="empty"></td>
+        <td class="empty"></td>
+        
+        <td class="empty"></td>
+        <td class="empty"></td>
+        </tr>
+        </tbody>
+        </table>
+        <p style='font-size:2px'><br/></p><h3>2) Accuracy:</h3><h4>Overall:</h4>
+            <table>
+            <tbody>
+            <tr>
+            <td><strong>Overall Accuracy</strong></td>
+            <td><strong>Standard deviation</strong></td>
+            </tr>
+            <tr>
+            <td class="highlight">1.0</td>
+            <td>0.0</td>
+            </tr>
+            </tbody>
+            </table>
+            <h4>User:</h4>
+            <table>
+            <tbody>
+            <tr>
+            <td class="empty"></td>
+            <th>User's accuracy</th><th>Standard deviation</th></tr><tr><th >36 (orange)</th><td class="highlight">1.0</th><td>0.0</th></tr>
+            </tbody>
+            </table>
+            <h4>Producer:</h4>
+            <table>
+            <tbody>
+            <tr>
+            <td class="empty"></td>
+            <th>Producer's accuracy</th><th>Standard deviation</th></tr><tr><th >36 (orange)</th><td class="highlight">1.0</th><td>0.0</th></tr>
+            </tbody>
+            </table>
+            <p style='font-size:2px'><br/></p><h3>3) Class area adjusted:</h3>
+        <table>
+        <tbody>
+        <tr>
+        <td class="empty"></td>
+        <th >Area adjusted (m²)</th><th >Error</th><th >Lower limit</th><th >Upper limit</th></tr><tr><th >36 (orange)</th><td>5224025.10391</th><td>0.0</th><td>5224025.10391</th><td>5224025.10391</th></tr>    
+        <tr>
+          <th>total</th>
+        <td>5224025.10391</th>
+        <td class="empty"></td>
+        <td class="empty"></td>
+        <td class="empty"></td>
+        </tr>
+        </tbody>
+        </table>
+        
+        </body>
+        

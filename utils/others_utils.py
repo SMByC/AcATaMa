@@ -159,7 +159,7 @@ def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=-1):
 
     progress = QProgressDialog('AcATaMa is counting the number of pixels for each thematic value.\n'
                                'Depending on the size of the image, it would take a few minutes.',
-                               None, 0, 100, iface.mainWindow())
+                               None, 0, 100)
     progress.setWindowTitle("AcATaMa - Counting pixels by values... " + ("[parallel]" if parallel else "[not parallel!]"))
     progress.setWindowModality(Qt.WindowModal)
     progress.setValue(0)
