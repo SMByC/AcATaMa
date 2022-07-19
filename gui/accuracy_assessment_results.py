@@ -309,9 +309,9 @@ def get_html(accu_asse):
         html += '''<td class="highlight">{}</th>'''.format(rf(accuracy))
         # standard error
         try:
-            if accu_asse.sampling_type in ['Simple random sampling', 'Simple random sampling post-stratified']:
+            if accu_asse.sampling_type in ['Simple random sampling']:
                 producer_standard_error = (accuracy*(1-accuracy)/(sum(list(zip(*accu_asse.error_matrix))[idx_row])-1))**0.5
-            if accu_asse.sampling_type == 'Stratified random sampling':
+            if accu_asse.sampling_type in ['Stratified random sampling', 'Simple random sampling post-stratified']:
                 u_accuracy = accuracy_table[idx_row][idx_row] / sum(accuracy_table[idx_row])
                 producer_standard_error = \
                     (1/(sum([n*row[idx_row]/total_row for total_row, row, n in
@@ -743,10 +743,10 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         r.append(rf(accuracy))
         # standard error
         try:
-            if accu_asse.sampling_type in ['Simple random sampling', 'Simple random sampling post-stratified']:
+            if accu_asse.sampling_type in ['Simple random sampling']:
                 producer_standard_error = (accuracy * (1 - accuracy) / (
                             sum(list(zip(*accu_asse.error_matrix))[idx_row]) - 1)) ** 0.5
-            if accu_asse.sampling_type == 'Stratified random sampling':
+            if accu_asse.sampling_type in ['Stratified random sampling', 'Simple random sampling post-stratified']:
                 u_accuracy = accuracy_table[idx_row][idx_row] / sum(accuracy_table[idx_row])
                 producer_standard_error = \
                     (1 / (sum([n * row[idx_row] / total_row for total_row, row, n in
