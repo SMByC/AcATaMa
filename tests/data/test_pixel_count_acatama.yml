@@ -1,0 +1,41 @@
+!!python/object/apply:collections.OrderedDict
+- - - thematic_map
+    - band: 2
+      nodata: 0
+      path: test_stack.tif
+  - - general
+    - tab_activated: 0
+  - - sampling_design
+    - simple_random_sampling:
+        automatic_random_seed: true
+        categ_map_band: -1
+        categ_map_path: null
+        min_distance: 0.0
+        min_neighbors_with_the_same_class: '1'
+        num_neighbors: '8'
+        num_samples: 10
+        pixel_values_categ_map: ''
+        post_stratify: false
+        random_sampling_options: false
+        random_seed_by_user: ''
+        with_neighbors_aggregation: false
+        with_random_seed_by_user: false
+      stratified_random_sampling:
+        automatic_random_seed: true
+        categ_map_band: 2
+        categ_map_nodata: 0
+        categ_map_path: test_stack.tif
+        min_distance: 0.0
+        min_neighbors_with_the_same_class: '1'
+        num_neighbors: '8'
+        overall_std_error: 0.005
+        random_sampling_options: false
+        random_seed_by_user: ''
+        sampling_random_method: ''
+        stratified_random_sampling_table: null
+        with_neighbors_aggregation: false
+        with_random_seed_by_user: false
+      tab_activated: 1
+  - - analysis
+    - sampling_file: null
+      sampling_type: -1
