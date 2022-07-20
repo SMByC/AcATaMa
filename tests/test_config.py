@@ -3,7 +3,7 @@ import pytest
 from AcATaMa.core import config
 
 
-def compare_config_files(plugin, unwrap, tmpdir, input_yml_path):
+def compare_config_files(unwrap, tmpdir, input_yml_path):
     # restore
     config_restore = unwrap(config.restore)
     config_restore(input_yml_path)
@@ -20,4 +20,4 @@ def test_restore_and_save_config_file(plugin, unwrap, tmpdir):
     yml_files = [pytest.tests_data_dir / "stratified_random_sampling_config.yml",]
 
     for yml_file in yml_files:
-        compare_config_files(plugin, unwrap, tmpdir, yml_file)
+        compare_config_files(unwrap, tmpdir, yml_file)
