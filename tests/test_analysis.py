@@ -1,15 +1,15 @@
 import pytest
 
+from AcATaMa.core import config
+from AcATaMa.core.analysis import AccuracyAssessmentWindow
+from AcATaMa.gui import accuracy_assessment_results
+
 
 def clean_raw_html(html):
     return html.replace('\n', '').replace('\t', '').replace(' ', '')
 
 
 def test_accuracy_assessment_html(plugin, unwrap):
-    from AcATaMa.core import config
-    from AcATaMa.core.analysis import AccuracyAssessmentWindow
-    from AcATaMa.gui import accuracy_assessment_results
-
     # restore
     input_yml_path = pytest.tests_data_dir / "accuracy_assessment_config.yml"
     config_restore = unwrap(config.restore)
