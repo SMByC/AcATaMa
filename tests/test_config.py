@@ -1,9 +1,9 @@
 import pytest
 
-from AcATaMa.core import config
-
 
 def compare_config_files(unwrap, tmpdir, input_yml_path):
+    from AcATaMa.core import config
+
     # restore
     config_restore = unwrap(config.restore)
     config_restore(input_yml_path)

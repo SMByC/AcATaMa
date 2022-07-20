@@ -2,12 +2,12 @@ import fiona
 import pytest
 from shapely.geometry import shape
 
-from AcATaMa.core import config
-from AcATaMa.core.map import Map
-from AcATaMa.core.sampling_design import Sampling
-
 
 def test_simple_post_stratified_random_sampling(plugin, unwrap, tmpdir):
+    from AcATaMa.core import config
+    from AcATaMa.core.map import Map
+    from AcATaMa.core.sampling_design import Sampling
+
     # restore
     input_yml_path = pytest.tests_data_dir / "test_sampling.yml"
     config_restore = unwrap(config.restore)
@@ -40,6 +40,10 @@ def test_simple_post_stratified_random_sampling(plugin, unwrap, tmpdir):
 
 
 def test_stratified_random_sampling(plugin, unwrap, tmpdir):
+    from AcATaMa.core import config
+    from AcATaMa.core.map import Map
+    from AcATaMa.core.sampling_design import Sampling
+
     # restore
     input_yml_path = pytest.tests_data_dir / "test_sampling.yml"
     config_restore = unwrap(config.restore)

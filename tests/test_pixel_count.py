@@ -1,10 +1,10 @@
 import pytest
 
-from AcATaMa.core import config
-from AcATaMa.utils.others_utils import get_pixel_count_by_pixel_values
-
 
 def test_pixel_count(plugin, unwrap):
+    from AcATaMa.core import config
+    from AcATaMa.utils.others_utils import get_pixel_count_by_pixel_values
+
     # restore
     input_yml_path = pytest.tests_data_dir / "test_pixel_count_acatama.yml"
     config_restore = unwrap(config.restore)
