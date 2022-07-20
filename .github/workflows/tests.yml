@@ -33,8 +33,8 @@ jobs:
       # Runs all tests
       
       - name: Run install test
-        run: docker run qgis/qgis:${QGIS_TEST_VERSION} sh -c "xvfb-run ${QGIS_COMMAND}"
+        run: docker run -rm -t qgis/qgis:${QGIS_TEST_VERSION} sh -c "xvfb-run ${QGIS_COMMAND}"
       
       - name: Run tests
-        run: docker-compose -f .docker/docker-compose.gh.yml run qgis /usr/src/.docker/run-docker-tests.sh
+        run: docker-compose -f .docker/docker-compose.gh.yml run qgis /usr/src/AcATaMa/.docker/run-docker-tests.sh
 
