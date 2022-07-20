@@ -79,25 +79,15 @@ try:
             f"Python exception hit during plugin install: \n {ERROR_MSG}"
         )
 
-    # Uninstall the plugin
-    plugin_installer.uninstallPlugin("AcATaMa", quiet=True)
-    assert (
-        "AcATaMa" not in pyplugin_installer.installer_data.plugins.all().keys()
-    ), "AcATaMa plugin failed to uninstall!"
-
-    if ERROR_OCCURRED:
-        raise PluginInstallException(
-            f"Python exception hit during plugin uninstall: \n {ERROR_MSG}"
-        )
 except Exception:  # noqa
     # Print the error so we know where it failed,
     # and exit with a non-zero status code so CI will fail.
-    print("FAIL: Plugin install and uninstalled failed with the following:")
+    print("FAIL: Plugin install failed with the following:")
     print(traceback.format_exc())
     os._exit(1)
 finally:
-    # The install and uninstall worked! Exit QGIS with a 0 status code.
+    # The install worked! Exit QGIS with a 0 status code.
     print(
-        f"PASS: Plugin install and uninstall successful for {str(plugin_install_zip)}"
+        f"PASS: Plugin install successful for {str(plugin_install_zip)}"
     )
     os._exit(0)
