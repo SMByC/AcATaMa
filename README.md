@@ -1,4 +1,5 @@
 # AcATaMa #
+[![Tests](https://github.com/SMByC/AcATaMa/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/SMByC/AcATaMa/actions/workflows/tests.yml)
 
 ![](icons/acatama.svg)
 
