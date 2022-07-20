@@ -1,7 +1,6 @@
-name: CI
+name: Tests
 
 on:
-  workflow_dispatch:
   push:
     branches: [ master ]
   pull_request:
@@ -12,26 +11,30 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        docker_tags: [ release-3_10, release-3_16, latest ]
+        docker_tags: [ release-3_18, release-3_22, latest ]
       fail-fast: false
+    env:
+      QGIS_TEST_VERSION: ${{ matrix.docker_tags }}
+      # cf https://docs.qgis.org/3.16/en/docs/user_manual/introduction/qgis_configuration.html#running-qgis-with-advanced-settings
+      QGIS_COMMAND: qgis --noplugins --noversioncheck --nologo --version-migration --code ./tests/install_plugin.py
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Pull QGIS ${{ matrix.docker_tags }}
-        run: docker pull qgis/qgis:${{ matrix.docker_tags }}
-      # Runs all tests
-      - name: Run tests
-        run: >
-          docker run --rm --net=host -e QGIS_IN_CI=1 --volume `pwd`:/app -w=/app qgis/qgis:${{ matrix.docker_tags }} sh -c
-          "pip3 install pytest-qgis fiona shapely && make deploy && pytest -v --cov --cov-report=xml"
-
-      # Upload coverage report. Will not work if the repo is private
-      - name: Upload coverage to Codecov
-        if: ${{ matrix.docker_tags == 'latest' && !github.event.repository.private }}
-        uses: codecov/codecov-action@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage.xml
-          flags: pytest
-          fail_ci_if_error: false # set to true when upload is working
-          verbose: false
+          submodules: recursive
+      
+      - name: Zip artifact
+        run: (make zip)
+      
+      - name: Pull QGIS ${QGIS_TEST_VERSION}
+        run: docker pull qgis/qgis:${QGIS_TEST_VERSION}
+        
+      # Runs all tests
+      
+      - name: Run install test
+        run: docker run --rm -v `pwd`:/tests_directory -t -w /tests_directory qgis/qgis:${QGIS_TEST_VERSION} sh -c "xvfb-run ${QGIS_COMMAND}"
+      
+      - name: Run tests
+        run: docker-compose -f .docker/docker-compose.gh.yml run qgis /usr/src/.docker/run-docker-tests.sh
+
