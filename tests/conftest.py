@@ -3,11 +3,11 @@ import pytest
 from pathlib import Path
 from qgis.testing import start_app
 
+from AcATaMa import classFactory
+from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget
 
 pytest_plugins = ('pytest_qgis',)
-
 pytest.tests_data_dir = Path(__file__).parent.resolve() / "data"
-
 
 if os.environ.get("IS_DOCKER_CONTAINER") and os.environ["IS_DOCKER_CONTAINER"].lower()[
     0
@@ -35,9 +35,6 @@ def plugin(pytestconfig, qgis_iface, qgis_parent, qgis_new_project):
     Initialize and return the plugin object.
     Resize the parent window according to config.
     """
-    from AcATaMa import classFactory
-    from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget
-
     plugin = classFactory(qgis_iface)
     plugin.initGui()
     plugin.dockwidget = AcATaMaDockWidget()
