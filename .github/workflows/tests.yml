@@ -25,7 +25,7 @@ jobs:
           submodules: recursive
       
       - name: Zip artifact
-        run: (make zip)
+        run: (pip3 install PyQt5 && make zip)
       
       - name: Pull QGIS ${QGIS_TEST_VERSION}
         run: docker pull qgis/qgis:${QGIS_TEST_VERSION}
