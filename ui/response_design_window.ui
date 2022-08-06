@@ -93,14 +93,14 @@
                <item>
                 <widget class="QLabel" name="label">
                  <property name="text">
-                  <string>pixel buffer</string>
+                  <string>Size:</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="SampleUnit_PixelBuffer">
+                <widget class="QComboBox" name="SampleUnit_Size">
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Define the sample unit using pixel buffer for the current sample. Pixel based on the thematic raster file. Set zero to disable it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Define the sample unit size using pixel buffer for the current sample. Pixel based on the thematic raster file. Set zero to disable it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="sizeAdjustPolicy">
                   <enum>QComboBox::AdjustToContents</enum>

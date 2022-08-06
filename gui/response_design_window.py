@@ -126,11 +126,11 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         self.current_sample = None
         self.pixel_tile = None
         self.sample_unit = None
-        self.SampleUnit_PixelBuffer.setCurrentIndex(self.response_design.sample_unit_pixel_buffer)
+        self.SampleUnit_Size.setCurrentIndex(self.response_design.sample_unit_pixel_buffer)
         self.set_current_sample()
         self.change_sample_unit_color(color=self.response_design.sample_unit_color)
         self.SampleUnit_Color.clicked.connect(self.change_sample_unit_color)
-        self.SampleUnit_PixelBuffer.currentIndexChanged.connect(self.show_the_sample_unit)
+        self.SampleUnit_Size.currentIndexChanged.connect(self.show_the_sample_unit)
         # set labeling buttons
         self.labeling_btns_config = LabelingButtonsConfig(self.response_design.buttons_config)
         self.create_labeling_buttons(buttons_config=self.response_design.buttons_config)
@@ -376,7 +376,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
     def show_the_sample_unit(self):
         if self.sample_unit:
             self.sample_unit.hide()
-        pixel_buffer = int(self.SampleUnit_PixelBuffer.currentText())
+        pixel_buffer = int(self.SampleUnit_Size.currentText())
         self.response_design.sample_unit_pixel_buffer = pixel_buffer
         if pixel_buffer > 0:
             sample_unit = self.current_sample.get_thematic_pixel(with_buffer=pixel_buffer)
