@@ -143,7 +143,7 @@ def save(file_out):
     data["analysis"] = {}
     data["analysis"]["sampling_file"] = get_current_file_path_in(AcATaMa.dockwidget.QCBox_SamplingFile_A,
                                                                  show_message=False)
-    data["analysis"]["sampling_type"] = AcATaMa.dockwidget.QCBox_SamplingType_A.currentIndex()
+    data["analysis"]["sampling_type"] = AcATaMa.dockwidget.QCBox_SamplingEstimator_A.currentIndex()
     # save config of the accuracy assessment dialog if exists
     if response_design and response_design.analysis:
         data["analysis"]["accuracy_assessment"] = {
@@ -389,7 +389,7 @@ def restore(yml_file_path):
         load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_SamplingFile_A,
                                     get_restore_path(yaml_config["accuracy_assessment_sampling_file"]))
     if "accuracy_assessment_sampling_type" in yaml_config:
-        AcATaMa.dockwidget.QCBox_SamplingType_A.setCurrentIndex(yaml_config["accuracy_assessment_sampling_type"])
+        AcATaMa.dockwidget.QCBox_SamplingEstimator_A.setCurrentIndex(yaml_config["accuracy_assessment_sampling_type"])
 
     if "accuracy_assessment_dialog" in yaml_config and response_design:
         from AcATaMa.core.analysis import Analysis
@@ -407,8 +407,8 @@ def restore(yml_file_path):
         load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_SamplingFile_A,
                                     get_restore_path(yaml_config["analysis"]["sampling_file"]))
     if "analysis" in yaml_config and "sampling_type" in yaml_config["analysis"]:
-        AcATaMa.dockwidget.QCBox_SamplingType_A.setCurrentIndex(-1)
-        AcATaMa.dockwidget.QCBox_SamplingType_A.setCurrentIndex(yaml_config["analysis"]["sampling_type"])
+        AcATaMa.dockwidget.QCBox_SamplingEstimator_A.setCurrentIndex(-1)
+        AcATaMa.dockwidget.QCBox_SamplingEstimator_A.setCurrentIndex(yaml_config["analysis"]["sampling_type"])
 
     if "analysis" in yaml_config and "accuracy_assessment" in yaml_config["analysis"] and response_design:
         from AcATaMa.core.analysis import Analysis

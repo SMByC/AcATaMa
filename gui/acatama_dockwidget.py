@@ -188,13 +188,13 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # set and update the sampling file status in analysis tab
         self.QCBox_SamplingFile_A.layerChanged.connect(self.set_sampling_file_in_analysis)
         # sampling type selection action
-        self.QCBox_SamplingType_A.currentIndexChanged[int].connect(self.sampling_type_selection_action)
+        self.QCBox_SamplingEstimator_A.currentIndexChanged[int].connect(self.sampling_type_selection_action)
         # compute the AA and open the result dialog
         self.QPBtn_ComputeTheAccurasyAssessment.clicked.connect(self.open_accuracy_assessment_results)
-        # disable group box that depends of sampling file
+        # disable group box that depends on sampling file
         self.QLabel_SamplingFileStatus_A.setText("No sampling file selected")
         self.QLabel_SamplingFileStatus_A.setStyleSheet("QLabel {color: gray;}")
-        self.QGBox_SamplingType_A.setDisabled(True)
+        self.QGBox_SamplingEstimator_A.setDisabled(True)
         self.QGBox_AccuracyAssessment.setDisabled(True)
 
     @pyqtSlot()
@@ -546,7 +546,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                 if not response_design.with_thematic_classes:
                     self.QLabel_SamplingFileStatus_A.setText("Labeling was not made with thematic classes")
                     self.QLabel_SamplingFileStatus_A.setStyleSheet("QLabel {color: red;}")
-                    self.QGBox_SamplingType_A.setDisabled(True)
+                    self.QGBox_SamplingEstimator_A.setDisabled(True)
                     self.QGBox_AccuracyAssessment.setDisabled(True)
                     return
                 # check is the response_design is completed and update in dockwidget status
@@ -560,20 +560,20 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                                                               format(response_design.total_labeled,
                                                                      response_design.num_points))
                     self.QLabel_SamplingFileStatus_A.setStyleSheet("QLabel {color: orange;}")
-                self.QGBox_SamplingType_A.setEnabled(True)
-                self.QGBox_AccuracyAssessment.setEnabled(self.QCBox_SamplingType_A.currentIndex() != -1)
-                self.QCBox_SamplingType_A.setCurrentIndex(response_design.sampling_type)
+                self.QGBox_SamplingEstimator_A.setEnabled(True)
+                self.QGBox_AccuracyAssessment.setEnabled(self.QCBox_SamplingEstimator_A.currentIndex() != -1)
+                self.QCBox_SamplingEstimator_A.setCurrentIndex(response_design.sampling_type)
 
             else:
                 self.QLabel_SamplingFileStatus_A.setText("Sampling file not labeled")
                 self.QLabel_SamplingFileStatus_A.setStyleSheet("QLabel {color: red;}")
-                self.QGBox_SamplingType_A.setDisabled(True)
+                self.QGBox_SamplingEstimator_A.setDisabled(True)
                 self.QGBox_AccuracyAssessment.setDisabled(True)
         else:
             # not select sampling file
             self.QLabel_SamplingFileStatus_A.setText("No sampling file selected")
             self.QLabel_SamplingFileStatus_A.setStyleSheet("QLabel {color: gray;}")
-            self.QGBox_SamplingType_A.setDisabled(True)
+            self.QGBox_SamplingEstimator_A.setDisabled(True)
             self.QGBox_AccuracyAssessment.setDisabled(True)
 
     @pyqtSlot(int)

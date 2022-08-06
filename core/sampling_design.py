@@ -130,8 +130,8 @@ def do_simple_random_sampling(dockwidget):
     if sampling_layer_generated not in ResponseDesign.instances:
         ResponseDesign(sampling_layer_generated)
     dockwidget.QCBox_SamplingFile_A.setLayer(sampling_layer_generated)
-    dockwidget.QCBox_SamplingType_A.setCurrentIndex(-1)
-    dockwidget.QCBox_SamplingType_A.setCurrentIndex(0 if categorical_map is None else 1)
+    dockwidget.QCBox_SamplingEstimator_A.setCurrentIndex(-1)
+    dockwidget.QCBox_SamplingEstimator_A.setCurrentIndex(0 if categorical_map is None else 1)
 
 
 @error_handler
@@ -251,8 +251,8 @@ def do_stratified_random_sampling(dockwidget):
     if sampling_layer_generated not in ResponseDesign.instances:
         ResponseDesign(sampling_layer_generated)
     dockwidget.QCBox_SamplingFile_A.setLayer(sampling_layer_generated)
-    dockwidget.QCBox_SamplingType_A.setCurrentIndex(-1)
-    dockwidget.QCBox_SamplingType_A.setCurrentIndex(2)
+    dockwidget.QCBox_SamplingEstimator_A.setCurrentIndex(-1)
+    dockwidget.QCBox_SamplingEstimator_A.setCurrentIndex(2)
 
 
 class Sampling(object):

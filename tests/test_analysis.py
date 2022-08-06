@@ -19,7 +19,7 @@ def disabled_test_accuracy_assessment_html(plugin, unwrap):
     accuracy_assessment = AccuracyAssessmentWindow()
     accuracy_assessment.analysis.sampling_type = \
         {0: 'Simple random sampling', 1: 'Simple random sampling post-stratified', 2: 'Stratified random sampling'} \
-            [plugin.dockwidget.QCBox_SamplingType_A.currentIndex()]
+            [plugin.dockwidget.QCBox_SamplingEstimator_A.currentIndex()]
     accuracy_assessment.analysis.compute()
     # set content results in HTML
     result_html_computed = accuracy_assessment_results.get_html(accuracy_assessment.analysis)

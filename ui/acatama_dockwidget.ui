@@ -1382,12 +1382,12 @@ It set automatically from image if the layer has the nodata value set.</string>
                 </widget>
                </item>
                <item>
-                <widget class="QWidget" name="QGBox_SamplingType_A" native="true">
+                <widget class="QWidget" name="QGBox_SamplingEstimator_A" native="true">
                  <layout class="QVBoxLayout" name="verticalLayout">
                   <item>
                    <widget class="QLabel" name="label_24">
                     <property name="text">
-                     <string>Select the sampling type:</string>
+                     <string>Select the sampling estimator:</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -1398,7 +1398,10 @@ It set automatically from image if the layer has the nodata value set.</string>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QComboBox" name="QCBox_SamplingType_A">
+                   <widget class="QComboBox" name="QCBox_SamplingEstimator_A">
+                    <property name="toolTip">
+                     <string>The sampling estimator that was used to generate the selected sampling file</string>
+                    </property>
                     <property name="currentIndex">
                      <number>-1</number>
                     </property>
