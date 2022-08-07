@@ -170,11 +170,12 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QPBtn_RestoreAcatamaState.clicked.connect(self.file_dialog_restore_acatama_state)
         self.QPBtn_SaveAcatamaState.clicked.connect(self.file_dialog_save_acatama_state)
         # save sampling + labeling
+        self.widget_saveSamplingLabeled.setHidden(True)
         self.QPBtn_saveSamplingLabeled.clicked.connect(self.file_dialog_save_sampling_labeled)
         # change grid config
         self.grid_columns.valueChanged.connect(lambda: self.set_grid_setting("column"))
         self.grid_rows.valueChanged.connect(lambda: self.set_grid_setting("row"))
-        # disable group box that depends of sampling file
+        # disable group box that depends on sampling file
         self.QGBox_ResponseDesignWindow.setDisabled(True)
         self.QGBox_saveSamplingLabeled.setDisabled(True)
 

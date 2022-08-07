@@ -13,7 +13,7 @@ if os.environ.get("IS_DOCKER_CONTAINER") and os.environ["IS_DOCKER_CONTAINER"].l
     0
 ] in ["t", "y", "1"]:
     # when running in a docker container, we use the start_app provided by qgis rather
-    # than that of pytest-qgis. pytest-qgis does not cleanup the application properly
+    # than that of pytest-qgis. pytest-qgis does not clean up the application properly
     # and results in a seg-fault
     start_app()
 
