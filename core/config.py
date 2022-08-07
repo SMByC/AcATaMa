@@ -19,6 +19,7 @@
  ***************************************************************************/
 """
 import os
+import re
 from collections import OrderedDict
 import yaml
 try:
@@ -36,10 +37,13 @@ from AcATaMa.utils.sampling_utils import fill_stratified_sampling_table
 from AcATaMa.utils.qgis_utils import get_current_file_path_in, get_file_path_of_layer, load_and_select_filepath_in, \
     select_item_in
 
+CONFIG_FILE_VERSION = None
+
 
 @wait_process
 def save(file_out):
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+    from AcATaMa.gui.acatama_dockwidget import VERSION
 
     def setup_yaml():
         """
@@ -52,14 +56,18 @@ def save(file_out):
     setup_yaml()
 
     data = OrderedDict()
+
+    # ######### general configuration ######### #
+    data["general"] = \
+        {"config_file_version": re.sub('\D', '', VERSION),
+         "tab_activated": AcATaMa.dockwidget.tabWidget.currentIndex()}
+
+    # ######### thematic ######### #
     data["thematic_map"] = \
         {"path": get_current_file_path_in(AcATaMa.dockwidget.QCBox_ThematicMap, show_message=False),
          "band": int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
             if AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText() != '' else -1,
          "nodata": AcATaMa.dockwidget.nodata_ThematicMap.value()}
-
-    # ######### general configuration ######### #
-    data["general"] = {"tab_activated": AcATaMa.dockwidget.tabWidget.currentIndex()}
 
     # ######### sampling design ######### #
     data["sampling_design"] = {}
@@ -179,6 +187,12 @@ def restore(yml_file_path):
         return os.path.abspath(_path)
 
     # ######### general configuration ######### #
+    global CONFIG_FILE_VERSION
+    if "general" in yaml_config and "config_file_version" in yaml_config["general"]:
+        CONFIG_FILE_VERSION = int(yaml_config["general"]["config_file_version"])
+    else:
+        CONFIG_FILE_VERSION = 191121  # v19.11.21
+
     if "general" in yaml_config:
         AcATaMa.dockwidget.tabWidget.setCurrentIndex(yaml_config["general"]["tab_activated"])
 
