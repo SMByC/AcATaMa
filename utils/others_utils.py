@@ -202,6 +202,8 @@ def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=None)
 
 
 def set_nodata_format(value):
+    if isinstance(value, str) and not value.strip():
+        return ""
     value = float(value)
     if np.isnan(value):
         return str(value)
