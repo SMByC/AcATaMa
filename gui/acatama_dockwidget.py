@@ -35,6 +35,7 @@ from AcATaMa.core.sampling_design import do_simple_random_sampling, do_stratifie
 from AcATaMa.core.map import get_nodata_value
 from AcATaMa.gui.about_dialog import AboutDialog
 from AcATaMa.gui.response_design_window import ResponseDesignWindow
+from AcATaMa.utils.others_utils import set_nodata_format
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_filepath_in, get_file_path_of_layer
 from AcATaMa.utils.sampling_utils import update_stratified_sampling_table, fill_stratified_sampling_table
 from AcATaMa.utils.system_utils import error_handler, block_signals_to
@@ -136,7 +137,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # select and check the categorical map
         self.QCBox_CategMap_StraRS.layerChanged.connect(self.select_categorical_map_StraRS)
         self.QCBox_band_CategMap_StraRS.currentIndexChanged.connect(self.reset_StraRS_method)
-        self.nodata_CategMap_StraRS.valueChanged.connect(self.reset_StraRS_method)
+        self.nodata_CategMap_StraRS.textChanged.connect(self.reset_StraRS_method)
         # init variable for save tables content
         self.srs_tables = {}
         # fill table of categorical map
@@ -210,7 +211,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             with block_signals_to(self.QCBox_ThematicMap):
                 self.QCBox_ThematicMap.setCurrentIndex(-1)
             self.QCBox_band_ThematicMap.clear()
-            self.nodata_ThematicMap.setValue(-1)
+            self.nodata_ThematicMap.setText("")
             # SimpRS
             self.minDistance_SimpRS.setSuffix("")
             self.minDistance_SimpRS.setToolTip("")
@@ -242,7 +243,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QCBox_band_ThematicMap.clear()
         self.QCBox_band_ThematicMap.addItems([str(x) for x in range(1, layer.bandCount() + 1)])
         # set nodata value of thematic map in nodata field
-        self.nodata_ThematicMap.setValue(int(get_nodata_value(layer)))
+        self.nodata_ThematicMap.setText(set_nodata_format(get_nodata_value(layer)))
         # set/update the units in minimum distance items in sampling tab
         layer_dist_unit = layer.crs().mapUnits()
         str_unit = QgsUnitTypes.toString(layer_dist_unit)
@@ -298,14 +299,14 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # check
         if not valid_file_selected_in(self.QCBox_CategMap_StraRS, "categorical map"):
             self.QCBox_band_CategMap_StraRS.clear()
-            self.nodata_CategMap_StraRS.setValue(-1)
+            self.nodata_CategMap_StraRS.setText("")
             self.QGBox_Sampling_Method.setEnabled(False)
             return
         # check if categorical map data type is integer or byte
         if layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
             self.QCBox_CategMap_StraRS.setCurrentIndex(-1)
             self.QCBox_band_CategMap_StraRS.clear()
-            self.nodata_CategMap_StraRS.setValue(-1)
+            self.nodata_CategMap_StraRS.setText("")
             self.QGBox_Sampling_Method.setEnabled(False)
             iface.messageBar().pushMessage("AcATaMa",
                                            "Error, categorical map must be byte or integer as data type.",
@@ -317,9 +318,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QGBox_Sampling_Method.setEnabled(True)
         # set the same nodata value if select the thematic map
         if layer == self.QCBox_ThematicMap.currentLayer():
-            self.nodata_CategMap_StraRS.setValue(self.nodata_ThematicMap.value())
+            self.nodata_CategMap_StraRS.setText(set_nodata_format(self.nodata_ThematicMap.text()))
             return
-        self.nodata_CategMap_StraRS.setValue(int(get_nodata_value(layer)))
+        self.nodata_CategMap_StraRS.setText(set_nodata_format(get_nodata_value(layer)))
 
     @pyqtSlot()
     def reset_StraRS_method(self):

@@ -16,7 +16,7 @@ def test_simple_post_stratified_random_sampling(plugin, unwrap, tmpdir):
     # load simple post stratify random sampling config
     thematic_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
                        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
-                       nodata=int(plugin.dockwidget.nodata_ThematicMap.value()))
+                       nodata=float(plugin.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
     categorical_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_CategMap_SimpRS,
                           band=int(plugin.dockwidget.QCBox_band_CategMap_SimpRS.currentText()))
     pixel_values = [int(p) for p in plugin.dockwidget.pixelValuesCategMap.text().split(",")]
@@ -48,7 +48,7 @@ def test_stratified_random_sampling(plugin, unwrap, tmpdir):
     # load stratify random sampling area based proportion config
     thematic_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
                        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
-                       nodata=int(plugin.dockwidget.nodata_ThematicMap.value()))
+                       nodata=float(plugin.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
     categorical_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_CategMap_StraRS,
                           band=int(plugin.dockwidget.QCBox_band_CategMap_StraRS.currentText()))
 

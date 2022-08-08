@@ -180,7 +180,7 @@ class ResponseDesign(object):
             from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
             thematic_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicMap,
                                band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
-                               nodata=int(AcATaMa.dockwidget.nodata_ThematicMap.value()))
+                               nodata=float(AcATaMa.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
 
         points_ordered = sorted(self.points, key=lambda p: p.sample_id)
         for point in points_ordered:

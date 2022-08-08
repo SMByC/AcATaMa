@@ -48,8 +48,8 @@ class Analysis(object):
         self.response_design = response_design
         self.thematic_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicMap,
                                 band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
-                                    if AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText() else None,
-                                nodata=int(AcATaMa.dockwidget.nodata_ThematicMap.value()))
+                                     if AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText() else None,
+                                nodata=float(AcATaMa.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
         self.thematic_pixels_count = {}
         # dialog settings
         self.area_unit = None

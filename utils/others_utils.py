@@ -120,12 +120,17 @@ total_count = 0
 
 
 @wait_process
-def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=-1):
-    nodata = nodata if nodata != -1 else None
+def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=None):
+    if nodata in [None, "", "nan"] or np.isnan(nodata):
+        nodata = "nan"
+    elif float(nodata) == int(nodata):
+        nodata = int(nodata)
+    else:
+        nodata = float(nodata)
 
     # check if it was already computed, then return it
-    if (layer, band, nodata) in storage_pixel_count_by_pixel_values:
-        return storage_pixel_count_by_pixel_values[(layer, band, nodata)]
+    if (layer, band, set_nodata_format(nodata)) in storage_pixel_count_by_pixel_values:
+        return storage_pixel_count_by_pixel_values[(layer, band, set_nodata_format(nodata))]
 
     app = QCoreApplication.instance()
     if pixel_values is None:
@@ -133,7 +138,7 @@ def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=-1):
 
     # put nodata at the beginning, with the idea to include it for stopping
     # the counting when reaching the total pixels, delete it at the end
-    if nodata is not None:
+    if nodata != "nan":
         if nodata in pixel_values: pixel_values.remove(nodata)
         pixel_values.insert(0, nodata)
 
@@ -183,11 +188,25 @@ def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=-1):
 
     pixel_counts = [count_value(pixel_value) for pixel_value in pixel_values]
 
-    if nodata is not None:
+    if nodata != "nan":
         pixel_values.pop(0)
         pixel_counts.pop(0)
 
     progress.accept()
     pairing_values_and_counts = dict(zip(pixel_values, pixel_counts))
-    storage_pixel_count_by_pixel_values[(layer, band, nodata)] = pairing_values_and_counts
+    storage_pixel_count_by_pixel_values[(layer, band, set_nodata_format(nodata))] = pairing_values_and_counts
     return pairing_values_and_counts
+
+# --------------------------------------------------------------------------
+# set nodata format for the text line boxes
+
+
+def set_nodata_format(value):
+    value = float(value)
+    if np.isnan(value):
+        return str(value)
+    if value <= -1000 or value >= 1000:
+        return np.format_float_scientific(value)
+    if value == int(value):
+        return str(int(value))
+    return str(value)

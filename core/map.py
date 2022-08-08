@@ -18,7 +18,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from math import isnan
+import numpy as np
 from random import randrange
 import xml.etree.ElementTree as ET
 
@@ -50,13 +50,10 @@ def auto_symbology_classification_render(layer, band):
 
 
 def get_nodata_value(layer, band=1):
-    nodata_value = -1  # nan in the spinbox
-    if layer is not None:
-        nodata = layer.dataProvider().sourceNoDataValue(band)
-        if not isnan(nodata) and (-1 <= nodata <= 999999):
-            nodata_value = nodata
-
-    return nodata_value
+    if layer and layer.isValid():
+        return layer.dataProvider().sourceNoDataValue(band)
+    else:
+        return np.nan
 
 
 def get_xml_style(layer, band):
@@ -98,7 +95,7 @@ def get_values_and_colors_table(layer, band=1, nodata=None):
 
     values_and_colors_table = {"Pixel Value": [], "Red": [], "Green": [], "Blue": [], "Alpha": []}
     for item in xml_style_items:
-        if nodata is not None and int(item.get("value")) == int(nodata):
+        if nodata is not None and int(item.get("value")) == nodata:
             continue
 
         values_and_colors_table["Pixel Value"].append(int(item.get("value")))
@@ -120,7 +117,7 @@ class Map(object):
         self.file_path = get_current_file_path_in(file_selected_combo_box)
         self.qgs_layer = file_selected_combo_box.currentLayer()
         self.band = band
-        self.nodata = nodata if nodata != -1 else None
+        self.nodata = nodata
 
     def extent(self):
         return self.qgs_layer.extent()

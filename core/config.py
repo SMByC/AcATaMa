@@ -36,6 +36,7 @@ from AcATaMa.utils.system_utils import wait_process, block_signals_to
 from AcATaMa.utils.sampling_utils import fill_stratified_sampling_table
 from AcATaMa.utils.qgis_utils import get_current_file_path_in, get_file_path_of_layer, load_and_select_filepath_in, \
     select_item_in
+from AcATaMa.utils.others_utils import set_nodata_format
 
 CONFIG_FILE_VERSION = None
 
@@ -67,7 +68,7 @@ def save(file_out):
         {"path": get_current_file_path_in(AcATaMa.dockwidget.QCBox_ThematicMap, show_message=False),
          "band": int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
             if AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText() != '' else -1,
-         "nodata": AcATaMa.dockwidget.nodata_ThematicMap.value()}
+         "nodata": AcATaMa.dockwidget.nodata_ThematicMap.text()}
 
     # ######### sampling design ######### #
     data["sampling_design"] = {}
@@ -99,7 +100,7 @@ def save(file_out):
         "categ_map_path": get_current_file_path_in(AcATaMa.dockwidget.QCBox_CategMap_StraRS, show_message=False),
         "categ_map_band": int(AcATaMa.dockwidget.QCBox_band_CategMap_StraRS.currentText())
             if AcATaMa.dockwidget.QCBox_band_CategMap_StraRS.currentText() != '' else -1,
-        "categ_map_nodata": AcATaMa.dockwidget.nodata_CategMap_StraRS.value(),
+        "categ_map_nodata": AcATaMa.dockwidget.nodata_CategMap_StraRS.text(),
 
         "sampling_random_method": AcATaMa.dockwidget.QCBox_StraRS_Method.currentText(),
         "overall_std_error": AcATaMa.dockwidget.TotalExpectedSE.value(),
@@ -222,7 +223,11 @@ def restore(yml_file_path):
         if "band" in yaml_config["thematic_map"]:
             AcATaMa.dockwidget.QCBox_band_ThematicMap.setCurrentIndex(yaml_config["thematic_map"]["band"] - 1)
         # nodata
-        AcATaMa.dockwidget.nodata_ThematicMap.setValue(yaml_config["thematic_map"]["nodata"])
+        nodata = set_nodata_format(yaml_config["thematic_map"]["nodata"])
+        if CONFIG_FILE_VERSION <= 191121 and nodata == "-1":
+            AcATaMa.dockwidget.nodata_ThematicMap.setText("nan")
+        else:
+            AcATaMa.dockwidget.nodata_ThematicMap.setText(nodata)
 
     # ######### sampling design configuration ######### #
     if "sampling_design" in yaml_config:
@@ -270,8 +275,12 @@ def restore(yml_file_path):
         AcATaMa.dockwidget.select_categorical_map_StraRS(AcATaMa.dockwidget.QCBox_CategMap_StraRS.currentLayer())
         AcATaMa.dockwidget.QCBox_band_CategMap_StraRS.setCurrentIndex(
             yaml_config["sampling_design"]["stratified_random_sampling"]['categ_map_band'] - 1)
-        AcATaMa.dockwidget.nodata_CategMap_StraRS.setValue(
-            yaml_config["sampling_design"]["stratified_random_sampling"]["categ_map_nodata"])
+        # nodata
+        nodata = set_nodata_format(yaml_config["sampling_design"]["stratified_random_sampling"]["categ_map_nodata"])
+        if CONFIG_FILE_VERSION <= 191121 and nodata == "-1":
+            AcATaMa.dockwidget.nodata_CategMap_StraRS.setText("nan")
+        else:
+            AcATaMa.dockwidget.nodata_CategMap_StraRS.setText(nodata)
 
         with block_signals_to(AcATaMa.dockwidget.QCBox_StraRS_Method):
             select_item_in(AcATaMa.dockwidget.QCBox_StraRS_Method,
@@ -290,11 +299,11 @@ def restore(yml_file_path):
         if srs_table:
             from AcATaMa.utils.others_utils import storage_pixel_count_by_pixel_values
             global storage_pixel_count_by_pixel_values
-            storage_pixel_count_by_pixel_values[(AcATaMa.dockwidget.QCBox_CategMap_StraRS.currentLayer(),
-                                                 int(AcATaMa.dockwidget.QCBox_band_CategMap_StraRS.currentText()),
-                                                 AcATaMa.dockwidget.nodata_CategMap_StraRS.value() if
-                                                 AcATaMa.dockwidget.nodata_CategMap_StraRS.value() != -1 else None)] = \
-                dict(zip(srs_table['values_and_colors_table']['Pixel Value'], srs_table['pixel_count']))
+            storage_pixel_count_by_pixel_values[
+                (AcATaMa.dockwidget.QCBox_CategMap_StraRS.currentLayer(),
+                 int(AcATaMa.dockwidget.QCBox_band_CategMap_StraRS.currentText()),
+                 set_nodata_format(AcATaMa.dockwidget.nodata_CategMap_StraRS.text().strip() or "nan"))
+            ] = dict(zip(srs_table['values_and_colors_table']['Pixel Value'], srs_table['pixel_count']))
 
         # TODO:
         # restore the values color table of the QCBox_CategMap_StraRS saved

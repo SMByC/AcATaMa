@@ -45,7 +45,7 @@ def do_simple_random_sampling(dockwidget):
 
     thematic_map = Map(file_selected_combo_box=dockwidget.QCBox_ThematicMap,
                        band=int(dockwidget.QCBox_band_ThematicMap.currentText()),
-                       nodata=int(dockwidget.nodata_ThematicMap.value()))
+                       nodata=float(dockwidget.nodata_ThematicMap.text().strip() or "nan"))
 
     # get and define some variables
     number_of_samples = int(dockwidget.numberOfSamples_SimpRS.value())
@@ -145,10 +145,10 @@ def do_stratified_random_sampling(dockwidget):
     min_distance = float(dockwidget.minDistance_StraRS.value())
     thematic_map = Map(file_selected_combo_box=dockwidget.QCBox_ThematicMap,
                        band=int(dockwidget.QCBox_band_ThematicMap.currentText()),
-                       nodata=int(dockwidget.nodata_ThematicMap.value()))
+                       nodata=float(dockwidget.nodata_ThematicMap.text().strip() or "nan"))
     categorical_map = Map(file_selected_combo_box=dockwidget.QCBox_CategMap_StraRS,
                           band=int(dockwidget.QCBox_band_CategMap_StraRS.currentText()),
-                          nodata=int(dockwidget.nodata_CategMap_StraRS.value()))
+                          nodata=float(dockwidget.nodata_CategMap_StraRS.text().strip() or "nan"))
 
     # get values from category table  #########
     pixel_values = []

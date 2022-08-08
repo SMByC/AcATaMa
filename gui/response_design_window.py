@@ -720,7 +720,7 @@ class ThematicMapClasses(QDialog, FORM_CLASS):
         thematic_table = {"values_and_colors_table": get_values_and_colors_table(
             AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer(),
             band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
-            nodata=int(AcATaMa.dockwidget.nodata_ThematicMap.value()))}
+            nodata=float(AcATaMa.dockwidget.nodata_ThematicMap.text().strip() or "nan"))}
 
         if not thematic_table["values_and_colors_table"]:
             # clear table
