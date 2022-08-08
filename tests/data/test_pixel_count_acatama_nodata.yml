@@ -5,7 +5,7 @@
   - - thematic_map
     - band: 1
       nodata: '-2.147483647e+09'
-      path: /home/xavier/Projects/SMBYC/Qgis_Plugins/AcATaMa/AcATaMa/tests/data/test_layer_with_nodata.tif
+      path: test_layer_with_nodata.tif
   - - sampling_design
     - simple_random_sampling:
         automatic_random_seed: true
@@ -25,7 +25,7 @@
         automatic_random_seed: true
         categ_map_band: 1
         categ_map_nodata: '-2.147483647e+09'
-        categ_map_path: /home/xavier/Projects/SMBYC/Qgis_Plugins/AcATaMa/AcATaMa/tests/data/test_layer_with_nodata.tif
+        categ_map_path: test_layer_with_nodata.tif
         min_distance: 0.0
         min_neighbors_with_the_same_class: '1'
         num_neighbors: '8'
