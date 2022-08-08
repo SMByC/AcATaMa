@@ -1,0 +1,87 @@
+!!python/object/apply:collections.OrderedDict
+- - - general
+    - config_file_version: '22'
+      tab_activated: 0
+  - - thematic_map
+    - band: 1
+      nodata: '-2.147483647e+09'
+      path: /home/xavier/Projects/SMBYC/Qgis_Plugins/AcATaMa/AcATaMa/tests/data/test_layer_with_nodata.tif
+  - - sampling_design
+    - simple_random_sampling:
+        automatic_random_seed: true
+        categ_map_band: -1
+        categ_map_path: null
+        min_distance: 0.0
+        min_neighbors_with_the_same_class: '1'
+        num_neighbors: '8'
+        num_samples: 10
+        pixel_values_categ_map: ''
+        post_stratify: false
+        random_sampling_options: false
+        random_seed_by_user: ''
+        with_neighbors_aggregation: false
+        with_random_seed_by_user: false
+      stratified_random_sampling:
+        automatic_random_seed: true
+        categ_map_band: 1
+        categ_map_nodata: '-2.147483647e+09'
+        categ_map_path: /home/xavier/Projects/SMBYC/Qgis_Plugins/AcATaMa/AcATaMa/tests/data/test_layer_with_nodata.tif
+        min_distance: 0.0
+        min_neighbors_with_the_same_class: '1'
+        num_neighbors: '8'
+        overall_std_error: 0.005
+        random_sampling_options: false
+        random_seed_by_user: ''
+        sampling_random_method: Area based proportion (using overall std error)
+        stratified_random_sampling_table:
+          'On':
+          - true
+          - true
+          - true
+          column_count: 5
+          header:
+          - Pix Val
+          - Color
+          - Num Samples
+          - Std Dev
+          - 'On'
+          num_samples:
+          - '210'
+          - '8'
+          - '178'
+          pixel_count:
+          - 10423
+          - 418
+          - 8822
+          row_count: 3
+          std_dev:
+          - '0.01'
+          - '0.01'
+          - '0.01'
+          values_and_colors_table:
+            Alpha:
+            - 255
+            - 255
+            - 255
+            Blue:
+            - 201
+            - 209
+            - 67
+            Green:
+            - 105
+            - 225
+            - 186
+            Pixel Value:
+            - 1
+            - 2
+            - 5
+            Red:
+            - 191
+            - 86
+            - 202
+        with_neighbors_aggregation: false
+        with_random_seed_by_user: false
+      tab_activated: 1
+  - - analysis
+    - sampling_file: null
+      sampling_type: -1
