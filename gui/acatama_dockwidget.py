@@ -332,36 +332,6 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # clear select
         self.QCBox_StraRS_Method.setCurrentIndex(-1)
 
-    @pyqtSlot()
-    def update_generated_sampling_list_in(self, combo_box):
-        try:
-            combo_box.clear()
-            layers = QgsProject.instance().mapLayers().values()
-            for layer in layers:
-                if layer.name() in list(Sampling.samplings.keys()):
-                    combo_box.addItem(layer.name())
-        except:
-            pass
-
-    @pyqtSlot()
-    @error_handler
-    def file_dialog_save_sampling(self, combo_box):
-        if combo_box.currentText() not in Sampling.samplings:
-            iface.messageBar().pushMessage("AcATaMa",
-                                           "Error, please select a valid sampling file", level=Qgis.Warning)
-            return
-        suggested_filename = os.path.splitext(Sampling.samplings[combo_box.currentText()].thematic_map.file_path)[0] \
-                             + "_sampling.gpkg"
-        file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save sampling file"),
-                                                  suggested_filename,
-                                                  self.tr("GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"))
-        if file_out != '':
-            layer = combo_box.currentLayer()
-            file_format = \
-                "GPKG" if file_out.endswith(".gpkg") else "ESRI Shapefile" if file_out.endswith(".shp") else None
-            QgsVectorFileWriter.writeAsVectorFormat(layer, file_out, "System", layer.crs(), file_format)
-            iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=Qgis.Success)
-
     def update_response_design_state(self, sampling_layer=None):
         if sampling_layer is None:
             sampling_layer = self.QCBox_SamplingFile.currentLayer()
