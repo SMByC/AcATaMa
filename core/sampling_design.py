@@ -23,7 +23,7 @@ import random
 
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QVariant
-from qgis.PyQt.QtWidgets import QFileDialog
+from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox
 from qgis.core import QgsGeometry, QgsField, QgsFields, QgsSpatialIndex, \
     QgsFeature, Qgis, QgsVectorFileWriter, QgsWkbTypes, QgsUnitTypes
 
@@ -92,18 +92,22 @@ def do_simple_random_sampling(dockwidget):
     else:
         random_seed = None
 
+    # before process
+    dockwidget.widget_generate_SimpRS.QPBtn_GenerateSamples.setText("Generating...")
+
     # process
     sampling = Sampling("simple", thematic_map, categorical_map, output_file=output_file)
     sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
                                       neighbor_aggregation, dockwidget.widget_generate_SimpRS.QPBar_GenerateSamples,
                                       random_seed)
 
+    # restoring
+    dockwidget.widget_generate_SimpRS.QPBtn_GenerateSamples.setText("Generate samples")
+
     # zero points
     if sampling.total_of_samples < number_of_samples and sampling.total_of_samples == 0:
-        # delete instance where storage all sampling generated
-        Sampling.samplings.pop(sampling.filename, None)
-        iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any random points with this settings, "
-                                                  "attempts exceeded", level=Qgis.Warning, duration=-1)
+        iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any random points with this settings",
+                                       level=Qgis.Warning, duration=-1)
         return
 
     # success
@@ -114,9 +118,9 @@ def do_simple_random_sampling(dockwidget):
     # success but not completed
     if number_of_samples > sampling.total_of_samples > 0:
         sampling_layer_generated = load_layer(sampling.output_file)
-        iface.messageBar().pushMessage("AcATaMa", "Generated the simple random sampling, but can not generate requested number of "
-                                                  "random points {}/{}, attempts exceeded".format(sampling.total_of_samples, number_of_samples),
-                                       level=Qgis.Warning, duration=-1)
+        iface.messageBar().pushMessage("AcATaMa", "Generated the simple random sampling, but could not generate the requested number of "
+                                                  "random points {}/{}, sampling process aborted".format(sampling.total_of_samples, number_of_samples),
+                                       level=Qgis.Warning)
     # check the thematic map unit to calculate the minimum distances
     if min_distance > 0:
         if thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
@@ -212,6 +216,9 @@ def do_stratified_random_sampling(dockwidget):
     else:
         random_seed = None
 
+    # before process
+    dockwidget.widget_generate_StraRS.QPBtn_GenerateSamples.setText("Generating...")
+
     # process
     sampling = Sampling("stratified", thematic_map, categorical_map, sampling_method,
                         srs_config=srs_config, output_file=output_file)
@@ -219,12 +226,13 @@ def do_stratified_random_sampling(dockwidget):
                                       neighbor_aggregation, dockwidget.widget_generate_StraRS.QPBar_GenerateSamples,
                                       random_seed)
 
+    # before process
+    dockwidget.widget_generate_StraRS.QPBtn_GenerateSamples.setText("Generate samples")
+
     # zero points
     if sampling.total_of_samples < total_of_samples and sampling.total_of_samples == 0:
-        # delete instance where storage all sampling generated
-        Sampling.samplings.pop(sampling.filename, None)
-        iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any stratified random points with this settings, "
-                                                  "attempts exceeded", level=Qgis.Warning, duration=-1)
+        iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any stratified random points with this settings",
+                                                  level=Qgis.Warning, duration=-1)
         return
 
     # success
@@ -235,9 +243,9 @@ def do_stratified_random_sampling(dockwidget):
     # success but not completed
     if sampling.total_of_samples < total_of_samples and sampling.total_of_samples > 0:
         sampling_layer_generated = load_layer(sampling.output_file)
-        iface.messageBar().pushMessage("AcATaMa", "Generated the stratified random sampling, but can not generate requested number of "
-                                                  "random points {}/{}, attempts exceeded".format(sampling.total_of_samples, total_of_samples),
-                                       level=Qgis.Warning, duration=-1)
+        iface.messageBar().pushMessage("AcATaMa", "Generated the stratified random sampling, but could not generate the requested number of "
+                                                  "random points {}/{}, sampling process aborted".format(sampling.total_of_samples, total_of_samples),
+                                       level=Qgis.Warning)
     # check the thematic map unit to calculate the minimum distances
     if min_distance > 0:
         if thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
@@ -256,8 +264,6 @@ def do_stratified_random_sampling(dockwidget):
 
 
 class Sampling(object):
-    # for save all instances
-    samplings = dict()  # {name_in_qgis: class instance}
 
     def __init__(self, sampling_type, thematic_map, categorical_map, sampling_method=None, srs_config=None, output_file=None):
         # set and init variables
@@ -272,9 +278,6 @@ class Sampling(object):
         self.srs_config = srs_config
         # set the output dir for save sampling
         self.output_file = output_file
-        # save instance
-        self.filename = os.path.splitext(os.path.basename(output_file))[0]  # without extension
-        Sampling.samplings[self.filename] = self
         # for save all sampling points
         self.points = dict()
 
@@ -307,6 +310,7 @@ class Sampling(object):
             self.samples_in_categories = [0] * len(self.number_of_samples)  # total generated by categories
 
         nPoints = 0
+        nIterations = 0
         self.index = QgsSpatialIndex()
 
         # init the random sampling seed
@@ -320,6 +324,16 @@ class Sampling(object):
 
             # checks to the sampling point, else discard and continue
             if not self.check_sampling_point(random_sampling_point):
+                if nIterations == 150000:
+                    nPoints20k = nPoints
+                if nIterations == 200000 and nPoints <= nPoints20k+2:
+                    quit_msg = "The sampling process seems stuck due to sampling conditions. Do you want to continue " \
+                               "this sampling process and never ask this again? or cancel it?"
+                    reply = QMessageBox.question(None, "Continue sampling process", quit_msg, QMessageBox.Yes,
+                                                 QMessageBox.Cancel)
+                    if reply == QMessageBox.Cancel:
+                        break
+                nIterations += 1
                 continue
 
             if self.sampling_type == "stratified":
@@ -334,6 +348,7 @@ class Sampling(object):
             self.points[nPoints] = random_sampling_point.QgsPnt
 
             nPoints += 1
+            nIterations += 1
             # update progress bar
             progress_bar.setValue(int(nPoints))
 
