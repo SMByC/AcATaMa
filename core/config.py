@@ -296,7 +296,7 @@ def restore(yml_file_path):
         AcATaMa.dockwidget.srs_tables[AcATaMa.dockwidget.QCBox_CategMap_StraRS.currentText()][srs_method] = srs_table
         fill_stratified_sampling_table(AcATaMa.dockwidget)
         # restore the pixel count by pixel value
-        if srs_table:
+        if srs_table and 'pixel_count' in srs_table:
             from AcATaMa.utils.others_utils import storage_pixel_count_by_pixel_values
             global storage_pixel_count_by_pixel_values
             storage_pixel_count_by_pixel_values[
