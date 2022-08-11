@@ -163,7 +163,7 @@ def update_srs_table_content(dockwidget, srs_table):
 
 @wait_process
 def reload_StraRS_table(dockwidget):
-    """Reload the pixel value/color table, resetting the style and pixel count"""
+    """Reset the categorical value table, reloading the layer style and restoring default values"""
     # clear table
     dockwidget.QTableW_StraRS.setRowCount(0)
     dockwidget.QTableW_StraRS.setColumnCount(0)
