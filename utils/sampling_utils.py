@@ -23,7 +23,7 @@ from qgis.PyQt.QtWidgets import QTableWidgetItem
 from qgis.PyQt.QtGui import QColor
 
 from AcATaMa.utils.system_utils import wait_process, block_signals_to
-from AcATaMa.utils.others_utils import mask, get_pixel_count_by_pixel_values
+from AcATaMa.utils.others_utils import mask, get_pixel_count_by_pixel_values, set_nodata_format
 
 
 def check_min_distance(point, index, distance, points):
@@ -159,6 +159,35 @@ def update_srs_table_content(dockwidget, srs_table):
         # set maximum and reset the value in progress bar status
         dockwidget.widget_generate_StraRS.QPBar_GenerateSamples.setValue(0)
         dockwidget.widget_generate_StraRS.QPBar_GenerateSamples.setMaximum(total_num_samples)
+
+
+@wait_process
+def reload_StraRS_table(dockwidget):
+    """Reload the pixel value/color table, resetting the style and pixel count"""
+    # clear table
+    dockwidget.QTableW_StraRS.setRowCount(0)
+    dockwidget.QTableW_StraRS.setColumnCount(0)
+
+    if dockwidget.QCBox_StraRS_Method.currentText().startswith("Fixed values"):
+        srs_method = "fixed values"
+    if dockwidget.QCBox_StraRS_Method.currentText().startswith("Area based proportion"):
+        srs_method = "area based proportion"
+
+    # delete style
+    if dockwidget.QCBox_CategMap_StraRS.currentText() in dockwidget.srs_tables.keys() and \
+        srs_method in dockwidget.srs_tables[dockwidget.QCBox_CategMap_StraRS.currentText()].keys():
+        del dockwidget.srs_tables[dockwidget.QCBox_CategMap_StraRS.currentText()][srs_method]
+    # delete pixel count
+    if srs_method == "area based proportion":
+        from AcATaMa.utils.others_utils import storage_pixel_count_by_pixel_values
+        global storage_pixel_count_by_pixel_values
+        layer = dockwidget.QCBox_CategMap_StraRS.currentLayer()
+        band = int(dockwidget.QCBox_band_CategMap_StraRS.currentText())
+        nodata = set_nodata_format(float(dockwidget.nodata_CategMap_StraRS.text().strip() or "nan"))
+        if (layer, band, nodata) in storage_pixel_count_by_pixel_values:
+            del storage_pixel_count_by_pixel_values[(layer, band, nodata)]
+
+    fill_stratified_sampling_table(dockwidget)
 
 
 def fill_stratified_sampling_table(dockwidget):

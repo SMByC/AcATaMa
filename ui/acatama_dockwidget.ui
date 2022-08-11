@@ -154,7 +154,7 @@ It set automatically from image if the layer has the nodata value set.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>655</width>
+             <width>660</width>
              <height>1231</height>
             </rect>
            </property>
@@ -635,29 +635,70 @@ It set automatically from image if the layer has the nodata value set.</string>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QComboBox" name="QCBox_StraRS_Method">
-                        <property name="sizePolicy">
-                         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                         </sizepolicy>
-                        </property>
-                        <property name="focusPolicy">
-                         <enum>Qt::StrongFocus</enum>
-                        </property>
-                        <property name="currentIndex">
-                         <number>-1</number>
-                        </property>
-                        <item>
-                         <property name="text">
-                          <string>Fixed values by category (manually)</string>
+                       <widget class="QWidget" name="widget_7" native="true">
+                        <layout class="QHBoxLayout" name="horizontalLayout_5">
+                         <property name="leftMargin">
+                          <number>0</number>
                          </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>Area based proportion (using overall std error)</string>
+                         <property name="topMargin">
+                          <number>0</number>
                          </property>
-                        </item>
+                         <property name="rightMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="bottomMargin">
+                          <number>0</number>
+                         </property>
+                         <item>
+                          <widget class="QComboBox" name="QCBox_StraRS_Method">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
+                           <property name="focusPolicy">
+                            <enum>Qt::StrongFocus</enum>
+                           </property>
+                           <property name="currentIndex">
+                            <number>-1</number>
+                           </property>
+                           <item>
+                            <property name="text">
+                             <string>Fixed values by category (manually)</string>
+                            </property>
+                           </item>
+                           <item>
+                            <property name="text">
+                             <string>Area based proportion (using overall std error)</string>
+                            </property>
+                           </item>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QToolButton" name="QPBtn_reloadSrsTable">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
+                           <property name="toolTip">
+                            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reload the pixel value/color table, resetting the style and pixel count&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                           </property>
+                           <property name="text">
+                            <string/>
+                           </property>
+                           <property name="icon">
+                            <iconset>
+                             <normaloff>:/plugins/AcATaMa/icons/reload.svg</normaloff>:/plugins/AcATaMa/icons/reload.svg</iconset>
+                           </property>
+                           <property name="toolButtonStyle">
+                            <enum>Qt::ToolButtonIconOnly</enum>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
                        </widget>
                       </item>
                       <item>

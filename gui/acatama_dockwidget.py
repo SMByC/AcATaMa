@@ -25,19 +25,20 @@ import configparser
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, Qt
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QDockWidget
-from qgis.core import QgsProject, QgsVectorFileWriter, QgsMapLayerProxyModel, Qgis, QgsUnitTypes
+from qgis.core import QgsMapLayerProxyModel, Qgis, QgsUnitTypes
 from qgis.utils import iface
 
 from AcATaMa.core import config
 from AcATaMa.core.analysis import AccuracyAssessmentWindow
 from AcATaMa.core.response_design import ResponseDesign
-from AcATaMa.core.sampling_design import do_simple_random_sampling, do_stratified_random_sampling, Sampling
+from AcATaMa.core.sampling_design import do_simple_random_sampling, do_stratified_random_sampling
 from AcATaMa.core.map import get_nodata_value
 from AcATaMa.gui.about_dialog import AboutDialog
 from AcATaMa.gui.response_design_window import ResponseDesignWindow
 from AcATaMa.utils.others_utils import set_nodata_format
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_filepath_in, get_file_path_of_layer
-from AcATaMa.utils.sampling_utils import update_stratified_sampling_table, fill_stratified_sampling_table
+from AcATaMa.utils.sampling_utils import update_stratified_sampling_table, fill_stratified_sampling_table, \
+    reload_StraRS_table
 from AcATaMa.utils.system_utils import error_handler, block_signals_to
 
 # plugin path
@@ -143,6 +144,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # fill table of categorical map
         self.widget_TotalExpectedSE.setHidden(True)
         self.QCBox_StraRS_Method.currentIndexChanged.connect(lambda: fill_stratified_sampling_table(self))
+        self.QPBtn_reloadSrsTable.clicked.connect(lambda: reload_StraRS_table(self))
         # for each item changed in table, save and update it
         self.TotalExpectedSE.valueChanged.connect(lambda: update_stratified_sampling_table(self, "TotalExpectedSE"))
         self.QTableW_StraRS.itemChanged.connect(lambda: update_stratified_sampling_table(self, "TableContent"))
