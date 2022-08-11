@@ -85,6 +85,7 @@ def get_xml_style(layer, band):
             return get_xml_style(layer, band)
         else:
             return
+    xml_style_items = sorted(xml_style_items, key=lambda x: int(x.get("value")))
     return xml_style_items
 
 
