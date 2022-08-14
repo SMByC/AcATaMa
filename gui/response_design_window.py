@@ -19,7 +19,7 @@
  ***************************************************************************/
 """
 import os
-import tempfile
+import uuid
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt, pyqtSlot, QEventLoop, QTimer
@@ -247,11 +247,6 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
     @pyqtSlot()
     @error_handler
     def open_current_point_in_google_engine(self):
-        # create temp file
-        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        kml_file = tempfile.mktemp(
-            prefix="point_id_{}_{}_".format(self.current_sample.sample_id, self.sampling_layer.name()),
-            suffix=".kml", dir=AcATaMa.dockwidget.tmp_dir)
         # convert coordinates
         crsSrc = QgsCoordinateReferenceSystem(self.sampling_layer.crs())
         crsDest = QgsCoordinateReferenceSystem(4326)  # WGS84
@@ -278,10 +273,12 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
               </Placemark>
             </kml>""".format(name="Sampling Point ID {}".format(self.current_sample.sample_id),
                              desc=description, lon=point.x(), lat=point.y())
-        outfile = open(kml_file, "w")
-        outfile.writelines(kml_raw)
-        outfile.close()
-
+        # create temp file
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        kml_file = os.path.join(AcATaMa.dockwidget.tmp_dir, "point_id_{}_{}.kml".format(self.current_sample.sample_id,
+                                                                                        uuid.uuid4().hex[0:7]))
+        with open(kml_file, "w") as f:
+            f.writelines(kml_raw)
         open_file(kml_file)
 
     @pyqtSlot(int)
