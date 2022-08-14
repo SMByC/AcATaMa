@@ -684,7 +684,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                             </sizepolicy>
                            </property>
                            <property name="toolTip">
-                            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reset the categorical value table, reloading the layer style and restoring default values&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reset the categorical value table, reloading the layer style, pixel count and restoring default values&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                            </property>
                            <property name="text">
                             <string/>
