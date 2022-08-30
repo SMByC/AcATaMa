@@ -29,11 +29,7 @@ from AcATaMa.utils.system_utils import block_signals_to
 
 
 class Point(object):
-
     def __init__(self, x, y):
-        self.set_qgis_pnt(x, y)
-
-    def set_qgis_pnt(self, x, y):
         self.QgsPnt = QgsPointXY(x, y)
         self.QgsGeom = QgsGeometry.fromPointXY(self.QgsPnt)
 
@@ -42,7 +38,13 @@ class RandomPoint(Point):
     """Class for generate, check and validate the random points
     """
 
-    def __init__(self, extent):
+    def __init__(self, x, y):
+        """Init Qgis point
+        """
+        super().__init__(x, y)
+
+    @classmethod
+    def fromExtent(cls, extent):
         """Generate the random x and y between boundaries
 
         Args:
@@ -50,7 +52,7 @@ class RandomPoint(Point):
         """
         rx = extent.xMinimum() + (extent.xMaximum() - extent.xMinimum()) * random.random()
         ry = extent.yMinimum() + (extent.yMaximum() - extent.yMinimum()) * random.random()
-        self.set_qgis_pnt(rx, ry)
+        return cls(rx, ry)
 
     def in_valid_data(self, thematic_map):
         """Check if the point is in valid data in thematic map
@@ -83,22 +85,22 @@ class RandomPoint(Point):
             return True
         return False
 
-    def in_categorical_map_SimpRS(self, pixel_values, categorical_map):
+    def in_categorical_map_post_stratify(self, categorical_values, categorical_map):
         """Check if point is at least in one pixel values set in the categorical map
         """
-        if pixel_values is not None:
+        if categorical_values is not None:
             point_value_in_categ_map = int(categorical_map.get_pixel_value_from_pnt(self.QgsPnt))
-            if point_value_in_categ_map not in pixel_values:
+            if point_value_in_categ_map not in categorical_values:
                 return False
         return True
 
-    def in_categorical_map_StraRS(self, pixel_values, number_of_samples, categorical_map, nPointsInCategories):
+    def in_categorical_map_StraRS(self, categorical_values, number_of_samples, categorical_map, nPointsInCategories):
         """Check if point pass the number of samples in the category or is nodata
         """
         pixel_value_in_categ_map = int(categorical_map.get_pixel_value_from_pnt(self.QgsPnt))
-        if pixel_value_in_categ_map == categorical_map.nodata or pixel_value_in_categ_map not in pixel_values:
+        if pixel_value_in_categ_map == categorical_map.nodata or pixel_value_in_categ_map not in categorical_values:
             return False
-        self.index_pixel_value = pixel_values.index(pixel_value_in_categ_map)
+        self.index_pixel_value = categorical_values.index(pixel_value_in_categ_map)
         if nPointsInCategories[self.index_pixel_value] >= number_of_samples[self.index_pixel_value]:
             return False
         return True
@@ -138,7 +140,7 @@ class RandomPoint(Point):
 class LabelingPoint(Point):
 
     def __init__(self, x, y, sample_id=None):
-        super(LabelingPoint, self).__init__(x, y)
+        super().__init__(x, y)
         # shape id is the order of the points inside the shapefile
         self.sample_id = sample_id
         # label button id

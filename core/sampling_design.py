@@ -24,8 +24,8 @@ import random
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox
-from qgis.core import QgsGeometry, QgsField, QgsFields, QgsSpatialIndex, \
-    QgsFeature, Qgis, QgsVectorFileWriter, QgsWkbTypes, QgsUnitTypes
+from qgis.core import QgsGeometry, QgsField, QgsFields, QgsSpatialIndex, QgsFeature, Qgis, \
+    QgsVectorFileWriter, QgsWkbTypes, QgsUnitTypes, QgsPoint, QgsFeatureSink
 
 from AcATaMa.core.point import RandomPoint
 from AcATaMa.core.map import Map
@@ -56,14 +56,14 @@ def do_simple_random_sampling(dockwidget):
         categorical_map = Map(file_selected_combo_box=dockwidget.QCBox_CategMap_SimpRS,
                               band=int(dockwidget.QCBox_band_CategMap_SimpRS.currentText()))
         try:
-            pixel_values = [int(p) for p in dockwidget.pixelValuesCategMap.text().split(",")]
+            categorical_values = [int(p) for p in dockwidget.pixelValuesCategMap_SimpRS.text().split(",")]
         except:
-            iface.messageBar().pushMessage("AcATaMa", "Error, wrong pixel values, set only integers and separated by commas",
+            iface.messageBar().pushMessage("AcATaMa", "Error, wrong pixel values in post-stratify option, set only integers and separated by commas",
                                            level=Qgis.Warning)
             return
     else:
         categorical_map = None
-        pixel_values = None
+        categorical_values = None
 
     # check neighbors aggregation
     if dockwidget.widget_generate_SimpRS.QGBox_neighbour_aggregation.isChecked():
@@ -97,9 +97,8 @@ def do_simple_random_sampling(dockwidget):
 
     # process
     sampling = Sampling("simple", thematic_map, categorical_map, output_file=output_file)
-    sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
-                                      neighbor_aggregation, dockwidget.widget_generate_SimpRS.QPBar_GenerateSamples,
-                                      random_seed)
+    sampling.generate_sampling_points(number_of_samples, min_distance, categorical_values, neighbor_aggregation,
+                                      random_seed, dockwidget.widget_generate_SimpRS.QPBar_GenerateSamples)
 
     # restoring
     dockwidget.widget_generate_SimpRS.QPBtn_GenerateSamples.setText("Generate samples")
@@ -155,10 +154,10 @@ def do_stratified_random_sampling(dockwidget):
                           nodata=float(dockwidget.nodata_CategMap_StraRS.text().strip() or "nan"))
 
     # get values from category table  #########
-    pixel_values = []
+    categorical_values = []
     number_of_samples = []
     for row in range(dockwidget.QTableW_StraRS.rowCount()):
-        pixel_values.append(int(dockwidget.QTableW_StraRS.item(row, 0).text()))
+        categorical_values.append(int(dockwidget.QTableW_StraRS.item(row, 0).text()))
         number_of_samples.append(dockwidget.QTableW_StraRS.item(row, 2).text())
     # convert and check if number of samples only positive integers
     try:
@@ -222,9 +221,8 @@ def do_stratified_random_sampling(dockwidget):
     # process
     sampling = Sampling("stratified", thematic_map, categorical_map, sampling_method,
                         srs_config=srs_config, output_file=output_file)
-    sampling.generate_sampling_points(pixel_values, number_of_samples, min_distance,
-                                      neighbor_aggregation, dockwidget.widget_generate_StraRS.QPBar_GenerateSamples,
-                                      random_seed)
+    sampling.generate_sampling_points(number_of_samples, min_distance, categorical_values, neighbor_aggregation,
+                                      random_seed, dockwidget.widget_generate_StraRS.QPBar_GenerateSamples)
 
     # before process
     dockwidget.widget_generate_StraRS.QPBtn_GenerateSamples.setText("Generate samples")
@@ -263,6 +261,101 @@ def do_stratified_random_sampling(dockwidget):
     dockwidget.QCBox_SamplingEstimator_A.setCurrentIndex(2)
 
 
+@error_handler
+def do_two_stage_sampling(dockwidget):
+    # first check input files requirements
+    if not valid_file_selected_in(dockwidget.QCBox_ThematicMap, "thematic map"):
+        return
+
+    # get and define some variables
+    thematic_map = Map(file_selected_combo_box=dockwidget.QCBox_ThematicMap,
+                       band=int(dockwidget.QCBox_band_ThematicMap.currentText()),
+                       nodata=float(dockwidget.nodata_ThematicMap.text().strip() or "nan"))
+    points_spacing = float(dockwidget.PointsSpacing_TwoSS.value())
+    initial_inset = float(dockwidget.InitialInset_TwoSS.value())
+    random_offset_radius = float(dockwidget.MaxDistanceRadius_TwoSS.value())
+    number_of_samples = dockwidget.widget_generate_TwoSS.QPBar_GenerateSamples.maximum()
+
+    # two stage sampling in categorical map
+    if dockwidget.QGBox_TwoSSwithCR.isChecked():
+        categorical_map = Map(file_selected_combo_box=dockwidget.QCBox_CategMap_TwoSS,
+                              band=int(dockwidget.QCBox_band_CategMap_TwoSS.currentText()))
+        try:
+            categorical_values = [int(p) for p in dockwidget.pixelValuesCategMap_TwoSS.text().split(",")]
+        except:
+            iface.messageBar().pushMessage("AcATaMa", "Error, wrong pixel values in post-stratify option, set only integers and separated by commas",
+                                           level=Qgis.Warning)
+            return
+    else:
+        categorical_map = None
+        categorical_values = None
+
+    # check neighbors aggregation
+    if dockwidget.widget_generate_TwoSS.QGBox_neighbour_aggregation.isChecked():
+        number_of_neighbors = int(dockwidget.widget_generate_TwoSS.QCBox_NumberOfNeighbors.currentText())
+        same_class_of_neighbors = int(dockwidget.widget_generate_TwoSS.QCBox_SameClassOfNeighbors.currentText())
+        neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
+    else:
+        neighbor_aggregation = None
+
+    # first select the target dir for save the sampling file
+    suggested_filename = os.path.join(os.path.dirname(thematic_map.file_path), "two_stage_sampling.gpkg")
+    output_file, _ = QFileDialog.getSaveFileName(dockwidget,
+                                                 dockwidget.tr("Select the output file to save the sampling"),
+                                                 suggested_filename,
+                                                 dockwidget.tr("GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"))
+    if output_file == '':
+        return
+
+    # define the random seed
+    if dockwidget.widget_generate_TwoSS.with_random_seed_by_user.isChecked():
+        random_seed = dockwidget.widget_generate_TwoSS.random_seed_by_user.text()
+        try:
+            random_seed = int(random_seed)
+        except:
+            pass
+    else:
+        random_seed = None
+
+    # before process
+    dockwidget.widget_generate_TwoSS.QPBtn_GenerateSamples.setText("Generating...")
+
+    # process
+    sampling = Sampling("two_stage", thematic_map, categorical_map, "grid with random offset", output_file=output_file)
+    sampling.generate_two_stage_sampling_points(points_spacing, initial_inset, random_offset_radius,
+                                                categorical_values, neighbor_aggregation, random_seed,
+                                                dockwidget.widget_generate_TwoSS.QPBar_GenerateSamples)
+
+    # restoring
+    dockwidget.widget_generate_TwoSS.QPBtn_GenerateSamples.setText("Generate samples")
+
+    # zero points
+    if sampling.total_of_samples < number_of_samples and sampling.total_of_samples == 0:
+        iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any random points with this settings",
+                                       level=Qgis.Warning, duration=-1)
+        return
+
+    # success
+    if sampling.total_of_samples == number_of_samples:
+        sampling_layer_generated = load_layer(sampling.output_file)
+        iface.messageBar().pushMessage("AcATaMa", "Successful two stage sampling with {} samples generated"
+                                                  .format(sampling.total_of_samples), level=Qgis.Success)
+    # success but not completed
+    if number_of_samples > sampling.total_of_samples > 0:
+        sampling_layer_generated = load_layer(sampling.output_file)
+        iface.messageBar().pushMessage("AcATaMa",
+                                       "Successful two stage sampling with {} samples generated, filtered from a max of {}"
+                                       .format(sampling.total_of_samples, number_of_samples), level=Qgis.Success)
+
+    # select the sampling file generated in respond design and analysis tab
+    dockwidget.QCBox_SamplingFile.setLayer(sampling_layer_generated)
+    if sampling_layer_generated not in ResponseDesign.instances:
+        ResponseDesign(sampling_layer_generated)
+    dockwidget.QCBox_SamplingFile_A.setLayer(sampling_layer_generated)
+    dockwidget.QCBox_SamplingEstimator_A.setCurrentIndex(-1)
+    dockwidget.QCBox_SamplingEstimator_A.setCurrentIndex(0 if categorical_map is None else 1)
+
+
 class Sampling(object):
 
     def __init__(self, sampling_type, thematic_map, categorical_map, sampling_method=None, srs_config=None, output_file=None):
@@ -282,15 +375,15 @@ class Sampling(object):
         self.points = dict()
 
     @wait_process
-    def generate_sampling_points(self, pixel_values, number_of_samples, min_distance,
-                                 neighbor_aggregation, progress_bar, random_seed):
+    def generate_sampling_points(self, number_of_samples, min_distance, categorical_values,
+                                 neighbor_aggregation, random_seed, progress_bar):
         """Some code base from (by Alexander Bruy):
         https://github.com/qgis/QGIS/blob/release-2_18/python/plugins/processing/algs/qgis/RandomPointsExtent.py
         """
-        self.pixel_values = pixel_values
         self.number_of_samples = number_of_samples  # desired
         self.total_of_samples = None  # total generated
         self.min_distance = min_distance
+        self.categorical_values = categorical_values
         self.neighbor_aggregation = neighbor_aggregation
         progress_bar.setValue(0)  # init progress bar
 
@@ -370,6 +463,97 @@ class Sampling(object):
         self.total_of_samples = len(points_generated)
         del writer, self.index
 
+    @wait_process
+    def generate_two_stage_sampling_points(self, points_spacing, initial_inset, random_offset_radius,
+                                           categorical_values, neighbor_aggregation, random_seed, progress_bar):
+        """Some code base from (by Alexander Bruy):
+        https://github.com/qgis/QGIS/blob/master/python/plugins/processing/algs/qgis/RegularPoints.py
+        """
+        self.points_spacing = points_spacing
+        self.initial_inset = initial_inset
+        self.random_offset_radius = random_offset_radius
+        self.categorical_values = categorical_values
+        self.neighbor_aggregation = neighbor_aggregation
+        self.total_of_samples = None  # total generated
+        progress_bar.setValue(0)  # init progress bar
+
+        self.ThematicR_boundaries = QgsGeometry().fromRect(self.thematic_map.extent())
+
+        # add an epsilon to accept sampling points on the edge of the map
+        epsilon = 0.00001
+        initial_inset += epsilon
+
+        fields = QgsFields()
+        fields.append(QgsField('id', QVariant.Int, '', 10, 0))
+        thematic_CRS = self.thematic_map.qgs_layer.crs()
+        file_format = \
+            "GPKG" if self.output_file.endswith(".gpkg") else "ESRI Shapefile" if self.output_file.endswith(".shp") else None
+        writer = QgsVectorFileWriter(self.output_file, "System", fields, QgsWkbTypes.Point, thematic_CRS, file_format)
+
+        nPoints = 0
+        y = self.thematic_map.extent().yMaximum() - initial_inset
+        extent_geom = QgsGeometry.fromRect(self.thematic_map.extent())
+        extent_engine = QgsGeometry.createGeometryEngine(extent_geom.constGet())
+        extent_engine.prepareGeometry()
+
+        # init the random sampling seed
+        self.random_seed = random_seed
+        random.seed(self.random_seed)
+
+        points_generated = []
+        while y >= self.thematic_map.extent().yMinimum():
+            x = self.thematic_map.extent().xMinimum() + initial_inset
+            while x <= self.thematic_map.extent().xMaximum():
+                attempts = 0
+                # stage 2: random offset
+                while True:
+                    if attempts == 1000:
+                        x += points_spacing
+                        break
+                    if random_offset_radius > 0:
+                        rx = random.uniform(x - random_offset_radius, x + random_offset_radius)
+                        ry = random.uniform(y - random_offset_radius, y + random_offset_radius)
+                        random_sampling_point = RandomPoint(rx, ry)
+                    else:
+                        random_sampling_point = RandomPoint(x, y)
+
+                    if not extent_engine.intersects(random_sampling_point.QgsGeom.constGet()):
+                        attempts += 1
+                        continue
+
+                    # checks to the sampling point, else discard and continue
+                    if not self.check_sampling_point(random_sampling_point):
+                        attempts += 1
+                        continue
+
+                    points_generated.append(random_sampling_point)
+
+                    x += points_spacing
+                    nPoints += 1
+                    # update progress bar
+                    progress_bar.setValue(int(nPoints))
+                    break
+
+            y = y - points_spacing
+
+        # guarantee the random order for response design process
+        random.shuffle(points_generated)
+        self.points = dict()  # restart
+
+        for num_point, point_generated in enumerate(points_generated):
+            # random sampling point passed the checks, save it
+            f = QgsFeature()
+            f.initAttributes(1)
+            f.setFields(fields)
+            f.setAttribute('id', num_point+1)
+            f.setGeometry(point_generated.QgsGeom)
+            writer.addFeature(f)
+            self.points[num_point] = point_generated.QgsPnt
+
+        # save the total point generated
+        self.total_of_samples = len(points_generated)
+        del writer
+
     def check_sampling_point(self, sampling_point):
         """Make several checks to the sampling point, else discard
         """
@@ -379,14 +563,16 @@ class Sampling(object):
         if not sampling_point.in_extent(self.ThematicR_boundaries):
             return False
 
-        if not sampling_point.in_mim_distance(self.index, self.min_distance, self.points):
-            return False
-
-        if self.sampling_type == "simple":
-            if not sampling_point.in_categorical_map_SimpRS(self.pixel_values, self.categorical_map):
+        if self.sampling_type in ["simple", "stratified"]:
+            if not sampling_point.in_mim_distance(self.index, self.min_distance, self.points):
                 return False
+
+        if self.sampling_type in ["simple", "two_stage"]:
+            if not sampling_point.in_categorical_map_post_stratify(self.categorical_values, self.categorical_map):
+                return False
+
         if self.sampling_type == "stratified":
-            if not sampling_point.in_categorical_map_StraRS(self.pixel_values, self.number_of_samples,
+            if not sampling_point.in_categorical_map_StraRS(self.categorical_values, self.number_of_samples,
                                                             self.categorical_map, self.samples_in_categories):
                 return False
 

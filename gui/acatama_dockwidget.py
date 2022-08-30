@@ -31,7 +31,7 @@ from qgis.utils import iface
 from AcATaMa.core import config
 from AcATaMa.core.analysis import AccuracyAssessmentWindow
 from AcATaMa.core.response_design import ResponseDesign
-from AcATaMa.core.sampling_design import do_simple_random_sampling, do_stratified_random_sampling
+from AcATaMa.core.sampling_design import do_simple_random_sampling, do_stratified_random_sampling, do_two_stage_sampling
 from AcATaMa.core.map import get_nodata_value
 from AcATaMa.gui.about_dialog import AboutDialog
 from AcATaMa.gui.response_design_window import ResponseDesignWindow
@@ -117,8 +117,6 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
         # select and check the categorical map
         self.QCBox_CategMap_SimpRS.layerChanged.connect(self.select_categorical_map_SimpRS)
-        # generate and random sampling options
-        self.widget_generate_SimpRS.widget_random_sampling_options.setHidden(True)
         # generation options
         self.widget_generate_SimpRS.QPBtn_GenerateSamples.clicked.connect(lambda: do_simple_random_sampling(self))
         # update progress bar limits
@@ -148,13 +146,30 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # for each item changed in table, save and update it
         self.TotalExpectedSE.valueChanged.connect(lambda: update_stratified_sampling_table(self, "TotalExpectedSE"))
         self.QTableW_StraRS.itemChanged.connect(lambda: update_stratified_sampling_table(self, "TableContent"))
-        # generate and random sampling options
-        self.widget_generate_StraRS.widget_random_sampling_options.setHidden(True)
         # generation options
         self.widget_generate_StraRS.QPBtn_GenerateSamples.clicked.connect(lambda: do_stratified_random_sampling(self))
 
         # disable sampling tab at start
         self.scrollAreaWidgetContents_S.setDisabled(True)
+
+        # ######### Two Stage Sampling ######### #
+        # generation options
+        self.widget_generate_TwoSS.QPBtn_GenerateSamples.clicked.connect(lambda: do_two_stage_sampling(self))
+        self.PointsSpacing_TwoSS.valueChanged.connect(self.update_two_stage_sampling_progressbar)
+        self.InitialInset_TwoSS.valueChanged.connect(self.update_two_stage_sampling_progressbar)
+        # select and check the categorical map
+        self.widget_TwoSSwithCR.setHidden(True)
+        # set properties to QgsMapLayerComboBox
+        self.QCBox_CategMap_TwoSS.setCurrentIndex(-1)
+        self.QCBox_CategMap_TwoSS.setFilters(QgsMapLayerProxyModel.RasterLayer)
+        # call to browse the categorical map
+        self.QPBtn_browseCategMap_TwoSS.clicked.connect(lambda: self.browser_dialog_to_load_file(
+            self.QCBox_CategMap_TwoSS,
+            dialog_title=self.tr("Select the categorical map"),
+            file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
+        # select and check the categorical map
+        self.QCBox_CategMap_TwoSS.layerChanged.connect(self.select_categorical_map_TwoSS)
+        self.widget_generate_TwoSS.QPBar_GenerateSamples.setFormat("%v / (~%m) samples")
 
         # ######### Response Design tab ######### #
         # set properties to QgsMapLayerComboBox
@@ -222,6 +237,18 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.minDistance_StraRS.setSuffix("")
             self.minDistance_StraRS.setToolTip("")
             self.minDistance_StraRS.setValue(0)
+            # TwoSS
+            self.PointsSpacing_TwoSS.setSuffix("")
+            self.PointsSpacing_TwoSS.setToolTip("")
+            self.PointsSpacing_TwoSS.setValue(0)
+            self.InitialInset_TwoSS.setSuffix("")
+            self.InitialInset_TwoSS.setToolTip("")
+            self.InitialInset_TwoSS.setValue(0)
+            self.MaxDistanceRadius_TwoSS.setSuffix("")
+            self.MaxDistanceRadius_TwoSS.setToolTip("")
+            self.MaxDistanceRadius_TwoSS.setValue(0)
+            self.widget_generate_StraRS.QPBar_GenerateSamples.setValue(0)
+            self.widget_generate_StraRS.QPBar_GenerateSamples.setMaximum(0)
             # disable sampling tab
             self.scrollAreaWidgetContents_S.setDisabled(True)
             # unset the thematic classes in response design instance
@@ -249,13 +276,11 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # set/update the units in minimum distance items in sampling tab
         layer_dist_unit = layer.crs().mapUnits()
         str_unit = QgsUnitTypes.toString(layer_dist_unit)
-        abbr_unit = QgsUnitTypes.toAbbreviatedString(layer_dist_unit)
         # Set the properties of the QdoubleSpinBox based on the QgsUnitTypes of the thematic map
         # https://qgis.org/api/classQgsUnitTypes.html
         # SimpRS
-        self.minDistance_SimpRS.setSuffix(" {}".format(abbr_unit))
-        self.minDistance_SimpRS.setToolTip(
-            "Minimum distance in {} (units based on thematic map selected)".format(str_unit))
+        self.minDistance_SimpRS.setSuffix(" {}".format(str_unit))
+        self.minDistance_SimpRS.setToolTip("Minimum distance\n(units based on thematic map selected)")
         self.minDistance_SimpRS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
         self.minDistance_SimpRS.setDecimals(
             4 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
@@ -265,9 +290,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                                           QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
         self.minDistance_SimpRS.setValue(0)
         # StraRS
-        self.minDistance_StraRS.setSuffix(" {}".format(abbr_unit))
-        self.minDistance_StraRS.setToolTip(
-            "Minimum distance in {} (units based on thematic map selected)".format(str_unit))
+        self.minDistance_StraRS.setSuffix(" {}".format(str_unit))
+        self.minDistance_StraRS.setToolTip("Minimum distance\n(units based on thematic map selected)")
         self.minDistance_StraRS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
         self.minDistance_StraRS.setDecimals(
             4 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
@@ -276,6 +300,43 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             0.0001 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
                                           QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
         self.minDistance_StraRS.setValue(0)
+        # TwoSS
+        self.PointsSpacing_TwoSS.setSuffix(" {}".format(str_unit))
+        self.PointsSpacing_TwoSS.setToolTip(
+            "Space between grid points\n(units based on thematic map selected)")
+        self.PointsSpacing_TwoSS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
+        self.PointsSpacing_TwoSS.setDecimals(
+            4 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
+                                     QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
+        self.PointsSpacing_TwoSS.setSingleStep(
+            0.0001 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
+                                          QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
+        self.PointsSpacing_TwoSS.setValue(0)
+        #
+        self.InitialInset_TwoSS.setSuffix(" {}".format(str_unit))
+        self.InitialInset_TwoSS.setToolTip(
+            "Initial inset distance from left-top\n(units based on thematic map selected)")
+        self.InitialInset_TwoSS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
+        self.InitialInset_TwoSS.setDecimals(
+            4 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
+                                     QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
+        self.InitialInset_TwoSS.setSingleStep(
+            0.0001 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
+                                          QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
+        self.InitialInset_TwoSS.setValue(0)
+        #
+        self.MaxDistanceRadius_TwoSS.setSuffix(" {}".format(str_unit))
+        self.MaxDistanceRadius_TwoSS.setToolTip(
+            "Distance radius for the random offset\n(units based on thematic map selected)")
+        self.MaxDistanceRadius_TwoSS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
+        self.MaxDistanceRadius_TwoSS.setDecimals(
+            4 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
+                                     QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
+        self.MaxDistanceRadius_TwoSS.setSingleStep(
+            0.0001 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
+                                          QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
+        self.MaxDistanceRadius_TwoSS.setValue(0)
+
         # enable sampling tab
         self.scrollAreaWidgetContents_S.setEnabled(True)
 
@@ -323,6 +384,23 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.nodata_CategMap_StraRS.setText(set_nodata_format(self.nodata_ThematicMap.text()))
             return
         self.nodata_CategMap_StraRS.setText(set_nodata_format(get_nodata_value(layer)))
+
+    def select_categorical_map_TwoSS(self, layer):
+        # first check
+        if not valid_file_selected_in(self.QCBox_CategMap_TwoSS, "categorical map"):
+            self.QCBox_band_CategMap_TwoSS.clear()
+            return
+        # check if categorical map data type is integer or byte
+        if layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
+            self.QCBox_CategMap_TwoSS.setCurrentIndex(-1)
+            self.QCBox_band_CategMap_TwoSS.clear()
+            iface.messageBar().pushMessage("AcATaMa", "Error, categorical map must be byte or integer as data type.",
+                                           level=Qgis.Warning)
+            return
+        # set band count
+        self.QCBox_band_CategMap_TwoSS.clear()
+        self.QCBox_band_CategMap_TwoSS.addItems([str(x) for x in range(1, layer.bandCount() + 1)])
+
 
     @pyqtSlot()
     def reset_StraRS_method(self):
@@ -384,6 +462,20 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
         # update state of sampling file selected for accuracy assessment tab
         self.set_sampling_file_in_analysis()
+
+    def update_two_stage_sampling_progressbar(self):
+        if not self.QCBox_ThematicMap.currentLayer() or not self.QCBox_ThematicMap.currentLayer().isValid():
+            return
+        extent = self.QCBox_ThematicMap.currentLayer().extent()
+        points_spacing = float(self.PointsSpacing_TwoSS.value())
+        initial_inset = float(self.InitialInset_TwoSS.value())
+        try:
+            max_samples = (int((extent.width()-initial_inset)/points_spacing) + 1) * \
+                          (int((extent.height()-initial_inset)/points_spacing) + 1)
+        except ZeroDivisionError:
+            return
+        if max_samples < 2147483647:
+            self.widget_generate_TwoSS.QPBar_GenerateSamples.setMaximum(max_samples)
 
     @pyqtSlot()
     def reload_sampling_file(self):

@@ -56,7 +56,7 @@
          <item>
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>Only accept the pixel in the sampling if it have at least the number of neighbors of the same class:</string>
+            <string>Only accept the pixel in the sampling if it has at least the number of neighbors of the same class:</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -208,7 +208,7 @@
          <number>0</number>
         </property>
         <property name="format">
-         <string>%v/%m samples</string>
+         <string>%v / %m samples</string>
         </property>
        </widget>
       </item>

@@ -81,7 +81,7 @@ def save(file_out):
         "categ_map_path": get_current_file_path_in(AcATaMa.dockwidget.QCBox_CategMap_SimpRS, show_message=False),
         "categ_map_band": int(AcATaMa.dockwidget.QCBox_band_CategMap_SimpRS.currentText())
             if AcATaMa.dockwidget.QCBox_band_CategMap_SimpRS.currentText() != '' else -1,
-        "pixel_values_categ_map": AcATaMa.dockwidget.pixelValuesCategMap.text(),
+        "pixel_values_categ_map": AcATaMa.dockwidget.pixelValuesCategMap_SimpRS.text(),
 
         "with_neighbors_aggregation": AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_neighbour_aggregation.isChecked(),
         "num_neighbors": AcATaMa.dockwidget.widget_generate_SimpRS.QCBox_NumberOfNeighbors.currentText(),
@@ -247,7 +247,7 @@ def restore(yml_file_path):
         AcATaMa.dockwidget.select_categorical_map_SimpRS(AcATaMa.dockwidget.QCBox_CategMap_SimpRS.currentLayer())
         AcATaMa.dockwidget.QCBox_band_CategMap_SimpRS.setCurrentIndex(
             yaml_config["sampling_design"]["simple_random_sampling"]['categ_map_band'] - 1)
-        AcATaMa.dockwidget.pixelValuesCategMap.setText(
+        AcATaMa.dockwidget.pixelValuesCategMap_SimpRS.setText(
             yaml_config["sampling_design"]["simple_random_sampling"]['pixel_values_categ_map'])
 
         AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_neighbour_aggregation.setChecked(

@@ -36,6 +36,7 @@ class GenerateSamplingWidget(QWidget, FORM_CLASS):
         self.setupUi(self)
         ######
         self.widget_neighbour_aggregation.setHidden(True)
+        self.widget_random_sampling_options.setHidden(True)
         # fill QCBox_SameClassOfNeighbors
         self.fill_same_class_of_neighbors()
         self.QCBox_NumberOfNeighbors.currentIndexChanged.connect(self.fill_same_class_of_neighbors)

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
-    <height>1262</height>
+    <width>694</width>
+    <height>1322</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -175,7 +175,7 @@ It set automatically from image if the layer has the nodata value set.</string>
              <number>1</number>
             </property>
             <item>
-             <widget class="QTabWidget" name="tabs_SamplingStrategy">
+             <widget class="QTabWidget" name="tabs_Stage1">
               <property name="tabPosition">
                <enum>QTabWidget::West</enum>
               </property>
@@ -426,7 +426,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                              </widget>
                             </item>
                             <item>
-                             <widget class="QLineEdit" name="pixelValuesCategMap">
+                             <widget class="QLineEdit" name="pixelValuesCategMap_SimpRS">
                               <property name="toolTip">
                                <string>Enter multiple pixel values separated by comma</string>
                               </property>
@@ -851,6 +851,291 @@ It set automatically from image if the layer has the nodata value set.</string>
                <zorder>verticalSpacer_4</zorder>
                <zorder>QGBox_3</zorder>
               </widget>
+              <widget class="QWidget" name="tab_TwoStageSampling">
+               <attribute name="title">
+                <string>Two Stage Sampling</string>
+               </attribute>
+               <layout class="QVBoxLayout" name="verticalLayout_7">
+                <item>
+                 <widget class="QLabel" name="label_22">
+                  <property name="text">
+                   <string>Two Stage Sampling</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_25">
+                  <property name="text">
+                   <string>This sampling creates a regular points (grid) with a random offset to the original grid spot</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QGroupBox" name="QGBox_5">
+                  <property name="title">
+                   <string>Stage 1</string>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_26">
+                   <item>
+                    <widget class="QLabel" name="label_32">
+                     <property name="text">
+                      <string>Set points spacing grid</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QWidget" name="widget_8" native="true">
+                     <layout class="QGridLayout" name="gridLayout_6">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <item row="0" column="0">
+                       <widget class="QLabel" name="label_26">
+                        <property name="text">
+                         <string>Points spacing:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="1">
+                       <widget class="QDoubleSpinBox" name="PointsSpacing_TwoSS"/>
+                      </item>
+                      <item row="1" column="0">
+                       <widget class="QLabel" name="label_27">
+                        <property name="text">
+                         <string>Initial inset from LT sides:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="1">
+                       <widget class="QDoubleSpinBox" name="InitialInset_TwoSS"/>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QGroupBox" name="QGBox_6">
+                  <property name="title">
+                   <string>Stage 2</string>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_29">
+                   <item>
+                    <widget class="QLabel" name="label_7">
+                     <property name="text">
+                      <string>Apply random offset to point spacing</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QWidget" name="widget_11" native="true">
+                     <layout class="QGridLayout" name="gridLayout_7">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <item row="0" column="0">
+                       <widget class="QLabel" name="label_31">
+                        <property name="text">
+                         <string>Max XY offset from center:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="1">
+                       <widget class="QDoubleSpinBox" name="MaxDistanceRadius_TwoSS"/>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QGroupBox" name="QGBox_TwoSSwithCR">
+                  <property name="title">
+                   <string>Post-stratify the two stage sampling (optional)</string>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="checked">
+                   <bool>false</bool>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_32">
+                   <item>
+                    <widget class="QWidget" name="widget_TwoSSwithCR" native="true">
+                     <layout class="QVBoxLayout" name="verticalLayout_33">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QLabel" name="label_33">
+                        <property name="text">
+                         <string>Use a categorical map (can be the same thematic file) to randomly sample only within the pixel values set below.</string>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+                        </property>
+                        <property name="wordWrap">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QWidget" name="widget_27" native="true">
+                        <layout class="QHBoxLayout" name="horizontalLayout_27">
+                         <property name="spacing">
+                          <number>3</number>
+                         </property>
+                         <property name="leftMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="topMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="rightMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="bottomMargin">
+                          <number>0</number>
+                         </property>
+                         <item>
+                          <widget class="QgsMapLayerComboBox" name="QCBox_CategMap_TwoSS">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
+                           <property name="focusPolicy">
+                            <enum>Qt::StrongFocus</enum>
+                           </property>
+                           <property name="editable">
+                            <bool>false</bool>
+                           </property>
+                           <property name="allowEmptyLayer">
+                            <bool>true</bool>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QToolButton" name="QPBtn_browseCategMap_TwoSS">
+                           <property name="maximumSize">
+                            <size>
+                             <width>30</width>
+                             <height>16777215</height>
+                            </size>
+                           </property>
+                           <property name="toolTip">
+                            <string>Load file</string>
+                           </property>
+                           <property name="text">
+                            <string>...</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QComboBox" name="QCBox_band_CategMap_TwoSS">
+                           <property name="maximumSize">
+                            <size>
+                             <width>50</width>
+                             <height>16777215</height>
+                            </size>
+                           </property>
+                           <property name="toolTip">
+                            <string>Band</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QWidget" name="widget_12" native="true">
+                        <layout class="QHBoxLayout" name="horizontalLayout_6">
+                         <property name="leftMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="topMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="rightMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="bottomMargin">
+                          <number>0</number>
+                         </property>
+                         <item>
+                          <widget class="QLabel" name="label_34">
+                           <property name="text">
+                            <string>Set pixel values:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLineEdit" name="pixelValuesCategMap_TwoSS">
+                           <property name="toolTip">
+                            <string>Enter multiple pixel values separated by comma</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="GenerateSamplingWidget" name="widget_generate_TwoSS" native="true"/>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_6">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
              </widget>
             </item>
            </layout>
@@ -895,8 +1180,8 @@ It set automatically from image if the layer has the nodata value set.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>676</width>
-             <height>963</height>
+             <width>670</width>
+             <height>1023</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_24">
@@ -1021,7 +1306,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                         <bool>false</bool>
                        </property>
                        <property name="format">
-                        <string>%v/%m samples labeled</string>
+                        <string>%v / %m samples labeled</string>
                        </property>
                       </widget>
                      </item>
@@ -1360,8 +1645,8 @@ It set automatically from image if the layer has the nodata value set.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>676</width>
-             <height>963</height>
+             <width>670</width>
+             <height>1023</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -1749,6 +2034,22 @@ It set automatically from image if the layer has the nodata value set.</string>
     <hint type="destinationlabel">
      <x>114</x>
      <y>707</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>QGBox_TwoSSwithCR</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>widget_TwoSSwithCR</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>118</x>
+     <y>701</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>70</x>
+     <y>827</y>
     </hint>
    </hints>
   </connection>
