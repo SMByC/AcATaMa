@@ -155,20 +155,20 @@ def do_stratified_random_sampling(dockwidget):
 
     # get values from category table  #########
     categorical_values = []
-    total_of_samples = []
+    total_of_samples_by_cat = []
     for row in range(dockwidget.QTableW_StraRS.rowCount()):
         categorical_values.append(int(dockwidget.QTableW_StraRS.item(row, 0).text()))
-        total_of_samples.append(dockwidget.QTableW_StraRS.item(row, 2).text())
+        total_of_samples_by_cat.append(dockwidget.QTableW_StraRS.item(row, 2).text())
     # convert and check if number of samples only positive integers
     try:
-        total_of_samples = [int(ns) for ns in total_of_samples]
-        if True in [ns < 0 for ns in total_of_samples]:
+        total_of_samples_by_cat = [int(ns) for ns in total_of_samples_by_cat]
+        if True in [ns < 0 for ns in total_of_samples_by_cat]:
             raise Exception
     except:
         iface.messageBar().pushMessage("AcATaMa", "Error, the number of samples should be only positive integers",
                                        level=Qgis.Warning)
         return
-    total_of_samples = sum(total_of_samples)
+    total_of_samples = sum(total_of_samples_by_cat)
     if total_of_samples == 0:
         iface.messageBar().pushMessage("AcATaMa", "Error, no number of samples configured!",
                                        level=Qgis.Warning)
@@ -221,7 +221,7 @@ def do_stratified_random_sampling(dockwidget):
     # process
     sampling = Sampling("stratified", thematic_map, categorical_map, sampling_method,
                         srs_config=srs_config, output_file=output_file)
-    sampling.generate_sampling_points(total_of_samples, min_distance, categorical_values, neighbor_aggregation,
+    sampling.generate_sampling_points(total_of_samples_by_cat, min_distance, categorical_values, neighbor_aggregation,
                                       random_seed, dockwidget.widget_generate_StraRS.QPBar_GenerateSamples)
 
     # before process
@@ -374,7 +374,7 @@ class Sampling(object):
         # for save all sampling points
         self.points = dict()
 
-    @wait_process
+    #@wait_process
     def generate_sampling_points(self, total_of_samples, min_distance, categorical_values,
                                  neighbor_aggregation, random_seed, progress_bar):
         """Some code base from (by Alexander Bruy):
@@ -413,7 +413,7 @@ class Sampling(object):
         points_generated = []
         while nPoints < total_of_samples:
 
-            random_sampling_point = RandomPoint(self.thematic_map.extent())
+            random_sampling_point = RandomPoint.fromExtent(self.thematic_map.extent())
 
             # checks to the sampling point, else discard and continue
             if not self.check_sampling_point(random_sampling_point):
