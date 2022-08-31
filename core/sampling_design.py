@@ -374,7 +374,7 @@ class Sampling(object):
         # for save all sampling points
         self.points = dict()
 
-    #@wait_process
+    @wait_process
     def generate_sampling_points(self, total_of_samples, min_distance, categorical_values,
                                  neighbor_aggregation, random_seed, progress_bar):
         """Some code base from (by Alexander Bruy):
