@@ -175,7 +175,7 @@ It set automatically from image if the layer has the nodata value set.</string>
              <number>1</number>
             </property>
             <item>
-             <widget class="QTabWidget" name="tabs_Stage1">
+             <widget class="QTabWidget" name="tabs_SamplingStrategy">
               <property name="tabPosition">
                <enum>QTabWidget::West</enum>
               </property>
