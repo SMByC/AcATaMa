@@ -94,14 +94,14 @@ class RandomPoint(Point):
                 return False
         return True
 
-    def in_categorical_map_StraRS(self, categorical_values, number_of_samples, categorical_map, nPointsInCategories):
+    def in_categorical_map_StraRS(self, categorical_values, total_of_samples, categorical_map, nPointsInCategories):
         """Check if point pass the number of samples in the category or is nodata
         """
         pixel_value_in_categ_map = int(categorical_map.get_pixel_value_from_pnt(self.QgsPnt))
         if pixel_value_in_categ_map == categorical_map.nodata or pixel_value_in_categ_map not in categorical_values:
             return False
         self.index_pixel_value = categorical_values.index(pixel_value_in_categ_map)
-        if nPointsInCategories[self.index_pixel_value] >= number_of_samples[self.index_pixel_value]:
+        if nPointsInCategories[self.index_pixel_value] >= total_of_samples[self.index_pixel_value]:
             return False
         return True
 

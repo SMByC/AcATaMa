@@ -25,7 +25,7 @@ from qgis.utils import iface
 from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox
 from qgis.core import QgsGeometry, QgsField, QgsFields, QgsSpatialIndex, QgsFeature, Qgis, \
-    QgsVectorFileWriter, QgsWkbTypes, QgsUnitTypes, QgsPoint, QgsFeatureSink
+    QgsVectorFileWriter, QgsWkbTypes, QgsUnitTypes
 
 from AcATaMa.core.point import RandomPoint
 from AcATaMa.core.map import Map
@@ -48,7 +48,7 @@ def do_simple_random_sampling(dockwidget):
                        nodata=float(dockwidget.nodata_ThematicMap.text().strip() or "nan"))
 
     # get and define some variables
-    number_of_samples = int(dockwidget.numberOfSamples_SimpRS.value())
+    total_of_samples = int(dockwidget.numberOfSamples_SimpRS.value())
     min_distance = float(dockwidget.minDistance_SimpRS.value())
 
     # simple random sampling in categorical map
@@ -97,28 +97,28 @@ def do_simple_random_sampling(dockwidget):
 
     # process
     sampling = Sampling("simple", thematic_map, categorical_map, output_file=output_file)
-    sampling.generate_sampling_points(number_of_samples, min_distance, categorical_values, neighbor_aggregation,
+    sampling.generate_sampling_points(total_of_samples, min_distance, categorical_values, neighbor_aggregation,
                                       random_seed, dockwidget.widget_generate_SimpRS.QPBar_GenerateSamples)
 
     # restoring
     dockwidget.widget_generate_SimpRS.QPBtn_GenerateSamples.setText("Generate samples")
 
     # zero points
-    if sampling.total_of_samples < number_of_samples and sampling.total_of_samples == 0:
+    if sampling.samples_generated < total_of_samples and sampling.samples_generated == 0:
         iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any random points with this settings",
                                        level=Qgis.Warning, duration=-1)
         return
 
     # success
-    if sampling.total_of_samples == number_of_samples:
+    if sampling.samples_generated == total_of_samples:
         sampling_layer_generated = load_layer(sampling.output_file)
-        iface.messageBar().pushMessage("AcATaMa", "Generate the simple random sampling, completed",
-                                       level=Qgis.Success)
+        iface.messageBar().pushMessage("AcATaMa", "Successful simple random sampling with {} samples generated"
+                                       .format(sampling.samples_generated), level=Qgis.Success)
     # success but not completed
-    if number_of_samples > sampling.total_of_samples > 0:
+    if total_of_samples > sampling.samples_generated > 0:
         sampling_layer_generated = load_layer(sampling.output_file)
-        iface.messageBar().pushMessage("AcATaMa", "Generated the simple random sampling, but could not generate the requested number of "
-                                                  "random points {}/{}, sampling process aborted".format(sampling.total_of_samples, number_of_samples),
+        iface.messageBar().pushMessage("AcATaMa", "Successful simple random sampling, but could not generate the requested number of "
+                                                  "random points {}/{}, sampling process aborted".format(sampling.samples_generated, total_of_samples),
                                        level=Qgis.Warning)
     # check the thematic map unit to calculate the minimum distances
     if min_distance > 0:
@@ -155,20 +155,20 @@ def do_stratified_random_sampling(dockwidget):
 
     # get values from category table  #########
     categorical_values = []
-    number_of_samples = []
+    total_of_samples = []
     for row in range(dockwidget.QTableW_StraRS.rowCount()):
         categorical_values.append(int(dockwidget.QTableW_StraRS.item(row, 0).text()))
-        number_of_samples.append(dockwidget.QTableW_StraRS.item(row, 2).text())
+        total_of_samples.append(dockwidget.QTableW_StraRS.item(row, 2).text())
     # convert and check if number of samples only positive integers
     try:
-        number_of_samples = [int(ns) for ns in number_of_samples]
-        if True in [ns < 0 for ns in number_of_samples]:
+        total_of_samples = [int(ns) for ns in total_of_samples]
+        if True in [ns < 0 for ns in total_of_samples]:
             raise Exception
     except:
         iface.messageBar().pushMessage("AcATaMa", "Error, the number of samples should be only positive integers",
                                        level=Qgis.Warning)
         return
-    total_of_samples = sum(number_of_samples)
+    total_of_samples = sum(total_of_samples)
     if total_of_samples == 0:
         iface.messageBar().pushMessage("AcATaMa", "Error, no number of samples configured!",
                                        level=Qgis.Warning)
@@ -221,28 +221,28 @@ def do_stratified_random_sampling(dockwidget):
     # process
     sampling = Sampling("stratified", thematic_map, categorical_map, sampling_method,
                         srs_config=srs_config, output_file=output_file)
-    sampling.generate_sampling_points(number_of_samples, min_distance, categorical_values, neighbor_aggregation,
+    sampling.generate_sampling_points(total_of_samples, min_distance, categorical_values, neighbor_aggregation,
                                       random_seed, dockwidget.widget_generate_StraRS.QPBar_GenerateSamples)
 
     # before process
     dockwidget.widget_generate_StraRS.QPBtn_GenerateSamples.setText("Generate samples")
 
     # zero points
-    if sampling.total_of_samples < total_of_samples and sampling.total_of_samples == 0:
+    if sampling.samples_generated < total_of_samples and sampling.samples_generated == 0:
         iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any stratified random points with this settings",
                                                   level=Qgis.Warning, duration=-1)
         return
 
     # success
-    if sampling.total_of_samples == total_of_samples:
+    if sampling.samples_generated == total_of_samples:
         sampling_layer_generated = load_layer(sampling.output_file)
-        iface.messageBar().pushMessage("AcATaMa", "Generate the stratified random sampling, completed",
-                                       level=Qgis.Success)
+        iface.messageBar().pushMessage("AcATaMa", "Successful stratified random sampling with {} samples generated"
+                                       .format(sampling.samples_generated), level=Qgis.Success)
     # success but not completed
-    if sampling.total_of_samples < total_of_samples and sampling.total_of_samples > 0:
+    if sampling.samples_generated < total_of_samples and sampling.samples_generated > 0:
         sampling_layer_generated = load_layer(sampling.output_file)
-        iface.messageBar().pushMessage("AcATaMa", "Generated the stratified random sampling, but could not generate the requested number of "
-                                                  "random points {}/{}, sampling process aborted".format(sampling.total_of_samples, total_of_samples),
+        iface.messageBar().pushMessage("AcATaMa", "Successful stratified random sampling, but could not generate the requested number of "
+                                                  "random points {}/{}, sampling process aborted".format(sampling.samples_generated, total_of_samples),
                                        level=Qgis.Warning)
     # check the thematic map unit to calculate the minimum distances
     if min_distance > 0:
@@ -274,7 +274,7 @@ def do_two_stage_sampling(dockwidget):
     points_spacing = float(dockwidget.PointsSpacing_TwoSS.value())
     initial_inset = float(dockwidget.InitialInset_TwoSS.value())
     random_offset_radius = float(dockwidget.MaxDistanceRadius_TwoSS.value())
-    number_of_samples = dockwidget.widget_generate_TwoSS.QPBar_GenerateSamples.maximum()
+    total_of_samples = dockwidget.widget_generate_TwoSS.QPBar_GenerateSamples.maximum()
 
     # two stage sampling in categorical map
     if dockwidget.QGBox_TwoSSwithCR.isChecked():
@@ -330,22 +330,22 @@ def do_two_stage_sampling(dockwidget):
     dockwidget.widget_generate_TwoSS.QPBtn_GenerateSamples.setText("Generate samples")
 
     # zero points
-    if sampling.total_of_samples < number_of_samples and sampling.total_of_samples == 0:
+    if sampling.samples_generated < total_of_samples and sampling.samples_generated == 0:
         iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any random points with this settings",
                                        level=Qgis.Warning, duration=-1)
         return
 
     # success
-    if sampling.total_of_samples == number_of_samples:
+    if sampling.samples_generated == total_of_samples:
         sampling_layer_generated = load_layer(sampling.output_file)
         iface.messageBar().pushMessage("AcATaMa", "Successful two stage sampling with {} samples generated"
-                                                  .format(sampling.total_of_samples), level=Qgis.Success)
+                                       .format(sampling.samples_generated), level=Qgis.Success)
     # success but not completed
-    if number_of_samples > sampling.total_of_samples > 0:
+    if total_of_samples > sampling.samples_generated > 0:
         sampling_layer_generated = load_layer(sampling.output_file)
         iface.messageBar().pushMessage("AcATaMa",
                                        "Successful two stage sampling with {} samples generated, filtered from a max of {}"
-                                       .format(sampling.total_of_samples, number_of_samples), level=Qgis.Success)
+                                       .format(sampling.samples_generated, total_of_samples), level=Qgis.Success)
 
     # select the sampling file generated in respond design and analysis tab
     dockwidget.QCBox_SamplingFile.setLayer(sampling_layer_generated)
@@ -375,13 +375,13 @@ class Sampling(object):
         self.points = dict()
 
     @wait_process
-    def generate_sampling_points(self, number_of_samples, min_distance, categorical_values,
+    def generate_sampling_points(self, total_of_samples, min_distance, categorical_values,
                                  neighbor_aggregation, random_seed, progress_bar):
         """Some code base from (by Alexander Bruy):
         https://github.com/qgis/QGIS/blob/release-2_18/python/plugins/processing/algs/qgis/RandomPointsExtent.py
         """
-        self.number_of_samples = number_of_samples  # desired
-        self.total_of_samples = None  # total generated
+        self.total_of_samples = total_of_samples  # desired
+        self.samples_generated = None  # total generated
         self.min_distance = min_distance
         self.categorical_values = categorical_values
         self.neighbor_aggregation = neighbor_aggregation
@@ -397,10 +397,10 @@ class Sampling(object):
         writer = QgsVectorFileWriter(self.output_file, "System", fields, QgsWkbTypes.Point, thematic_CRS, file_format)
 
         if self.sampling_type == "simple":
-            total_of_samples = self.number_of_samples
+            total_of_samples = self.total_of_samples
         if self.sampling_type == "stratified":
-            total_of_samples = sum(self.number_of_samples)
-            self.samples_in_categories = [0] * len(self.number_of_samples)  # total generated by categories
+            total_of_samples = sum(self.total_of_samples)
+            self.samples_in_categories = [0] * len(self.total_of_samples)  # total generated by categories
 
         nPoints = 0
         nIterations = 0
@@ -460,7 +460,7 @@ class Sampling(object):
             self.points[num_point] = point_generated.QgsPnt
 
         # save the total point generated
-        self.total_of_samples = len(points_generated)
+        self.samples_generated = len(points_generated)
         del writer, self.index
 
     @wait_process
@@ -474,7 +474,7 @@ class Sampling(object):
         self.random_offset_radius = random_offset_radius
         self.categorical_values = categorical_values
         self.neighbor_aggregation = neighbor_aggregation
-        self.total_of_samples = None  # total generated
+        self.samples_generated = None  # total generated
         progress_bar.setValue(0)  # init progress bar
 
         self.ThematicR_boundaries = QgsGeometry().fromRect(self.thematic_map.extent())
@@ -551,7 +551,7 @@ class Sampling(object):
             self.points[num_point] = point_generated.QgsPnt
 
         # save the total point generated
-        self.total_of_samples = len(points_generated)
+        self.samples_generated = len(points_generated)
         del writer
 
     def check_sampling_point(self, sampling_point):
@@ -572,7 +572,7 @@ class Sampling(object):
                 return False
 
         if self.sampling_type == "stratified":
-            if not sampling_point.in_categorical_map_StraRS(self.categorical_values, self.number_of_samples,
+            if not sampling_point.in_categorical_map_StraRS(self.categorical_values, self.total_of_samples,
                                                             self.categorical_map, self.samples_in_categories):
                 return False
 
