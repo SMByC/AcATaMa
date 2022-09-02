@@ -851,15 +851,15 @@ It set automatically from image if the layer has the nodata value set.</string>
                <zorder>verticalSpacer_4</zorder>
                <zorder>QGBox_3</zorder>
               </widget>
-              <widget class="QWidget" name="tab_TwoStageSampling">
+              <widget class="QWidget" name="tab_SystematicSampling">
                <attribute name="title">
-                <string>Two Stage Sampling</string>
+                <string>Systematic Sampling</string>
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_7">
                 <item>
                  <widget class="QLabel" name="label_22">
                   <property name="text">
-                   <string>Two Stage Sampling</string>
+                   <string>Systematic Sampling</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
@@ -912,7 +912,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                        </widget>
                       </item>
                       <item row="0" column="1">
-                       <widget class="QDoubleSpinBox" name="PointsSpacing_TwoSS"/>
+                       <widget class="QDoubleSpinBox" name="PointsSpacing_SystS"/>
                       </item>
                       <item row="1" column="0">
                        <widget class="QLabel" name="label_27">
@@ -922,7 +922,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                        </widget>
                       </item>
                       <item row="1" column="1">
-                       <widget class="QDoubleSpinBox" name="InitialInset_TwoSS"/>
+                       <widget class="QDoubleSpinBox" name="InitialInset_SystS"/>
                       </item>
                      </layout>
                     </widget>
@@ -963,7 +963,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                        </widget>
                       </item>
                       <item row="0" column="1">
-                       <widget class="QDoubleSpinBox" name="MaxDistanceRadius_TwoSS"/>
+                       <widget class="QDoubleSpinBox" name="MaxDistanceRadius_SystS"/>
                       </item>
                      </layout>
                     </widget>
@@ -972,9 +972,9 @@ It set automatically from image if the layer has the nodata value set.</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QGroupBox" name="QGBox_TwoSSwithCR">
+                 <widget class="QGroupBox" name="QGBox_SystSwithCR">
                   <property name="title">
-                   <string>Post-stratify the two stage sampling (optional)</string>
+                   <string>Post-stratify the systematic sampling (optional)</string>
                   </property>
                   <property name="checkable">
                    <bool>true</bool>
@@ -984,7 +984,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_32">
                    <item>
-                    <widget class="QWidget" name="widget_TwoSSwithCR" native="true">
+                    <widget class="QWidget" name="widget_SystSwithCR" native="true">
                      <layout class="QVBoxLayout" name="verticalLayout_33">
                       <property name="leftMargin">
                        <number>0</number>
@@ -1030,7 +1030,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                           <number>0</number>
                          </property>
                          <item>
-                          <widget class="QgsMapLayerComboBox" name="QCBox_CategMap_TwoSS">
+                          <widget class="QgsMapLayerComboBox" name="QCBox_CategMap_SystS">
                            <property name="sizePolicy">
                             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                              <horstretch>0</horstretch>
@@ -1049,7 +1049,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                           </widget>
                          </item>
                          <item>
-                          <widget class="QToolButton" name="QPBtn_browseCategMap_TwoSS">
+                          <widget class="QToolButton" name="QPBtn_browseCategMap_SystS">
                            <property name="maximumSize">
                             <size>
                              <width>30</width>
@@ -1065,7 +1065,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                           </widget>
                          </item>
                          <item>
-                          <widget class="QComboBox" name="QCBox_band_CategMap_TwoSS">
+                          <widget class="QComboBox" name="QCBox_band_CategMap_SystS">
                            <property name="maximumSize">
                             <size>
                              <width>50</width>
@@ -1103,7 +1103,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                           </widget>
                          </item>
                          <item>
-                          <widget class="QLineEdit" name="pixelValuesCategMap_TwoSS">
+                          <widget class="QLineEdit" name="pixelValuesCategMap_SystS">
                            <property name="toolTip">
                             <string>Enter multiple pixel values separated by comma</string>
                            </property>
@@ -1119,7 +1119,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="GenerateSamplingWidget" name="widget_generate_TwoSS" native="true"/>
+                 <widget class="GenerateSamplingWidget" name="widget_generate_SystS" native="true"/>
                 </item>
                 <item>
                  <spacer name="verticalSpacer_6">
@@ -2038,9 +2038,9 @@ It set automatically from image if the layer has the nodata value set.</string>
    </hints>
   </connection>
   <connection>
-   <sender>QGBox_TwoSSwithCR</sender>
+   <sender>QGBox_SystSwithCR</sender>
    <signal>clicked(bool)</signal>
-   <receiver>widget_TwoSSwithCR</receiver>
+   <receiver>widget_SystSwithCR</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">

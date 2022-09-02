@@ -262,7 +262,7 @@ def do_stratified_random_sampling(dockwidget):
 
 
 @error_handler
-def do_two_stage_sampling(dockwidget):
+def do_systematic_sampling(dockwidget):
     # first check input files requirements
     if not valid_file_selected_in(dockwidget.QCBox_ThematicMap, "thematic map"):
         return
@@ -271,17 +271,17 @@ def do_two_stage_sampling(dockwidget):
     thematic_map = Map(file_selected_combo_box=dockwidget.QCBox_ThematicMap,
                        band=int(dockwidget.QCBox_band_ThematicMap.currentText()),
                        nodata=float(dockwidget.nodata_ThematicMap.text().strip() or "nan"))
-    points_spacing = float(dockwidget.PointsSpacing_TwoSS.value())
-    initial_inset = float(dockwidget.InitialInset_TwoSS.value())
-    random_offset_radius = float(dockwidget.MaxDistanceRadius_TwoSS.value())
-    total_of_samples = dockwidget.widget_generate_TwoSS.QPBar_GenerateSamples.maximum()
+    points_spacing = float(dockwidget.PointsSpacing_SystS.value())
+    initial_inset = float(dockwidget.InitialInset_SystS.value())
+    random_offset_radius = float(dockwidget.MaxDistanceRadius_SystS.value())
+    total_of_samples = dockwidget.widget_generate_SystS.QPBar_GenerateSamples.maximum()
 
-    # two stage sampling in categorical map
-    if dockwidget.QGBox_TwoSSwithCR.isChecked():
-        categorical_map = Map(file_selected_combo_box=dockwidget.QCBox_CategMap_TwoSS,
-                              band=int(dockwidget.QCBox_band_CategMap_TwoSS.currentText()))
+    # systematic sampling in categorical map
+    if dockwidget.QGBox_SystSwithCR.isChecked():
+        categorical_map = Map(file_selected_combo_box=dockwidget.QCBox_CategMap_SystS,
+                              band=int(dockwidget.QCBox_band_CategMap_SystS.currentText()))
         try:
-            categorical_values = [int(p) for p in dockwidget.pixelValuesCategMap_TwoSS.text().split(",")]
+            categorical_values = [int(p) for p in dockwidget.pixelValuesCategMap_SystS.text().split(",")]
         except:
             iface.messageBar().pushMessage("AcATaMa", "Error, wrong pixel values in post-stratify option, set only integers and separated by commas",
                                            level=Qgis.Warning)
@@ -291,15 +291,15 @@ def do_two_stage_sampling(dockwidget):
         categorical_values = None
 
     # check neighbors aggregation
-    if dockwidget.widget_generate_TwoSS.QGBox_neighbour_aggregation.isChecked():
-        number_of_neighbors = int(dockwidget.widget_generate_TwoSS.QCBox_NumberOfNeighbors.currentText())
-        same_class_of_neighbors = int(dockwidget.widget_generate_TwoSS.QCBox_SameClassOfNeighbors.currentText())
+    if dockwidget.widget_generate_SystS.QGBox_neighbour_aggregation.isChecked():
+        number_of_neighbors = int(dockwidget.widget_generate_SystS.QCBox_NumberOfNeighbors.currentText())
+        same_class_of_neighbors = int(dockwidget.widget_generate_SystS.QCBox_SameClassOfNeighbors.currentText())
         neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
     else:
         neighbor_aggregation = None
 
     # first select the target dir for save the sampling file
-    suggested_filename = os.path.join(os.path.dirname(thematic_map.file_path), "two_stage_sampling.gpkg")
+    suggested_filename = os.path.join(os.path.dirname(thematic_map.file_path), "systematic_sampling.gpkg")
     output_file, _ = QFileDialog.getSaveFileName(dockwidget,
                                                  dockwidget.tr("Select the output file to save the sampling"),
                                                  suggested_filename,
@@ -308,8 +308,8 @@ def do_two_stage_sampling(dockwidget):
         return
 
     # define the random seed
-    if dockwidget.widget_generate_TwoSS.with_random_seed_by_user.isChecked():
-        random_seed = dockwidget.widget_generate_TwoSS.random_seed_by_user.text()
+    if dockwidget.widget_generate_SystS.with_random_seed_by_user.isChecked():
+        random_seed = dockwidget.widget_generate_SystS.random_seed_by_user.text()
         try:
             random_seed = int(random_seed)
         except:
@@ -318,16 +318,16 @@ def do_two_stage_sampling(dockwidget):
         random_seed = None
 
     # before process
-    dockwidget.widget_generate_TwoSS.QPBtn_GenerateSamples.setText("Generating...")
+    dockwidget.widget_generate_SystS.QPBtn_GenerateSamples.setText("Generating...")
 
     # process
-    sampling = Sampling("two_stage", thematic_map, categorical_map, "grid with random offset", output_file=output_file)
-    sampling.generate_two_stage_sampling_points(points_spacing, initial_inset, random_offset_radius,
+    sampling = Sampling("systematic", thematic_map, categorical_map, "grid with random offset", output_file=output_file)
+    sampling.generate_systematic_sampling_points(points_spacing, initial_inset, random_offset_radius,
                                                 categorical_values, neighbor_aggregation, random_seed,
-                                                dockwidget.widget_generate_TwoSS.QPBar_GenerateSamples)
+                                                dockwidget.widget_generate_SystS.QPBar_GenerateSamples)
 
     # restoring
-    dockwidget.widget_generate_TwoSS.QPBtn_GenerateSamples.setText("Generate samples")
+    dockwidget.widget_generate_SystS.QPBtn_GenerateSamples.setText("Generate samples")
 
     # zero points
     if sampling.samples_generated < total_of_samples and sampling.samples_generated == 0:
@@ -338,13 +338,13 @@ def do_two_stage_sampling(dockwidget):
     # success
     if sampling.samples_generated == total_of_samples:
         sampling_layer_generated = load_layer(sampling.output_file)
-        iface.messageBar().pushMessage("AcATaMa", "Successful two stage sampling with {} samples generated"
+        iface.messageBar().pushMessage("AcATaMa", "Successful systematic sampling with {} samples generated"
                                        .format(sampling.samples_generated), level=Qgis.Success)
     # success but not completed
     if total_of_samples > sampling.samples_generated > 0:
         sampling_layer_generated = load_layer(sampling.output_file)
         iface.messageBar().pushMessage("AcATaMa",
-                                       "Successful two stage sampling with {} samples generated, filtered from a max of {}"
+                                       "Successful systematic sampling with {} samples generated, filtered from a max of {}"
                                        .format(sampling.samples_generated, total_of_samples), level=Qgis.Success)
 
     # select the sampling file generated in respond design and analysis tab
@@ -464,7 +464,7 @@ class Sampling(object):
         del writer, self.index
 
     @wait_process
-    def generate_two_stage_sampling_points(self, points_spacing, initial_inset, random_offset_radius,
+    def generate_systematic_sampling_points(self, points_spacing, initial_inset, random_offset_radius,
                                            categorical_values, neighbor_aggregation, random_seed, progress_bar):
         """Some code base from (by Alexander Bruy):
         https://github.com/qgis/QGIS/blob/master/python/plugins/processing/algs/qgis/RegularPoints.py
@@ -567,7 +567,7 @@ class Sampling(object):
             if not sampling_point.in_mim_distance(self.index, self.min_distance, self.points):
                 return False
 
-        if self.sampling_type in ["simple", "two_stage"]:
+        if self.sampling_type in ["simple", "systematic"]:
             if not sampling_point.in_categorical_map_post_stratify(self.categorical_values, self.categorical_map):
                 return False
 
