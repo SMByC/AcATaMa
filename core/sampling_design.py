@@ -273,7 +273,7 @@ def do_systematic_sampling(dockwidget):
                        nodata=float(dockwidget.nodata_ThematicMap.text().strip() or "nan"))
     points_spacing = float(dockwidget.PointsSpacing_SystS.value())
     initial_inset = float(dockwidget.InitialInset_SystS.value())
-    random_offset_radius = float(dockwidget.MaxDistanceRadius_SystS.value())
+    max_xy_offset = float(dockwidget.MaxXYoffset_SystS.value())
     total_of_samples = dockwidget.widget_generate_SystS.QPBar_GenerateSamples.maximum()
 
     # systematic sampling in categorical map
@@ -322,7 +322,7 @@ def do_systematic_sampling(dockwidget):
 
     # process
     sampling = Sampling("systematic", thematic_map, categorical_map, "grid with random offset", output_file=output_file)
-    sampling.generate_systematic_sampling_points(points_spacing, initial_inset, random_offset_radius,
+    sampling.generate_systematic_sampling_points(points_spacing, initial_inset, max_xy_offset,
                                                 categorical_values, neighbor_aggregation, random_seed,
                                                 dockwidget.widget_generate_SystS.QPBar_GenerateSamples)
 
@@ -464,14 +464,14 @@ class Sampling(object):
         del writer, self.index
 
     @wait_process
-    def generate_systematic_sampling_points(self, points_spacing, initial_inset, random_offset_radius,
-                                           categorical_values, neighbor_aggregation, random_seed, progress_bar):
+    def generate_systematic_sampling_points(self, points_spacing, initial_inset, max_xy_offset,
+                                            categorical_values, neighbor_aggregation, random_seed, progress_bar):
         """Some code base from (by Alexander Bruy):
         https://github.com/qgis/QGIS/blob/master/python/plugins/processing/algs/qgis/RegularPoints.py
         """
         self.points_spacing = points_spacing
         self.initial_inset = initial_inset
-        self.random_offset_radius = random_offset_radius
+        self.max_xy_offset = max_xy_offset
         self.categorical_values = categorical_values
         self.neighbor_aggregation = neighbor_aggregation
         self.samples_generated = None  # total generated
@@ -505,16 +505,17 @@ class Sampling(object):
             x = self.thematic_map.extent().xMinimum() + initial_inset
             while x <= self.thematic_map.extent().xMaximum():
                 attempts = 0
-                # stage 2: random offset
                 while True:
                     if attempts == 1000:
                         x += points_spacing
                         break
-                    if random_offset_radius > 0:
-                        rx = random.uniform(x - random_offset_radius, x + random_offset_radius)
-                        ry = random.uniform(y - random_offset_radius, y + random_offset_radius)
+                    if max_xy_offset > 0:
+                        # step 2: random offset
+                        rx = random.uniform(x - max_xy_offset, x + max_xy_offset)
+                        ry = random.uniform(y - max_xy_offset, y + max_xy_offset)
                         random_sampling_point = RandomPoint(rx, ry)
                     else:
+                        # systematic sampling aligned with the grid, offset = 0
                         random_sampling_point = RandomPoint(x, y)
 
                     if not extent_engine.intersects(random_sampling_point.QgsGeom.constGet()):

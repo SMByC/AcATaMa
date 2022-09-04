@@ -169,7 +169,13 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
         # select and check the categorical map
         self.QCBox_CategMap_SystS.layerChanged.connect(self.select_categorical_map_SystS)
-        self.widget_generate_SystS.QPBar_GenerateSamples.setFormat("%v / (~%m) samples")
+        self.widget_generate_SystS.QPBar_GenerateSamples.setMaximum(1)
+        self.widget_generate_SystS.QPBar_GenerateSamples.setFormat("%v / %m* samples")
+        self.widget_generate_SystS.QPBar_GenerateSamples.setToolTip(
+            "The total of samples (*) is an estimation based only by\n"
+            "the grid definition; the nodata value, the post-stratify\n"
+            "and neighborhood aggregation filters make the generated\n"
+            "samples less than the total.")
 
         # ######### Response Design tab ######### #
         # set properties to QgsMapLayerComboBox
@@ -244,11 +250,11 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.InitialInset_SystS.setSuffix("")
             self.InitialInset_SystS.setToolTip("")
             self.InitialInset_SystS.setValue(0)
-            self.MaxDistanceRadius_SystS.setSuffix("")
-            self.MaxDistanceRadius_SystS.setToolTip("")
-            self.MaxDistanceRadius_SystS.setValue(0)
-            self.widget_generate_StraRS.QPBar_GenerateSamples.setValue(0)
-            self.widget_generate_StraRS.QPBar_GenerateSamples.setMaximum(0)
+            self.MaxXYoffset_SystS.setSuffix("")
+            self.MaxXYoffset_SystS.setToolTip("")
+            self.MaxXYoffset_SystS.setValue(0)
+            self.widget_generate_SystS.QPBar_GenerateSamples.setMaximum(1)
+            self.widget_generate_SystS.QPBar_GenerateSamples.reset()
             # disable sampling tab
             self.scrollAreaWidgetContents_S.setDisabled(True)
             # unset the thematic classes in response design instance
@@ -325,17 +331,17 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                                           QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
         self.InitialInset_SystS.setValue(0)
         #
-        self.MaxDistanceRadius_SystS.setSuffix(" {}".format(str_unit))
-        self.MaxDistanceRadius_SystS.setToolTip(
-            "Distance radius for the random offset\n(units based on thematic map selected)")
-        self.MaxDistanceRadius_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
-        self.MaxDistanceRadius_SystS.setDecimals(
+        self.MaxXYoffset_SystS.setSuffix(" {}".format(str_unit))
+        self.MaxXYoffset_SystS.setToolTip(
+            "Maximum XY distance from the center to generate the random offset\n(units based on thematic map selected)")
+        self.MaxXYoffset_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
+        self.MaxXYoffset_SystS.setDecimals(
             4 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
                                      QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
-        self.MaxDistanceRadius_SystS.setSingleStep(
+        self.MaxXYoffset_SystS.setSingleStep(
             0.0001 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
                                           QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
-        self.MaxDistanceRadius_SystS.setValue(0)
+        self.MaxXYoffset_SystS.setValue(0)
 
         # enable sampling tab
         self.scrollAreaWidgetContents_S.setEnabled(True)

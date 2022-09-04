@@ -882,7 +882,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                 <item>
                  <widget class="QGroupBox" name="QGBox_5">
                   <property name="title">
-                   <string>Stage 1</string>
+                   <string>Step 1</string>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_26">
                    <item>
@@ -933,7 +933,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                 <item>
                  <widget class="QGroupBox" name="QGBox_6">
                   <property name="title">
-                   <string>Stage 2</string>
+                   <string>Step 2</string>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_29">
                    <item>
@@ -963,7 +963,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                        </widget>
                       </item>
                       <item row="0" column="1">
-                       <widget class="QDoubleSpinBox" name="MaxDistanceRadius_SystS"/>
+                       <widget class="QDoubleSpinBox" name="MaxXYoffset_SystS"/>
                       </item>
                      </layout>
                     </widget>
