@@ -239,10 +239,14 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.minDistance_SimpRS.setSuffix("")
             self.minDistance_SimpRS.setToolTip("")
             self.minDistance_SimpRS.setValue(0)
+            self.widget_generate_SimpRS.QPBar_GenerateSamples.setMaximum(1)
+            self.widget_generate_SimpRS.QPBar_GenerateSamples.setValue(0)
             # StraRS
             self.minDistance_StraRS.setSuffix("")
             self.minDistance_StraRS.setToolTip("")
             self.minDistance_StraRS.setValue(0)
+            self.widget_generate_StraRS.QPBar_GenerateSamples.setMaximum(1)
+            self.widget_generate_StraRS.QPBar_GenerateSamples.setValue(0)
             # SystS
             self.PointsSpacing_SystS.setSuffix("")
             self.PointsSpacing_SystS.setToolTip("")
@@ -254,7 +258,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.MaxXYoffset_SystS.setToolTip("")
             self.MaxXYoffset_SystS.setValue(0)
             self.widget_generate_SystS.QPBar_GenerateSamples.setMaximum(1)
-            self.widget_generate_SystS.QPBar_GenerateSamples.reset()
+            self.widget_generate_SystS.QPBar_GenerateSamples.setValue(0)
             # disable sampling tab
             self.scrollAreaWidgetContents_S.setDisabled(True)
             # unset the thematic classes in response design instance
