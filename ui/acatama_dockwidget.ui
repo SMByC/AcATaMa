@@ -324,7 +324,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                          <item>
                           <widget class="QLabel" name="label_12">
                            <property name="text">
-                            <string>Use a categorical map (can be the same thematic file) to randomly sample only within the pixel values set below of the selected raster to get a simple random sampling post-stratified.</string>
+                            <string>Use a categorical map (can be the same thematic file) to randomly sample only within the classes (categorical pixel values) set below.</string>
                            </property>
                            <property name="alignment">
                             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -421,16 +421,38 @@ It set automatically from image if the layer has the nodata value set.</string>
                             <item>
                              <widget class="QLabel" name="label_13">
                               <property name="text">
-                               <string>Set pixel values:</string>
+                               <string>Classes selected:</string>
                               </property>
                              </widget>
                             </item>
                             <item>
-                             <widget class="QLineEdit" name="pixelValuesCategMap_SimpRS">
-                              <property name="toolTip">
-                               <string>Enter multiple pixel values separated by comma</string>
+                             <widget class="QPushButton" name="QPBtn_CategMapClassesSelection_SimpRS">
+                              <property name="minimumSize">
+                               <size>
+                                <width>180</width>
+                                <height>0</height>
+                               </size>
+                              </property>
+                              <property name="cursor">
+                               <cursorShape>PointingHandCursor</cursorShape>
+                              </property>
+                              <property name="text">
+                               <string>click to select</string>
                               </property>
                              </widget>
+                            </item>
+                            <item>
+                             <spacer name="horizontalSpacer_6">
+                              <property name="orientation">
+                               <enum>Qt::Horizontal</enum>
+                              </property>
+                              <property name="sizeHint" stdset="0">
+                               <size>
+                                <width>40</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                             </spacer>
                             </item>
                            </layout>
                           </widget>
@@ -1001,7 +1023,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <item>
                        <widget class="QLabel" name="label_33">
                         <property name="text">
-                         <string>Use a categorical map (can be the same thematic file) to randomly sample only within the pixel values set below.</string>
+                         <string>Use a categorical map (can be the same thematic file) to randomly sample only within the classes (categorical pixel values) set below.</string>
                         </property>
                         <property name="alignment">
                          <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -1098,16 +1120,38 @@ It set automatically from image if the layer has the nodata value set.</string>
                          <item>
                           <widget class="QLabel" name="label_34">
                            <property name="text">
-                            <string>Set pixel values:</string>
+                            <string>Classes selected:</string>
                            </property>
                           </widget>
                          </item>
                          <item>
-                          <widget class="QLineEdit" name="pixelValuesCategMap_SystS">
-                           <property name="toolTip">
-                            <string>Enter multiple pixel values separated by comma</string>
+                          <widget class="QPushButton" name="QPBtn_CategMapClassesSelection_SystS">
+                           <property name="minimumSize">
+                            <size>
+                             <width>180</width>
+                             <height>0</height>
+                            </size>
+                           </property>
+                           <property name="cursor">
+                            <cursorShape>PointingHandCursor</cursorShape>
+                           </property>
+                           <property name="text">
+                            <string>click to select</string>
                            </property>
                           </widget>
+                         </item>
+                         <item>
+                          <spacer name="horizontalSpacer_5">
+                           <property name="orientation">
+                            <enum>Qt::Horizontal</enum>
+                           </property>
+                           <property name="sizeHint" stdset="0">
+                            <size>
+                             <width>40</width>
+                             <height>20</height>
+                            </size>
+                           </property>
+                          </spacer>
                          </item>
                         </layout>
                        </widget>

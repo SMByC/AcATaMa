@@ -85,22 +85,22 @@ class RandomPoint(Point):
             return True
         return False
 
-    def in_categorical_map_post_stratify(self, categorical_values, categorical_map):
+    def in_categorical_map_post_stratify(self, classes_for_sampling, categorical_map):
         """Check if point is at least in one pixel values set in the categorical map
         """
-        if categorical_values is not None:
+        if classes_for_sampling is not None:
             point_value_in_categ_map = int(categorical_map.get_pixel_value_from_pnt(self.QgsPnt))
-            if point_value_in_categ_map not in categorical_values:
+            if point_value_in_categ_map not in classes_for_sampling:
                 return False
         return True
 
-    def in_categorical_map_StraRS(self, categorical_values, total_of_samples, categorical_map, nPointsInCategories):
+    def in_categorical_map_StraRS(self, classes_for_sampling, total_of_samples, categorical_map, nPointsInCategories):
         """Check if point pass the number of samples in the category or is nodata
         """
         pixel_value_in_categ_map = int(categorical_map.get_pixel_value_from_pnt(self.QgsPnt))
-        if pixel_value_in_categ_map == categorical_map.nodata or pixel_value_in_categ_map not in categorical_values:
+        if pixel_value_in_categ_map == categorical_map.nodata or pixel_value_in_categ_map not in classes_for_sampling:
             return False
-        self.index_pixel_value = categorical_values.index(pixel_value_in_categ_map)
+        self.index_pixel_value = classes_for_sampling.index(pixel_value_in_categ_map)
         if nPointsInCategories[self.index_pixel_value] >= total_of_samples[self.index_pixel_value]:
             return False
         return True

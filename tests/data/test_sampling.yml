@@ -14,7 +14,7 @@
         min_neighbors_with_the_same_class: '4'
         num_neighbors: '8'
         num_samples: 100
-        pixel_values_categ_map: 35,46
+        classes_selected_for_sampling: 35,46
         post_stratify: true
         random_sampling_options: true
         random_seed_by_user: '12345'

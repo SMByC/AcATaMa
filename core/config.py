@@ -22,6 +22,10 @@ import os
 import re
 from collections import OrderedDict
 import yaml
+
+from AcATaMa.gui.generate_sampling_widget import SelectCategoricalMapClasses
+from AcATaMa.gui.response_design_window import ResponseDesignWindow
+
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
 except ImportError:
@@ -81,7 +85,7 @@ def save(file_out):
         "categ_map_path": get_current_file_path_in(AcATaMa.dockwidget.QCBox_CategMap_SimpRS, show_message=False),
         "categ_map_band": int(AcATaMa.dockwidget.QCBox_band_CategMap_SimpRS.currentText())
             if AcATaMa.dockwidget.QCBox_band_CategMap_SimpRS.currentText() != '' else -1,
-        "pixel_values_categ_map": AcATaMa.dockwidget.pixelValuesCategMap_SimpRS.text(),
+        "classes_selected_for_sampling": AcATaMa.dockwidget.QPBtn_CategMapClassesSelection_SimpRS.text(),
 
         "with_neighbors_aggregation": AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_neighbour_aggregation.isChecked(),
         "num_neighbors": AcATaMa.dockwidget.widget_generate_SimpRS.QCBox_NumberOfNeighbors.currentText(),
@@ -179,6 +183,11 @@ def restore(yml_file_path):
                                            level=Qgis.Critical)
             return
 
+    # clear some stuff
+    SelectCategoricalMapClasses.instances = {}
+    ResponseDesign.instances = {}
+    ResponseDesignWindow.instance = None
+
     def get_restore_path(_path):
         """check if the file path exists or try using relative path to the yml file"""
         if _path is None:
@@ -244,11 +253,11 @@ def restore(yml_file_path):
             yaml_config["sampling_design"]["simple_random_sampling"]['post_stratify'])
         load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_CategMap_SimpRS,
                                     get_restore_path(yaml_config["sampling_design"]["simple_random_sampling"]['categ_map_path']))
-        AcATaMa.dockwidget.select_categorical_map_SimpRS(AcATaMa.dockwidget.QCBox_CategMap_SimpRS.currentLayer())
+        AcATaMa.dockwidget.select_categorical_map_SimpRS()
         AcATaMa.dockwidget.QCBox_band_CategMap_SimpRS.setCurrentIndex(
             yaml_config["sampling_design"]["simple_random_sampling"]['categ_map_band'] - 1)
-        AcATaMa.dockwidget.pixelValuesCategMap_SimpRS.setText(
-            yaml_config["sampling_design"]["simple_random_sampling"]['pixel_values_categ_map'])
+        AcATaMa.dockwidget.QPBtn_CategMapClassesSelection_SimpRS.setText(
+            yaml_config["sampling_design"]["simple_random_sampling"]['classes_selected_for_sampling'])
 
         AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_neighbour_aggregation.setChecked(
             yaml_config["sampling_design"]["simple_random_sampling"]['with_neighbors_aggregation'])

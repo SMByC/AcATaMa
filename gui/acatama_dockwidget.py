@@ -34,6 +34,7 @@ from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.core.sampling_design import do_simple_random_sampling, do_stratified_random_sampling, do_systematic_sampling
 from AcATaMa.core.map import get_nodata_value
 from AcATaMa.gui.about_dialog import AboutDialog
+from AcATaMa.gui.generate_sampling_widget import SelectCategoricalMapClasses
 from AcATaMa.gui.response_design_window import ResponseDesignWindow
 from AcATaMa.utils.others_utils import set_nodata_format
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_filepath_in, get_file_path_of_layer
@@ -117,6 +118,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
         # select and check the categorical map
         self.QCBox_CategMap_SimpRS.layerChanged.connect(self.select_categorical_map_SimpRS)
+        self.QCBox_band_CategMap_SimpRS.currentIndexChanged.connect(self.select_categorical_map_SimpRS)
+        self.QPBtn_CategMapClassesSelection_SimpRS.setEnabled(False)
+        self.QPBtn_CategMapClassesSelection_SimpRS.clicked.connect(lambda: self.select_categorical_map_classes("simple"))
         # generation options
         self.widget_generate_SimpRS.QPBtn_GenerateSamples.clicked.connect(lambda: do_simple_random_sampling(self))
         # update progress bar limits
@@ -162,13 +166,16 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # set properties to QgsMapLayerComboBox
         self.QCBox_CategMap_SystS.setCurrentIndex(-1)
         self.QCBox_CategMap_SystS.setFilters(QgsMapLayerProxyModel.RasterLayer)
-        # call to browse the categorical map
+        # post-stratify sampling
         self.QPBtn_browseCategMap_SystS.clicked.connect(lambda: self.browser_dialog_to_load_file(
             self.QCBox_CategMap_SystS,
             dialog_title=self.tr("Select the categorical map"),
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
-        # select and check the categorical map
         self.QCBox_CategMap_SystS.layerChanged.connect(self.select_categorical_map_SystS)
+        self.QCBox_band_CategMap_SystS.currentIndexChanged.connect(self.select_categorical_map_SystS)
+        self.QPBtn_CategMapClassesSelection_SystS.setEnabled(False)
+        self.QPBtn_CategMapClassesSelection_SystS.clicked.connect(lambda: self.select_categorical_map_classes("systematic"))
+        # others
         self.widget_generate_SystS.QPBar_GenerateSamples.setMaximum(1)
         self.widget_generate_SystS.QPBar_GenerateSamples.setFormat("%v / %m* samples")
         self.widget_generate_SystS.QPBar_GenerateSamples.setToolTip(
@@ -350,21 +357,38 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # enable sampling tab
         self.scrollAreaWidgetContents_S.setEnabled(True)
 
-    def select_categorical_map_SimpRS(self, layer):
+    def select_categorical_map_SimpRS(self):
+        self.QPBtn_CategMapClassesSelection_SimpRS.setText("click to select")
         # first check
         if not valid_file_selected_in(self.QCBox_CategMap_SimpRS, "categorical map"):
             self.QCBox_band_CategMap_SimpRS.clear()
+            self.QPBtn_CategMapClassesSelection_SimpRS.setEnabled(False)
             return
+        categorical_map_layer = self.QCBox_CategMap_SimpRS.currentLayer()
+        categorical_map_band = self.QCBox_band_CategMap_SimpRS.currentText()
+        categorical_map_band = int(categorical_map_band) if categorical_map_band else 1
+        categorical_map_band = 1 if categorical_map_band > categorical_map_layer.bandCount() else categorical_map_band
         # check if categorical map data type is integer or byte
-        if layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
+        if categorical_map_layer.dataProvider().dataType(categorical_map_band) not in [1, 2, 3, 4, 5]:
             self.QCBox_CategMap_SimpRS.setCurrentIndex(-1)
             self.QCBox_band_CategMap_SimpRS.clear()
+            self.QPBtn_CategMapClassesSelection_SimpRS.setEnabled(False)
             iface.messageBar().pushMessage("AcATaMa", "Error, categorical map must be byte or integer as data type.",
                                            level=Qgis.Warning)
             return
-        # set band count
-        self.QCBox_band_CategMap_SimpRS.clear()
-        self.QCBox_band_CategMap_SimpRS.addItems([str(x) for x in range(1, layer.bandCount() + 1)])
+        # fill band list
+        if self.QCBox_band_CategMap_SimpRS.count() != categorical_map_layer.bandCount():
+            with block_signals_to(self.QCBox_band_CategMap_SimpRS):
+                self.QCBox_band_CategMap_SimpRS.clear()
+                self.QCBox_band_CategMap_SimpRS.addItems([str(x) for x in range(1, categorical_map_layer.bandCount() + 1)])
+        # enable pixel value selection
+        self.QPBtn_CategMapClassesSelection_SimpRS.setEnabled(True)
+        # update button categorical classes selection
+        if (categorical_map_layer, categorical_map_band) in SelectCategoricalMapClasses.instances:
+            classes_selection_dialog = SelectCategoricalMapClasses.instances[(categorical_map_layer, categorical_map_band)]
+            pixel_values_selected = classes_selection_dialog.classes_selected
+            if pixel_values_selected:
+                self.QPBtn_CategMapClassesSelection_SimpRS.setText(", ".join(classes_selection_dialog.classes_selected))
 
     def select_categorical_map_StraRS(self, layer):
         # first deselect/clear sampling method
@@ -395,22 +419,63 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             return
         self.nodata_CategMap_StraRS.setText(set_nodata_format(get_nodata_value(layer)))
 
-    def select_categorical_map_SystS(self, layer):
+    def select_categorical_map_SystS(self):
+        self.QPBtn_CategMapClassesSelection_SystS.setText("click to select")
         # first check
         if not valid_file_selected_in(self.QCBox_CategMap_SystS, "categorical map"):
             self.QCBox_band_CategMap_SystS.clear()
+            self.QPBtn_CategMapClassesSelection_SystS.setEnabled(False)
             return
+        categorical_map_layer = self.QCBox_CategMap_SystS.currentLayer()
+        categorical_map_band = self.QCBox_band_CategMap_SystS.currentText()
+        categorical_map_band = int(categorical_map_band) if categorical_map_band else 1
+        categorical_map_band = 1 if categorical_map_band > categorical_map_layer.bandCount() else categorical_map_band
         # check if categorical map data type is integer or byte
-        if layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
+        if categorical_map_layer.dataProvider().dataType(categorical_map_band) not in [1, 2, 3, 4, 5]:
             self.QCBox_CategMap_SystS.setCurrentIndex(-1)
             self.QCBox_band_CategMap_SystS.clear()
+            self.QPBtn_CategMapClassesSelection_SystS.setEnabled(False)
             iface.messageBar().pushMessage("AcATaMa", "Error, categorical map must be byte or integer as data type.",
                                            level=Qgis.Warning)
             return
-        # set band count
-        self.QCBox_band_CategMap_SystS.clear()
-        self.QCBox_band_CategMap_SystS.addItems([str(x) for x in range(1, layer.bandCount() + 1)])
+        # fill band list
+        if self.QCBox_band_CategMap_SystS.count() != categorical_map_layer.bandCount():
+            with block_signals_to(self.QCBox_band_CategMap_SystS):
+                self.QCBox_band_CategMap_SystS.clear()
+                self.QCBox_band_CategMap_SystS.addItems([str(x) for x in range(1, categorical_map_layer.bandCount() + 1)])
+        # enable pixel value selection
+        self.QPBtn_CategMapClassesSelection_SystS.setEnabled(True)
+        # update button categorical classes selection
+        if (categorical_map_layer, categorical_map_band) in SelectCategoricalMapClasses.instances:
+            classes_selection_dialog = SelectCategoricalMapClasses.instances[(categorical_map_layer, categorical_map_band)]
+            pixel_values_selected = classes_selection_dialog.classes_selected
+            if pixel_values_selected:
+                self.QPBtn_CategMapClassesSelection_SystS.setText(", ".join(classes_selection_dialog.classes_selected))
 
+    def select_categorical_map_classes(self, sampling_type):
+        if sampling_type == "simple":
+            categorical_map_layer = self.QCBox_CategMap_SimpRS.currentLayer()
+            categorical_map_band = int(self.QCBox_band_CategMap_SimpRS.currentText())
+            QPBtn_CategMapClassesSelection = self.QPBtn_CategMapClassesSelection_SimpRS
+        if sampling_type == "systematic":
+            categorical_map_layer = self.QCBox_CategMap_SystS.currentLayer()
+            categorical_map_band = int(self.QCBox_band_CategMap_SystS.currentText())
+            QPBtn_CategMapClassesSelection = self.QPBtn_CategMapClassesSelection_SystS
+
+        # check if instance already exists
+        if (categorical_map_layer, categorical_map_band) in SelectCategoricalMapClasses.instances:
+            classes_selection_dialog = SelectCategoricalMapClasses.instances[(categorical_map_layer, categorical_map_band)]
+        else:
+            classes_selection_dialog = SelectCategoricalMapClasses(categorical_map_layer, categorical_map_band,
+                                                                   QPBtn_CategMapClassesSelection.text())
+        # get classes picked by user
+        classes_selection_dialog.exec_()
+        classes_selected = classes_selection_dialog.classes_selected
+        # update button text
+        if classes_selected:
+            QPBtn_CategMapClassesSelection.setText(", ".join(classes_selection_dialog.classes_selected))
+        else:
+            QPBtn_CategMapClassesSelection.setText("click to select")
 
     @pyqtSlot()
     def reset_StraRS_method(self):

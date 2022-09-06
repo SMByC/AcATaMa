@@ -19,7 +19,7 @@ def test_simple_post_stratified_random_sampling(plugin, unwrap, tmpdir):
                        nodata=float(plugin.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
     categorical_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_CategMap_SimpRS,
                           band=int(plugin.dockwidget.QCBox_band_CategMap_SimpRS.currentText()))
-    categorical_values = [int(p) for p in plugin.dockwidget.pixelValuesCategMap_SimpRS.text().split(",")]
+    classes_selected = [int(p) for p in plugin.dockwidget.QPBtn_CategMapClassesSelection_SimpRS.text().split(",")]
     total_of_samples = int(plugin.dockwidget.numberOfSamples_SimpRS.value())
     min_distance = float(plugin.dockwidget.minDistance_SimpRS.value())
     number_of_neighbors = int(plugin.dockwidget.widget_generate_SimpRS.QCBox_NumberOfNeighbors.currentText())
@@ -29,7 +29,7 @@ def test_simple_post_stratified_random_sampling(plugin, unwrap, tmpdir):
     output_file = tmpdir.join('test_simple_post_stratified_random_sampling.gpkg')
 
     sampling = Sampling("simple", thematic_map, categorical_map, output_file=str(output_file))
-    sampling.generate_sampling_points(total_of_samples, min_distance, categorical_values, neighbor_aggregation,
+    sampling.generate_sampling_points(total_of_samples, min_distance, classes_selected, neighbor_aggregation,
                                       random_seed, plugin.dockwidget.widget_generate_SimpRS.QPBar_GenerateSamples)
 
     with fiona.open(pytest.tests_data_dir / "simple_post_stratified_random_sampling.gpkg") as source, \
@@ -51,10 +51,10 @@ def test_stratified_random_sampling(plugin, unwrap, tmpdir):
     categorical_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_CategMap_StraRS,
                           band=int(plugin.dockwidget.QCBox_band_CategMap_StraRS.currentText()))
 
-    categorical_values = []
+    classes_for_sampling = []
     total_of_samples = []
     for row in range(plugin.dockwidget.QTableW_StraRS.rowCount()):
-        categorical_values.append(int(plugin.dockwidget.QTableW_StraRS.item(row, 0).text()))
+        classes_for_sampling.append(int(plugin.dockwidget.QTableW_StraRS.item(row, 0).text()))
         total_of_samples.append(plugin.dockwidget.QTableW_StraRS.item(row, 2).text())
     total_of_samples = [int(ns) for ns in total_of_samples]
     number_of_neighbors = int(plugin.dockwidget.widget_generate_StraRS.QCBox_NumberOfNeighbors.currentText())
@@ -74,7 +74,7 @@ def test_stratified_random_sampling(plugin, unwrap, tmpdir):
 
     sampling = Sampling("stratified", thematic_map, categorical_map, sampling_method,
                         srs_config=srs_config, output_file=str(output_file))
-    sampling.generate_sampling_points(total_of_samples, min_distance, categorical_values, neighbor_aggregation,
+    sampling.generate_sampling_points(total_of_samples, min_distance, classes_for_sampling, neighbor_aggregation,
                                       random_seed, plugin.dockwidget.widget_generate_StraRS.QPBar_GenerateSamples)
 
     with fiona.open(pytest.tests_data_dir / "stratified_random_sampling.gpkg") as source, \

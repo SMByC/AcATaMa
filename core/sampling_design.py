@@ -56,14 +56,16 @@ def do_simple_random_sampling(dockwidget):
         categorical_map = Map(file_selected_combo_box=dockwidget.QCBox_CategMap_SimpRS,
                               band=int(dockwidget.QCBox_band_CategMap_SimpRS.currentText()))
         try:
-            categorical_values = [int(p) for p in dockwidget.pixelValuesCategMap_SimpRS.text().split(",")]
+            classes_selected = [int(p) for p in dockwidget.QPBtn_CategMapClassesSelection_SimpRS.text().split(",")]
+            if not classes_selected:
+                raise Exception
         except:
-            iface.messageBar().pushMessage("AcATaMa", "Error, wrong pixel values in post-stratify option, set only integers and separated by commas",
-                                           level=Qgis.Warning)
+            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratify option enabled but none of the classes were selected",
+                                           level=Qgis.Warning, duration=5)
             return
     else:
         categorical_map = None
-        categorical_values = None
+        classes_selected = None
 
     # check neighbors aggregation
     if dockwidget.widget_generate_SimpRS.QGBox_neighbour_aggregation.isChecked():
@@ -97,7 +99,7 @@ def do_simple_random_sampling(dockwidget):
 
     # process
     sampling = Sampling("simple", thematic_map, categorical_map, output_file=output_file)
-    sampling.generate_sampling_points(total_of_samples, min_distance, categorical_values, neighbor_aggregation,
+    sampling.generate_sampling_points(total_of_samples, min_distance, classes_selected, neighbor_aggregation,
                                       random_seed, dockwidget.widget_generate_SimpRS.QPBar_GenerateSamples)
 
     # restoring
@@ -154,10 +156,10 @@ def do_stratified_random_sampling(dockwidget):
                           nodata=float(dockwidget.nodata_CategMap_StraRS.text().strip() or "nan"))
 
     # get values from category table  #########
-    categorical_values = []
+    classes_for_sampling = []
     total_of_samples_by_cat = []
     for row in range(dockwidget.QTableW_StraRS.rowCount()):
-        categorical_values.append(int(dockwidget.QTableW_StraRS.item(row, 0).text()))
+        classes_for_sampling.append(int(dockwidget.QTableW_StraRS.item(row, 0).text()))
         total_of_samples_by_cat.append(dockwidget.QTableW_StraRS.item(row, 2).text())
     # convert and check if number of samples only positive integers
     try:
@@ -221,7 +223,7 @@ def do_stratified_random_sampling(dockwidget):
     # process
     sampling = Sampling("stratified", thematic_map, categorical_map, sampling_method,
                         srs_config=srs_config, output_file=output_file)
-    sampling.generate_sampling_points(total_of_samples_by_cat, min_distance, categorical_values, neighbor_aggregation,
+    sampling.generate_sampling_points(total_of_samples_by_cat, min_distance, classes_for_sampling, neighbor_aggregation,
                                       random_seed, dockwidget.widget_generate_StraRS.QPBar_GenerateSamples)
 
     # before process
@@ -281,14 +283,16 @@ def do_systematic_sampling(dockwidget):
         categorical_map = Map(file_selected_combo_box=dockwidget.QCBox_CategMap_SystS,
                               band=int(dockwidget.QCBox_band_CategMap_SystS.currentText()))
         try:
-            categorical_values = [int(p) for p in dockwidget.pixelValuesCategMap_SystS.text().split(",")]
+            classes_selected = [int(p) for p in dockwidget.QPBtn_CategMapClassesSelection_SystS.text().split(",")]
+            if not classes_selected:
+                raise Exception
         except:
-            iface.messageBar().pushMessage("AcATaMa", "Error, wrong pixel values in post-stratify option, set only integers and separated by commas",
-                                           level=Qgis.Warning)
+            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratify option enabled but none of the classes were selected",
+                                           level=Qgis.Warning, duration=5)
             return
     else:
         categorical_map = None
-        categorical_values = None
+        classes_selected = None
 
     # check neighbors aggregation
     if dockwidget.widget_generate_SystS.QGBox_neighbour_aggregation.isChecked():
@@ -323,8 +327,8 @@ def do_systematic_sampling(dockwidget):
     # process
     sampling = Sampling("systematic", thematic_map, categorical_map, "grid with random offset", output_file=output_file)
     sampling.generate_systematic_sampling_points(points_spacing, initial_inset, max_xy_offset,
-                                                categorical_values, neighbor_aggregation, random_seed,
-                                                dockwidget.widget_generate_SystS.QPBar_GenerateSamples)
+                                                 classes_selected, neighbor_aggregation, random_seed,
+                                                 dockwidget.widget_generate_SystS.QPBar_GenerateSamples)
 
     # restoring
     dockwidget.widget_generate_SystS.QPBtn_GenerateSamples.setText("Generate samples")
@@ -375,7 +379,7 @@ class Sampling(object):
         self.points = dict()
 
     @wait_process
-    def generate_sampling_points(self, total_of_samples, min_distance, categorical_values,
+    def generate_sampling_points(self, total_of_samples, min_distance, classes_for_sampling,
                                  neighbor_aggregation, random_seed, progress_bar):
         """Some code base from (by Alexander Bruy):
         https://github.com/qgis/QGIS/blob/release-2_18/python/plugins/processing/algs/qgis/RandomPointsExtent.py
@@ -383,7 +387,7 @@ class Sampling(object):
         self.total_of_samples = total_of_samples  # desired
         self.samples_generated = None  # total generated
         self.min_distance = min_distance
-        self.categorical_values = categorical_values
+        self.classes_for_sampling = classes_for_sampling
         self.neighbor_aggregation = neighbor_aggregation
         progress_bar.setValue(0)  # init progress bar
 
@@ -465,14 +469,14 @@ class Sampling(object):
 
     @wait_process
     def generate_systematic_sampling_points(self, points_spacing, initial_inset, max_xy_offset,
-                                            categorical_values, neighbor_aggregation, random_seed, progress_bar):
+                                            classes_for_sampling, neighbor_aggregation, random_seed, progress_bar):
         """Some code base from (by Alexander Bruy):
         https://github.com/qgis/QGIS/blob/master/python/plugins/processing/algs/qgis/RegularPoints.py
         """
         self.points_spacing = points_spacing
         self.initial_inset = initial_inset
         self.max_xy_offset = max_xy_offset
-        self.categorical_values = categorical_values
+        self.classes_for_sampling = classes_for_sampling
         self.neighbor_aggregation = neighbor_aggregation
         self.samples_generated = None  # total generated
         progress_bar.setValue(0)  # init progress bar
@@ -569,11 +573,11 @@ class Sampling(object):
                 return False
 
         if self.sampling_type in ["simple", "systematic"]:
-            if not sampling_point.in_categorical_map_post_stratify(self.categorical_values, self.categorical_map):
+            if not sampling_point.in_categorical_map_post_stratify(self.classes_for_sampling, self.categorical_map):
                 return False
 
         if self.sampling_type == "stratified":
-            if not sampling_point.in_categorical_map_StraRS(self.categorical_values, self.total_of_samples,
+            if not sampling_point.in_categorical_map_StraRS(self.classes_for_sampling, self.total_of_samples,
                                                             self.categorical_map, self.samples_in_categories):
                 return False
 

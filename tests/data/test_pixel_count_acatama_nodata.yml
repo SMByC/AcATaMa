@@ -15,7 +15,7 @@
         min_neighbors_with_the_same_class: '1'
         num_neighbors: '8'
         num_samples: 10
-        pixel_values_categ_map: ''
+        classes_selected_for_sampling: ''
         post_stratify: false
         random_sampling_options: false
         random_seed_by_user: ''
