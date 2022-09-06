@@ -81,6 +81,7 @@ def save(file_out):
     data["sampling_design"]["simple_random_sampling"] = {
         "num_samples": AcATaMa.dockwidget.numberOfSamples_SimpRS.value(),
         "min_distance": AcATaMa.dockwidget.minDistance_SimpRS.value(),
+
         "post_stratify": AcATaMa.dockwidget.QGBox_SimpRSwithCR.isChecked(),
         "categ_map_path": get_current_file_path_in(AcATaMa.dockwidget.QCBox_CategMap_SimpRS, show_message=False),
         "categ_map_band": int(AcATaMa.dockwidget.QCBox_band_CategMap_SimpRS.currentText())
@@ -122,6 +123,25 @@ def save(file_out):
         "automatic_random_seed": AcATaMa.dockwidget.widget_generate_StraRS.automatic_random_seed.isChecked(),
         "with_random_seed_by_user": AcATaMa.dockwidget.widget_generate_StraRS.with_random_seed_by_user.isChecked(),
         "random_seed_by_user": AcATaMa.dockwidget.widget_generate_StraRS.random_seed_by_user.text(),
+    }
+    # systematic sampling
+    data["sampling_design"]["systematic_sampling"] = {
+        "points_spacing": AcATaMa.dockwidget.PointsSpacing_SystS.value(),
+        "initial_inset": AcATaMa.dockwidget.InitialInset_SystS.value(),
+        "max_xy_offset": AcATaMa.dockwidget.MaxXYoffset_SystS.value(),
+
+        "post_stratify": AcATaMa.dockwidget.QGBox_SystSwithCR.isChecked(),
+        "categ_map_path": get_current_file_path_in(AcATaMa.dockwidget.QCBox_CategMap_SystS, show_message=False),
+        "categ_map_band": int(AcATaMa.dockwidget.QCBox_band_CategMap_SystS.currentText())
+        if AcATaMa.dockwidget.QCBox_band_CategMap_SystS.currentText() != '' else -1,
+        "classes_selected_for_sampling": AcATaMa.dockwidget.QPBtn_CategMapClassesSelection_SystS.text(),
+        "with_neighbors_aggregation": AcATaMa.dockwidget.widget_generate_SystS.QGBox_neighbour_aggregation.isChecked(),
+        "num_neighbors": AcATaMa.dockwidget.widget_generate_SystS.QCBox_NumberOfNeighbors.currentText(),
+        "min_neighbors_with_the_same_class": AcATaMa.dockwidget.widget_generate_SystS.QCBox_SameClassOfNeighbors.currentText(),
+        "random_sampling_options": AcATaMa.dockwidget.widget_generate_SystS.QGBox_random_sampling_options.isChecked(),
+        "automatic_random_seed": AcATaMa.dockwidget.widget_generate_SystS.automatic_random_seed.isChecked(),
+        "with_random_seed_by_user": AcATaMa.dockwidget.widget_generate_SystS.with_random_seed_by_user.isChecked(),
+        "random_seed_by_user": AcATaMa.dockwidget.widget_generate_SystS.random_seed_by_user.text(),
     }
 
     # ######### response design configuration ######### #
@@ -337,6 +357,46 @@ def restore(yml_file_path):
             yaml_config["sampling_design"]["stratified_random_sampling"]['with_random_seed_by_user'])
         AcATaMa.dockwidget.widget_generate_StraRS.random_seed_by_user.setText(
             yaml_config["sampling_design"]["stratified_random_sampling"]['random_seed_by_user'])
+
+        # systematic sampling
+        if "systematic_sampling" in yaml_config["sampling_design"]:
+            AcATaMa.dockwidget.PointsSpacing_SystS.setValue(
+                yaml_config["sampling_design"]["systematic_sampling"]['points_spacing'])
+            AcATaMa.dockwidget.InitialInset_SystS.setValue(
+                yaml_config["sampling_design"]["systematic_sampling"]['initial_inset'])
+            AcATaMa.dockwidget.MaxXYoffset_SystS.setValue(
+                yaml_config["sampling_design"]["systematic_sampling"]['max_xy_offset'])
+
+            AcATaMa.dockwidget.QGBox_SystSwithCR.setChecked(
+                yaml_config["sampling_design"]["systematic_sampling"]['post_stratify'])
+            AcATaMa.dockwidget.widget_SystSwithCR.setVisible(
+                yaml_config["sampling_design"]["systematic_sampling"]['post_stratify'])
+            load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_CategMap_SystS,
+                                        get_restore_path(yaml_config["sampling_design"]["systematic_sampling"]['categ_map_path']))
+            AcATaMa.dockwidget.select_categorical_map_SystS()
+            AcATaMa.dockwidget.QCBox_band_CategMap_SystS.setCurrentIndex(
+                yaml_config["sampling_design"]["systematic_sampling"]['categ_map_band'] - 1)
+            AcATaMa.dockwidget.QPBtn_CategMapClassesSelection_SystS.setText(
+                yaml_config["sampling_design"]["systematic_sampling"]['classes_selected_for_sampling'])
+
+            AcATaMa.dockwidget.widget_generate_SystS.QGBox_neighbour_aggregation.setChecked(
+                yaml_config["sampling_design"]["systematic_sampling"]['with_neighbors_aggregation'])
+            AcATaMa.dockwidget.widget_generate_SystS.widget_neighbour_aggregation.setVisible(
+                yaml_config["sampling_design"]["systematic_sampling"]['with_neighbors_aggregation'])
+            select_item_in(AcATaMa.dockwidget.widget_generate_SystS.QCBox_NumberOfNeighbors,
+                           yaml_config["sampling_design"]["systematic_sampling"]['num_neighbors'])
+            select_item_in(AcATaMa.dockwidget.widget_generate_SystS.QCBox_SameClassOfNeighbors,
+                           yaml_config["sampling_design"]["systematic_sampling"]['min_neighbors_with_the_same_class'])
+            AcATaMa.dockwidget.widget_generate_SystS.QGBox_random_sampling_options.setChecked(
+                yaml_config["sampling_design"]["systematic_sampling"]['random_sampling_options'])
+            AcATaMa.dockwidget.widget_generate_SystS.widget_random_sampling_options.setVisible(
+                yaml_config["sampling_design"]["systematic_sampling"]['random_sampling_options'])
+            AcATaMa.dockwidget.widget_generate_SystS.automatic_random_seed.setChecked(
+                yaml_config["sampling_design"]["systematic_sampling"]['automatic_random_seed'])
+            AcATaMa.dockwidget.widget_generate_SystS.with_random_seed_by_user.setChecked(
+                yaml_config["sampling_design"]["systematic_sampling"]['with_random_seed_by_user'])
+            AcATaMa.dockwidget.widget_generate_SystS.random_seed_by_user.setText(
+                yaml_config["sampling_design"]["systematic_sampling"]['random_seed_by_user'])
 
     # ######### response_design configuration ######### #
     # restore the response_design settings
