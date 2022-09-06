@@ -1,20 +1,21 @@
 !!python/object/apply:collections.OrderedDict
-- - - thematic_map
+- - - general
+    - config_file_version: 220905
+      tab_activated: 0
+  - - thematic_map
     - band: 2
-      nodata: 0
+      nodata: '0'
       path: test_stack.tif
-  - - general
-    - tab_activated: 0
   - - sampling_design
     - simple_random_sampling:
         automatic_random_seed: true
         categ_map_band: -1
         categ_map_path: null
+        classes_selected_for_sampling: ''
         min_distance: 0.0
         min_neighbors_with_the_same_class: '1'
         num_neighbors: '8'
         num_samples: 10
-        classes_selected_for_sampling: ''
         post_stratify: false
         random_sampling_options: false
         random_seed_by_user: ''
@@ -23,7 +24,7 @@
       stratified_random_sampling:
         automatic_random_seed: true
         categ_map_band: 2
-        categ_map_nodata: 0
+        categ_map_nodata: '0'
         categ_map_path: test_stack.tif
         min_distance: 0.0
         min_neighbors_with_the_same_class: '1'
@@ -33,6 +34,21 @@
         random_seed_by_user: ''
         sampling_random_method: ''
         stratified_random_sampling_table: null
+        with_neighbors_aggregation: false
+        with_random_seed_by_user: false
+      systematic_sampling:
+        automatic_random_seed: true
+        categ_map_band: -1
+        categ_map_path: null
+        classes_selected_for_sampling: click to select
+        initial_inset: 0.0
+        max_xy_offset: 0.0
+        min_neighbors_with_the_same_class: '1'
+        num_neighbors: '8'
+        points_spacing: 0.0
+        post_stratify: false
+        random_sampling_options: false
+        random_seed_by_user: ''
         with_neighbors_aggregation: false
         with_random_seed_by_user: false
       tab_activated: 1

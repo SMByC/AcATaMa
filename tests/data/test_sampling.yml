@@ -1,6 +1,6 @@
 !!python/object/apply:collections.OrderedDict
 - - - general
-    - config_file_version: '22'
+    - config_file_version: 220905
       tab_activated: 0
   - - thematic_map
     - band: 2

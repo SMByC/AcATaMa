@@ -1,6 +1,6 @@
 !!python/object/apply:collections.OrderedDict
 - - - general
-    - config_file_version: '22'
+    - config_file_version: 220905
       tab_activated: 0
   - - thematic_map
     - band: 1
@@ -11,11 +11,11 @@
         automatic_random_seed: true
         categ_map_band: -1
         categ_map_path: null
+        classes_selected_for_sampling: click to select
         min_distance: 0.0
         min_neighbors_with_the_same_class: '1'
         num_neighbors: '8'
         num_samples: 10
-        classes_selected_for_sampling: ''
         post_stratify: false
         random_sampling_options: false
         random_seed_by_user: ''
@@ -81,7 +81,22 @@
             - 202
         with_neighbors_aggregation: false
         with_random_seed_by_user: false
-      tab_activated: 1
+      systematic_sampling:
+        automatic_random_seed: true
+        categ_map_band: -1
+        categ_map_path: null
+        classes_selected_for_sampling: click to select
+        initial_inset: 0.0
+        max_xy_offset: 0.0
+        min_neighbors_with_the_same_class: '1'
+        num_neighbors: '8'
+        points_spacing: 0.0
+        post_stratify: false
+        random_sampling_options: false
+        random_seed_by_user: ''
+        with_neighbors_aggregation: false
+        with_random_seed_by_user: false
+      tab_activated: 0
   - - analysis
     - sampling_file: null
       sampling_type: -1
