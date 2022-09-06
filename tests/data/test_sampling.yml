@@ -1,20 +1,21 @@
 !!python/object/apply:collections.OrderedDict
-- - - thematic_map
+- - - general
+    - config_file_version: '22'
+      tab_activated: 0
+  - - thematic_map
     - band: 2
-      nodata: 0
+      nodata: '0'
       path: test_stack.tif
-  - - general
-    - tab_activated: 0
   - - sampling_design
     - simple_random_sampling:
         automatic_random_seed: false
         categ_map_band: 2
         categ_map_path: test_stack.tif
+        classes_selected_for_sampling: 35,46
         min_distance: 1000.0
         min_neighbors_with_the_same_class: '4'
         num_neighbors: '8'
         num_samples: 100
-        classes_selected_for_sampling: 35,46
         post_stratify: true
         random_sampling_options: true
         random_seed_by_user: '12345'
@@ -23,12 +24,12 @@
       stratified_random_sampling:
         automatic_random_seed: false
         categ_map_band: 2
-        categ_map_nodata: 0
+        categ_map_nodata: '0'
         categ_map_path: test_stack.tif
         min_distance: 500.0
         min_neighbors_with_the_same_class: '2'
         num_neighbors: '8'
-        overall_std_error: 0.0070000000000000045
+        overall_std_error: 0.007
         random_sampling_options: true
         random_seed_by_user: '12345'
         sampling_random_method: Area based proportion (using overall std error)
@@ -197,7 +198,22 @@
             - 175
         with_neighbors_aggregation: true
         with_random_seed_by_user: true
-      tab_activated: 1
+      systematic_sampling:
+        automatic_random_seed: false
+        categ_map_band: 2
+        categ_map_path: test_stack.tif
+        classes_selected_for_sampling: 35, 46
+        initial_inset: 500.0
+        max_xy_offset: 200.0
+        min_neighbors_with_the_same_class: '3'
+        num_neighbors: '8'
+        points_spacing: 2000.0
+        post_stratify: true
+        random_sampling_options: true
+        random_seed_by_user: '4321'
+        with_neighbors_aggregation: true
+        with_random_seed_by_user: true
+      tab_activated: 2
   - - analysis
     - sampling_file: null
       sampling_type: 2

@@ -82,3 +82,37 @@ def test_stratified_random_sampling(plugin, unwrap, tmpdir):
         for s, t in zip(source, target):
             assert shape(s['geometry']).equals(shape(t['geometry']))
 
+
+def test_systematic_post_stratified_random_sampling(plugin, unwrap, tmpdir):
+    # restore
+    input_yml_path = pytest.tests_data_dir / "test_sampling.yml"
+    config_restore = unwrap(config.restore)
+    config_restore(input_yml_path)
+
+    # load simple post stratify random sampling config
+    thematic_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
+                       band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
+                       nodata=float(plugin.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
+    categorical_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_CategMap_SystS,
+                          band=int(plugin.dockwidget.QCBox_band_CategMap_SystS.currentText()))
+    points_spacing = float(plugin.dockwidget.PointsSpacing_SystS.value())
+    initial_inset = float(plugin.dockwidget.InitialInset_SystS.value())
+    max_xy_offset = float(plugin.dockwidget.MaxXYoffset_SystS.value())
+
+    classes_selected = [int(p) for p in plugin.dockwidget.QPBtn_CategMapClassesSelection_SystS.text().split(",")]
+    number_of_neighbors = int(plugin.dockwidget.widget_generate_SystS.QCBox_NumberOfNeighbors.currentText())
+    same_class_of_neighbors = int(plugin.dockwidget.widget_generate_SystS.QCBox_SameClassOfNeighbors.currentText())
+    neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
+    random_seed = int(plugin.dockwidget.widget_generate_SystS.random_seed_by_user.text())
+    output_file = tmpdir.join('test_systematic_post_stratified_random_sampling.gpkg')
+
+    sampling = Sampling("systematic", thematic_map, categorical_map, output_file=str(output_file))
+    sampling.generate_systematic_sampling_points(points_spacing, initial_inset, max_xy_offset,
+                                                 classes_selected, neighbor_aggregation, random_seed,
+                                                 plugin.dockwidget.widget_generate_SystS.QPBar_GenerateSamples)
+
+    with fiona.open(pytest.tests_data_dir / "systematic_sampling.gpkg") as source, \
+            fiona.open(str(output_file)) as target:
+        for s, t in zip(source, target):
+            assert shape(s['geometry']).equals(shape(t['geometry']))
+
