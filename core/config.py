@@ -64,7 +64,7 @@ def save(file_out):
 
     # ######### general configuration ######### #
     data["general"] = \
-        {"config_file_version": re.sub('\D', '', VERSION),
+        {"config_file_version": int(''.join(['{:0>2}'.format(re.sub('\D', '', x)) for x in VERSION.split('.')])),
          "tab_activated": AcATaMa.dockwidget.tabWidget.currentIndex()}
 
     # ######### thematic ######### #
@@ -219,7 +219,7 @@ def restore(yml_file_path):
     # ######### general configuration ######### #
     global CONFIG_FILE_VERSION
     if "general" in yaml_config and "config_file_version" in yaml_config["general"]:
-        CONFIG_FILE_VERSION = int(yaml_config["general"]["config_file_version"])
+        CONFIG_FILE_VERSION = yaml_config["general"]["config_file_version"]
     else:
         CONFIG_FILE_VERSION = 191121  # v19.11.21
 
