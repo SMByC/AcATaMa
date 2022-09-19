@@ -1,35 +1,33 @@
+---
+layout: default
+---
+
 # AcATaMa
 
 ![](img/acatama.svg)
 
-The AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps. It was designed mainly for: to assess the accuracy of thematic maps, to estimate areas of the map classes, sampling design, response design and others.
-
-The AcATaMa plugin was designed mainly with these keys goals:
-
-1. To assess the accuracy of thematic maps
-
-2. To estimate areas of the map classes (for example land cover and land change), according to Olofsson et al. (2013, 2014).
-
-3. Sampling design/classification
-
-But nevertheless, you can use AcATaMa for many different uses.
+AcATaMa is a Qgis plugin that provides comprehensive support for sampling, labelling and estimation in a design-based 
+inference framework. The primary goal of AcATaMa is to provide users with the necessary tools to comply with international 
+guidance and best practices for sampling design, estimating land category areas and land change, and for assessing map accuracy.
 
 ![](img/overview.jpg)
 
-The plugin allow to apply the methodology and main recommendations included (mainly) in these papers:
+AcATaMa provides several sampling designs and estimators, but also comprehensive support for the response design process (see response design). AcATaMa has been manually tested with multiple real examples for all user cases in order to guarantee the quality of the results, some of them have been implemented as [unit tests](https://github.com/SMByC/AcATaMa/actions/workflows/tests.yml).
+
+AcATaMa implements equations, methodologies and recommendations from (primarily) the following widely accepted papers, and we recommend reading for theoretical support on how AcATaMa works:
+
++ *Stehman, S. V., & Czaplewski, R. L. (1998). Design and analysis for thematic map accuracy assessment: fundamental principles. Remote sensing of environment, 66(3), 311-326. [Link](https://doi.org/10.1016/S0034-4257(98)00010-8)*
 
 + *Olofsson, P., Herold, M., Stehman, S. V., Woodcock, C. E. & , M. A. Wulder. 2014. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57. [Link](https://www.sciencedirect.com/science/article/pii/S0034425714000704)*
 
 + *Olofsson, P., Foody, G. M., Stehman, S. V. & C. E. Woodcock. 2013. Making better use of accuracy data in land change studies: Estimating accuracy and area and quantifying uncertainty using stratified estimation. Remote Sensing of Environment, 129:122–131. [Link](https://www.sciencedirect.com/science/article/pii/S0034425712004191?via%3Dihub)*
 
-AcATaMa is divided and ordered by four tabs/sections:
+Next >> [Thematic map](#thematic-map)
 
-1. [Thematic](#1-thematic-map)
-2. [Sampling](#2-sampling-design)
-3. [Classification](#3-classification)
-4. [Accuracy Assessment](#4-accuracy-assessment)
-
-<img src="img/dock_main.png" width="60%">
++ [Thematic map](#thematic-map)
++ [Sampling design](#sampling-design)
++ [Response design](#response-design)
++ [Analysis](#analysis)
 
 At the bottom of the plugin there are 3 buttons:
 
