@@ -1,0 +1,16 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+body {
+    color: #484848;
+}
+
+div.wrapper section {
+    width: 630px;
+}
+
+body div.wrapper {
+    width: 930px;
+}
