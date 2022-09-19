@@ -4,7 +4,7 @@
 @import "{{ site.theme }}";
 
 body {
-    color: #484848;
+    color: #595959;
 }
 
 div.wrapper section {
@@ -13,4 +13,10 @@ div.wrapper section {
 
 body div.wrapper {
     width: 930px;
+}
+
+body div.wrapper div.sidebar header div.header-title img.logo {
+    -webkit-border-radius: 0%;
+    -moz-border-radius: 0%;
+    border-radius: 0%;
 }

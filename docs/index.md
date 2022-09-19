@@ -4,17 +4,20 @@ layout: default
 
 # AcATaMa
 
-![](img/acatama.svg)
-
-AcATaMa is a Qgis plugin that provides comprehensive support for sampling, labelling and estimation in a design-based 
-inference framework. The primary goal of AcATaMa is to provide users with the necessary tools to comply with international 
-guidance and best practices for sampling design, estimating land category areas and land change, and for assessing map accuracy.
+AcATaMa (sort for Accuracy Assessment of Thematic Maps) is a Qgis plugin that provides comprehensive support for sampling, 
+labelling and estimation in a design-based inference framework. The primary goal of AcATaMa is to provide users with the 
+necessary tools to comply with international guidance and best practices for sampling design, estimating land category areas 
+and land change, and for assessing map accuracy.
 
 ![](img/overview.jpg)
 
-AcATaMa provides several sampling designs and estimators, but also comprehensive support for the response design process (see response design). AcATaMa has been manually tested with multiple real examples for all user cases in order to guarantee the quality of the results, some of them have been implemented as [unit tests](https://github.com/SMByC/AcATaMa/actions/workflows/tests.yml).
+AcATaMa provides several sampling designs and estimators, but also comprehensive support for the response design process 
+(see response design). AcATaMa has been manually tested with multiple real examples for all user cases in order to 
+guarantee the quality of the results, some of them have been implemented as 
+[unit tests](https://github.com/SMByC/AcATaMa/actions/workflows/tests.yml).
 
-AcATaMa implements equations, methodologies and recommendations from (primarily) the following widely accepted papers, and we recommend reading for theoretical support on how AcATaMa works:
+AcATaMa implements equations, methodologies and recommendations from (primarily) the following widely accepted papers, 
+and we recommend reading for theoretical support on how AcATaMa works:
 
 + *Stehman, S. V., & Czaplewski, R. L. (1998). Design and analysis for thematic map accuracy assessment: fundamental principles. Remote sensing of environment, 66(3), 311-326. [Link](https://doi.org/10.1016/S0034-4257(98)00010-8)*
 

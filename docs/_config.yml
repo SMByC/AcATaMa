@@ -18,8 +18,6 @@ navigation:
     link: ./index.html
   - name: Thematic map
     link: ./thematic_map.html
-  - name: Thematic map
-    link: ./thematic_map.html
   - name: Sampling design
     link: ./sampling_design.html
   - name: Response design
