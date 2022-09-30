@@ -28,7 +28,7 @@ from qgis.PyQt.QtWidgets import QTableWidgetItem, QSplitter, QColorDialog, QDial
 from qgis.PyQt.QtGui import QColor, QIcon
 from qgis.gui import QgsRubberBand
 from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, Qgis, QgsProject, QgsUnitTypes, \
-    QgsRectangle, QgsPointXY, QgsGeometry
+    QgsRectangle, QgsPointXY, QgsGeometry, QgsWkbTypes
 
 from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, get_current_file_path_in, \
@@ -802,4 +802,4 @@ class Tile(object):
                 self.create(view_widget.render_widget.canvas)
 
     def hide(self):
-        [rubber_band.reset() for rubber_band in self.rbs_in_response_design_window]
+        [rubber_band.reset(QgsWkbTypes.PolygonGeometry) for rubber_band in self.rbs_in_response_design_window]

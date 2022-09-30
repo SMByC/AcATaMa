@@ -141,6 +141,9 @@ class RenderWidget(QWidget):
             # show marker
             if ResponseDesignWindow.current_sample:
                 self.marker.show(ResponseDesignWindow.current_sample)
+            # update square rubber band for current and sample unit markers
+            ResponseDesignWindow.instance.show_the_current_pixel()
+            ResponseDesignWindow.instance.show_the_sample_unit()
 
     def set_extents_and_scalefactor(self, extent):
         with block_signals_to(self.canvas):
@@ -181,7 +184,7 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
         # ignore and not show the sampling layer
         self.QCBox_RenderFile.setExceptedLayerList([self.sampling_layer])
         # handle connect layer selection with render canvas
-        self.QCBox_RenderFile.currentIndexChanged.connect(lambda: self.set_render_layer(self.QCBox_RenderFile.currentLayer()))
+        self.QCBox_RenderFile.layerChanged.connect(self.set_render_layer)
         # call to browse the render file
         self.QCBox_browseRenderFile.clicked.connect(lambda: self.browser_dialog_to_load_file(
             self.QCBox_RenderFile,
@@ -218,6 +221,11 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
             self.render_widget.canvas.setCanvasColor(QColor(245, 245, 245))
             # set status for view widget
             self.is_active = False
+
+        # update square rubber band for current and sample unit markers
+        from AcATaMa.gui.response_design_window import ResponseDesignWindow
+        ResponseDesignWindow.instance.show_the_current_pixel()
+        ResponseDesignWindow.instance.show_the_sample_unit()
 
     def set_render_layer(self, layer):
         if not layer:

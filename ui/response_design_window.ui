@@ -102,9 +102,6 @@
                  <property name="toolTip">
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Define the sample unit size using pixel buffer for the current sample. Pixel based on the thematic raster file. Set zero to disable it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
-                 <property name="sizeAdjustPolicy">
-                  <enum>QComboBox::AdjustToContents</enum>
-                 </property>
                  <property name="frame">
                   <bool>false</bool>
                  </property>
