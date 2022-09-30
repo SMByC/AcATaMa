@@ -15,7 +15,7 @@ color-scheme: auto
 # Navigation
 navigation:
   - name: Home Page
-    link: ./index.html
+    link: ./
   - name: Thematic map
     link: ./thematic_map.html
   - name: Sampling design
