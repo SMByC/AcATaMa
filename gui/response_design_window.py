@@ -125,12 +125,12 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         self.current_sample_idx = self.response_design.current_sample_idx
         self.current_sample = None
         self.pixel_tile = None
-        self.sample_unit = None
-        self.SampleUnit_Size.setCurrentIndex(self.response_design.sample_unit_pixel_buffer)
+        self.sampling_unit = None
+        self.SamplingUnit_Size.setCurrentIndex(self.response_design.sampling_unit_pixel_buffer)
         self.set_current_sample()
-        self.change_sample_unit_color(color=self.response_design.sample_unit_color)
-        self.SampleUnit_Color.clicked.connect(self.change_sample_unit_color)
-        self.SampleUnit_Size.currentIndexChanged.connect(self.show_the_sample_unit)
+        self.change_sampling_unit_color(color=self.response_design.sampling_unit_color)
+        self.SamplingUnit_Color.clicked.connect(self.change_sampling_unit_color)
+        self.SamplingUnit_Size.currentIndexChanged.connect(self.show_the_sampling_unit)
         # set labeling buttons
         self.labeling_btns_config = LabelingButtonsConfig(self.response_design.buttons_config)
         self.create_labeling_buttons(buttons_config=self.response_design.buttons_config)
@@ -361,25 +361,25 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         loop.exec_()
 
     @pyqtSlot()
-    def change_sample_unit_color(self, color=None):
+    def change_sampling_unit_color(self, color=None):
         if not color:
-            color = QColorDialog.getColor(self.response_design.sample_unit_color, self)
+            color = QColorDialog.getColor(self.response_design.sampling_unit_color, self)
         if color.isValid():
-            self.response_design.sample_unit_color = color
-            self.SampleUnit_Color.setStyleSheet("QToolButton{{background-color:{};}}".format(color.name()))
-            self.show_the_sample_unit()
+            self.response_design.sampling_unit_color = color
+            self.SamplingUnit_Color.setStyleSheet("QToolButton{{background-color:{};}}".format(color.name()))
+            self.show_the_sampling_unit()
 
     @pyqtSlot()
-    def show_the_sample_unit(self):
-        if self.sample_unit:
-            self.sample_unit.hide()
-        pixel_buffer = int(self.SampleUnit_Size.currentText())
-        self.response_design.sample_unit_pixel_buffer = pixel_buffer
+    def show_the_sampling_unit(self):
+        if self.sampling_unit:
+            self.sampling_unit.hide()
+        pixel_buffer = int(self.SamplingUnit_Size.currentText())
+        self.response_design.sampling_unit_pixel_buffer = pixel_buffer
         if pixel_buffer > 0:
-            sample_unit = self.current_sample.get_thematic_pixel(with_buffer=pixel_buffer)
-            if sample_unit:
-                self.sample_unit = Tile(*sample_unit, self.response_design.sample_unit_color)
-                self.sample_unit.show()
+            sampling_unit = self.current_sample.get_thematic_pixel(with_buffer=pixel_buffer)
+            if sampling_unit:
+                self.sampling_unit = Tile(*sampling_unit, self.response_design.sampling_unit_color)
+                self.sampling_unit.show()
 
     @pyqtSlot()
     def show_the_current_pixel(self):
@@ -404,7 +404,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
                     view_widget.render_widget.marker.highlight()
 
         self.show_the_current_pixel()
-        self.show_the_sample_unit()
+        self.show_the_sampling_unit()
 
     @pyqtSlot()
     def next_sample(self):

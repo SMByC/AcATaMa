@@ -141,9 +141,9 @@ class RenderWidget(QWidget):
             # show marker
             if ResponseDesignWindow.current_sample:
                 self.marker.show(ResponseDesignWindow.current_sample)
-            # update square rubber band for current and sample unit markers
+            # update square rubber band for current and sampling unit markers
             ResponseDesignWindow.instance.show_the_current_pixel()
-            ResponseDesignWindow.instance.show_the_sample_unit()
+            ResponseDesignWindow.instance.show_the_sampling_unit()
 
     def set_extents_and_scalefactor(self, extent):
         with block_signals_to(self.canvas):
@@ -222,10 +222,10 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
             # set status for view widget
             self.is_active = False
 
-        # update square rubber band for current and sample unit markers
+        # update square rubber band for current and sampling unit markers
         from AcATaMa.gui.response_design_window import ResponseDesignWindow
         ResponseDesignWindow.instance.show_the_current_pixel()
-        ResponseDesignWindow.instance.show_the_sample_unit()
+        ResponseDesignWindow.instance.show_the_sampling_unit()
 
     def set_render_layer(self, layer):
         if not layer:

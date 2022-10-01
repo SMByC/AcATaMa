@@ -47,9 +47,9 @@
       rows: 1
   - - current_sample_idx
     - 1
-  - - sample_unit_pixel_buffer
+  - - sampling_unit_pixel_buffer
     - 2
-  - - sample_unit_color
+  - - sampling_unit_color
     - '#60ff7a'
   - - fit_to_sample
     - 2000.0

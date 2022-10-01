@@ -155,8 +155,8 @@ def save(file_out):
         data["dialog_size"] = response_design.dialog_size
         data["grid_view_widgets"] = {"columns": response_design.grid_columns, "rows": response_design.grid_rows}
         data["current_sample_idx"] = response_design.current_sample_idx
-        data["sample_unit_pixel_buffer"] = response_design.sample_unit_pixel_buffer
-        data["sample_unit_color"] = response_design.sample_unit_color.name()
+        data["sampling_unit_pixel_buffer"] = response_design.sampling_unit_pixel_buffer
+        data["sampling_unit_color"] = response_design.sampling_unit_color.name()
         data["fit_to_sample"] = response_design.fit_to_sample
         data["is_completed"] = response_design.is_completed
         data["view_widgets_config"] = response_design.view_widgets_config
@@ -416,10 +416,10 @@ def restore(yml_file_path):
         response_design.grid_columns = yaml_config["grid_view_widgets"]["columns"]
         response_design.grid_rows = yaml_config["grid_view_widgets"]["rows"]
         response_design.current_sample_idx = yaml_config["current_sample_idx"]
-        if "sample_unit_pixel_buffer" in yaml_config:
-            response_design.sample_unit_pixel_buffer = yaml_config["sample_unit_pixel_buffer"]
-        if "sample_unit_color" in yaml_config:
-            response_design.sample_unit_color = QColor(yaml_config["sample_unit_color"])
+        if "sampling_unit_pixel_buffer" in yaml_config:
+            response_design.sampling_unit_pixel_buffer = yaml_config["sampling_unit_pixel_buffer"]
+        if "sampling_unit_color" in yaml_config:
+            response_design.sampling_unit_color = QColor(yaml_config["sampling_unit_color"])
         response_design.fit_to_sample = yaml_config["fit_to_sample"]
         response_design.is_completed = yaml_config["is_completed"]
         # restore the buttons config

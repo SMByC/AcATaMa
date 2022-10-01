@@ -80,7 +80,7 @@
             <item>
              <widget class="QLabel" name="label_5">
               <property name="text">
-               <string>Sample unit</string>
+               <string>Sampling unit</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -98,9 +98,9 @@
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="SampleUnit_Size">
+                <widget class="QComboBox" name="SamplingUnit_Size">
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Define the sample unit size using pixel buffer for the current sample. Pixel based on the thematic raster file. Set zero to disable it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Define the sampling unit size using pixel buffer for the current sample. Pixel based on the thematic raster file. Set zero to disable it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="frame">
                   <bool>false</bool>
@@ -138,7 +138,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QToolButton" name="SampleUnit_Color">
+                <widget class="QToolButton" name="SamplingUnit_Color">
                  <property name="maximumSize">
                   <size>
                    <width>20</width>
@@ -149,7 +149,7 @@
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>Select the color for the sample unit</string>
+                  <string>Select the color for the sampling unit</string>
                  </property>
                  <property name="styleSheet">
                   <string notr="true">
