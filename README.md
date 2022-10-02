@@ -1,4 +1,7 @@
 # AcATaMa #
+
+> After more than 2 years new version with several features is coming soon, stay tuned!
+
 [![Tests](https://github.com/SMByC/AcATaMa/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/SMByC/AcATaMa/actions/workflows/tests.yml)
 
 ![](icons/acatama.svg)
