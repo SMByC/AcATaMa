@@ -1783,17 +1783,17 @@ It set automatically from image if the layer has the nodata value set.</string>
                     </property>
                     <item>
                      <property name="text">
-                      <string>Simple random sampling</string>
+                      <string>Simple estimator</string>
                      </property>
                     </item>
                     <item>
                      <property name="text">
-                      <string>Simple random sampling post-stratified</string>
+                      <string>Simple post-stratified estimator</string>
                      </property>
                     </item>
                     <item>
                      <property name="text">
-                      <string>Stratified random sampling</string>
+                      <string>Stratified estimator</string>
                      </property>
                     </item>
                    </widget>
