@@ -216,4 +216,4 @@
       tab_activated: 2
   - - analysis
     - sampling_file: null
-      sampling_type: 2
+      estimator: 2

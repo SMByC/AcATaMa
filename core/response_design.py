@@ -71,12 +71,12 @@ class ResponseDesign(object):
         self.total_unlabel = self.num_points
         # when all points are labeled
         self.is_completed = False
-        # sampling type needs for accuracy assessment results
+        # estimator needs for accuracy assessment results
         # -1 = None
         #  0 = Simple random sampling
         #  1 = Simple random sampling post-stratified
         #  2 = Stratified random sampling
-        self.sampling_type = -1
+        self.estimator = -1
         # for store the instance of the analysis results
         self.analysis = None
 

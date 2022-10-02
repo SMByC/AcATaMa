@@ -99,4 +99,4 @@
       tab_activated: 0
   - - analysis
     - sampling_file: null
-      sampling_type: -1
+      estimator: -1

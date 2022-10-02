@@ -108,4 +108,4 @@
         csv_separator: ;
         z_score: 1.96
       sampling_file: /home/xavier/Data/SMByC/Acatama/stratified_random_sampling.shp
-      sampling_type: 0
+      estimator: 0

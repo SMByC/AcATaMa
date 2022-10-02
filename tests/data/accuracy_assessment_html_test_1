@@ -31,7 +31,7 @@
         </style>
         </head>
         <body>
-        <h2>Analysis - Accuracy assessment results</h2><p><strong>Thematic map:</strong> stack.tif</p><p><strong>Sampling file:</strong> stratified_random_sampling.shp</p><p><strong>Sampling type:</strong> Simple random sampling</p><p><strong>Response design state:</strong> 2/2 samples labeled</p><p style='font-size:2px'><br/></p><h3>1) Error matrix:</h3>
+        <h2>Analysis - Accuracy assessment results</h2><p><strong>Thematic map:</strong> stack.tif</p><p><strong>Sampling file:</strong> stratified_random_sampling.shp</p><p><strong>Estimator:</strong> Simple random sampling</p><p><strong>Response design state:</strong> 2/2 samples labeled</p><p style='font-size:2px'><br/></p><h3>1) Error matrix:</h3>
         <table>
         <tbody>
         <tr>

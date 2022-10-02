@@ -44,7 +44,7 @@ def get_html(accu_asse):
     total_pixels_classes = sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values])
     sum_total_class_area = total_pixels_classes * accu_asse.pixel_area_value
 
-    if accu_asse.sampling_type in ['Simple random sampling post-stratified', 'Stratified random sampling']:
+    if accu_asse.estimator in ['Simple random sampling post-stratified', 'Stratified random sampling']:
 
         error_matrix_area_prop = copy.deepcopy(accu_asse.error_matrix)
         for idx_row, row in enumerate(accu_asse.error_matrix):
@@ -61,7 +61,7 @@ def get_html(accu_asse):
                 quadratic_error_matrix[idx_row][idx_col] = \
                     (wi ** 2 * ((value / sum(row)) * (1 - (value / sum(row))) / (sum(row) - 1))) if sum(row) > 1 else 0
 
-    accuracy_table = error_matrix_area_prop if accu_asse.sampling_type == 'Stratified random sampling' else accu_asse.error_matrix
+    accuracy_table = error_matrix_area_prop if accu_asse.estimator == 'Stratified random sampling' else accu_asse.error_matrix
 
     ###########################################################################
     # #### html init
@@ -103,7 +103,7 @@ def get_html(accu_asse):
     html += "<p><strong>Thematic map:</strong> {}</p>".format(os.path.basename(accu_asse.thematic_map.file_path))
     html += "<p><strong>Sampling file:</strong> {}</p>".format(
         os.path.basename(get_file_path_of_layer(accu_asse.response_design.sampling_layer)))
-    html += "<p><strong>Sampling type:</strong> {}</p>".format(accu_asse.sampling_type)
+    html += "<p><strong>Estimator:</strong> {}</p>".format(accu_asse.estimator)
     html += "<p><strong>Response design state:</strong> {}/{} samples labeled</p>".format(
         accu_asse.response_design.total_labeled, accu_asse.response_design.num_points)
 
@@ -219,11 +219,11 @@ def get_html(accu_asse):
     ###########################################################################
     # #### 2) Accuracy
 
-    if accu_asse.sampling_type in ['Simple random sampling', 'Simple random sampling post-stratified']:
+    if accu_asse.estimator in ['Simple random sampling', 'Simple random sampling post-stratified']:
         # overall
         overall_accuracy = sum([row[idx_row] for idx_row, row in enumerate(accu_asse.error_matrix)]) / total_samples
         standard_deviation = (overall_accuracy*(1-overall_accuracy)/(total_samples-1))**0.5
-    if accu_asse.sampling_type == 'Stratified random sampling':
+    if accu_asse.estimator == 'Stratified random sampling':
         # overall
         overall_accuracy = sum([row[idx_row] for idx_row, row in enumerate(error_matrix_area_prop)])
         try:
@@ -309,9 +309,9 @@ def get_html(accu_asse):
         html += '''<td class="highlight">{}</th>'''.format(rf(accuracy))
         # standard error
         try:
-            if accu_asse.sampling_type in ['Simple random sampling']:
+            if accu_asse.estimator in ['Simple random sampling']:
                 producer_standard_error = (accuracy*(1-accuracy)/(sum(list(zip(*accu_asse.error_matrix))[idx_row])-1))**0.5
-            if accu_asse.sampling_type in ['Stratified random sampling', 'Simple random sampling post-stratified']:
+            if accu_asse.estimator in ['Stratified random sampling', 'Simple random sampling post-stratified']:
                 u_accuracy = accuracy_table[idx_row][idx_row] / sum(accuracy_table[idx_row])
                 producer_standard_error = \
                     (1/(sum([n*row[idx_row]/total_row for total_row, row, n in
@@ -333,7 +333,7 @@ def get_html(accu_asse):
 
     # #### 2b) Accuracy matrix of estimated area proportion
 
-    if accu_asse.sampling_type == 'Stratified random sampling':
+    if accu_asse.estimator == 'Stratified random sampling':
         html += "<p style='font-size:2px'><br/></p>"
         html += "<h3>2b) Accuracy matrix of estimated area proportion:</h3>"
         ###################################
@@ -423,7 +423,7 @@ def get_html(accu_asse):
     ###########################################################################
     # #### 3) Error matrix of estimated area proportion
 
-    if accu_asse.sampling_type in ['Simple random sampling post-stratified', 'Stratified random sampling']:
+    if accu_asse.estimator in ['Simple random sampling post-stratified', 'Stratified random sampling']:
         html += "<p style='font-size:2px'><br/></p>"
         html += "<h3>3) Error matrix of estimated area proportion:</h3>"
         html += '''
@@ -480,7 +480,7 @@ def get_html(accu_asse):
     ###########################################################################
     # #### 4) Quadratic error matrix of estimated area proportion
 
-    if accu_asse.sampling_type in ['Simple random sampling post-stratified', 'Stratified random sampling']:
+    if accu_asse.estimator in ['Simple random sampling post-stratified', 'Stratified random sampling']:
         html += "<p style='font-size:2px'><br/></p>"
         html += "<h3>4) Quadratic error matrix of estimated area proportion:</h3>"
         html += '''
@@ -531,7 +531,7 @@ def get_html(accu_asse):
     # #### 3/5) Class area adjusted
 
     html += "<p style='font-size:2px'><br/></p>"
-    html += "<h3>{}) Class area adjusted:</h3>".format("3" if accu_asse.sampling_type == 'Simple random sampling' else "5")
+    html += "<h3>{}) Class area adjusted:</h3>".format("3" if accu_asse.estimator == 'Simple random sampling' else "5")
     html += '''
         <table>
         <tbody>
@@ -546,7 +546,7 @@ def get_html(accu_asse):
     total_area = 0
 
     # the error for post-stratified
-    if accu_asse.sampling_type == 'Simple random sampling post-stratified':
+    if accu_asse.estimator == 'Simple random sampling post-stratified':
         std_dev_table = [[(1-i/total_row)**2*i/(total_row-1) if total_row not in [0, 1] else np.NaN
                           for i in row] for total_row, row in
                          zip([sum(r) for r in accu_asse.error_matrix], accu_asse.error_matrix)]
@@ -558,15 +558,15 @@ def get_html(accu_asse):
         _error = [sum_total_class_area*v**0.5 for v in variance]
 
     for idx_row, value in enumerate(accu_asse.values):
-        if accu_asse.sampling_type == 'Simple random sampling':
+        if accu_asse.estimator == 'Simple random sampling':
             p_k = sum(list(zip(*accu_asse.error_matrix))[idx_row])/total_samples
             area = p_k * sum_total_class_area
             v_p_k = ((p_k)*(1-p_k)/total_samples)*(total_pixels_classes-total_samples)/(total_pixels_classes-1)
             error = (v_p_k**0.5) * sum_total_class_area
-        if accu_asse.sampling_type == 'Simple random sampling post-stratified':
+        if accu_asse.estimator == 'Simple random sampling post-stratified':
             area = sum(list(zip(*error_matrix_area_prop))[idx_row]) * sum_total_class_area
             error = _error[idx_row]
-        if accu_asse.sampling_type == 'Stratified random sampling':
+        if accu_asse.estimator == 'Stratified random sampling':
             area = sum(list(zip(*error_matrix_area_prop))[idx_row]) * sum_total_class_area
             error = (sum(list(zip(*quadratic_error_matrix))[idx_row])**0.5) * sum_total_class_area
 
@@ -619,8 +619,8 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows.append(["Sampling file:"])
     csv_rows.append([os.path.basename(get_file_path_of_layer(accu_asse.response_design.sampling_layer))])
     csv_rows.append([])
-    csv_rows.append(["Sampling type:"])
-    csv_rows.append([accu_asse.sampling_type])
+    csv_rows.append(["Estimator:"])
+    csv_rows.append([accu_asse.estimator])
     csv_rows.append([])
     csv_rows.append(["Response design state:"])
     csv_rows.append(["{}/{} samples labeled".format(accu_asse.response_design.total_labeled,
@@ -633,7 +633,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     total_pixels_classes = sum([accu_asse.thematic_pixels_count[v] for v in accu_asse.values])
     sum_total_class_area = total_pixels_classes * accu_asse.pixel_area_value
 
-    if accu_asse.sampling_type in ['Simple random sampling post-stratified', 'Stratified random sampling']:
+    if accu_asse.estimator in ['Simple random sampling post-stratified', 'Stratified random sampling']:
 
         error_matrix_area_prop = copy.deepcopy(accu_asse.error_matrix)
         for idx_row, row in enumerate(accu_asse.error_matrix):
@@ -650,7 +650,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
                 quadratic_error_matrix[idx_row][idx_col] = \
                     (wi ** 2 * ((value / sum(row)) * (1 - (value / sum(row))) / (sum(row) - 1))) if sum(row) > 1 else 0
 
-    accuracy_table = error_matrix_area_prop if accu_asse.sampling_type == 'Stratified random sampling' else accu_asse.error_matrix
+    accuracy_table = error_matrix_area_prop if accu_asse.estimator == 'Stratified random sampling' else accu_asse.error_matrix
 
     ###########################################################################
     # #### 1) Error matrix
@@ -689,11 +689,11 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows.append([])
     csv_rows.append(["2) Accuracy:"])
 
-    if accu_asse.sampling_type in ['Simple random sampling', 'Simple random sampling post-stratified']:
+    if accu_asse.estimator in ['Simple random sampling', 'Simple random sampling post-stratified']:
         # overall
         overall_accuracy = sum([row[idx_row] for idx_row, row in enumerate(accu_asse.error_matrix)]) / total_samples
         standard_deviation = (overall_accuracy*(1-overall_accuracy)/(total_samples-1))**0.5
-    if accu_asse.sampling_type == 'Stratified random sampling':
+    if accu_asse.estimator == 'Stratified random sampling':
         # overall
         overall_accuracy = sum([row[idx_row] for idx_row, row in enumerate(error_matrix_area_prop)])
         try:
@@ -743,10 +743,10 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         r.append(rf(accuracy))
         # standard error
         try:
-            if accu_asse.sampling_type in ['Simple random sampling']:
+            if accu_asse.estimator in ['Simple random sampling']:
                 producer_standard_error = (accuracy * (1 - accuracy) / (
                             sum(list(zip(*accu_asse.error_matrix))[idx_row]) - 1)) ** 0.5
-            if accu_asse.sampling_type in ['Stratified random sampling', 'Simple random sampling post-stratified']:
+            if accu_asse.estimator in ['Stratified random sampling', 'Simple random sampling post-stratified']:
                 u_accuracy = accuracy_table[idx_row][idx_row] / sum(accuracy_table[idx_row])
                 producer_standard_error = \
                     (1 / (sum([n * row[idx_row] / total_row for total_row, row, n in
@@ -769,7 +769,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
 
     # #### 2b) Accuracy matrix of estimated area proportion
 
-    if accu_asse.sampling_type == 'Stratified random sampling':
+    if accu_asse.estimator == 'Stratified random sampling':
         csv_rows.append([])
         csv_rows.append(["2b) Accuracy matrix of estimated area proportion:"])
         ###################################
@@ -821,7 +821,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     ###########################################################################
     # #### 3) Error matrix of estimated area proportion
 
-    if accu_asse.sampling_type in ['Simple random sampling post-stratified', 'Stratified random sampling']:
+    if accu_asse.estimator in ['Simple random sampling post-stratified', 'Stratified random sampling']:
         csv_rows.append([])
         csv_rows.append(["3) Error matrix of estimated area proportion:"])
         csv_rows.append(["", "", "Validation"])
@@ -845,7 +845,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     ###########################################################################
     # #### 4) Quadratic error matrix of estimated area proportion
 
-    if accu_asse.sampling_type in ['Simple random sampling post-stratified', 'Stratified random sampling']:
+    if accu_asse.estimator in ['Simple random sampling post-stratified', 'Stratified random sampling']:
         csv_rows.append([])
         csv_rows.append(["4) Quadratic error matrix of estimated area proportion:"])
         csv_rows.append(["", "", "Validation"])
@@ -869,13 +869,13 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     # #### 3/5) Class area adjusted
 
     csv_rows.append([])
-    csv_rows.append(["{}) Class area adjusted:".format("3" if accu_asse.sampling_type == 'Simple random sampling' else "5")])
+    csv_rows.append(["{}) Class area adjusted:".format("3" if accu_asse.estimator == 'Simple random sampling' else "5")])
     csv_rows.append(["", "Area adjusted ({area_unit})".format(area_unit=accu_asse.pixel_area_unit), "Error", "Lower limit", "Upper limit"])
 
     total_area = 0
 
     # the error for post-stratified
-    if accu_asse.sampling_type == 'Simple random sampling post-stratified':
+    if accu_asse.estimator == 'Simple random sampling post-stratified':
         std_dev_table = [[(1-i/total_row)**2*i/(total_row-1) if total_row not in [0, 1] else np.NaN
                           for i in row] for total_row, row in
                          zip([sum(r) for r in accu_asse.error_matrix], accu_asse.error_matrix)]
@@ -887,15 +887,15 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         _error = [sum_total_class_area*v**0.5 for v in variance]
 
     for idx_row, value in enumerate(accu_asse.values):
-        if accu_asse.sampling_type == 'Simple random sampling':
+        if accu_asse.estimator == 'Simple random sampling':
             p_k = sum(list(zip(*accu_asse.error_matrix))[idx_row])/total_samples
             area = p_k * sum_total_class_area
             v_p_k = ((p_k)*(1-p_k)/total_samples)*(total_pixels_classes-total_samples)/(total_pixels_classes-1)
             error = (v_p_k**0.5) * sum_total_class_area
-        if accu_asse.sampling_type == 'Simple random sampling post-stratified':
+        if accu_asse.estimator == 'Simple random sampling post-stratified':
             area = sum(list(zip(*error_matrix_area_prop))[idx_row]) * sum_total_class_area
             error = _error[idx_row]
-        if accu_asse.sampling_type == 'Stratified random sampling':
+        if accu_asse.estimator == 'Stratified random sampling':
             area = sum(list(zip(*error_matrix_area_prop))[idx_row]) * sum_total_class_area
             error = (sum(list(zip(*quadratic_error_matrix))[idx_row])**0.5) * sum_total_class_area
 

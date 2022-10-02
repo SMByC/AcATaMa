@@ -219,8 +219,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QCBox_SamplingFile_A.setFilters(QgsMapLayerProxyModel.PointLayer)
         # set and update the sampling file status in analysis tab
         self.QCBox_SamplingFile_A.layerChanged.connect(self.set_sampling_file_in_analysis)
-        # sampling type selection action
-        self.QCBox_SamplingEstimator_A.currentIndexChanged[int].connect(self.sampling_type_selection_action)
+        # estimator selection action
+        self.QCBox_SamplingEstimator_A.currentIndexChanged[int].connect(self.estimator_selection_action)
         # compute the AA and open the result dialog
         self.QPBtn_ComputeTheAccurasyAssessment.clicked.connect(self.open_accuracy_assessment_results)
         # disable group box that depends on sampling file
@@ -452,12 +452,12 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             if pixel_values_selected:
                 self.QPBtn_CategMapClassesSelection_SystS.setText(", ".join(classes_selection_dialog.classes_selected))
 
-    def select_categorical_map_classes(self, sampling_type):
-        if sampling_type == "simple":
+    def select_categorical_map_classes(self, sampling_design_type):
+        if sampling_design_type == "simple":
             categorical_map_layer = self.QCBox_CategMap_SimpRS.currentLayer()
             categorical_map_band = int(self.QCBox_band_CategMap_SimpRS.currentText())
             QPBtn_CategMapClassesSelection = self.QPBtn_CategMapClassesSelection_SimpRS
-        if sampling_type == "systematic":
+        if sampling_design_type == "systematic":
             categorical_map_layer = self.QCBox_CategMap_SystS.currentLayer()
             categorical_map_band = int(self.QCBox_band_CategMap_SystS.currentText())
             QPBtn_CategMapClassesSelection = self.QPBtn_CategMapClassesSelection_SystS
@@ -703,7 +703,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                     self.QLabel_SamplingFileStatus_A.setStyleSheet("QLabel {color: orange;}")
                 self.QGBox_SamplingEstimator_A.setEnabled(True)
                 self.QGBox_AccuracyAssessment.setEnabled(self.QCBox_SamplingEstimator_A.currentIndex() != -1)
-                self.QCBox_SamplingEstimator_A.setCurrentIndex(response_design.sampling_type)
+                self.QCBox_SamplingEstimator_A.setCurrentIndex(response_design.estimator)
 
             else:
                 self.QLabel_SamplingFileStatus_A.setText("Sampling file not labeled")
@@ -718,13 +718,13 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.QGBox_AccuracyAssessment.setDisabled(True)
 
     @pyqtSlot(int)
-    def sampling_type_selection_action(self, type_id):
+    def estimator_selection_action(self, type_id):
         if not self.QCBox_SamplingFile_A.currentLayer():
             return
         self.QGBox_AccuracyAssessment.setEnabled(type_id != -1)
-        # save the sampling type to response design instance
+        # save the estimator in response design instance
         if self.QCBox_SamplingFile_A.currentLayer() in ResponseDesign.instances:
-            ResponseDesign.instances[self.QCBox_SamplingFile_A.currentLayer()].sampling_type = type_id
+            ResponseDesign.instances[self.QCBox_SamplingFile_A.currentLayer()].estimator = type_id
 
     @pyqtSlot()
     def open_accuracy_assessment_results(self):
