@@ -294,6 +294,9 @@ QToolButton
                </property>
                <item>
                 <widget class="QToolButton" name="previousSampleNotLabeled">
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
                  <property name="toolTip">
                   <string>Go to the previous sample not labeled</string>
                  </property>
@@ -314,6 +317,9 @@ QToolButton
                </item>
                <item>
                 <widget class="QToolButton" name="previousSample">
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
                  <property name="toolTip">
                   <string>Go to the previous sample</string>
                  </property>
@@ -362,6 +368,9 @@ QToolButton
                   </item>
                   <item>
                    <widget class="QToolButton" name="currentSample">
+                    <property name="cursor">
+                     <cursorShape>PointingHandCursor</cursorShape>
+                    </property>
                     <property name="toolTip">
                      <string>Go to current sample</string>
                     </property>
@@ -408,6 +417,9 @@ QToolButton
                </item>
                <item>
                 <widget class="QToolButton" name="nextSample">
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
                  <property name="toolTip">
                   <string>Go to the next sample</string>
                  </property>
@@ -431,6 +443,9 @@ QToolButton
                </item>
                <item>
                 <widget class="QToolButton" name="nextSampleNotLabeled">
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
                  <property name="toolTip">
                   <string>Go to the next sample not labeled</string>
                  </property>
@@ -623,6 +638,9 @@ QToolButton
                </item>
                <item>
                 <widget class="QToolButton" name="QPBtn_OpenInGE">
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
                  <property name="toolTip">
                   <string>Open the current point in Google Earth (KML)</string>
                  </property>
@@ -693,6 +711,9 @@ QToolButton
                </item>
                <item>
                 <widget class="QToolButton" name="GoTo_ID_Button">
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
                  <property name="toolTip">
                   <string>Go to ID set in the box</string>
                  </property>
