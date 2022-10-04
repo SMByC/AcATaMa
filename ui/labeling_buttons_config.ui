@@ -17,7 +17,7 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>To build the labeling buttons: Set the name (mandatory), color (optional) and thematic class if you are labeling with thematic classes.</string>
+      <string>Setup the labeling buttons from the reference classification</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignJustify|Qt::AlignVCenter</set>
