@@ -75,7 +75,6 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             self.resize(*self.response_design.dialog_size)
 
         # disable enter action
-        self.QPBtn_LabelingSetup.setAutoDefault(False)
         self.QPBtn_unlabelSampleButton.setAutoDefault(False)
 
         # go to sample ID action

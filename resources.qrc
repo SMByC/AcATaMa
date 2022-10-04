@@ -17,5 +17,6 @@
         <file>icons/render_view_config.svg</file>
         <file>icons/open.svg</file>
         <file>icons/save.svg</file>
+        <file>icons/setup.svg</file>
     </qresource>
 </RCC>

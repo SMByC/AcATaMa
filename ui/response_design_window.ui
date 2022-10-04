@@ -763,14 +763,9 @@ QToolButton
          </property>
          <item>
           <widget class="QLabel" name="label_4">
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
            <property name="text">
-            <string>Labeling</string>
+            <string>Reference
+classification</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -806,18 +801,25 @@ QToolButton
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="QPBtn_LabelingSetup">
+             <widget class="QToolButton" name="QPBtn_LabelingSetup">
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
               <property name="toolTip">
-               <string>Set the labeling buttons to label the samples</string>
+               <string>Setup the labeling buttons</string>
               </property>
               <property name="text">
-               <string>Labeling setup</string>
+               <string>setup</string>
               </property>
-              <property name="autoDefault">
-               <bool>false</bool>
+              <property name="icon">
+               <iconset>
+                <normaloff>:/plugins/AcATaMa/icons/setup.svg</normaloff>:/plugins/AcATaMa/icons/setup.svg</iconset>
               </property>
-              <property name="flat">
-               <bool>false</bool>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -867,7 +869,7 @@ QToolButton
               <x>0</x>
               <y>0</y>
               <width>254</width>
-              <height>300</height>
+              <height>273</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_5">
