@@ -1428,7 +1428,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                      <string/>
                     </property>
                     <property name="pixmap">
-                     <pixmap>:/plugins/thrase/icons/render_view_config.svg</pixmap>
+                     <pixmap>:/plugins/AcATaMa/icons/render_view_config.svg</pixmap>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
