@@ -219,7 +219,9 @@ def restore(yml_file_path):
     # ######### general configuration ######### #
     global CONFIG_FILE_VERSION
     if "general" in yaml_config and "config_file_version" in yaml_config["general"]:
-        CONFIG_FILE_VERSION = yaml_config["general"]["config_file_version"]
+        # remove dots and alpha characters from the version string
+        CONFIG_FILE_VERSION = int(''.join(['{:0>2}'.format(re.sub('\D', '', x)) for x in
+                                           yaml_config["general"]["config_file_version"].split('.')]))
     else:
         CONFIG_FILE_VERSION = 191121  # v19.11.21
 
@@ -253,7 +255,7 @@ def restore(yml_file_path):
             AcATaMa.dockwidget.QCBox_band_ThematicMap.setCurrentIndex(yaml_config["thematic_map"]["band"] - 1)
         # nodata
         nodata = set_nodata_format(yaml_config["thematic_map"]["nodata"])
-        if CONFIG_FILE_VERSION <= 191121 and nodata == "-1":
+        if CONFIG_FILE_VERSION == 191121 and nodata == "-1":
             AcATaMa.dockwidget.nodata_ThematicMap.setText("nan")
         else:
             AcATaMa.dockwidget.nodata_ThematicMap.setText(nodata)
@@ -306,7 +308,7 @@ def restore(yml_file_path):
             yaml_config["sampling_design"]["stratified_random_sampling"]['categ_map_band'] - 1)
         # nodata
         nodata = set_nodata_format(yaml_config["sampling_design"]["stratified_random_sampling"]["categ_map_nodata"])
-        if CONFIG_FILE_VERSION <= 191121 and nodata == "-1":
+        if CONFIG_FILE_VERSION == 191121 and nodata == "-1":
             AcATaMa.dockwidget.nodata_CategMap_StraRS.setText("nan")
         else:
             AcATaMa.dockwidget.nodata_CategMap_StraRS.setText(nodata)
