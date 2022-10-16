@@ -16,12 +16,14 @@ color-scheme: auto
 navigation:
   - name: Home Page
     link: ./
+  - name: Overview
+    link: ./overview.html
   - name: Thematic map
-    link: ./thematic_map.html
+    link: ./thematic-map.html
   - name: Sampling design
-    link: ./sampling_design.html
+    link: ./sampling-design.html
   - name: Response design
-    link: ./response_design.html
+    link: ./response-design.html
   - name: Analysis
     link: ./analysis.html
   - name: Examples

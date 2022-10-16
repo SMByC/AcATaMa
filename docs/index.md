@@ -27,7 +27,7 @@ and we recommend reading for theoretical support on how AcATaMa works:
 
 Next >> [Thematic map](#thematic-map)
 
-+ [Thematic map](#thematic-map)
++ [Thematic map](./thematic_map.html)
 + [Sampling design](#sampling-design)
 + [Response design](#response-design)
 + [Analysis](#analysis)
