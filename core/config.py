@@ -221,7 +221,7 @@ def restore(yml_file_path):
     if "general" in yaml_config and "config_file_version" in yaml_config["general"]:
         # remove dots and alpha characters from the version string
         CONFIG_FILE_VERSION = int(''.join(['{:0>2}'.format(re.sub('\D', '', x)) for x in
-                                           yaml_config["general"]["config_file_version"].split('.')]))
+                                           str(yaml_config["general"]["config_file_version"]).split('.')]))
     else:
         CONFIG_FILE_VERSION = 191121  # v19.11.21
 
