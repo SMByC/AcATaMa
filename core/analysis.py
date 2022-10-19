@@ -205,9 +205,7 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
 
         AccuracyAssessmentWindow.is_opened = True
         # first, set the estimator for accuracy assessment from dropdown selected
-        self.analysis.estimator = \
-            {0: 'Simple estimator', 1: 'Simple post-stratified estimator', 2: 'Stratified estimator'}\
-            [AcATaMa.dockwidget.QCBox_SamplingEstimator_A.currentIndex()]
+        self.analysis.estimator = AcATaMa.dockwidget.QCBox_SamplingEstimator_A.currentText()
         # second, compute the accuracy assessment
         self.analysis.compute()
         # set content results in HTML

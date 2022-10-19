@@ -1783,12 +1783,12 @@ It set automatically from image if the layer has the nodata value set.</string>
                     </property>
                     <item>
                      <property name="text">
-                      <string>Simple estimator</string>
+                      <string>Simple/systematic estimator</string>
                      </property>
                     </item>
                     <item>
                      <property name="text">
-                      <string>Simple post-stratified estimator</string>
+                      <string>Simple/systematic post-stratified estimator</string>
                      </property>
                     </item>
                     <item>

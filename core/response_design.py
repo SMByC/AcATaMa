@@ -73,8 +73,8 @@ class ResponseDesign(object):
         self.is_completed = False
         # estimator needs for accuracy assessment results
         # -1 = None
-        #  0 = Simple estimator
-        #  1 = Simple post-stratified estimator
+        #  0 = Simple/systematic estimator
+        #  1 = Simple/systematic post-stratified estimator
         #  2 = Stratified estimator
         self.estimator = -1
         # for store the instance of the analysis results
