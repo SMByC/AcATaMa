@@ -272,7 +272,10 @@ def get_html(accu_asse):
         html += "<th >{} ({})</th>".format(value, accu_asse.labels[str(value)] if str(value) in accu_asse.labels else "-")
         # accuracy
         try:
-            accuracy = accuracy_table[idx_row][idx_row] / sum(accuracy_table[idx_row])
+            if accu_asse.estimator in ['Simple estimator']:
+                accuracy = accuracy_table[idx_row][idx_row] / sum(accuracy_table[idx_row])
+            if accu_asse.estimator in ['Stratified estimator', 'Simple post-stratified estimator']:
+                accuracy = error_matrix_area_prop[idx_row][idx_row] / sum(error_matrix_area_prop[idx_row])
         except ZeroDivisionError:
             accuracy = np.NaN
         html += '''<td class="highlight">{}</th>'''.format(rf(accuracy))
@@ -303,7 +306,10 @@ def get_html(accu_asse):
         html += "<th >{} ({})</th>".format(value, accu_asse.labels[str(value)] if str(value) in accu_asse.labels else "-")
         # accuracy
         try:
-            accuracy = accuracy_table[idx_row][idx_row] / sum(list(zip(*accuracy_table))[idx_row])
+            if accu_asse.estimator in ['Simple estimator']:
+                accuracy = accuracy_table[idx_row][idx_row] / sum(list(zip(*accuracy_table))[idx_row])
+            if accu_asse.estimator in ['Stratified estimator', 'Simple post-stratified estimator']:
+                accuracy = error_matrix_area_prop[idx_row][idx_row] / sum(list(zip(*error_matrix_area_prop))[idx_row])
         except ZeroDivisionError:
             accuracy = np.NaN
         html += '''<td class="highlight">{}</th>'''.format(rf(accuracy))
@@ -718,7 +724,10 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         r.append("{} ({})".format(value, accu_asse.labels[str(value)] if str(value) in accu_asse.labels else "-"))
         # accuracy
         try:
-            accuracy = accuracy_table[idx_row][idx_row] / sum(accuracy_table[idx_row])
+            if accu_asse.estimator in ['Simple estimator']:
+                accuracy = accuracy_table[idx_row][idx_row] / sum(accuracy_table[idx_row])
+            if accu_asse.estimator in ['Stratified estimator', 'Simple post-stratified estimator']:
+                accuracy = error_matrix_area_prop[idx_row][idx_row] / sum(error_matrix_area_prop[idx_row])
         except ZeroDivisionError:
             accuracy = np.NaN
         r.append(rf(accuracy))
@@ -737,7 +746,10 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         r.append("{} ({})".format(value, accu_asse.labels[str(value)] if str(value) in accu_asse.labels else "-"))
         # accuracy
         try:
-            accuracy = accuracy_table[idx_row][idx_row] / sum(list(zip(*accuracy_table))[idx_row])
+            if accu_asse.estimator in ['Simple estimator']:
+                accuracy = accuracy_table[idx_row][idx_row] / sum(list(zip(*accuracy_table))[idx_row])
+            if accu_asse.estimator in ['Stratified estimator', 'Simple post-stratified estimator']:
+                accuracy = error_matrix_area_prop[idx_row][idx_row] / sum(list(zip(*error_matrix_area_prop))[idx_row])
         except ZeroDivisionError:
             accuracy = np.NaN
         r.append(rf(accuracy))
