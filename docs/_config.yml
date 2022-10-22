@@ -17,14 +17,14 @@ navigation:
   - name: Home Page
     link: ./
   - name: Overview
-    link: ./overview.html
+    link: ./overview
   - name: Thematic map
-    link: ./thematic-map.html
+    link: ./thematic-map
   - name: Sampling design
-    link: ./sampling-design.html
+    link: ./sampling-design
   - name: Response design
-    link: ./response-design.html
+    link: ./response-design
   - name: Analysis
-    link: ./analysis.html
+    link: ./analysis
   - name: Examples
-    link: ./examples.html
+    link: ./examples
