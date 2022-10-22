@@ -451,6 +451,10 @@ def restore(yml_file_path):
                 sample["sample_id"] = sample["shape_id"]
                 del sample["shape_id"]
 
+        # support relative paths in the view widgets
+        for x in response_design.view_widgets_config.values():
+            x["render_file_path"] = get_restore_path(x["render_file_path"])
+
         # restore the samples order
         samples_ordered = []
         for sample_id in yaml_config["samples_order"]:
