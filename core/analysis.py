@@ -238,7 +238,7 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
         path, filename = os.path.split(file_path)
         if AcATaMa.dockwidget.tmp_dir in path:
             path = os.path.split(get_file_path_of_layer(AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer()))[0]
-        suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_results.csv" if filename else ""
+        suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + " - results.csv" if filename else "acatama results.csv"
 
         file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Export accuracy assessment results to csv"),
                                                   suggested_filename,

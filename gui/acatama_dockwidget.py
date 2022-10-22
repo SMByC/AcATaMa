@@ -603,9 +603,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             else:
                 file_path = get_file_path_of_layer(self.QCBox_SamplingFile.currentLayer())
             path, filename = os.path.split(file_path)
-            suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_acatama.yml" if filename else "_acatama.yml"
+            suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + " - acatama.yml" if filename else "acatama.yml"
         else:
-            suggested_filename = "_acatama.yml"
+            suggested_filename = "acatama.yml"
 
         file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save AcATaMa configuration and state"),
                                                   suggested_filename, self.tr("Yaml (*.yaml *.yml);;All files (*.*)"))
@@ -643,7 +643,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         path, filename = os.path.split(file_path)
         if self.tmp_dir in path:
             path = os.path.split(get_file_path_of_layer(self.QCBox_ThematicMap.currentLayer()))[0]
-        suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + "_labeled.gpkg" if filename else ""
+        suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + " - labeled.gpkg" if filename else "samples labeled.gpkg"
 
         file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save sampling file with the response_design"),
                                                   suggested_filename,

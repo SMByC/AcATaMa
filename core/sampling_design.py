@@ -75,8 +75,9 @@ def do_simple_random_sampling(dockwidget):
     else:
         neighbor_aggregation = None
 
-    # first select the target dir for save the sampling file
-    suggested_filename = os.path.join(os.path.dirname(thematic_map.file_path), "random_sampling.gpkg")
+    # first select the target file for save the sampling file
+    suggested_filename = os.path.join(os.path.dirname(thematic_map.file_path),
+                                      "simple {}sampling.gpkg".format("post-stratified " if categorical_map else ""))
     output_file, _ = QFileDialog.getSaveFileName(dockwidget,
                                                  dockwidget.tr("Select the output file to save the sampling"),
                                                  suggested_filename,
@@ -198,8 +199,8 @@ def do_stratified_random_sampling(dockwidget):
         for row in range(dockwidget.QTableW_StraRS.rowCount()):
             srs_config["std_dev"].append(float(dockwidget.QTableW_StraRS.item(row, 3).text()))
 
-    # first select the target dir for save the sampling file
-    suggested_filename = os.path.join(os.path.dirname(thematic_map.file_path), "stratified_random_sampling.gpkg")
+    # first select the target file for save the sampling file
+    suggested_filename = os.path.join(os.path.dirname(thematic_map.file_path), "stratified sampling.gpkg")
     output_file, _ = QFileDialog.getSaveFileName(dockwidget,
                                                  dockwidget.tr("Select the output file to save the sampling"),
                                                  suggested_filename,
@@ -302,8 +303,9 @@ def do_systematic_sampling(dockwidget):
     else:
         neighbor_aggregation = None
 
-    # first select the target dir for save the sampling file
-    suggested_filename = os.path.join(os.path.dirname(thematic_map.file_path), "systematic_sampling.gpkg")
+    # first select the target file for save the sampling file
+    suggested_filename = os.path.join(os.path.dirname(thematic_map.file_path),
+                                      "systematic {}sampling.gpkg".format("post-stratified " if categorical_map else ""))
     output_file, _ = QFileDialog.getSaveFileName(dockwidget,
                                                  dockwidget.tr("Select the output file to save the sampling"),
                                                  suggested_filename,
