@@ -92,7 +92,8 @@ def save(file_out):
         "categ_map_path": get_current_file_path_in(AcATaMa.dockwidget.QCBox_CategMap_SimpRS, show_message=False),
         "categ_map_band": int(AcATaMa.dockwidget.QCBox_band_CategMap_SimpRS.currentText())
             if AcATaMa.dockwidget.QCBox_band_CategMap_SimpRS.currentText() != '' else -1,
-        "classes_selected_for_sampling": AcATaMa.dockwidget.QPBtn_CategMapClassesSelection_SimpRS.text(),
+        "classes_selected_for_sampling": AcATaMa.dockwidget.QPBtn_CategMapClassesSelection_SimpRS.text()
+            if AcATaMa.dockwidget.QPBtn_CategMapClassesSelection_SimpRS.text() != 'click to select' else None,
 
         "with_neighbors_aggregation": AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_neighbour_aggregation.isChecked(),
         "num_neighbors": AcATaMa.dockwidget.widget_generate_SimpRS.QCBox_NumberOfNeighbors.currentText(),
@@ -139,8 +140,9 @@ def save(file_out):
         "post_stratify": AcATaMa.dockwidget.QGBox_SystSwithCR.isChecked(),
         "categ_map_path": get_current_file_path_in(AcATaMa.dockwidget.QCBox_CategMap_SystS, show_message=False),
         "categ_map_band": int(AcATaMa.dockwidget.QCBox_band_CategMap_SystS.currentText())
-        if AcATaMa.dockwidget.QCBox_band_CategMap_SystS.currentText() != '' else -1,
-        "classes_selected_for_sampling": AcATaMa.dockwidget.QPBtn_CategMapClassesSelection_SystS.text(),
+            if AcATaMa.dockwidget.QCBox_band_CategMap_SystS.currentText() != '' else -1,
+        "classes_selected_for_sampling": AcATaMa.dockwidget.QPBtn_CategMapClassesSelection_SystS.text()
+            if AcATaMa.dockwidget.QPBtn_CategMapClassesSelection_SystS.text() != 'click to select' else None,
         "with_neighbors_aggregation": AcATaMa.dockwidget.widget_generate_SystS.QGBox_neighbour_aggregation.isChecked(),
         "num_neighbors": AcATaMa.dockwidget.widget_generate_SystS.QCBox_NumberOfNeighbors.currentText(),
         "min_neighbors_with_the_same_class": AcATaMa.dockwidget.widget_generate_SystS.QCBox_SameClassOfNeighbors.currentText(),
@@ -288,7 +290,8 @@ def restore(yml_file_path):
         AcATaMa.dockwidget.QCBox_band_CategMap_SimpRS.setCurrentIndex(
             yaml_config["sampling_design"]["simple_random_sampling"]['categ_map_band'] - 1)
         AcATaMa.dockwidget.QPBtn_CategMapClassesSelection_SimpRS.setText(
-            yaml_config["sampling_design"]["simple_random_sampling"]['classes_selected_for_sampling'])
+            yaml_config["sampling_design"]["simple_random_sampling"]['classes_selected_for_sampling']
+            if yaml_config["sampling_design"]["simple_random_sampling"]['classes_selected_for_sampling'] else "click to select")
 
         AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_neighbour_aggregation.setChecked(
             yaml_config["sampling_design"]["simple_random_sampling"]['with_neighbors_aggregation'])
@@ -388,7 +391,8 @@ def restore(yml_file_path):
             AcATaMa.dockwidget.QCBox_band_CategMap_SystS.setCurrentIndex(
                 yaml_config["sampling_design"]["systematic_sampling"]['categ_map_band'] - 1)
             AcATaMa.dockwidget.QPBtn_CategMapClassesSelection_SystS.setText(
-                yaml_config["sampling_design"]["systematic_sampling"]['classes_selected_for_sampling'])
+                yaml_config["sampling_design"]["systematic_sampling"]['classes_selected_for_sampling']
+                if yaml_config["sampling_design"]["systematic_sampling"]['classes_selected_for_sampling'] else "click to select")
 
             AcATaMa.dockwidget.widget_generate_SystS.QGBox_neighbour_aggregation.setChecked(
                 yaml_config["sampling_design"]["systematic_sampling"]['with_neighbors_aggregation'])
