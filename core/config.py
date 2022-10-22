@@ -526,8 +526,7 @@ def restore(yml_file_path):
             analysis.area_unit = AREA_UNITS[yaml_config["analysis"]["accuracy_assessment"]["area_unit"]]
         else:  # old format
             area_unit, success = QgsUnitTypes.stringToAreaUnit(yaml_config["analysis"]["accuracy_assessment"]["area_unit"])
-            if success:
-                analysis.area_unit = area_unit
+            analysis.area_unit = area_unit if success else QgsUnitTypes.AreaSquareMeters
         analysis.z_score = yaml_config["analysis"]["accuracy_assessment"]["z_score"]
         analysis.csv_separator = yaml_config["analysis"]["accuracy_assessment"]["csv_separator"]
         analysis.csv_decimal = yaml_config["analysis"]["accuracy_assessment"]["csv_decimal"]
