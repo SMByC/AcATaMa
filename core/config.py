@@ -44,6 +44,12 @@ from AcATaMa.utils.others_utils import set_nodata_format
 
 CONFIG_FILE_VERSION = None
 
+# Qgis 3 areas units, int values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+AREA_UNITS = [QgsUnitTypes.AreaSquareMeters, QgsUnitTypes.AreaSquareKilometers, QgsUnitTypes.AreaSquareFeet,
+              QgsUnitTypes.AreaSquareYards, QgsUnitTypes.AreaSquareMiles, QgsUnitTypes.AreaHectares,
+              QgsUnitTypes.AreaAcres, QgsUnitTypes.AreaSquareNauticalMiles, QgsUnitTypes.AreaSquareDegrees,
+              QgsUnitTypes.AreaSquareCentimeters, QgsUnitTypes.AreaSquareMillimeters]
+
 
 @wait_process
 def save(file_out):
@@ -180,7 +186,7 @@ def save(file_out):
     # save config of the accuracy assessment dialog if exists
     if response_design and response_design.analysis:
         data["analysis"]["accuracy_assessment"] = {
-            "area_unit": QgsUnitTypes.toString(response_design.analysis.area_unit),
+            "area_unit": AREA_UNITS.index(response_design.analysis.area_unit),
             "z_score": response_design.analysis.z_score,
             "csv_separator": response_design.analysis.csv_separator,
             "csv_decimal": response_design.analysis.csv_decimal,
@@ -516,9 +522,12 @@ def restore(yml_file_path):
     if "analysis" in yaml_config and "accuracy_assessment" in yaml_config["analysis"] and response_design:
         from AcATaMa.core.analysis import Analysis
         analysis = Analysis(response_design)
-        area_unit, success = QgsUnitTypes.stringToAreaUnit(yaml_config["analysis"]["accuracy_assessment"]["area_unit"])
-        if success:
-            analysis.area_unit = area_unit
+        if yaml_config["analysis"]["accuracy_assessment"]["area_unit"] in AREA_UNITS:
+            analysis.area_unit = AREA_UNITS[yaml_config["analysis"]["accuracy_assessment"]["area_unit"]]
+        else:  # old format
+            area_unit, success = QgsUnitTypes.stringToAreaUnit(yaml_config["analysis"]["accuracy_assessment"]["area_unit"])
+            if success:
+                analysis.area_unit = area_unit
         analysis.z_score = yaml_config["analysis"]["accuracy_assessment"]["z_score"]
         analysis.csv_separator = yaml_config["analysis"]["accuracy_assessment"]["csv_separator"]
         analysis.csv_decimal = yaml_config["analysis"]["accuracy_assessment"]["csv_decimal"]
