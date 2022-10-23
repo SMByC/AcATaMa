@@ -26,7 +26,7 @@ Sampling protocol is one of the most complex and important steps in assessing th
 protocol is responsible for selecting the sampling units and, together with the analysis of its components, the 
 statistical inference is obtained.
 
-<img src="img/sampling_designs.webp" height="400px" style="margin: auto;display: block;">
+<img src="img/sampling_designs.webp" height="500px" style="margin: auto;display: block;">
 
 Selecting the sampling design is crucial and could be based on the population/data type, what you are evaluating, or 
 your needs. At the moment we have implemented three main sampling designs: simple random, stratified random, and 

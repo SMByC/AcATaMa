@@ -45,15 +45,15 @@ of the user or the producer. And, the third, which corresponds to the estimation
 
 ### Accuracy
 
-* `Overall accuracy`: The global accuracy has a direct interpretation in terms of area, since it represents the proportion of area correctly 
+* **Overall accuracy**: The global accuracy has a direct interpretation in terms of area, since it represents the proportion of area correctly 
 classified. Overall accuracy hides important information specific to each class. The limitation to overall accuracy is 
 not how it weights or represents class-specific information, but rather that it does not provide class-specific information.
 
-* `User accuracy`: In it, the number of correctly classified sampling units (nii) in a class is divided by the total number of sampling 
+* **User accuracy**: In it, the number of correctly classified sampling units (nii) in a class is divided by the total number of sampling 
 units of that same class in the map (nk+). In this case, this accuracy is associated with the measurement of commission 
 errors, which are defined as the inclusion of a map area in a land cover class in which that area should not be included.
 
-* `Producer accuracy`: Where the number of correctly classified sampling units (njj) in a class is divided by the total number of sampling 
+* **Producer accuracy**: Where the number of correctly classified sampling units (njj) in a class is divided by the total number of sampling 
 units in the reference data n+j, for that class. Omission errors occur when an area is excluded on the map from the 
 land cover class to which it should belong. 
 
@@ -66,9 +66,9 @@ The variances of the general, user and producer accuracy are estimated with refe
 
 ### Accuracy matrix of estimated area proportions
 
-* `User´s accuracy matrix of estimated area proportion`: User´s accuracy is the proportion of the area mapped as a particular category that is actually that category "on the ground" where the reference classification is the best assessment of ground condition. User's accuracy is the complement of the probability of commission error (Olofsson et al. 2013). The user´s accuracy is calculated by the equation (2) in Olofsson et al. (2014). In the report, the user´s accuracy for each class or category correspond to the diagonal of the matrix, that means, the fields in which the class of the thematic map and the classified category (reference) are equals.
+* **User´s accuracy matrix of estimated area proportion**: User´s accuracy is the proportion of the area mapped as a particular category that is actually that category "on the ground" where the reference classification is the best assessment of ground condition. User's accuracy is the complement of the probability of commission error (Olofsson et al. 2013). The user´s accuracy is calculated by the equation (2) in Olofsson et al. (2014). In the report, the user´s accuracy for each class or category correspond to the diagonal of the matrix, that means, the fields in which the class of the thematic map and the classified category (reference) are equals.
 
-* `Producer´s accuracy matrix of estimated area proportion`: Producer's accuracy is the proportion of the area that is a particular category on the ground that is also mapped as that category. Producer's accuracy is the complement of the probability of omission error (Olofsson et al. 2013). The producer's accuracy is calculated by the equation (3) in Olofsson et al. (2014). In the report, the accuracy for each class or category correspond to the diagonal of the matrix, the fields in which the class of the thematic map and the classified category (reference) are equals.
+* **Producer´s accuracy matrix of estimated area proportion**: Producer's accuracy is the proportion of the area that is a particular category on the ground that is also mapped as that category. Producer's accuracy is the complement of the probability of omission error (Olofsson et al. 2013). The producer's accuracy is calculated by the equation (3) in Olofsson et al. (2014). In the report, the accuracy for each class or category correspond to the diagonal of the matrix, the fields in which the class of the thematic map and the classified category (reference) are equals.
 
 ### Error matrix of estimated area proportion
 
