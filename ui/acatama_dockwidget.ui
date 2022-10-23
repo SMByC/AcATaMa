@@ -155,7 +155,7 @@ It set automatically from image if the layer has the nodata value set.</string>
              <x>0</x>
              <y>0</y>
              <width>660</width>
-             <height>1231</height>
+             <height>1169</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -219,8 +219,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                    <item>
                     <widget class="QLabel" name="label_8">
                      <property name="text">
-                      <string>Generate n number of sampling points inside only valid thematic data and optionally only inside in valid pixel values in categorical map and/or with neighbors aggregation and minimum distance
-</string>
+                      <string>Simple random sampling along the thematic map where each pixel has an equal chance of being selected.</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -521,8 +520,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                    <item>
                     <widget class="QLabel" name="label_11">
                      <property name="text">
-                      <string>Generate n number of sampling points for each pixel categorical value set and only in valid thematic data and optionally with neighbors aggregation and minimum distance
-</string>
+                      <string>Stratified random sampling in smaller areas (strata) with a specific number of samples for each stratum, set manually or relative to their area proportion.</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -891,7 +889,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                 <item>
                  <widget class="QLabel" name="label_25">
                   <property name="text">
-                   <string>This sampling creates a regular points (grid) with a random offset to the original grid spot</string>
+                   <string>Sampling along a regular grid with a random offset to the original grid spot.</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -1757,58 +1755,54 @@ It set automatically from image if the layer has the nodata value set.</string>
                  </property>
                 </widget>
                </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="QGBox_SamplingEstimator_A">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="title">
+               <string>Estimator</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_12">
                <item>
-                <widget class="QWidget" name="QGBox_SamplingEstimator_A" native="true">
-                 <layout class="QVBoxLayout" name="verticalLayout">
-                  <item>
-                   <widget class="QLabel" name="label_24">
-                    <property name="text">
-                     <string>Select the sampling estimator:</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-                    </property>
-                    <property name="wordWrap">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QComboBox" name="QCBox_SamplingEstimator_A">
-                    <property name="toolTip">
-                     <string>The sampling estimator that was used to generate the selected sampling file</string>
-                    </property>
-                    <property name="currentIndex">
-                     <number>-1</number>
-                    </property>
-                    <item>
-                     <property name="text">
-                      <string>Simple/systematic estimator</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>Simple/systematic post-stratified estimator</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>Stratified estimator</string>
-                     </property>
-                    </item>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label_2">
-                    <property name="text">
-                     <string>(the accuracy assessment results depend on it)</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
+                <widget class="QLabel" name="label_24">
+                 <property name="text">
+                  <string>Select the sampling estimator:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="QCBox_SamplingEstimator_A">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;An estimator is a rule by which an estimate of some population characteristic is calculated from the sample results. The selection of an estimator depends on the sampling type generated and the accuracy assessment results depend on it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="currentIndex">
+                  <number>-1</number>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>Simple/systematic estimator</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Simple/systematic post-stratified estimator</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Stratified estimator</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
               </layout>
@@ -1823,16 +1817,6 @@ It set automatically from image if the layer has the nodata value set.</string>
                <string>Accuracy Assessment</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_28">
-               <item>
-                <widget class="QLabel" name="label_6">
-                 <property name="text">
-                  <string>Estimating a measure of map accuracy using a sample of reference observations</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
                <item>
                 <widget class="QPushButton" name="QPBtn_ComputeTheAccurasyAssessment">
                  <property name="text">
