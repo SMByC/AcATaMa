@@ -63,6 +63,8 @@ probabilities of inclusion, this makes it difficult to calculate the estimators
 
 ## Systematic random sampling
 
+<img src="img/systematic_sampling.png" width="50%" style="margin: auto;display: block;">
+
 ### Aligned systematic sampling
 
 Distribute the sampling units equally for the entire study area. As long as the first sampling unit is randomly selected, 
