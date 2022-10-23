@@ -34,7 +34,7 @@ QA and ideas: [https://github.com/SMByC/AcATaMa/discussions](https://github.com/
 AcATaMa was developing, designed and implemented by the Group of Forest and Carbon Monitoring System (SMByC), operated by the Institute of Hydrology, Meteorology and Environmental Studies (IDEAM) - Colombia.
 
 Author and developer: *Xavier C. Llano*  
-Theoretical support, tester and product verification: Gustavo Galindo, Jhonatan Andrés Arias, Katerine Vergara
+Documentation, testers and product verification: *Gustavo Galindo, Jhonatan Andrés Arias, Katerine Vergara*
 
 ### Contact
 
