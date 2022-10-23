@@ -249,7 +249,7 @@ def restore(yml_file_path):
         yaml_config["analysis"] = yaml_config.pop("accuracy_assessment")
     if "analysis" in yaml_config and "dialog" in yaml_config["analysis"]:
         yaml_config["analysis"]["accuracy_assessment"] = yaml_config["analysis"].pop("dialog")
-    if "pixel_values_categ_map" in yaml_config["sampling_design"]["simple_random_sampling"]:
+    if "sampling_design" in yaml_config and "pixel_values_categ_map" in yaml_config["sampling_design"]["simple_random_sampling"]:
         yaml_config["sampling_design"]["simple_random_sampling"]['classes_selected_for_sampling'] = \
             yaml_config["sampling_design"]["simple_random_sampling"].pop("pixel_values_categ_map")
 
