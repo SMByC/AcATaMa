@@ -1,0 +1,22 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+body {
+    color: #595959;
+}
+
+div.wrapper section {
+    width: 630px;
+}
+
+body div.wrapper {
+    width: 930px;
+}
+
+body div.wrapper div.sidebar header div.header-title img.logo {
+    -webkit-border-radius: 0%;
+    -moz-border-radius: 0%;
+    border-radius: 0%;
+}

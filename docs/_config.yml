@@ -1,1 +1,30 @@
-theme: jekyll-theme-minimal
+# https://github.com/vaibhavvikas/jekyll-theme-minimalistic
+
+remote_theme: vaibhavvikas/jekyll-theme-minimalistic
+
+plugins:
+  - jekyll-remote-theme
+
+title: AcATaMa
+description: The AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps.
+logo: ./img/acatama.svg
+email:
+favicon: true
+color-scheme: auto
+
+# Navigation
+navigation:
+  - name: Home Page
+    link: ./
+  - name: Overview
+    link: ./overview
+  - name: Thematic map
+    link: ./thematic-map
+  - name: Sampling design
+    link: ./sampling-design
+  - name: Response design
+    link: ./response-design
+  - name: Analysis
+    link: ./analysis
+  - name: Examples
+    link: ./examples
