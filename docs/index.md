@@ -9,7 +9,7 @@ response design and estimation in a design-based inference framework. The primar
 the necessary tools to comply with international guidance and best practices for sampling design, estimating land category 
 areas and land change, and for assessing map accuracy.
 
-![](img/overview.jpg)
+![](img/overview.webp)
 
 AcATaMa provides several sampling designs and estimators, but also comprehensive support for the response design process 
 (see response design). AcATaMa has been manually tested with multiple real examples for all user cases in order to 
