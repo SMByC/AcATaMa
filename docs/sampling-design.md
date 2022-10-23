@@ -26,6 +26,8 @@ Sampling protocol is one of the most complex and important steps in assessing th
 protocol is responsible for selecting the sampling units and, together with the analysis of its components, the 
 statistical inference is obtained.
 
+<img src="img/sampling_designs.webp" height="400px" style="margin: auto;display: block;">
+
 Selecting the sampling design is crucial and could be based on the population/data type, what you are evaluating, or 
 your needs. At the moment we have implemented three main sampling designs: simple random, stratified random, and 
 systematic sampling and all are probability sampling designs. For example, use simple random for a population without 
@@ -38,10 +40,10 @@ for simple random and systematic sampling to ensure that samples randomly genera
 It is appropriate if the sample size is large enough to ensure that all classes are adequately represented. It could be 
 useful to serve the needs of a wide group of users. 
 
-`Advantages`: It is extremely simple to use and adapts to the need to increase or decrease the sampling units. 
+_**Advantages**_: It is extremely simple to use and adapts to the need to increase or decrease the sampling units. 
 Less complex statistical estimators compared to other sampling designs. 
 
-`Disadvantages`: Underestimates the less representative classes. Not well distributed spatially
+_**Disadvantages**_: Underestimates the less representative classes. Not well distributed spatially
 
 ## Stratified random sampling
 
@@ -50,12 +52,12 @@ be improved. As a result, it is one of the most commonly used. It is used in con
 the study area. This design is recommended by Olofsson et al. (2014) as a good practice option for ensuring that rare 
 classes are well represented. 
 
-`Advantages`: It allows to increase the sample size of the less common classes. It lowers the standard errors of the 
+_**Advantages**_: It allows to increase the sample size of the less common classes. It lowers the standard errors of the 
 accuracy estimates for rare classes or if the proportions are very different between strata. Geographic stratification 
 could be used to ensure a good spatial distribution of the sample. It allows the option of using different sampling 
 designs in different strata.
 
-`Disadvantages`: Stratification by geographic region does not result in a gain in precision. Only the evaluation of the 
+_**Disadvantages**_: Stratification by geographic region does not result in a gain in precision. Only the evaluation of the 
 accuracy of the map that gives rise to the strata is allowed. Sampling with an optimal allocation leads to different 
 probabilities of inclusion, this makes it difficult to calculate the estimators
 
@@ -67,11 +69,11 @@ Distribute the sampling units equally for the entire study area. As long as the 
 we can say that systematic sampling is random. Simplicity is highly attractive to end users. The variance depends on how 
 the error is spatially distributed.
 
-`Advantages`: It distributes the sampling units equitably throughout the study area. As long as the first sampling unit is 
+_**Advantages**_: It distributes the sampling units equitably throughout the study area. As long as the first sampling unit is 
 randomly selected, we can say that systematic sampling is random. Simplicity is highly attractive to end users. The 
 variance depends on how the error is spatially distributed.
 
-`Disadvantages`: If the errors are located in certain areas of the population, systematic sampling will have a lower 
+_**Disadvantages**_: If the errors are located in certain areas of the population, systematic sampling will have a lower 
 variance. The non-existence of an impartial estimator for calculating the variance. This aspect leads to an overestimation 
 of the variance. In the presence of uniformly distributed errors, the application is not desirable.
  
@@ -80,10 +82,10 @@ of the variance. In the presence of uniformly distributed errors, the applicatio
 The area is divided into smaller, regularly spaced regions, with a randomly chosen sample unit within each of these 
 regions. The sample units are evenly dispersed but not positioned. In order to minimize the effects of the periodicity of errors.
 
-`Advantages`: If the linearity of the error is present, it is less susceptible to error. The calculation of the variance 
+_**Advantages**_: If the linearity of the error is present, it is less susceptible to error. The calculation of the variance 
 is acceptable and unbiased.
 
-`Disadvantages`: Reduces the advantage of the spatial distribution of error and favors systematic sampling over simple 
+_**Disadvantages**_: Reduces the advantage of the spatial distribution of error and favors systematic sampling over simple 
 random sampling. The lack of an unbiased estimator.
 
 ## Sample size

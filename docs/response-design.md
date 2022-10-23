@@ -4,11 +4,17 @@ layout: default
 
 # Response Design
 
+<img src="img/response_design.webp" width="90%" style="margin: auto;display: block;">
+
 The responsive design is defined as the protocol for determining the baseline classification at the selected sample 
 sites (Olofsson, et al., 2014). Conceptually it is useful to separate the response design into two components:
 
+<img src="img/response_design_components.png" height="200px" style="margin: auto;display: block;">
+
 **A)** The evaluation protocol with the procedures used to gather information that contributes to the determination of the 
 reference classification.
+
+<img src="img/response_design_part_A.webp" width="60%" style="margin: auto;display: block;">
 
 ### Sampling unit
 
@@ -29,10 +35,14 @@ the evaluation protocol (Stehman & Czaplewski, 1998).
 Available assessment of the condition of a population unit. The classes available come from the thematic map, the 
 evaluator must select the reference classes as a labeling buttons using the “Labeling setup” option in AcATaMa.
 
+<img src="img/labeling_buttons_setup.webp" width="60%" style="margin: auto;display: block;">
+
 ### Labeling protocol
 
 The labeling protocol assigns a label from the reference classification (through labeling buttons) to the sampling unit, 
 supported by the reference data and the evaluation protocol.
+
+<img src="img/response_design_evaluation.webp" width="60%" style="margin: auto;display: block;">
 
 ### Evaluation protocol
 
