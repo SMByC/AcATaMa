@@ -1,22 +1,21 @@
 # AcATaMa #
 
-> After more than 2 years new version with several features is coming soon, stay tuned!
-
 [![Tests](https://github.com/SMByC/AcATaMa/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/SMByC/AcATaMa/actions/workflows/tests.yml)
 
 ![](icons/acatama.svg)
 
-The AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps. It was designed mainly for: to assess the accuracy of thematic maps, to estimate areas of the map classes, sampling design/labeling and others.
+AcATaMa (sort for Accuracy Assessment of Thematic Maps) is a Qgis plugin that provides comprehensive support for sampling, 
+response design and estimation in a design-based inference framework. The primary goal of AcATaMa is to provide users with 
+the necessary tools to comply with international guidance and best practices for sampling design, estimating land category 
+areas and land change, and for assessing map accuracy.
 
 ![](docs/img/overview.webp)
 
+AcATaMa provides several sampling designs and estimators, but also comprehensive support for the response design process 
+(see response design). AcATaMa has been manually tested with multiple real examples for all user cases in order to 
+guarantee the quality of the results.
+
 Read more in: [https://smbyc.github.io/AcATaMa](https://smbyc.github.io/AcATaMa)
-
-## Installation
-
-The plugin can be installed using the QGIS Plugin Manager, go into Qgis to `Plugins` menu and `Manage and install plugins`, in `All` section search for `AcATaMa`.
-
-The plugin will be available in the `Plugins` menu and `Plugins toolbar`.
 
 ## Source code
 
@@ -35,7 +34,7 @@ QA and ideas: [https://github.com/SMByC/AcATaMa/discussions](https://github.com/
 AcATaMa was developing, designed and implemented by the Group of Forest and Carbon Monitoring System (SMByC), operated by the Institute of Hydrology, Meteorology and Environmental Studies (IDEAM) - Colombia.
 
 Author and developer: *Xavier C. Llano*  
-Theoretical support, tester and product verification: SMByC-PDI group
+Theoretical support, tester and product verification: Gustavo Galindo, Jhonatan Andrés Arias, Katerine Vergara
 
 ### Contact
 
