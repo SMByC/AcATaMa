@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        docker_tags: [ release-3_18, final-3_22_12, latest ]
+        docker_tags: [ release-3_18, final-3_22_9, latest ]
       fail-fast: false
     env:
       QGIS_TEST_VERSION: ${{ matrix.docker_tags }}
