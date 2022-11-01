@@ -4,7 +4,7 @@ layout: default
 
 # Response Design
 
-<img src="img/response_design.webp" width="90%" style="margin: auto;display: block;">
+<img src="img/response_design.webp" width="100%" style="margin: auto;display: block;">
 
 The responsive design is defined as the protocol for determining the baseline classification at the selected sample 
 sites (Olofsson, et al., 2014). Conceptually it is useful to separate the response design into two components:

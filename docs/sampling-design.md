@@ -99,10 +99,17 @@ Stehman (2001), a sample with 100 sampling units per class ensures that the accu
 deviation of no more than 0.05. Despite this aspect, the minimum value of the sampling units per land cover class could 
 vary depending on the importance (Congalton & Green, 2019) (Stehman & Foody, 2019)
  
+Simple and systematic random sampling are easy and practical designs, they represent homogeneous and proportional 
+populations very well, and the sample size for each coverage or map class must be large enough to produce sufficiently 
+precise estimates of area. However, when there are small or rare areas compared to the total area such as deforestation, 
+stratified sampling is recommended. (Methods and Guidance from the Global Forest Observations Initiative, GFOI, 2020)
+
 For stratified sampling, Cochran (1977) provides the following sample size formula (Cochran, 1977)  (Olofsson, et al., 2014)
 
-Where N= number of units in the study region, S(ô) is the standard error of the expected global accuracy, Wi is the 
-mapped proportion of the area of class i, and Si is the standard deviation of stratum 'i'  and Ui is the accuracy 
+<img src="img/ecuation_sample_size.webp" width="75%" style="margin: auto;display: block;">
+
+Where N=number of units in the study region, S(ô) is the standard error of the expected global accuracy, Wi is the 
+mapped proportion of the area of class i, and Si is the standard deviation of stratum i and Ui is the accuracy 
 expected by class i. Since N is usually very large, the second term in the denominator of the above equation can be discarded.
 
 Next >> [Response design](response-design.html)

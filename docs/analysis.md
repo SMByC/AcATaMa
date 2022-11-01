@@ -4,7 +4,7 @@ layout: default
 
 # Analysis
 
-<img src="img/accuracy_assessment.webp" width="80%" style="margin: auto;display: block;">
+<img src="img/accuracy_assessment.webp" width="100%" style="margin: auto;display: block;">
 
 The main objective of the accuracy evaluation is the estimation of the area. It seeks to ensure that each land cover 
 class is correctly classified, as well as the confidence intervals of the accuracy measurements for said cover classes. 
