@@ -9,6 +9,9 @@ response design and estimation in a design-based inference framework. The primar
 the necessary tools to comply with international guidance and best practices for sampling design, estimating land category 
 areas and land change, and for assessing map accuracy.
 
+> *Important:* AcATaMa with the version [22.10.23](https://github.com/SMByC/AcATaMa/releases/tag/22.10.23) has received 
+> a major update. Check if you are using the latest version of the plugin, this documentation is based on that major update.
+
 ![](img/overview.webp)
 
 AcATaMa provides several sampling designs and estimators, but also comprehensive support for the response design process 
