@@ -12,39 +12,28 @@ areas and land change, and for assessing map accuracy.
 
 ![](docs/img/overview.webp)
 
-AcATaMa provides several sampling designs and estimators, but also comprehensive support for the response design process 
-(see response design). AcATaMa has been manually tested with multiple real examples for all user cases in order to 
-guarantee the quality of the results.
+To ensure a good accuracy assessment AcATaMa provides three components: sampling design, used to select the reference 
+sample; the response design, which allows the evaluation protocol, and finally, the estimation and analysis procedures.
+AcATaMa has been manually tested with multiple real examples for all user cases in order to guarantee the quality of 
+the results.
 
-Read more in: [https://smbyc.github.io/AcATaMa](https://smbyc.github.io/AcATaMa)
+> **Read more in the documentation here: [https://smbyc.github.io/AcATaMa](https://smbyc.github.io/AcATaMa)**
 
 ## Source code
 
-The official version control system repository of the plugin:
-[https://github.com/SMByC/AcATaMa](https://github.com/SMByC/AcATaMa)
-
+Source code, issue tracker, QA and ideas:[https://github.com/SMByC/AcATaMa](https://github.com/SMByC/AcATaMa)  
 The home plugin in plugins.qgis.org: [https://plugins.qgis.org/plugins/AcATaMa/](https://plugins.qgis.org/plugins/AcATaMa/)
-
-## Issue Tracker, QA and ideas
-
-Issues: [https://github.com/SMByC/AcATaMa/issues](https://github.com/SMByC/AcATaMa/issues)  
-QA and ideas: [https://github.com/SMByC/AcATaMa/discussions](https://github.com/SMByC/AcATaMa/discussions)
 
 ## About us
 
 AcATaMa was developing, designed and implemented by the Group of Forest and Carbon Monitoring System (SMByC), operated by the Institute of Hydrology, Meteorology and Environmental Studies (IDEAM) - Colombia.
 
-Author and developer: *Xavier C. Llano*  
+Author and developer: *Xavier C. Llano* *<xavier.corredor.llano@gmail.com>*  
 Documentation, testers and product verification: *Gustavo Galindo, Jhonatan Andrés Arias, Katerine Vergara*
-
-### Contact
-
-Xavier C. Llano: *xavier.corredor.llano@gmail.com*  
-SMByC: *smbyc@ideam.gov.co*
 
 ## How to cite
 
-Llano, X. C. (2022), SMByC-IDEAM. AcATaMa - QGIS plugin for Accuracy Assessment of Thematic Maps, version XX.XX. Available in https://github.com/SMByC/AcATaMa
+Llano, X. (2022), SMByC-IDEAM. AcATaMa - QGIS plugin for Accuracy Assessment of Thematic Maps, version XX.XX. Available in https://github.com/SMByC/AcATaMa
 
 ## License
 

@@ -19,7 +19,7 @@ AcATaMa provides several sampling designs and estimators, but also comprehensive
 guarantee the quality of the results, some of them have been implemented as 
 [unit tests](https://github.com/SMByC/AcATaMa/actions/workflows/tests.yml).
 
-AcATaMa implements equations, methodologies and recommendations from (primarily) the following widely accepted papers, 
+AcATaMa implements equations, methodologies and recommendations from the following widely accepted papers, 
 and we recommend reading as theoretical support and delving into the guide, protocol and recommendations for the entire 
 process to calculate the accuracy assessment of a map, and how AcATaMa works:
 
