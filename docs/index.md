@@ -14,8 +14,10 @@ areas and land change, and for assessing map accuracy.
 
 ![](img/overview.webp)
 
-AcATaMa provides several sampling designs and estimators, but also comprehensive support for the response design process 
-(see response design). AcATaMa has been manually tested with multiple real examples for all user cases in order to 
+To ensure a good accuracy assessment AcATaMa provides three components: **sampling design**, used to select the reference 
+sample; the **response design**, which allows the evaluation protocol, and finally, the **analysis** procedures with 
+different estimators. AcATaMa provides several sampling designs and estimators, but also comprehensive support for the 
+response design process. AcATaMa has been manually tested with multiple real examples for all user cases in order to 
 guarantee the quality of the results, some of them have been implemented as 
 [unit tests](https://github.com/SMByC/AcATaMa/actions/workflows/tests.yml).
 

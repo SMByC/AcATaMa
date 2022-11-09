@@ -12,12 +12,12 @@ areas and land change, and for assessing map accuracy.
 
 ![](docs/img/overview.webp)
 
-To ensure a good accuracy assessment AcATaMa provides three components: sampling design, used to select the reference 
-sample; the response design, which allows the evaluation protocol, and finally, the estimation and analysis procedures.
-AcATaMa has been manually tested with multiple real examples for all user cases in order to guarantee the quality of 
-the results.
+To ensure a good accuracy assessment AcATaMa provides three components: **sampling design**, used to select the reference 
+sample; the **response design**, which allows the evaluation protocol, and finally, the **analysis** procedures with 
+different estimators. AcATaMa has been manually tested with multiple real examples for all user cases in order to 
+guarantee the quality of the results.
 
-> **Read more in the documentation here: [https://smbyc.github.io/AcATaMa](https://smbyc.github.io/AcATaMa)**
+> Read more in the documentation here: [https://smbyc.github.io/AcATaMa](https://smbyc.github.io/AcATaMa)
 
 ## Source code
 
