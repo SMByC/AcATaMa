@@ -73,8 +73,7 @@ def chunks(l, n):
         yield l[i:i + n]
 
 
-def pixel_count_in_chunk(args):
-    img_path, band, pixel_values, xoff, yoff, xsize, ysize = args
+def pixel_count_in_chunk(img_path, band, pixel_values, xoff, yoff, xsize, ysize):
     pixel_count = [0] * len(pixel_values)
     gdal_file = gdal.Open(img_path, gdal.GA_ReadOnly)
 
@@ -107,8 +106,8 @@ def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None):
 
     # compute and merge all parallel process returns in one result
     with multiprocessing.Pool(multiprocessing.cpu_count()) as pool:
-        imap_it = pool.imap(pixel_count_in_chunk, input_data)
-        pixel_counts = np.sum([proc for proc in imap_it], axis=0).tolist()
+        map_it = pool.starmap(pixel_count_in_chunk, input_data)
+        pixel_counts = np.sum([proc for proc in map_it], axis=0).tolist()
         return dict(zip(pixel_values, pixel_counts))
 
 # --------------------------------------------------------------------------
