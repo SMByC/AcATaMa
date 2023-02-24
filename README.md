@@ -5,10 +5,11 @@
 
 ![](icons/acatama.svg)
 
-AcATaMa (sort for Accuracy Assessment of Thematic Maps) is a Qgis plugin that provides comprehensive support for sampling, 
-response design and estimation in a design-based inference framework. The primary goal of AcATaMa is to provide users with 
-the necessary tools to comply with international guidance and best practices for sampling design, estimating land category 
-areas and land change, and for assessing map accuracy.
+AcATaMa is a powerful and complete Qgis plugin for accuracy assessment designed for land use/land cover classification, 
+including supervised/unsupervised classification or any thematic map. It provides comprehensive support for sampling, 
+response design and estimation within a design-based inference framework. The primary goal of AcATaMa is to equip users 
+with the necessary tools to comply with international guidance and best practices for sampling design, estimation of 
+land category areas and changes, and map accuracy assessment.
 
 ![](docs/img/overview.webp)
 
