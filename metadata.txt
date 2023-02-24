@@ -8,7 +8,7 @@ qgisMinimumVersion=3.0
 qgisMaximumVersion=3.99
 
 author=Xavier Corredor Llano, SMByC
-email=xcorredorl@ideam.gov.co
+email=xavier.corredor.llano@gmail.com
 
 homepage=https://smbyc.github.io/AcATaMa
 tracker=https://github.com/SMByC/AcATaMa/issues
