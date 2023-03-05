@@ -8,19 +8,10 @@ import zipfile
 from paver.easy import *
 
 
-def get_extlibs():
-    if platform.system() == "Windows":
-        return 'extlibs_windows'
-    if platform.system() == "Darwin":
-        return 'extlibs_macos'
-    if platform.system() == "Linux":
-        return 'extlibs_linux'
-
-
 options(
     plugin=Bunch(
         name='AcATaMa',
-        ext_libs=path(get_extlibs()),
+        ext_libs='extlibs',
         source_dir=path('.'),
         package_dir=path('.'),
         tests=['test', 'tests'],
@@ -30,7 +21,19 @@ options(
             ".github",
             ".idea",
             ".gitignore",
+            ".docker",
             "__pycache__",
+            ".pytest_cache",
+            ".coverage",
+            "Makefile",
+            "build.md",
+            "metadata_new.txt",
+            "pavement.py",
+            "plugin_upload.py",
+            "docs",
+            "examples",
+            "tests",
+            "scripts",
             "AcATaMa.zip"
         ]
     ),
