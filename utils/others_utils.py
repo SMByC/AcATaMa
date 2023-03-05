@@ -26,7 +26,6 @@ from osgeo import gdal, gdal_array
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QProgressDialog, QApplication
 
-from AcATaMa.utils.progress_dialog import DaskQTProgressDialog
 from AcATaMa.utils.qgis_utils import get_file_path_of_layer
 from AcATaMa.utils.system_utils import wait_process
 
@@ -104,6 +103,8 @@ def pixel_count_in_chunk(img_path, band, pixel_values, xoff, yoff, xsize, ysize)
 def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None, nodata=None):
     """Get the total pixel count for each pixel values"""
     import dask
+    from AcATaMa.utils.progress_dialog import DaskQTProgressDialog
+
     if nodata in [None, "", "nan"] or np.isnan(nodata):
         nodata = "nan"
     elif float(nodata) == int(nodata):
