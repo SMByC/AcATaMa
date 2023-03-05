@@ -19,14 +19,14 @@
  ***************************************************************************/
 """
 import numpy as np
-import multiprocessing
 import xml.etree.ElementTree as ET
+
 from osgeo import gdal, gdal_array
 
-from qgis.PyQt.QtCore import Qt, QCoreApplication
-from qgis.PyQt.QtWidgets import QProgressDialog
-from qgis.utils import iface
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QProgressDialog, QApplication
 
+from AcATaMa.utils.progress_dialog import DaskQTProgressDialog
 from AcATaMa.utils.qgis_utils import get_file_path_of_layer
 from AcATaMa.utils.system_utils import wait_process
 
@@ -64,8 +64,25 @@ def get_pixel_values(layer, band):
         pixel_values.append(int(item.get("value")))
     return pixel_values
 
-# --------------------------------------------------------------------------
 
+# --------------------------------------------------------------------------
+# compute pixels count by pixel unique values
+
+storage_pixel_count_by_pixel_values = {}  # storage the pixel/values computed by layer, band and nodata
+
+
+def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=None):
+    """Meta function to choose the way to compute the pixel count by pixel values
+    checking if dask library is available or not"""
+    try:
+        import dask
+        return get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values, nodata)
+    except ImportError:
+        return get_pixel_count_by_pixel_values_sequential(layer, band, pixel_values, nodata)
+
+
+# --------------------------------------------------------------------------
+# parallel processing
 
 def chunks(l, n):
     """generate the sub-list of chunks of n-sizes from list l"""
@@ -74,52 +91,19 @@ def chunks(l, n):
 
 
 def pixel_count_in_chunk(img_path, band, pixel_values, xoff, yoff, xsize, ysize):
-    pixel_count = [0] * len(pixel_values)
     gdal_file = gdal.Open(img_path, gdal.GA_ReadOnly)
-
-    chunk_narray = gdal_file.GetRasterBand(band).ReadAsArray(xoff, yoff, xsize, ysize).astype(np.int)
-
+    chunk_narray = gdal_file.GetRasterBand(band).ReadAsArray(xoff, yoff, xsize, ysize)
+    del gdal_file
+    pixel_count = [0] * len(pixel_values)
     for idx, pixel_value in enumerate(pixel_values):
         pixel_count[idx] += (chunk_narray == int(pixel_value)).sum()
     return pixel_count
 
 
 @wait_process
-def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None):
+def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None, nodata=None):
     """Get the total pixel count for each pixel values"""
-
-    if pixel_values is None:
-        pixel_values = get_pixel_values(layer, band)
-
-    # split the image in chunks, the 0,0 is left-upper corner
-    gdal_file = gdal.Open(get_file_path_of_layer(layer), gdal.GA_ReadOnly)
-    chunk_size = 1000
-    input_data = []
-    for y in chunks(range(gdal_file.RasterYSize), chunk_size):
-        yoff = y[0]
-        ysize = len(y)
-        for x in chunks(range(gdal_file.RasterXSize), chunk_size):
-            xoff = x[0]
-            xsize = len(x)
-
-            input_data.append((get_file_path_of_layer(layer), band, pixel_values, xoff, yoff, xsize, ysize))
-
-    # compute and merge all parallel process returns in one result
-    with multiprocessing.Pool(multiprocessing.cpu_count()) as pool:
-        map_it = pool.starmap(pixel_count_in_chunk, input_data)
-        pixel_counts = np.sum([proc for proc in map_it], axis=0).tolist()
-        return dict(zip(pixel_values, pixel_counts))
-
-# --------------------------------------------------------------------------
-# compute pixels count by values
-
-
-storage_pixel_count_by_pixel_values = {}  # storage the pixel/values computed by layer, band and nodata
-total_count = 0
-
-
-@wait_process
-def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=None):
+    import dask
     if nodata in [None, "", "nan"] or np.isnan(nodata):
         nodata = "nan"
     elif float(nodata) == int(nodata):
@@ -131,7 +115,17 @@ def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=None)
     if (layer, band, set_nodata_format(nodata)) in storage_pixel_count_by_pixel_values:
         return storage_pixel_count_by_pixel_values[(layer, band, set_nodata_format(nodata))]
 
-    app = QCoreApplication.instance()
+    # progress dialog
+    progress = QProgressDialog('AcATaMa is counting the number of pixels for each thematic value.\n'
+                               'Depending on the size of the image, it would take a few minutes.',
+                               None, 0, 100)
+    progress.setWindowTitle("AcATaMa - Counting unique values...")
+    progress.setWindowModality(Qt.WindowModal)
+    progress.setValue(0)
+    progress.show()
+    progress.update()
+    QApplication.processEvents()
+
     if pixel_values is None:
         pixel_values = get_pixel_values(layer, band)
 
@@ -141,34 +135,77 @@ def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=None)
         if nodata in pixel_values: pixel_values.remove(nodata)
         pixel_values.insert(0, nodata)
 
-    try:
-        # libs for parallel process
-        #   - rioxarray (requires rasterio)
-        #   - dask
-        import rioxarray
-        import dask.array as da
-        dataset = rioxarray.open_rasterio(get_file_path_of_layer(layer), chunks={'band': 1, 'x': 3000, 'y': 3000})
-        parallel = True
-    except:
-        dataset = gdal_array.LoadFile(get_file_path_of_layer(layer))
-        parallel = False
+    # split the image in chunks, the 0,0 is left-upper corner
+    layer_filepath = get_file_path_of_layer(layer)
+    gdal_file = gdal.Open(layer_filepath, gdal.GA_ReadOnly)
+    chunk_size_x, chunk_size_y = gdal_file.RasterXSize//10+1, gdal_file.RasterYSize//10+1
+    data_in_chunks = []
+    for y in chunks(range(gdal_file.RasterYSize), chunk_size_y):
+        yoff = y[0]
+        ysize = len(y)
+        for x in chunks(range(gdal_file.RasterXSize), chunk_size_x):
+            xoff = x[0]
+            xsize = len(x)
+            data_in_chunks.append((layer_filepath, band, pixel_values, xoff, yoff, xsize, ysize))
+    del gdal_file
+
+    # compute and merge all parallel process returns in one result
+    with DaskQTProgressDialog(progress_dialog=progress):
+        results = dask.compute(*[dask.delayed(pixel_count_in_chunk)(*chunk) for chunk in data_in_chunks])
+    pixel_counts = np.sum(results, axis=0).tolist()
+
+    if nodata != "nan":
+        pixel_values.pop(0)
+        pixel_counts.pop(0)
+
+    progress.close()
+    pairing_values_and_counts = dict(zip(pixel_values, pixel_counts))
+    storage_pixel_count_by_pixel_values[(layer, band, set_nodata_format(nodata))] = pairing_values_and_counts
+    return pairing_values_and_counts
+
+
+# --------------------------------------------------------------------------
+# sequential processing
+total_count = 0
+
+
+@wait_process
+def get_pixel_count_by_pixel_values_sequential(layer, band, pixel_values=None, nodata=None):
+    if nodata in [None, "", "nan"] or np.isnan(nodata):
+        nodata = "nan"
+    elif float(nodata) == int(nodata):
+        nodata = int(nodata)
+    else:
+        nodata = float(nodata)
+
+    # check if it was already computed, then return it
+    if (layer, band, set_nodata_format(nodata)) in storage_pixel_count_by_pixel_values:
+        return storage_pixel_count_by_pixel_values[(layer, band, set_nodata_format(nodata))]
+
+    if pixel_values is None:
+        pixel_values = get_pixel_values(layer, band)
+
+    # put nodata at the beginning, with the idea to include it for stopping
+    # the counting when reaching the total pixels, delete it at the end
+    if nodata != "nan":
+        if nodata in pixel_values: pixel_values.remove(nodata)
+        pixel_values.insert(0, nodata)
+
+    dataset = gdal_array.LoadFile(get_file_path_of_layer(layer))
 
     if len(dataset.shape) == 3:
-        if parallel:
-            dataset = dataset.sel(band=band)
-        else:
-            dataset = dataset[band - 1]
+        dataset = dataset[band - 1]
 
     max_pixels = dataset.shape[-1] * dataset.shape[-2]
 
     progress = QProgressDialog('AcATaMa is counting the number of pixels for each thematic value.\n'
                                'Depending on the size of the image, it would take a few minutes.',
                                None, 0, 100)
-    progress.setWindowTitle("AcATaMa - Counting pixels by values... " + ("[parallel]" if parallel else "[not parallel!]"))
+    progress.setWindowTitle("AcATaMa - Counting pixels by values...")
     progress.setWindowModality(Qt.WindowModal)
     progress.setValue(0)
     progress.show()
-    app.processEvents()
+    QApplication.processEvents()
 
     global total_count
     total_count = 0
@@ -177,10 +214,7 @@ def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=None)
         global total_count
         if total_count >= max_pixels:
             return 0
-        if parallel:
-            count = da.count_nonzero(dataset == pixel_value).compute()
-        else:
-            count = np.count_nonzero(dataset == pixel_value)
+        count = np.count_nonzero(dataset == pixel_value)
         total_count += count
         progress.setValue(int(total_count * 100 / max_pixels))
         return count
@@ -191,14 +225,14 @@ def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=None)
         pixel_values.pop(0)
         pixel_counts.pop(0)
 
-    progress.accept()
+    progress.close()
     pairing_values_and_counts = dict(zip(pixel_values, pixel_counts))
     storage_pixel_count_by_pixel_values[(layer, band, set_nodata_format(nodata))] = pairing_values_and_counts
     return pairing_values_and_counts
 
+
 # --------------------------------------------------------------------------
 # set nodata format for the text line boxes
-
 
 def set_nodata_format(value):
     if isinstance(value, str) and not value.strip():
