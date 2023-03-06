@@ -17,7 +17,7 @@ def compare_config_files(unwrap, tmpdir, input_yml_path):
 
 
 def disabled_test_restore_and_save_config_file(plugin, unwrap, tmpdir):
-    yml_files = [pytest.tests_data_dir / "stratified_random_sampling_config.yml",]
+    yml_files = [pytest.tests_data_dir.parent.parent / "examples" / "Simple exercise - 2019-2020 change - Tinigua.yml"]
 
     for yml_file in yml_files:
         compare_config_files(unwrap, tmpdir, yml_file)

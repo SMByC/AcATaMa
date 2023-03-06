@@ -1,0 +1,280 @@
+
+        <head>
+        
+        <style type="text/css">
+        table {
+          table-layout: fixed;
+          white-space: normal!important;
+          background: #ffffff;
+          margin: 4px;
+        }
+        th {
+          word-wrap: break-word;
+          padding: 4px 6px;
+          background: #efefef;
+          valign: middle;
+        }
+        td {
+          word-wrap: break-word;
+          padding: 4px 6px;
+          background: #efefef;
+        }
+        .highlight {
+          background: #dddddd;
+        }
+        .th-rows {
+          max-width: 120px;
+        }
+        .empty {
+          background: #f9f9f9;
+        }
+        </style>
+        </head>
+        <body>
+        <h2>Analysis - Accuracy assessment results</h2><p><strong>Thematic map:</strong> Thematic - 2019-2020 change - Tinigua.tif</p><p><strong>Sampling file:</strong> simple sampling.gpkg</p><p><strong>Estimator:</strong> Simple/systematic post-stratified estimator</p><p><strong>Response design state:</strong> 500/500 samples labeled</p><p style='font-size:2px'><br/></p><h3>1) Error matrix:</h3>
+        <table>
+        <tbody>
+        <tr>
+        <td class="empty"></td>
+        <td class="empty"></td>
+         <th colspan="3">Validation</th>
+            <td class="empty"></td>
+            <td class="empty"></td>
+            <td class="empty"></td>
+            <td class="empty"></td>
+        </tr>
+        <tr>
+        <td class="empty"></td>
+        <td class="empty"></td>
+        <th >1 (Stable Forest)</th><th >2 (Deforestation)</th><th >5 (Non-Stable Forest)</th>
+        <th>Total</th>
+        <th>User accuracy</th>
+        <th>Total class area (ha)</th>
+        <th>Wi</th>
+        </tr>
+        <tr>
+                <th  class="th-rows" rowspan="3">Thematic map<br />classes</th>
+                <th>1</th>
+            <td class="highlight">325</td>
+            
+            <td class="highlight">0</td>
+            
+            <td class="highlight">15</td>
+            
+            <td>340</td>
+            <td>0.95588</td>
+            <td>145078.56</td>
+            <td>0.67537</td>
+            </tr>
+            <tr><th>2</th>
+            <td class="highlight">0</td>
+            
+            <td class="highlight">17</td>
+            
+            <td class="highlight">0</td>
+            
+            <td>17</td>
+            <td>1.0</td>
+            <td>5703.75</td>
+            <td>0.02655</td>
+            </tr>
+            <tr><th>5</th>
+            <td class="highlight">7</td>
+            
+            <td class="highlight">1</td>
+            
+            <td class="highlight">135</td>
+            
+            <td>143</td>
+            <td>0.94406</td>
+            <td>64029.69</td>
+            <td>0.29807</td>
+            </tr>
+                
+        <tr>
+        <td class="empty"></td>
+          <th>Total</th>
+        
+                <td>332</td>
+                
+                <td>18</td>
+                
+                <td>150</td>
+                
+        <td>500</td>
+        
+        <td class="empty"></td>
+        
+        <td>214812.0</td>
+        
+        <td class="empty"></td>
+        </tr>
+        <tr>
+        <td class="empty"></td>
+          <th>Producer accuracy</th>
+        
+            <td>0.97892</td>
+            
+            <td>0.94444</td>
+            
+            <td>0.9</td>
+            
+        <td class="empty"></td>
+        <td class="empty"></td>
+        
+        <td class="empty"></td>
+        <td class="empty"></td>
+        </tr>
+        </tbody>
+        </table>
+        <p style='font-size:2px'><br/></p><h3>2) Accuracy:</h3><h4>Overall:</h4>
+            <table>
+            <tbody>
+            <tr>
+            <td><strong>Overall Accuracy</strong></td>
+            <td><strong>Standard deviation</strong></td>
+            </tr>
+            <tr>
+            <td class="highlight">0.954</td>
+            <td>0.00938</td>
+            </tr>
+            </tbody>
+            </table>
+            <h4>User:</h4>
+            <table>
+            <tbody>
+            <tr>
+            <td class="empty"></td>
+            <th>User's accuracy</th><th>Standard deviation</th></tr><tr><th >1 (Stable Forest)</th><td class="highlight">0.95588</th><td>0.01115</th></tr><tr><th >2 (Deforestation)</th><td class="highlight">1.0</th><td>0.0</th></tr><tr><th >5 (Non-Stable Forest)</th><td class="highlight">0.94406</th><td>0.01929</th></tr>
+            </tbody>
+            </table>
+            <h4>Producer:</h4>
+            <table>
+            <tbody>
+            <tr>
+            <td class="empty"></td>
+            <th>Producer's accuracy</th><th>Standard deviation</th></tr><tr><th >1 (Stable Forest)</th><td class="highlight">0.9779</th><td>0.00811</th></tr><tr><th >2 (Deforestation)</th><td class="highlight">0.92721</th><td>0.06582</th></tr><tr><th >5 (Non-Stable Forest)</th><td class="highlight">0.90425</th><td>0.02131</th></tr>
+            </tbody>
+            </table>
+            <p style='font-size:2px'><br/></p><h3>3) Error matrix of estimated area proportion:</h3>
+            <table>
+            <tbody>
+            <tr>
+            <td class="empty"></td>
+            <td class="empty"></td>
+             <th colspan="3">Validation</th>
+                <td class="empty"></td>
+            </tr>
+            <tr>
+            <td class="empty"></td>
+            <td class="empty"></td>
+            <th >1 (Stable Forest)</th><th >2 (Deforestation)</th><th >5 (Non-Stable Forest)</th>
+            <th>Wi</th>
+            </tr>
+            <tr>
+                    <th  class="th-rows" rowspan="3">Thematic map<br />classes</th>
+                    <th>1</th>
+                <td class="highlight">0.64558</td>
+                
+                <td class="highlight">-</td>
+                
+                <td class="highlight">0.0298</td>
+                
+                <td>0.67537</td>
+                </tr>
+                <tr><th>2</th>
+                <td class="highlight">-</td>
+                
+                <td class="highlight">0.02655</td>
+                
+                <td class="highlight">-</td>
+                
+                <td>0.02655</td>
+                </tr>
+                <tr><th>5</th>
+                <td class="highlight">0.01459</td>
+                
+                <td class="highlight">0.00208</td>
+                
+                <td class="highlight">0.2814</td>
+                
+                <td>0.29807</td>
+                </tr>
+                    
+            <tr>
+            <td class="empty"></td>
+              <th>total</th>
+            
+                    <td>0.66017</td>
+                    
+                    <td>0.02864</td>
+                    
+                    <td>0.31119</td>
+                    
+            <td></td>
+            </tr>
+            </tbody>
+            </table>
+            <p style='font-size:2px'><br/></p><h3>4) Quadratic error matrix of estimated area proportion:</h3>
+            <table>
+            <tbody>
+            <tr>
+            <td class="empty"></td>
+            <td class="empty"></td>
+             <th colspan="3">Validation</th>
+            </tr>
+            <tr>
+            <td class="empty"></td>
+            <td class="empty"></td>
+            <th >1 (Stable Forest)</th><th >2 (Deforestation)</th><th >5 (Non-Stable Forest)</th></tr><tr>
+                    <th  class="th-rows" rowspan="3">Thematic map<br />classes</th>
+                    <th>1</th>
+                <td class="highlight">6e-05</td>
+                
+                <td class="highlight">-</td>
+                
+                <td class="highlight">6e-05</td>
+                </tr><tr><th>2</th>
+                <td class="highlight">-</td>
+                
+                <td class="highlight">-</td>
+                
+                <td class="highlight">-</td>
+                </tr><tr><th>5</th>
+                <td class="highlight">3e-05</td>
+                
+                <td class="highlight">0.0</td>
+                
+                <td class="highlight">3e-05</td>
+                </tr>    
+            <tr>
+            <td class="empty"></td>
+              <th>total</th>
+            
+                        <td>0.00927</td>
+                        
+                        <td>0.00208</td>
+                        
+                        <td>0.00948</td>
+                        
+            </tr>
+            </tbody>
+            </table>
+            <p style='font-size:2px'><br/></p><h3>5) Class area adjusted:</h3>
+        <table>
+        <tbody>
+        <tr>
+        <td class="empty"></td>
+        <th >Area adjusted (ha)</th><th >Error</th><th >Lower limit</th><th >Upper limit</th></tr><tr><th >1 (Stable Forest)</th><td>141812.35578</th><td>1161.23342</th><td>139536.33829</th><td>144088.37328</th></tr><tr><th >2 (Deforestation)</th><td>6151.51007</th><td>438.0444</th><td>5292.94305</th><td>7010.07709</th></tr><tr><th >5 (Non-Stable Forest)</th><td>66848.13415</th><td>1613.71172</th><td>63685.25918</th><td>70011.00912</th></tr>    
+        <tr>
+          <th>total</th>
+        <td>214812.0</th>
+        <td class="empty"></td>
+        <td class="empty"></td>
+        <td class="empty"></td>
+        </tr>
+        </tbody>
+        </table>
+        
+        </body>
+        
