@@ -9,14 +9,14 @@
   - - sampling_design
     - simple_random_sampling:
         automatic_random_seed: false
-        categ_map_band: -1
-        categ_map_path: null
-        classes_selected_for_sampling: null
+        categ_map_band: 1
+        categ_map_path: data/Thematic - 2019-2020 change - Tinigua.tif
+        classes_selected_for_sampling: 1, 2, 3, 5
         min_distance: 1000.0
         min_neighbors_with_the_same_class: '1'
         num_neighbors: '8'
         num_samples: 500
-        post_stratify: false
+        post_stratify: true
         random_sampling_options: true
         random_seed_by_user: '3'
         with_neighbors_aggregation: false
@@ -2117,5 +2117,5 @@
         csv_decimal: ','
         csv_separator: ;
         z_score: 1.96
-      estimator: Simple/systematic estimator
+      estimator: Simple/systematic post-stratified estimator
       sampling_file: data/simple sampling.gpkg
