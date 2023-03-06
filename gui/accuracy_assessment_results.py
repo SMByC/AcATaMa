@@ -219,11 +219,11 @@ def get_html(accu_asse):
     ###########################################################################
     # #### 2) Accuracy
 
-    if accu_asse.estimator in ['Simple/systematic estimator', 'Simple/systematic post-stratified estimator']:
+    if accu_asse.estimator in ['Simple/systematic estimator']:
         # overall
         overall_accuracy = sum([row[idx_row] for idx_row, row in enumerate(accu_asse.error_matrix)]) / total_samples
         standard_deviation = (overall_accuracy*(1-overall_accuracy)/(total_samples-1))**0.5
-    if accu_asse.estimator == 'Stratified estimator':
+    if accu_asse.estimator in ['Stratified estimator', 'Simple/systematic post-stratified estimator']:
         # overall
         overall_accuracy = sum([row[idx_row] for idx_row, row in enumerate(error_matrix_area_prop)])
         try:
@@ -695,11 +695,11 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows.append([])
     csv_rows.append(["2) Accuracy:"])
 
-    if accu_asse.estimator in ['Simple/systematic estimator', 'Simple/systematic post-stratified estimator']:
+    if accu_asse.estimator in ['Simple/systematic estimator']:
         # overall
         overall_accuracy = sum([row[idx_row] for idx_row, row in enumerate(accu_asse.error_matrix)]) / total_samples
         standard_deviation = (overall_accuracy*(1-overall_accuracy)/(total_samples-1))**0.5
-    if accu_asse.estimator == 'Stratified estimator':
+    if accu_asse.estimator in ['Stratified estimator', 'Simple/systematic post-stratified estimator']:
         # overall
         overall_accuracy = sum([row[idx_row] for idx_row, row in enumerate(error_matrix_area_prop)])
         try:

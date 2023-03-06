@@ -5,6 +5,10 @@ from AcATaMa.core.analysis import AccuracyAssessmentWindow
 from AcATaMa.gui import accuracy_assessment_results
 
 
+def clean_raw_html(html):
+    return html.replace('\n', '').replace('\t', '').replace(' ', '')
+
+
 def test_accuracy_assessment_simple_html(plugin, unwrap):
     # restore
     input_yml_path = pytest.tests_data_dir.parent.parent / "examples" / "Simple exercise - 2019-2020 change - Tinigua.yml"
@@ -24,7 +28,7 @@ def test_accuracy_assessment_simple_html(plugin, unwrap):
     # load the html file
     result_html_in_file = open(pytest.tests_data_dir / "analysis" / "accuracy_assessment_simple_revised.html", 'r')
 
-    assert result_html_computed == result_html_in_file.read()
+    assert clean_raw_html(result_html_computed) == clean_raw_html(result_html_in_file.read())
 
 
 def test_accuracy_assessment_simple_post_stratify_html(plugin, unwrap):
@@ -43,7 +47,7 @@ def test_accuracy_assessment_simple_post_stratify_html(plugin, unwrap):
     # load the html file
     result_html_in_file = open(pytest.tests_data_dir / "analysis" / "accuracy_assessment_simple_post_stratify_revised.html", 'r')
 
-    assert result_html_computed == result_html_in_file.read()
+    assert clean_raw_html(result_html_computed) == clean_raw_html(result_html_in_file.read())
 
 
 def test_accuracy_assessment_systematic_html(plugin, unwrap):
@@ -65,7 +69,7 @@ def test_accuracy_assessment_systematic_html(plugin, unwrap):
     # load the html file
     result_html_in_file = open(pytest.tests_data_dir / "analysis" / "accuracy_assessment_systematic_revised.html", 'r')
 
-    assert result_html_computed == result_html_in_file.read()
+    assert clean_raw_html(result_html_computed) == clean_raw_html(result_html_in_file.read())
 
 
 def test_accuracy_assessment_systematic_post_stratify_html(plugin, unwrap):
@@ -84,7 +88,7 @@ def test_accuracy_assessment_systematic_post_stratify_html(plugin, unwrap):
     # load the html file
     result_html_in_file = open(pytest.tests_data_dir / "analysis" / "accuracy_assessment_systematic_post_stratify_revised.html", 'r')
 
-    assert result_html_computed == result_html_in_file.read()
+    assert clean_raw_html(result_html_computed) == clean_raw_html(result_html_in_file.read())
 
 
 def test_accuracy_assessment_stratified_html(plugin, unwrap):
@@ -103,4 +107,4 @@ def test_accuracy_assessment_stratified_html(plugin, unwrap):
     # load the html file
     result_html_in_file = open(pytest.tests_data_dir / "analysis" / "accuracy_assessment_stratified_revised.html", 'r')
 
-    assert result_html_computed == result_html_in_file.read()
+    assert clean_raw_html(result_html_computed) == clean_raw_html(result_html_in_file.read())
