@@ -4,9 +4,9 @@ layout: default
 
 # Examples
 
-> **Download** the examples in order to load them in Acatama and explore the configuration and results, you can find the zip [here](https://drive.google.com/uc?export=download&id=1dZwaxA67FbhXY9MZ62LNVMqd8ZPpGJeE)
+> **Download** the examples in order to load them in Acatama and explore the configuration and results, you can find the zip [**here**](https://drive.google.com/uc?export=download&id=1dZwaxA67FbhXY9MZ62LNVMqd8ZPpGJeE)
 
-> Load the examples using the Restore state function in Acatama: <img src="img/restore_state.webp" height="250px" style="margin: auto;display: block;">
+> **Load** the examples using the Restore state function in Acatama: <img src="img/restore_state.webp" height="280px" style="margin: auto;display: block;">
 
 The examples were made with the forest land change map in Colombia for the year 2019-2020, the study area is the Tinigua 
 National Natural Park an area with a high deforestation rate that is located on the border of the Colombian Amazon and 
