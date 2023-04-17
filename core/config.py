@@ -134,7 +134,8 @@ def save(file_out):
     # systematic sampling
     data["sampling_design"]["systematic_sampling"] = {
         "points_spacing": AcATaMa.dockwidget.PointsSpacing_SystS.value(),
-        "initial_inset": AcATaMa.dockwidget.InitialInset_SystS.value(),
+        "initial_inset_mode": AcATaMa.dockwidget.QCBox_InitialInsetMode_SystS.currentText(),
+        "initial_inset": AcATaMa.dockwidget.InitialInsetFixed_SystS.value(),
         "max_xy_offset": AcATaMa.dockwidget.MaxXYoffset_SystS.value(),
 
         "post_stratify": AcATaMa.dockwidget.QGBox_SystSwithCR.isChecked(),
@@ -376,7 +377,12 @@ def restore(yml_file_path):
         if "systematic_sampling" in yaml_config["sampling_design"]:
             AcATaMa.dockwidget.PointsSpacing_SystS.setValue(
                 yaml_config["sampling_design"]["systematic_sampling"]['points_spacing'])
-            AcATaMa.dockwidget.InitialInset_SystS.setValue(
+            if "initial_inset_mode" in yaml_config["sampling_design"]["systematic_sampling"]:
+                select_item_in(AcATaMa.dockwidget.QCBox_InitialInsetMode_SystS,
+                               yaml_config["sampling_design"]["systematic_sampling"]['initial_inset_mode'])
+            else:
+                select_item_in(AcATaMa.dockwidget.QCBox_InitialInsetMode_SystS, "Fixed")
+            AcATaMa.dockwidget.InitialInsetFixed_SystS.setValue(
                 yaml_config["sampling_design"]["systematic_sampling"]['initial_inset'])
             AcATaMa.dockwidget.MaxXYoffset_SystS.setValue(
                 yaml_config["sampling_design"]["systematic_sampling"]['max_xy_offset'])

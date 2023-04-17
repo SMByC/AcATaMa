@@ -924,13 +924,6 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <property name="rightMargin">
                        <number>0</number>
                       </property>
-                      <item row="0" column="0">
-                       <widget class="QLabel" name="label_26">
-                        <property name="text">
-                         <string>Points spacing:</string>
-                        </property>
-                       </widget>
-                      </item>
                       <item row="0" column="1">
                        <widget class="QDoubleSpinBox" name="PointsSpacing_SystS"/>
                       </item>
@@ -941,8 +934,32 @@ It set automatically from image if the layer has the nodata value set.</string>
                         </property>
                        </widget>
                       </item>
+                      <item row="0" column="0">
+                       <widget class="QLabel" name="label_26">
+                        <property name="text">
+                         <string>Points spacing (XY):</string>
+                        </property>
+                       </widget>
+                      </item>
                       <item row="1" column="1">
-                       <widget class="QDoubleSpinBox" name="InitialInset_SystS"/>
+                       <widget class="QComboBox" name="QCBox_InitialInsetMode_SystS">
+                        <property name="toolTip">
+                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the initial inset from left-top corner using a random value (from 0 to point spacing) or using a fixed value by user&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                        </property>
+                        <item>
+                         <property name="text">
+                          <string>Random</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Fixed</string>
+                         </property>
+                        </item>
+                       </widget>
+                      </item>
+                      <item row="2" column="1">
+                       <widget class="QDoubleSpinBox" name="InitialInsetFixed_SystS"/>
                       </item>
                      </layout>
                     </widget>

@@ -160,7 +160,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # generation options
         self.widget_generate_SystS.QPBtn_GenerateSamples.clicked.connect(lambda: do_systematic_sampling(self))
         self.PointsSpacing_SystS.valueChanged.connect(self.update_systematic_sampling_progressbar)
-        self.InitialInset_SystS.valueChanged.connect(self.update_systematic_sampling_progressbar)
+        self.QCBox_InitialInsetMode_SystS.currentIndexChanged[int].connect(lambda index: self.InitialInsetFixed_SystS.setVisible(True if index == 1 else False))
+        self.InitialInsetFixed_SystS.setHidden(True)
+        self.InitialInsetFixed_SystS.valueChanged.connect(self.update_systematic_sampling_progressbar)
         # select and check the categorical map
         self.widget_SystSwithCR.setHidden(True)
         # set properties to QgsMapLayerComboBox
@@ -258,9 +260,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.PointsSpacing_SystS.setSuffix("")
             self.PointsSpacing_SystS.setToolTip("")
             self.PointsSpacing_SystS.setValue(0)
-            self.InitialInset_SystS.setSuffix("")
-            self.InitialInset_SystS.setToolTip("")
-            self.InitialInset_SystS.setValue(0)
+            self.InitialInsetFixed_SystS.setSuffix("")
+            self.InitialInsetFixed_SystS.setToolTip("")
+            self.InitialInsetFixed_SystS.setValue(0)
             self.MaxXYoffset_SystS.setSuffix("")
             self.MaxXYoffset_SystS.setToolTip("")
             self.MaxXYoffset_SystS.setValue(0)
@@ -330,17 +332,17 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                                           QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
         self.PointsSpacing_SystS.setValue(0)
         #
-        self.InitialInset_SystS.setSuffix(" {}".format(str_unit))
-        self.InitialInset_SystS.setToolTip(
+        self.InitialInsetFixed_SystS.setSuffix(" {}".format(str_unit))
+        self.InitialInsetFixed_SystS.setToolTip(
             "Initial inset distance from left-top\n(units based on thematic map selected)")
-        self.InitialInset_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
-        self.InitialInset_SystS.setDecimals(
+        self.InitialInsetFixed_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
+        self.InitialInsetFixed_SystS.setDecimals(
             4 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
                                      QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
-        self.InitialInset_SystS.setSingleStep(
+        self.InitialInsetFixed_SystS.setSingleStep(
             0.0001 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
                                           QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
-        self.InitialInset_SystS.setValue(0)
+        self.InitialInsetFixed_SystS.setValue(0)
         #
         self.MaxXYoffset_SystS.setSuffix(" {}".format(str_unit))
         self.MaxXYoffset_SystS.setToolTip(
@@ -543,7 +545,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             return
         extent = self.QCBox_ThematicMap.currentLayer().extent()
         points_spacing = float(self.PointsSpacing_SystS.value())
-        initial_inset = float(self.InitialInset_SystS.value())
+        initial_inset = float(self.InitialInsetFixed_SystS.value())
         try:
             max_samples = (int((extent.width()-initial_inset)/points_spacing) + 1) * \
                           (int((extent.height()-initial_inset)/points_spacing) + 1)

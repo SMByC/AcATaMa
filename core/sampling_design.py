@@ -275,7 +275,6 @@ def do_systematic_sampling(dockwidget):
                        band=int(dockwidget.QCBox_band_ThematicMap.currentText()),
                        nodata=float(dockwidget.nodata_ThematicMap.text().strip() or "nan"))
     points_spacing = float(dockwidget.PointsSpacing_SystS.value())
-    initial_inset = float(dockwidget.InitialInset_SystS.value())
     max_xy_offset = float(dockwidget.MaxXYoffset_SystS.value())
     total_of_samples = dockwidget.widget_generate_SystS.QPBar_GenerateSamples.maximum()
 
@@ -322,6 +321,13 @@ def do_systematic_sampling(dockwidget):
             pass
     else:
         random_seed = None
+
+    # define the initial inset
+    if dockwidget.QCBox_InitialInsetMode_SystS.currentText() == "Random":
+        random.seed(random_seed)
+        initial_inset = random.uniform(0, points_spacing)
+    else:
+        initial_inset = float(dockwidget.InitialInsetFixed_SystS.value())
 
     # before process
     dockwidget.widget_generate_SystS.QPBtn_GenerateSamples.setText("Generating...")
