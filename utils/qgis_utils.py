@@ -23,7 +23,7 @@ import os
 from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
-from qgis.gui import QgsRendererPropertiesDialog, QgsRendererRasterPropertiesWidget
+from qgis.gui import QgsRendererPropertiesDialog, QgsRendererRasterPropertiesWidget, QgsMapLayerComboBox
 from qgis.core import QgsProject, QgsRasterLayer, QgsVectorLayer, Qgis, QgsStyle, QgsMapLayer
 from qgis.utils import iface
 
@@ -76,12 +76,16 @@ def load_and_select_filepath_in(combo_box, file_path, layer_name=None):
     layer = get_layer_by_name(layer_name)
     # load
     if not layer:
-        if not load_layer(file_path, name=layer_name).isValid():
+        layer = load_layer(file_path, name=layer_name)
+        if not layer.isValid():
             return
-    # select the sampling file in combobox
-    select_item_in(combo_box, layer_name)
+    # select the layer in the combobox
+    if isinstance(combo_box, QgsMapLayerComboBox):
+        combo_box.setLayer(layer)
+    else:
+        select_item_in(combo_box, layer_name)
 
-    return get_layer_by_name(layer_name)
+    return layer
 
 
 def add_layer(layer, add_to_legend=True):
