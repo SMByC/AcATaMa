@@ -3,7 +3,7 @@ name=AcATaMa
 description=AcATaMa is a powerful and complete Qgis plugin for accuracy assessment that provides comprehensive support for sampling, response design and estimation.
 about=AcATaMa is a powerful and complete Qgis plugin for accuracy assessment designed for land use/land cover classification, including supervised/unsupervised classification or any thematic map. It provides comprehensive support for sampling, response design and estimation within a design-based inference framework. The primary goal of AcATaMa is to equip users with the necessary tools to comply with international guidance and best practices for sampling design, estimation of land category areas and changes, and map accuracy assessment.
 
-version=22.10.23
+version=23.4
 qgisMinimumVersion=3.0
 qgisMaximumVersion=3.99
 
@@ -15,59 +15,16 @@ tracker=https://github.com/SMByC/AcATaMa/issues
 repository=https://github.com/SMByC/AcATaMa
 
 changelog=
-    22.10.23:
-    - Refactoring the UI, reorganizing the tabs, set the main tab "Thematic map" in the top
-      always visible. Changes in the layout for selecting the layer and its band and nodata in
-      one row, reducing the space and improving the usability. UI improvements in the
-      classification dialog and its view widgets.
-    - Overhauling all accuracy assessment results, now all results based on the type of sampling
-      design into three estimators: Simple/systematic estimator, Simple/systematic post-stratified estimator
-      and Stratified estimator. Now the accuracy assessment result are more precise and adjusted
-      to the sampling design with more statistics data such as standard deviation for the accuracies:
-      overall, user and producer.
-    - Improvements for counting the number of pixels for each thematic value in parallel or
-      lineal processing with a process dialog
-    - After samples are created, the file generated is prepared and selected in respond design
-      and analysis tab
-    - Highlight the edges of the thematic pixel respectively of the current sampling point for
-      the views in the response design window
-    - Implemented the sampling unit using a number of pixel buffer around to current pixel for labeling,
-      helping the user identify the classes around the pixel that is being labelled.
-    - Added a new sampling method: systematic sampling using a point spacing grid with a random offset,
-      but also with the option to post-stratified the sampling and the option of neighbours aggregation.
-    - New dialog for easier selection the classes from categorical map to post-stratify the simple
-      and systematic sampling
-    - Refactoring the UI, classes, functions and docs to match with the correct names of the
-      accuracy assessment process described in the papers that this plugin is based on.
-    - Added the option to allow AcATaMa apply an automatic classification symbology to the layer
-      when the layer don't have an appropriate colors/values style
-    - Now the yml file save all the settings and configurations made in sampling design tab
-    - Improved the nodata boxes and processes to handle the case of large and negative nodata values
-    - Check if the sampling process seems stuck due to sampling conditions and ask the user to
-      continue or cancel the process
-    - New button for reset the categorical value table, reloading the layer style, pixel count and restoring
-      default values
-    - Checked or activated the labeling button for the label selected for the current sample
-    - Adjustments and fixes in the button classification dialog
-    - Added a check if all button configured have a valid name in the button classification dialog
-    - Set by default the classification view config by 2x1 views and readjust the size of window
-    - Refactoring the save/restore configuration and state of Acatama in order to include more configurations
-    - Remember the latest save/restore configuration file
-    - Deleted the option to save the sampling config as .ini file, use save/restore state instead.
-    - Check if all button configured have a valid name and check if button name exist (not allow duplicate
-      labels with the same names)
-    - Reviewed the user and producer accuracy value using error matrix adjusted table for stratified and
-      post-stratified estimator
-    - Updated and adjusted the suggested filenames
-    - Fixes counting pixel values using parallel libraries or gdal
-    - Fixes some division by zero in the new way to compute the Stratified estimator
-    - UI adjustments
-    - Cleaning unused files and libs
-    - Minor several fixes and improvements
-    - Don't forget rate the plugin :)
-
-    Previous versions:
-    - All commits in: https://github.com/SMByC/AcATaMa/commits
+    23.4:
+    - Added a new mechanism to compute in parallel the counting of the unique pixel values (thematic classes)
+      required for stratified sampling design and analysis using area based proportion.
+    - Added the option for systematic sampling to set the initial inset from left-top corner using a random value.
+    - Added the external library Dask in the plugin to allow parallel computing in some processes.
+    - Added all the tests to verify and check the accuracy assessment results in the different sampling types.
+    - Fixed an issue for the standard deviation in the overall accuracy for the post-stratify estimators
+    - Fixed the slot event for load the file and select the layer in the ComboBox for Qgis layers
+    - Adjusted all the exercises with the all configurations of the plugin and added the missing ones.
+    - All commits in: https://github.com/SMByC/AcATaMa/commits/all
 
 tags=accuracy,accuracy assessment,thematic,classification,sample,sampling design,points,remote sensing
 
