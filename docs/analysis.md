@@ -39,9 +39,17 @@ This matrix is essential for the analysis of the area and variance estimators. T
 population error matrix are important because they quantify the distribution, by area, of different land cover classes. 
 The row totals represent the proportion of area of each class, according to the map classification. On the other hand, 
 the totals of the columns represent the proportion of area, according to the reference classification. Accuracy 
-assessment focuses on three types of analysis and parameters. The first at a global level, defined as general accuracy 
-or Kappa coefficient. The second that focuses on the specific accuracy of the class and is classified as the accuracy 
-of the user or the producer. And, the third, which corresponds to the estimation of the proportion of area by a class.
+assessment focuses on three types of analysis and parameters. The first at a global level, defined as general accuracy. 
+The second that focuses on the specific accuracy of the class and is classified as the accuracy of the user or the 
+producer. And, the third, which corresponds to the estimation of the proportion of area by a class.
+
+> *About Kappa:* AcATaMa has not implemented the Kappa coefficient in the results, because in general we don't recommend
+> to use it. The kappa coefficient is widely used as a measure of thematic accuracy in remote sensing. However, 
+> Foody (2020), Pontius and Millones (2011) have shown that the Kappa coefficient is not a good measure of accuracy. 
+> Pontius and Millones (2011) have argued that Kappa indices are redundant, useless, and/or flawed and should be 
+> abandoned because they do not provide any information helping in the purpose of accuracy assessment and map 
+> comparison. Foody (2020) said that while Kappa is a useful measure of agreement, it is not a good measure of accuracy.
+> The kappa coefficient is an inappropriate index to use to describe classification accuracy.
 
 ### Accuracy
 
@@ -90,5 +98,18 @@ The estimated area for each class or stratum and the standard error of the estim
 in Olofsson et al. (2014); they allow to obtain the confidence interval with the percent defined by the z-score value. 
 AcATaMa calculate a 95% confidence interval (Z=1,96) by default, but you can modify the z-score value 
 according to the desired percent (Settings options in the report of results).
+
+#### References
+
+* Olofsson, P., Foody, G. M., Herold, M., Stehman, S. V., Woodcock, C. E., & Wulder, M. A. (2014). Good practices for
+estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148, 42-57.
+* Stehman, S. V. (2014). Estimating area from an accuracy assessment of land cover. Remote Sensing of Environment, 148, 42-57.
+* Stehman, S. V., & Foody, G. M. (2019). Accuracy assessment: a user's perspective. CRC Press.
+* FAO. (2016). Collect Earth: Land Use and Land Cover Assessment through Augmented Visual Interpretation. Rome, Italy:
+Food and Agriculture Organization of the United Nations.
+* Pontius Jr, R. G., & Millones, M. (2011). Death to Kappa: birth of quantity disagreement and allocation disagreement 
+for accuracy assessment. International Journal of Remote Sensing, 32(15), 4407-4429. 
+* Foody, G. M. (2020). Explaining the unsuitability of the kappa coefficient in the assessment and comparison of the 
+accuracy of thematic maps obtained by image classification. Remote Sensing of Environment, 239, 111630.
 
 Next >> [Examples](./examples)
