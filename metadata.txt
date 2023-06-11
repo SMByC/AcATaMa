@@ -24,7 +24,7 @@ changelog=
     - Fixed an issue for the standard deviation in the overall accuracy for the post-stratify estimators
     - Fixed the slot event for load the file and select the layer in the ComboBox for Qgis layers
     - Adjusted all the exercises with the all configurations of the plugin and added the missing ones.
-    - All commits in: https://github.com/SMByC/AcATaMa/commits/all
+    - All commits in: https://github.com/SMByC/AcATaMa/commits
 
 tags=accuracy,accuracy assessment,thematic,classification,sample,sampling design,points,remote sensing
 
