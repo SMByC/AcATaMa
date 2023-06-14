@@ -64,12 +64,12 @@ def get_num_samples_by_area_based_proportion(srs_table, total_std_error):
 
 def get_num_samples_by_keeping_total_samples(srs_table, new_num_samples):
     """Redistribute the samples number by area based proportion keeping
-    the total of samples, this occur when one num sample is changed
+    the total of samples, this occurs when a num sample item is changed
     """
     for idx, (old_ns, new_ns) in enumerate(zip(srs_table["num_samples"], new_num_samples)):
         if old_ns != new_ns:
             sample_idx = idx
-            sample_diff = float(old_ns) - float(new_ns)
+            sample_diff = int(old_ns) - int(new_ns)
             break
     distribute_on = list(srs_table["On"])
     distribute_on[sample_idx] = False
@@ -77,14 +77,23 @@ def get_num_samples_by_keeping_total_samples(srs_table, new_num_samples):
     total_pixel_count = float(sum(mask(srs_table["pixel_count"], distribute_on)))
     ratio_pixel_count = [p_c / total_pixel_count for p_c in mask(srs_table["pixel_count"], distribute_on)]
 
-    num_samples = []
-    idx = 0
-    for global_idx, item_enable in enumerate(distribute_on):
-        if item_enable:
-            num_samples.append(str(int(round(int(new_num_samples[global_idx]) + ratio_pixel_count[idx] * sample_diff))))
-            idx += 1
+    while True:
+        num_samples = []
+        idx = 0
+        for global_idx, item_enable in enumerate(distribute_on):
+            if item_enable:
+                num_samples.append(str(int(round(int(new_num_samples[global_idx]) + ratio_pixel_count[idx] * sample_diff))))
+                idx += 1
+            else:
+                num_samples.append(str(new_num_samples[global_idx]))
+        # check if one of the new num samples is negative
+        if any([int(ns) < 0 for ns in num_samples]):
+            sample_diff += 1
         else:
-            num_samples.append(str(new_num_samples[global_idx]))
+            break
+
+    # update the sample_idx (editing) with the (new) sample_diff
+    num_samples[sample_idx] = str(int(srs_table["num_samples"][sample_idx]) - sample_diff)
 
     return num_samples
 
@@ -274,20 +283,19 @@ def update_stratified_sampling_table(dockwidget, changes_from):
         num_samples = []
         std_dev = []
         on = []
-        try:
-            for row in range(dockwidget.QTableW_StraRS.rowCount()):
-                num_samples_in_row = dockwidget.QTableW_StraRS.item(row, 2).text()
-                if not num_samples_in_row.isdigit() or int(num_samples_in_row) < 0:
-                    num_samples_in_row = "0"
-                num_samples.append(num_samples_in_row)
-                if srs_method == "area based proportion":
-                    std_dev.append(dockwidget.QTableW_StraRS.item(row, 3).text())
-                    if dockwidget.QTableW_StraRS.item(row, 4).checkState() == 2:
-                        on.append(True)
-                    if dockwidget.QTableW_StraRS.item(row, 4).checkState() == 0:
-                        on.append(False)
-        except:
-            return
+
+        for row in range(dockwidget.QTableW_StraRS.rowCount()):
+            num_samples_in_row = dockwidget.QTableW_StraRS.item(row, 2).text()
+            if not num_samples_in_row.isdigit() or int(num_samples_in_row) < 0:
+                num_samples_in_row = srs_table["num_samples"][row]
+            num_samples.append(num_samples_in_row)
+            if srs_method == "area based proportion":
+                std_dev.append(dockwidget.QTableW_StraRS.item(row, 3).text())
+                if dockwidget.QTableW_StraRS.item(row, 4).checkState() == 2:
+                    on.append(True)
+                if dockwidget.QTableW_StraRS.item(row, 4).checkState() == 0:
+                    on.append(False)
+
         if srs_method == "fixed values":
             srs_table["num_samples"] = num_samples
         if srs_method == "area based proportion":
