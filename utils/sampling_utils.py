@@ -276,7 +276,10 @@ def update_stratified_sampling_table(dockwidget, changes_from):
         on = []
         try:
             for row in range(dockwidget.QTableW_StraRS.rowCount()):
-                num_samples.append(dockwidget.QTableW_StraRS.item(row, 2).text())
+                num_samples_in_row = dockwidget.QTableW_StraRS.item(row, 2).text()
+                if not num_samples_in_row.isdigit() or int(num_samples_in_row) < 0:
+                    num_samples_in_row = "0"
+                num_samples.append(num_samples_in_row)
                 if srs_method == "area based proportion":
                     std_dev.append(dockwidget.QTableW_StraRS.item(row, 3).text())
                     if dockwidget.QTableW_StraRS.item(row, 4).checkState() == 2:
