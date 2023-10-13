@@ -238,6 +238,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             # load to qgis and update combobox list
             load_and_select_filepath_in(combo_box, file_path)
 
+    @pyqtSlot("QgsMapLayer*")
     def select_thematic_map(self, layer):
         def clear_and_unset_the_thematic_map():
             with block_signals_to(self.QCBox_ThematicMap):
@@ -392,6 +393,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             if pixel_values_selected:
                 self.QPBtn_CategMapClassesSelection_SimpRS.setText(", ".join(classes_selection_dialog.classes_selected))
 
+    @pyqtSlot("QgsMapLayer*")
     def select_categorical_map_StraRS(self, layer):
         # first deselect/clear sampling method
         self.QCBox_StraRS_Method.setCurrentIndex(-1)
@@ -489,6 +491,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # clear select
         self.QCBox_StraRS_Method.setCurrentIndex(-1)
 
+    @pyqtSlot("QgsMapLayer*")
     def update_response_design_state(self, sampling_layer=None):
         if sampling_layer is None:
             sampling_layer = self.QCBox_SamplingFile.currentLayer()
@@ -676,6 +679,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # open dialog
         self.response_design_window.show()
 
+    @pyqtSlot("QgsMapLayer*")
     def set_sampling_file_in_analysis(self, sampling_layer=None):
         if sampling_layer is None:
             sampling_layer = self.QCBox_SamplingFile_A.currentLayer()
