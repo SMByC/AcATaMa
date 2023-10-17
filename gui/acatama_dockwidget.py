@@ -360,6 +360,19 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # enable sampling tab
         self.scrollAreaWidgetContents_S.setEnabled(True)
 
+        # update the labeling status of the sampling layer for the thematic map selected
+        sampling_layer = self.QCBox_SamplingFile.currentLayer()
+        if sampling_layer and sampling_layer in ResponseDesign.instances:
+            response_design = ResponseDesign.instances[sampling_layer]
+            response_design.reload_labeling_status()
+            self.update_response_design_state()
+            # define if this response_design was made with thematic classes
+            if response_design.buttons_config and True in [bc["thematic_class"] is not None and bc["thematic_class"] != ""
+                                                           for bc in response_design.buttons_config.values()]:
+                response_design.with_thematic_classes = True
+            # reload sampling file status in accuracy assessment tab
+            self.set_sampling_file_in_analysis()
+
     def select_categorical_map_SimpRS(self):
         self.QPBtn_CategMapClassesSelection_SimpRS.setText("click to select")
         # first check
