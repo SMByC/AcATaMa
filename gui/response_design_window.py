@@ -477,16 +477,18 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
 
         # from tableBtnsConfig
         if tableBtnsConfig:
+            label_id = 1
             for row in range(self.labeling_btns_config.tableBtnsConfig.rowCount()):
                 item_name = self.labeling_btns_config.tableBtnsConfig.item(row, 0).text()
                 item_color = self.labeling_btns_config.tableBtnsConfig.item(row, 1).background().color().name()
                 item_thematic_class = self.labeling_btns_config.tableBtnsConfig.item(row, 2).text()
                 item_thematic_class = None if item_thematic_class == "none" else item_thematic_class
                 if item_name != "":
-                    create_button(row + 1, item_name, item_color, item_thematic_class)
-                # define if this labeling was made with thematic classes
-                if item_thematic_class is not None and item_thematic_class != "":
-                    self.response_design.with_thematic_classes = True
+                    create_button(label_id, item_name, item_color, item_thematic_class)
+                    label_id += 1
+                    # define if this labeling was made with thematic classes
+                    if item_thematic_class is not None and item_thematic_class != "":
+                        self.response_design.with_thematic_classes = True
             # save btns config
             self.response_design.buttons_config = buttons
             self.labeling_btns_config.buttons_config = buttons
