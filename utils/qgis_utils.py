@@ -120,6 +120,26 @@ def unload_layer(layer_path):
             QgsProject.instance().removeMapLayer(layer_loaded.id())
 
 
+def get_symbology_table(raster_layer):
+    """Get the symbology table with pixel value, label and Qcolor of raster layer
+    """
+    renderer = raster_layer.renderer()
+
+    if renderer.type() == 'singlebandpseudocolor':
+        color_ramp = renderer.shader().rasterShaderFunction()
+        color_ramp_list = color_ramp.colorRampItemList()
+        symbology_table = []
+        for color_ramp_item in color_ramp_list:
+            symbology_table.append([int(color_ramp_item.value), color_ramp_item.label, color_ramp_item.color])
+        return symbology_table
+
+    if renderer.type() == 'paletted':
+        symbology_table = []
+        for raster_class in renderer.classes():
+            symbology_table.append([int(raster_class.value), raster_class.label, raster_class.color])
+        return symbology_table
+
+
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(

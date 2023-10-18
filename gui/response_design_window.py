@@ -32,7 +32,7 @@ from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, Qgis
 
 from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, get_current_file_path_in, \
-    load_and_select_filepath_in
+    load_and_select_filepath_in, get_symbology_table
 from AcATaMa.core.map import get_values_and_colors_table
 from AcATaMa.utils.system_utils import open_file, block_signals_to, error_handler
 from AcATaMa.gui.response_design_view_widget import LabelingViewWidget
@@ -561,6 +561,7 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
         self.tableBtnsConfig.itemClicked.connect(self.table_item_clicked)
         self.buttonBox.button(QDialogButtonBox.Ok).clicked.connect(self.check_before_accept)
         self.buttonBox.button(QDialogButtonBox.Cancel).clicked.connect(self.reject)
+        self.QPBtn_AutoFillLabels.clicked.connect(self.apply_auto_fill_from_thematic_map)
 
     @error_handler
     def create_table(self):
@@ -694,6 +695,31 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
             return
         # pass all checks
         self.accept()
+
+    @pyqtSlot()
+    def apply_auto_fill_from_thematic_map(self):
+        # check if the table tableBtnsConfig is not empty
+        if not all([self.tableBtnsConfig.item(row, 0).text() == "" and
+                    self.tableBtnsConfig.item(row, 2).text() == "" for row in range(self.tableBtnsConfig.rowCount())]):
+            # first prompt
+            quit_msg = ("This action will set up the labeling buttons based on the current thematic map symbology. "
+                        "This will replace the currently configured one. Do you want to continue?")
+            reply = QMessageBox.question(None, 'Apply auto fill from thematic map',
+                                         quit_msg, QMessageBox.Apply | QMessageBox.Cancel, QMessageBox.Cancel)
+            if reply != QMessageBox.Apply:
+                return
+
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        # clean the table
+        self.create_table()
+        # get the symbology table; pixel values, labels and colors from thematic map
+        symbology_table = get_symbology_table(AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer())
+        # create the buttons
+        for symbology_item in symbology_table:
+            value, label, color = symbology_item
+            self.tableBtnsConfig.item(value, 0).setText(label)
+            self.tableBtnsConfig.item(value, 1).setBackground(color)
+            self.tableBtnsConfig.item(value, 2).setText(str(value))
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(

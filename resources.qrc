@@ -18,5 +18,6 @@
         <file>icons/open.svg</file>
         <file>icons/save.svg</file>
         <file>icons/setup.svg</file>
+        <file>icons/autofill.svg</file>
     </qresource>
 </RCC>
