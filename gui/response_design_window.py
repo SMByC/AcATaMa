@@ -703,7 +703,7 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
         # check if exists a duplicate thematic class
         items_with_valid_names = [self.tableBtnsConfig.item(row, 2).text() for row in
                                     range(self.tableBtnsConfig.rowCount()) if
-                                    self.tableBtnsConfig.item(row, 2).text() != ""]
+                                    self.tableBtnsConfig.item(row, 2).text() not in ["", "none"]]
         if len(items_with_valid_names) != len(set(items_with_valid_names)):
             msg = "Invalid configuration:\n\nTo create the buttons for labeling, the thematic class values must be unique."
             QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.Ok)
