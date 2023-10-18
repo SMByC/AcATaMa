@@ -630,6 +630,11 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
                     item_table.setToolTip("Clean this row")
                     self.tableBtnsConfig.setItem(m, n, item_table)
 
+        # check if the thematic map is loaded to show the auto fill button
+        if valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicMap):
+            self.QPBtn_AutoFillLabels.setEnabled(True)
+        else:
+            self.QPBtn_AutoFillLabels.setDisabled(True)
         # set the minimum width to 0 for headers
         self.tableBtnsConfig.horizontalHeader().setMinimumSectionSize(0)
         # adjust size of Table
