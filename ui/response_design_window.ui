@@ -79,6 +79,9 @@
             </property>
             <item>
              <widget class="QLabel" name="label_5">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The sampling unit defines a space for comparing the thematic map and reference data, in the labeling protocol.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>Sampling unit</string>
               </property>
@@ -207,6 +210,9 @@ QToolButton
                </property>
                <item>
                 <widget class="QLabel" name="label_2">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Default zoom level for navigating through sample views.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
                  <property name="text">
                   <string>Zoom to sample</string>
                  </property>
@@ -622,7 +628,7 @@ QToolButton
                <item>
                 <widget class="QLabel" name="label_3">
                  <property name="toolTip">
-                  <string>The sample ID is the number of identification of the points order in the sampling file.</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The sample ID is the number of identification of the points order in the sampling file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Sample ID: </string>
@@ -699,7 +705,7 @@ QToolButton
                   </size>
                  </property>
                  <property name="toolTip">
-                  <string>Enter the sample ID, it is the number of identification of the points order in the sampling file.</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter the sample ID, it is the number of identification of the points order in the sampling file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="maxLength">
                   <number>10</number>
