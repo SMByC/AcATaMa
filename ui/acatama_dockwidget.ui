@@ -323,7 +323,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                          <item>
                           <widget class="QLabel" name="label_12">
                            <property name="text">
-                            <string>Use a categorical map (can be the same thematic file) to randomly sample only within the classes (categorical pixel values) set below.</string>
+                            <string>Use a categorical map (which can be the same thematic file) to validate random sampling exclusively within the selected classes.</string>
                            </property>
                            <property name="alignment">
                             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -1038,7 +1038,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <item>
                        <widget class="QLabel" name="label_33">
                         <property name="text">
-                         <string>Use a categorical map (can be the same thematic file) to randomly sample only within the classes (categorical pixel values) set below.</string>
+                         <string>Use a categorical map (which can be the same thematic file) to validate random sampling exclusively within the selected classes.</string>
                         </property>
                         <property name="alignment">
                          <set>Qt::AlignJustify|Qt::AlignVCenter</set>

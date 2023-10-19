@@ -56,7 +56,7 @@
          <item>
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>Only accept the pixel in the sampling if it has at least the number of neighbors of the same class:</string>
+            <string>Accept samples only if they have a minimum number of neighboring pixels with the same class:</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -140,29 +140,60 @@
      <layout class="QVBoxLayout" name="verticalLayout_8">
       <item>
        <widget class="QWidget" name="widget_random_sampling_options" native="true">
-        <layout class="QGridLayout" name="gridLayout_3">
-         <item row="1" column="0">
-          <widget class="QRadioButton" name="with_random_seed_by_user">
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_3">
            <property name="text">
-            <string>Set the random seed:</string>
+            <string>Specify a particular seed for the random process to ensure reproducible sampling:</string>
            </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="random_seed_by_user">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the seed random number as an integer value. It is possible to use strings, bytes, or bytearray but all of them get converted to an int and all of its bits are used.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <property name="alignment">
+            <set>Qt::AlignJustify|Qt::AlignVCenter</set>
            </property>
-          </widget>
-         </item>
-         <item row="0" column="0" colspan="2">
-          <widget class="QRadioButton" name="automatic_random_seed">
-           <property name="text">
-            <string>Automatic random seed</string>
-           </property>
-           <property name="checked">
+           <property name="wordWrap">
             <bool>true</bool>
            </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="widget_6" native="true">
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="1" column="0">
+             <widget class="QRadioButton" name="with_random_seed_by_user">
+              <property name="text">
+               <string>Set the random seed:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="random_seed_by_user">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the seed random number as an integer value. It is possible to use strings, bytes, or bytearray but all of them get converted to an int and all of its bits are used.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0" colspan="2">
+             <widget class="QRadioButton" name="automatic_random_seed">
+              <property name="text">
+               <string>Automatic random seed</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </item>
         </layout>
