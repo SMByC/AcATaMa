@@ -170,6 +170,7 @@ def save(file_out):
         data["is_completed"] = response_design.is_completed
         data["view_widgets_config"] = response_design.view_widgets_config
         data["labeling_buttons"] = response_design.buttons_config
+        data["auto_next_sample"] = response_design.auto_next_sample
         # save samples status
         points_config = {}
         for pnt_idx, point in enumerate(response_design.points):
@@ -447,6 +448,9 @@ def restore(yml_file_path):
         response_design.buttons_config = yaml_config["labeling_buttons"]
         # restore the view widget config
         response_design.view_widgets_config = yaml_config["view_widgets_config"]
+        # restore the auto next sample option
+        if "auto_next_sample" in yaml_config:
+            response_design.auto_next_sample = yaml_config["auto_next_sample"]
 
         # support load the old format of config file TODO: deprecated, legacy config input
         for x in response_design.view_widgets_config.values():

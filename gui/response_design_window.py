@@ -105,6 +105,9 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         # set total samples
         self.QPBar_SamplesNavigation.setMaximum(len(self.response_design.points))
 
+        # restore the auto next sample button status
+        self.autoNextSample.setChecked(self.response_design.auto_next_sample)
+
         # actions for fit and go to current sample
         self.radiusFitToSample.valueChanged.connect(lambda: self.show_and_go_to_current_sample(highlight=False))
         self.currentSample.clicked.connect(lambda: self.show_and_go_to_current_sample(highlight=True))
@@ -539,6 +542,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
 
         self.response_design.view_widgets_config = view_widgets_config
         self.response_design.dialog_size = (self.size().width(), self.size().height())
+        self.response_design.auto_next_sample = self.autoNextSample.isChecked()
 
         ResponseDesignWindow.is_opened = False
         # restore the states for some objects in the dockwidget

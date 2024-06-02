@@ -64,6 +64,8 @@ class ResponseDesign(object):
         self.view_widgets_config = {}
         # response design dialog size
         self.dialog_size = None
+        # autoNextSample button status
+        self.auto_next_sample = True
         # if this response design was made with thematic classes
         self.with_thematic_classes = False
         # init label status
