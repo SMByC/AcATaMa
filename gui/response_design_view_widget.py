@@ -224,8 +224,9 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
 
         # update square rubber band for current and sampling unit markers
         from AcATaMa.gui.response_design_window import ResponseDesignWindow
-        ResponseDesignWindow.instance.show_the_current_pixel()
-        ResponseDesignWindow.instance.show_the_sampling_unit()
+        if ResponseDesignWindow.instance is not None:
+            ResponseDesignWindow.instance.show_the_current_pixel()
+            ResponseDesignWindow.instance.show_the_sampling_unit()
 
     def set_render_layer(self, layer):
         if not layer:
