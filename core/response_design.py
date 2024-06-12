@@ -81,6 +81,9 @@ class ResponseDesign(object):
         self.estimator = -1
         # for store the instance of the analysis results
         self.analysis = None
+        # CCD plugin widget configuration
+        self.ccd_plugin_opened = False
+        self.ccd_plugin_config = None
 
         # shuffle the list items
         shuffle(self.points)

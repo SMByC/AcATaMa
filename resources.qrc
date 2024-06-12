@@ -19,5 +19,6 @@
         <file>icons/save.svg</file>
         <file>icons/setup.svg</file>
         <file>icons/autofill.svg</file>
+        <file>icons/ccd_plugin.svg</file>
     </qresource>
 </RCC>

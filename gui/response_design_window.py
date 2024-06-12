@@ -19,14 +19,16 @@
  ***************************************************************************/
 """
 import os
+import tempfile
 import uuid
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt, pyqtSlot, QEventLoop, QTimer
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QSplitter, QColorDialog, QDialog, QDialogButtonBox, QPushButton, \
-    QMessageBox
+    QMessageBox, QWidget, QLabel
 from qgis.PyQt.QtGui import QColor, QIcon
 from qgis.gui import QgsRubberBand
+from qgis.utils import iface
 from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, Qgis, QgsProject, QgsUnitTypes, \
     QgsRectangle, QgsPointXY, QgsGeometry, QgsWkbTypes
 
@@ -81,6 +83,9 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         self.GoTo_ID_Button.clicked.connect(self.go_to_sample_id)
         self.GoTo_ID.returnPressed.connect(self.go_to_sample_id)
         self.GoTo_ID.textChanged.connect(lambda: self.GoTo_ID.setStyleSheet(""))
+
+        # set up the Continuous Change Detection widget
+        self.QPBtn_CCDPlugin.clicked.connect(self.ccd_plugin_widget)
 
         # open in Google Earth
         self.QPBtn_OpenInGE.clicked.connect(self.open_current_point_in_google_engine)
@@ -201,6 +206,55 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
                     # active render layer in canvas
                     view_widget.set_render_layer(view_widget.QCBox_RenderFile.currentLayer())
 
+        #### CCD widget
+        self.widget_ccd.setVisible(False)
+        ccd_widget_layout = self.widget_ccd.layout()
+        try:
+            from CCD_Plugin.CCD_Plugin import CCD_Plugin
+            from CCD_Plugin.gui.CCD_Plugin_dockwidget import CCD_PluginDockWidget
+            from CCD_Plugin.utils.config import get_plugin_config, restore_plugin_config
+            self.ccd_plugin_available = True
+        except ImportError:
+            label = QLabel("\nError: Continuous Change Detection (CCD) plugin is not available in your Qgis instance.\n"
+                           "To integrate the CCD inside AcATaMa, go to the plugin managing in Qgis and search\n"
+                           "CCD-Plugin, install it and restart the response design window.\n\n"
+                           "CCD helps to analyze the trends and breakpoints of change of the samples over multi-year\n"
+                           "time series using Landsat and Sentinel.\n", self)
+            label.setAlignment(Qt.AlignCenter)
+            ccd_widget_layout.addWidget(label)
+            ccd_widget_layout.setAlignment(Qt.AlignCenter)
+            self.ccd_plugin_available = False
+            self.response_design.ccd_plugin_opened = True
+
+        if self.ccd_plugin_available:
+            # Remove all widgets from the layout
+            for i in reversed(range(ccd_widget_layout.count())):
+                ccd_widget_layout.itemAt(i).widget().setParent(None)
+
+            # create the ccd widget
+            self.ccd_plugin = CCD_Plugin(iface)
+            view_canvas = [view_widget.render_widget.canvas for view_widget in ResponseDesignWindow.view_widgets]
+            self.ccd_plugin.widget = CCD_PluginDockWidget(id=self.ccd_plugin.id, canvas=view_canvas, parent=self)
+            # adjust the dockwidget (ccd_widget) as a normal widget
+            self.ccd_plugin.widget.setWindowFlags(Qt.Widget)
+            self.ccd_plugin.widget.setWindowFlag(Qt.WindowCloseButtonHint, False)
+            self.ccd_plugin.widget.setFloating(False)
+            self.ccd_plugin.widget.setTitleBarWidget(QWidget(None))
+            # other adjustments
+            self.ccd_plugin.widget.auto_generate_plot.setToolTip("Automatically generate plot when a new sample/marker is set")
+            # init tmp dir for all process and intermediate files
+            if self.ccd_plugin.tmp_dir:
+                self.ccd_plugin.removes_temporary_files()
+            self.ccd_plugin.tmp_dir = tempfile.mkdtemp()
+            # replace the "widget_ccd" UI widget inside the response design window with the ccd widget
+            ccd_widget_layout.insertWidget(0, self.ccd_plugin.widget)
+            ccd_widget_layout.update()
+
+            # restore the configuration of the ccd plugin
+            self.QPBtn_CCDPlugin.setChecked(self.response_design.ccd_plugin_opened)
+            self.widget_ccd.setVisible(self.response_design.ccd_plugin_opened)
+            restore_plugin_config(self.ccd_plugin.id, self.response_design.ccd_plugin_config)
+
     def show(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         ResponseDesignWindow.is_opened = True
@@ -245,6 +299,33 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             self.set_current_sample()
         except:
             self.GoTo_ID.setStyleSheet("color: red")
+
+    @pyqtSlot(bool)
+    def ccd_plugin_widget(self, checked):
+        if checked:
+            self.widget_ccd.setVisible(True)
+            self.set_current_sample_in_ccd()
+        else:
+            self.widget_ccd.setVisible(False)
+
+    def set_current_sample_in_ccd(self):
+        if not hasattr(self, "ccd_plugin") or not self.ccd_plugin.widget or not self.ccd_plugin_available:
+            return
+
+        # get the coordinates of the current sample
+        crsSrc = QgsCoordinateReferenceSystem(self.sampling_layer.crs())
+        crsDest = QgsCoordinateReferenceSystem(4326)  # WGS84
+        xform = QgsCoordinateTransform(crsSrc, crsDest, QgsProject.instance())
+        # forward transformation: src -> dest
+        point = xform.transform(self.current_sample.QgsPnt)
+        # set the current sample in the CCD plugin
+        self.ccd_plugin.widget.longitude.setValue(point.x())
+        self.ccd_plugin.widget.latitude.setValue(point.y())
+
+        if self.QPBtn_CCDPlugin.isChecked() and self.ccd_plugin.widget.auto_generate_plot.isChecked():
+            from CCD_Plugin.gui.CCD_Plugin_dockwidget import PickerCoordsOnMap
+            PickerCoordsOnMap.delete_markers()
+            self.ccd_plugin.widget.new_plot()
 
     @pyqtSlot()
     @error_handler
@@ -407,6 +488,8 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
 
         self.show_the_current_pixel()
         self.show_the_sampling_unit()
+        # set the current sample in the CCD plugin
+        self.set_current_sample_in_ccd()
 
     @pyqtSlot()
     def next_sample(self):
@@ -543,6 +626,15 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         self.response_design.view_widgets_config = view_widgets_config
         self.response_design.dialog_size = (self.size().width(), self.size().height())
         self.response_design.auto_next_sample = self.autoNextSample.isChecked()
+
+        # close the ccd widget
+        if self.ccd_plugin_available:
+            from CCD_Plugin.utils.config import get_plugin_config
+            self.response_design.ccd_plugin_config = get_plugin_config(self.ccd_plugin.id)
+            self.response_design.ccd_plugin_opened = self.QPBtn_CCDPlugin.isChecked()
+            self.ccd_plugin.removes_temporary_files()
+            self.ccd_plugin.widget.close()
+            self.ccd_plugin.widget = None
 
         ResponseDesignWindow.is_opened = False
         # restore the states for some objects in the dockwidget
