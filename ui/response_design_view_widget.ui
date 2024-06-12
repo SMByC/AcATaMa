@@ -72,7 +72,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Scale factor for this view</string>
+         <string>Scale/zoom factor respect to the others views</string>
         </property>
         <property name="frame">
          <bool>false</bool>
@@ -80,17 +80,20 @@
         <property name="alignment">
          <set>Qt::AlignCenter</set>
         </property>
+        <property name="prefix">
+         <string>view scale: </string>
+        </property>
         <property name="decimals">
-         <number>2</number>
+         <number>1</number>
         </property>
         <property name="minimum">
-         <double>0.010000000000000</double>
+         <double>0.000000000000000</double>
         </property>
         <property name="maximum">
          <double>1000.000000000000000</double>
         </property>
         <property name="singleStep">
-         <double>0.010000000000000</double>
+         <double>0.100000000000000</double>
         </property>
         <property name="value">
          <double>1.000000000000000</double>
