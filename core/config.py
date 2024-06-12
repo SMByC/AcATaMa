@@ -179,6 +179,11 @@ def save(file_out):
         data["samples"] = points_config
         # save the samples order
         data["samples_order"] = [p.sample_id for p in response_design.points]
+
+        # save the ccd plugin config
+        if response_design.ccd_plugin_config is not None:
+            data["ccd_plugin_config"] = response_design.ccd_plugin_config
+            data["ccd_plugin_opened"] = response_design.ccd_plugin_opened
     else:
         response_design = None
 
@@ -500,6 +505,11 @@ def restore(yml_file_path):
         if response_design.buttons_config and yaml_config["thematic_map"]["path"] and \
                 True in [bc["thematic_class"] is not None and bc["thematic_class"] != "" for bc in response_design.buttons_config.values()]:
             response_design.with_thematic_classes = True
+
+        # restore the ccd plugin config
+        if "ccd_plugin_config" in yaml_config:
+            response_design.ccd_plugin_config = yaml_config["ccd_plugin_config"]
+            response_design.ccd_plugin_opened = yaml_config["ccd_plugin_opened"]
     else:
         response_design = None
 
