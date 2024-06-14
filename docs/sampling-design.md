@@ -91,6 +91,8 @@ variance is acceptable and unbiased.
 _**Disadvantages**_: Reduces the advantage of the spatial distribution of error and favors systematic sampling over
 simple random sampling. The lack of an unbiased estimator.
 
+---
+
 ## Sample size
 
 For a statistically correct assessment of accuracy it is necessary to collect an adequate number of sampling units for

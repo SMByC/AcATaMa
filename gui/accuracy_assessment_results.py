@@ -544,7 +544,8 @@ def get_html(accu_asse):
         <tr>
         <td class="empty"></td>
         '''.format(table_size=len(accu_asse.values))
-    headers = ["Area adjusted ({area_unit})".format(area_unit=accu_asse.pixel_area_unit), "Error", "Lower limit", "Upper limit"]
+    headers = ["Area adjusted ({area_unit})".format(area_unit=accu_asse.pixel_area_unit), "Error", "Lower limit",
+               "Upper limit", "Coefficient of variation", "Uncertainty"]
     html += "".join([
         "<th >" + str(h) + "</th>" for h in headers])
     html += "</tr>"
@@ -589,6 +590,12 @@ def get_html(accu_asse):
         html += '''<td>{lower_limit}</th>'''.format(lower_limit=rf(lower_limit))
         # upper limit
         html += '''<td>{upper_limit}</th>'''.format(upper_limit=rf(area + accu_asse.z_score * error))
+        # coefficient of variation
+        cv = (error / area) * 100 if area > 0 else np.NaN
+        html += '''<td>{cv} %</th>'''.format(cv=rf(cv, 2))
+        # uncertainty
+        u = (accu_asse.z_score * error / area) if area > 0 else np.NaN
+        html += '''<td>{u}</th>'''.format(u=rf(u))
         html += "</tr>"
 
     html += '''    
@@ -882,7 +889,8 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
 
     csv_rows.append([])
     csv_rows.append(["{}) Class area adjusted:".format("3" if accu_asse.estimator == 'Simple/systematic estimator' else "5")])
-    csv_rows.append(["", "Area adjusted ({area_unit})".format(area_unit=accu_asse.pixel_area_unit), "Error", "Lower limit", "Upper limit"])
+    csv_rows.append(["", "Area adjusted ({area_unit})".format(area_unit=accu_asse.pixel_area_unit), "Error",
+                     "Lower limit", "Upper limit", "Coefficient of variation", "Uncertainty"])
 
     total_area = 0
 
@@ -925,6 +933,12 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         r.append(rf(lower_limit))
         # upper limit
         r.append(rf(area + accu_asse.z_score * error))
+        # coefficient of variation
+        cv = (error / area) * 100 if area > 0 else np.NaN
+        r.append("{cv} %".format(cv=rf(cv, 2)))
+        # uncertainty
+        u = (accu_asse.z_score * error / area) if area > 0 else np.NaN
+        r.append("{u}".format(u=rf(u)))
         csv_rows.append(r)
 
     csv_rows.append(["total"] + [rf(total_area)])

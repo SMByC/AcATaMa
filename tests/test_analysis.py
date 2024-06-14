@@ -22,7 +22,7 @@ def test_accuracy_assessment_simple_html(plugin, unwrap):
     # set content results in HTML
     result_html_computed = accuracy_assessment_results.get_html(accuracy_assessment.analysis)
 
-    # in_file = open(pytest.tests_data_dir / "accuracy_assessment_html_test_1", 'w')
+    # in_file = open(pytest.tests_data_dir / "analysis" / "accuracy_assessment_simple_to_review.html", 'w')
     # in_file.write(result_html_computed)
 
     # load the html file
@@ -44,6 +44,9 @@ def test_accuracy_assessment_simple_post_stratify_html(plugin, unwrap):
     # set content results in HTML
     result_html_computed = accuracy_assessment_results.get_html(accuracy_assessment.analysis)
 
+    # in_file = open(pytest.tests_data_dir / "analysis" / "accuracy_assessment_simple_post_stratify_to_review.html", 'w')
+    # in_file.write(result_html_computed)
+
     # load the html file
     result_html_in_file = open(pytest.tests_data_dir / "analysis" / "accuracy_assessment_simple_post_stratify_revised.html", 'r')
 
@@ -63,7 +66,7 @@ def test_accuracy_assessment_systematic_html(plugin, unwrap):
     # set content results in HTML
     result_html_computed = accuracy_assessment_results.get_html(accuracy_assessment.analysis)
 
-    # in_file = open(pytest.tests_data_dir / "accuracy_assessment_html_test_1", 'w')
+    # in_file = open(pytest.tests_data_dir / "analysis" / "accuracy_assessment_systematic_to_review.html", 'w')
     # in_file.write(result_html_computed)
 
     # load the html file
@@ -85,6 +88,9 @@ def test_accuracy_assessment_systematic_post_stratify_html(plugin, unwrap):
     # set content results in HTML
     result_html_computed = accuracy_assessment_results.get_html(accuracy_assessment.analysis)
 
+    # in_file = open(pytest.tests_data_dir / "analysis" / "accuracy_assessment_systematic_post_stratify_to_review.html", 'w')
+    # in_file.write(result_html_computed)
+
     # load the html file
     result_html_in_file = open(pytest.tests_data_dir / "analysis" / "accuracy_assessment_systematic_post_stratify_revised.html", 'r')
 
@@ -103,6 +109,9 @@ def test_accuracy_assessment_stratified_html(plugin, unwrap):
     accuracy_assessment.analysis.compute()
     # set content results in HTML
     result_html_computed = accuracy_assessment_results.get_html(accuracy_assessment.analysis)
+
+    # in_file = open(pytest.tests_data_dir / "analysis" / "accuracy_assessment_stratified_to_review.html", 'w')
+    # in_file.write(result_html_computed)
 
     # load the html file
     result_html_in_file = open(pytest.tests_data_dir / "analysis" / "accuracy_assessment_stratified_revised.html", 'r')

@@ -109,8 +109,18 @@ the map estimates (FAO, 2016).
 
 The estimated area for each class or stratum and the standard error of the estimated area is given by the equation (11)
 in Olofsson et al. (2014); they allow to obtain the confidence interval with the percent defined by the z-score value.
-AcATaMa calculate a 95% confidence interval (Z=1,96) by default, but you can modify the z-score value
-according to the desired percent (Settings options in the report of results).
+It is typically represented by confidence intervals, which indicate the range within which the true area proportions 
+are expected to lie with a specified level of confidence, such as 95% (Z=1,96). Reporting these confidence intervals 
+helps in understanding the potential error margins and ensures that the estimates are robust and transparent.
+
+The coefficient of variation and uncertainty in the estimated area proportions table are metrics for assessing the 
+reliability and precision of land cover or land change area estimates. The coefficient of variation is a 
+standardized measure of the dispersion of the estimated area proportions, calculated as the ratio of the standard error 
+to the mean estimate. It provides a relative measure of variability, indicating the extent of variability in relation 
+to the mean, thus allowing for comparisons across different classes or studies. A lower CV indicates higher precision 
+of the estimates. Uncertainty, on the other hand, encompasses the potential errors and variability inherent in the 
+sampling design, classification accuracy, and reference data used for accuracy assessment. Quantifying this 
+uncertainty is crucial as it measures the reliability and precision of the area estimates.
 
 #### References
 
