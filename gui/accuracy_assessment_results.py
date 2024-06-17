@@ -125,6 +125,23 @@ def get_html(accu_asse):
     ###########################################################################
     # #### 1) Error matrix
 
+    # compute accuracy
+    if accu_asse.estimator in ['Simple/systematic estimator']:
+        # overall
+        overall_accuracy = sum([row[idx_row] for idx_row, row in enumerate(accu_asse.error_matrix)]) / total_samples
+        standard_deviation = (overall_accuracy*(1-overall_accuracy)/(total_samples-1))**0.5
+    if accu_asse.estimator in ['Stratified estimator', 'Simple/systematic post-stratified estimator']:
+        # overall
+        overall_accuracy = sum([row[idx_row] for idx_row, row in enumerate(error_matrix_area_prop)])
+        try:
+            overall_variance = sum([((accu_asse.thematic_pixels_count[value]/total_pixels_classes)**2) *
+                                    (accu_asse.error_matrix[idx_row][idx_row]/sum(accu_asse.error_matrix[idx_row])) *
+                                    (1-(accu_asse.error_matrix[idx_row][idx_row]/sum(accu_asse.error_matrix[idx_row]))) /
+                                    (sum(accu_asse.error_matrix[idx_row])-1) for idx_row, value in enumerate(accu_asse.values)])
+        except ZeroDivisionError:
+            overall_variance = np.NaN
+        standard_deviation = overall_variance ** 0.5
+
     html += "<p style='font-size:2px'><br/></p>"
     html += "<h3>1) Error matrix:</h3>"
     html += '''
@@ -158,7 +175,7 @@ def get_html(accu_asse):
         html += "<tr>"
         if idx_row == 0:
             html += '''
-                <th  class="th-rows" rowspan="{table_size}">Thematic map<br />classes</th>
+                <th  class="th-rows" rowspan="{table_size}">Thematic<br />map</th>
                 '''.format(table_size=len(accu_asse.values))
 
         html += "<th>{value}</th>".format(value=value)
@@ -206,34 +223,18 @@ def get_html(accu_asse):
             '''.format(p_accuracy=rf(col[idx_col] / sum(col)) if sum(col) > 0 else "-")
     html += '''
         <td class="empty"></td>
-        <td class="empty"></td>
-        '''
-    html += '''
+        <td class="highlight">{overall_accuracy}</td>
         <td class="empty"></td>
         <td class="empty"></td>
         </tr>
+        '''.format(overall_accuracy=rf(overall_accuracy))
+    html += '''
         </tbody>
         </table>
         '''
 
     ###########################################################################
     # #### 2) Accuracy
-
-    if accu_asse.estimator in ['Simple/systematic estimator']:
-        # overall
-        overall_accuracy = sum([row[idx_row] for idx_row, row in enumerate(accu_asse.error_matrix)]) / total_samples
-        standard_deviation = (overall_accuracy*(1-overall_accuracy)/(total_samples-1))**0.5
-    if accu_asse.estimator in ['Stratified estimator', 'Simple/systematic post-stratified estimator']:
-        # overall
-        overall_accuracy = sum([row[idx_row] for idx_row, row in enumerate(error_matrix_area_prop)])
-        try:
-            overall_variance = sum([((accu_asse.thematic_pixels_count[value]/total_pixels_classes)**2) *
-                                    (accu_asse.error_matrix[idx_row][idx_row]/sum(accu_asse.error_matrix[idx_row])) *
-                                    (1-(accu_asse.error_matrix[idx_row][idx_row]/sum(accu_asse.error_matrix[idx_row]))) /
-                                    (sum(accu_asse.error_matrix[idx_row])-1) for idx_row, value in enumerate(accu_asse.values)])
-        except ZeroDivisionError:
-            overall_variance = np.NaN
-        standard_deviation = overall_variance ** 0.5
 
     html += "<p style='font-size:2px'><br/></p>"
     html += "<h3>2) Accuracy:</h3>"
@@ -371,7 +372,7 @@ def get_html(accu_asse):
             html += "<tr>"
             if idx_row == 0:
                 html += '''
-                    <th  class="th-rows" rowspan="{table_size}">Thematic map<br />classes</th>
+                    <th  class="th-rows" rowspan="{table_size}">Thematic<br />map</th>
                     '''.format(table_size=len(accu_asse.values))
 
             html += "<th>{value}</th>".format(value=value)
@@ -412,7 +413,7 @@ def get_html(accu_asse):
             html += "<tr>"
             if idx_row == 0:
                 html += '''
-                    <th  class="th-rows" rowspan="{table_size}">Thematic map<br />classes</th>
+                    <th  class="th-rows" rowspan="{table_size}">Thematic<br />map</th>
                     '''.format(table_size=len(accu_asse.values))
 
             html += "<th>{value}</th>".format(value=value)
@@ -457,7 +458,7 @@ def get_html(accu_asse):
             html += "<tr>"
             if idx_row == 0:
                 html += '''
-                    <th  class="th-rows" rowspan="{table_size}">Thematic map<br />classes</th>
+                    <th  class="th-rows" rowspan="{table_size}">Thematic<br />map</th>
                     '''.format(table_size=len(accu_asse.values))
 
             html += "<th>{value}</th>".format(value=value)
@@ -511,7 +512,7 @@ def get_html(accu_asse):
             html += "<tr>"
             if idx_row == 0:
                 html += '''
-                    <th  class="th-rows" rowspan="{table_size}">Thematic map<br />classes</th>
+                    <th  class="th-rows" rowspan="{table_size}">Thematic<br />map</th>
                     '''.format(table_size=len(accu_asse.values))
 
             html += "<th>{value}</th>".format(value=value)
@@ -665,43 +666,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
 
     accuracy_table = error_matrix_area_prop if accu_asse.estimator == 'Stratified estimator' else accu_asse.error_matrix
 
-    ###########################################################################
-    # #### 1) Error matrix
-
-    csv_rows.append([])
-    csv_rows.append(["1) Error matrix:"])
-    csv_rows.append(["", "", "Validation"])
-    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
-              for i in accu_asse.values]
-    csv_rows.append(["", ""] + labels + ["Total", "User's accuracy",
-                                         "Total class area ({area_unit})".format(area_unit=accu_asse.pixel_area_unit), "Wi"])
-
-    for idx_row, value in enumerate(accu_asse.values):
-        r = []
-        if idx_row == 0:
-            r.append("Thematic map classes")
-        else:
-            r.append("")
-        r.append(value)
-        r += accu_asse.error_matrix[idx_row]
-        r.append(sum(accu_asse.error_matrix[idx_row]))
-        r.append(rf(accu_asse.error_matrix[idx_row][idx_row]/sum(accu_asse.error_matrix[idx_row]))
-                 if sum(accu_asse.error_matrix[idx_row]) > 0 else "-")
-        r.append(rf(accu_asse.thematic_pixels_count[value] * accu_asse.pixel_area_value))
-        r.append(rf(accu_asse.thematic_pixels_count[value] / total_pixels_classes))
-        csv_rows.append(r)
-
-    csv_rows.append(["", "total"] + [sum(t) for t in zip(*accu_asse.error_matrix)] + [total_samples] +
-                    [""] + [sum_total_class_area])
-    csv_rows.append(["", "Producer's accuracy"] +
-                    [rf(col[idx_col] / sum(col)) if sum(col) > 0 else "-" for idx_col, col in enumerate(zip(*accuracy_table))])
-
-    ###########################################################################
-    # #### 2) Accuracy
-
-    csv_rows.append([])
-    csv_rows.append(["2) Accuracy:"])
-
+    # compute accuracy
     if accu_asse.estimator in ['Simple/systematic estimator']:
         # overall
         overall_accuracy = sum([row[idx_row] for idx_row, row in enumerate(accu_asse.error_matrix)]) / total_samples
@@ -717,6 +682,44 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         except ZeroDivisionError:
             overall_variance = np.NaN
         standard_deviation = overall_variance ** 0.5
+
+    ###########################################################################
+    # #### 1) Error matrix
+
+    csv_rows.append([])
+    csv_rows.append(["1) Error matrix:"])
+    csv_rows.append(["", "", "Validation"])
+    labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
+              for i in accu_asse.values]
+    csv_rows.append(["", ""] + labels + ["Total", "User's accuracy",
+                                         "Total class area ({area_unit})".format(area_unit=accu_asse.pixel_area_unit), "Wi"])
+
+    for idx_row, value in enumerate(accu_asse.values):
+        r = []
+        if idx_row == 0:
+            r.append("Thematic map")
+        else:
+            r.append("")
+        r.append(value)
+        r += accu_asse.error_matrix[idx_row]
+        r.append(sum(accu_asse.error_matrix[idx_row]))
+        r.append(rf(accu_asse.error_matrix[idx_row][idx_row]/sum(accu_asse.error_matrix[idx_row]))
+                 if sum(accu_asse.error_matrix[idx_row]) > 0 else "-")
+        r.append(rf(accu_asse.thematic_pixels_count[value] * accu_asse.pixel_area_value))
+        r.append(rf(accu_asse.thematic_pixels_count[value] / total_pixels_classes))
+        csv_rows.append(r)
+
+    csv_rows.append(["", "total"] + [sum(t) for t in zip(*accu_asse.error_matrix)] + [total_samples] +
+                    [""] + [rf(sum_total_class_area)])
+    csv_rows.append(["", "Producer's accuracy"] +
+                    [rf(col[idx_col] / sum(col)) if sum(col) > 0 else "-" for idx_col, col in enumerate(zip(*accuracy_table))]
+                    + ["", rf(overall_accuracy)])
+
+    ###########################################################################
+    # #### 2) Accuracy
+
+    csv_rows.append([])
+    csv_rows.append(["2) Accuracy:"])
 
     csv_rows.append([])
     csv_rows.append(["Overall:"])
@@ -807,7 +810,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         for idx_row, value in enumerate(accu_asse.values):
             r = []
             if idx_row == 0:
-                r.append("Thematic map classes")
+                r.append("Thematic map")
             else:
                 r.append("")
             r.append(value)
@@ -830,7 +833,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         for idx_row, value in enumerate(accu_asse.values):
             r = []
             if idx_row == 0:
-                r.append("Thematic map classes")
+                r.append("Thematic map")
             else:
                 r.append("")
             r.append(value)
@@ -851,7 +854,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         for idx_row, value in enumerate(accu_asse.values):
             r = []
             if idx_row == 0:
-                r.append("Thematic map classes")
+                r.append("Thematic map")
             else:
                 r.append("")
             r.append(value)
@@ -875,7 +878,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         for idx_row, value in enumerate(accu_asse.values):
             r = []
             if idx_row == 0:
-                r.append("Thematic map classes")
+                r.append("Thematic map")
             else:
                 r.append("")
             r.append(value)
