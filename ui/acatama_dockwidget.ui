@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>A&amp;cATaMa</string>
+   <string>AcATaMa</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -182,9 +182,9 @@ It set automatically from image if the layer has the nodata value set.</string>
               <property name="currentIndex">
                <number>0</number>
               </property>
-              <widget class="QWidget" name="tab_SimpleRandomSampling">
+              <widget class="QWidget" name="tab_SimpleSampling">
                <attribute name="title">
-                <string>Simple Random Sampling</string>
+                <string>Simple Sampling</string>
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_4">
                 <property name="leftMargin">
@@ -485,7 +485,7 @@ It set automatically from image if the layer has the nodata value set.</string>
               </widget>
               <widget class="QWidget" name="tab_StratifiedSampling">
                <attribute name="title">
-                <string>Stratified Random Sampling</string>
+                <string>Stratified Sampling</string>
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_10">
                 <property name="leftMargin">
