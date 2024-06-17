@@ -5,7 +5,7 @@
                                  A QGIS plugin
  AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
                               -------------------
-        copyright            : (C) 2017-2023 by Xavier C. Llano, SMByC
+        copyright            : (C) 2017-2024 by Xavier C. Llano, SMByC
         email                : xavier.corredor.llano@gmail.com
  ***************************************************************************/
 
@@ -143,7 +143,7 @@ class ResponseDesign(object):
         # calc added/removed changes
         added = len(set([p.sample_id for p in points_from_shapefile]) - set([p.sample_id for p in self.points]))
         removed = len(set([p.sample_id for p in self.points]) - set([p.sample_id for p in points_from_shapefile]))
-        # adjust the current sample id if some points are eliminated and its located before it
+        # adjust the current sample id if some points are eliminated, and it's located before it
         for rm_sample_id in set([p.sample_id for p in self.points]) - set([p.sample_id for p in points_from_shapefile]):
             if [p.sample_id for p in self.points].index(rm_sample_id) <= self.current_sample_idx:
                 self.current_sample_idx -= 1

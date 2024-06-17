@@ -36,7 +36,7 @@ Documentation, testers and product verification: *Gustavo Galindo, Jhonatan Andr
 
 ## How to cite
 
-Llano, X. (2022), SMByC-IDEAM. AcATaMa - QGIS plugin for Accuracy Assessment of Thematic Maps, version XX.XX. Available
+Llano, X. (version_year), SMByC-IDEAM. AcATaMa - QGIS plugin for Accuracy Assessment of Thematic Maps, version XX.XX. Available
 in https://github.com/SMByC/AcATaMa
 
 ## License
