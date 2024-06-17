@@ -19,7 +19,6 @@
  ***************************************************************************/
 """
 import os
-import re
 from collections import OrderedDict
 import yaml
 
@@ -40,7 +39,7 @@ from AcATaMa.utils.system_utils import wait_process, block_signals_to
 from AcATaMa.utils.sampling_utils import fill_stratified_sampling_table
 from AcATaMa.utils.qgis_utils import get_current_file_path_in, get_file_path_of_layer, load_and_select_filepath_in, \
     select_item_in
-from AcATaMa.utils.others_utils import set_nodata_format
+from AcATaMa.utils.others_utils import set_nodata_format, get_plugin_version
 
 CONFIG_FILE_VERSION = None
 
@@ -70,7 +69,7 @@ def save(file_out):
 
     # ######### general configuration ######### #
     data["general"] = \
-        {"config_file_version": int(''.join(['{:0>2}'.format(re.sub('\D', '', x)) for x in VERSION.split('.')])),
+        {"config_file_version": get_plugin_version(VERSION),
          "tab_activated": AcATaMa.dockwidget.tabWidget.currentIndex()}
 
     # ######### thematic ######### #
@@ -235,8 +234,7 @@ def restore(yml_file_path):
     global CONFIG_FILE_VERSION
     if "general" in yaml_config and "config_file_version" in yaml_config["general"]:
         # remove dots and alpha characters from the version string
-        CONFIG_FILE_VERSION = int(''.join(['{:0>2}'.format(re.sub('\D', '', x)) for x in
-                                           str(yaml_config["general"]["config_file_version"]).split('.')]))
+        CONFIG_FILE_VERSION = get_plugin_version(yaml_config["general"]["config_file_version"])
     else:
         CONFIG_FILE_VERSION = 191121  # v19.11.21
 

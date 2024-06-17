@@ -19,6 +19,7 @@
  ***************************************************************************/
 """
 import numpy as np
+import re
 import xml.etree.ElementTree as ET
 
 from osgeo import gdal, gdal_array
@@ -28,6 +29,18 @@ from qgis.PyQt.QtWidgets import QProgressDialog, QApplication
 
 from AcATaMa.utils.qgis_utils import get_file_path_of_layer
 from AcATaMa.utils.system_utils import wait_process
+
+
+def get_plugin_version(version_string):
+    if isinstance(version_string, (int, float)):
+        version_string = str(version_string)
+
+    version = ''.join(['{:0>2}'.format(re.sub('\D', '', x)) for x in version_string.split('.')])
+
+    if len(version) == 4:
+        version += '00'
+
+    return int(version)
 
 
 def mask(input_list, boolean_mask):
