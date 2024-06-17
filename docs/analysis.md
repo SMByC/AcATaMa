@@ -58,12 +58,12 @@ producer. And, the third, which corresponds to the estimation of the proportion 
   limitation to overall accuracy is not how it weights or represents class-specific information, but rather that it
   does not provide class-specific information.
 
-* **User accuracy**: In it, the number of correctly classified sampling units (nii) in a class is divided by the total
+* **User's accuracy**: In it, the number of correctly classified sampling units (nii) in a class is divided by the total
   number of sampling units of that same class in the map (nk+). In this case, this accuracy is associated with the
   measurement of commission errors, which are defined as the inclusion of a map area in a land cover class in which that
   area should not be included.
 
-* **Producer accuracy**: Where the number of correctly classified sampling units (njj) in a class is divided by the
+* **Producer's accuracy**: Where the number of correctly classified sampling units (njj) in a class is divided by the
   total number of sampling units in the reference data n+j, for that class. Omission errors occur when an area is
   excluded on the map from the land cover class to which it should belong.
 

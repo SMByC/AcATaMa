@@ -149,7 +149,7 @@ def get_html(accu_asse):
         "<th >"+str(i)+"</th>" for i in labels])
     html += '''
         <th>Total</th>
-        <th>User accuracy</th>
+        <th>User's accuracy</th>
         <th>Total class area ({area_unit})</th>
         <th>Wi</th>
         </tr>
@@ -198,7 +198,7 @@ def get_html(accu_asse):
         </tr>
         <tr>
         <td class="empty"></td>
-          <th>Producer accuracy</th>
+          <th>Producer's accuracy</th>
         '''
     for idx_col, col in enumerate(zip(*accuracy_table)):
         html += '''
@@ -673,7 +673,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows.append(["", "", "Validation"])
     labels = ["{} ({})".format(i, accu_asse.labels[str(i)] if str(i) in accu_asse.labels else "-")
               for i in accu_asse.values]
-    csv_rows.append(["", ""] + labels + ["Total", "User accuracy",
+    csv_rows.append(["", ""] + labels + ["Total", "User's accuracy",
                                          "Total class area ({area_unit})".format(area_unit=accu_asse.pixel_area_unit), "Wi"])
 
     for idx_row, value in enumerate(accu_asse.values):
@@ -693,7 +693,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
 
     csv_rows.append(["", "total"] + [sum(t) for t in zip(*accu_asse.error_matrix)] + [total_samples] +
                     [""] + [sum_total_class_area])
-    csv_rows.append(["", "Producer accuracy"] +
+    csv_rows.append(["", "Producer's accuracy"] +
                     [rf(col[idx_col] / sum(col)) if sum(col) > 0 else "-" for idx_col, col in enumerate(zip(*accuracy_table))])
 
     ###########################################################################
