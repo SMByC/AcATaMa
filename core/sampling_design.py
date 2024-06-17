@@ -194,10 +194,10 @@ def do_stratified_random_sampling(dockwidget):
         srs_config = {}
         # save total expected std error
         srs_config["total_std_error"] = dockwidget.TotalExpectedSE.value()
-        # get std_dev from table
-        srs_config["std_dev"] = []
+        # get ui from table
+        srs_config["ui"] = []
         for row in range(dockwidget.QTableW_StraRS.rowCount()):
-            srs_config["std_dev"].append(float(dockwidget.QTableW_StraRS.item(row, 3).text()))
+            srs_config["ui"].append(float(dockwidget.QTableW_StraRS.item(row, 3).text()))
 
     # first select the target file for save the sampling file
     suggested_filename = os.path.join(os.path.dirname(thematic_map.file_path), "stratified sampling.gpkg")

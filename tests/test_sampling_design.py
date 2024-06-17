@@ -63,9 +63,9 @@ def test_stratified_random_sampling(plugin, unwrap, tmpdir):
     sampling_method = "area based proportion"
     srs_config = {}
     srs_config["total_std_error"] = plugin.dockwidget.TotalExpectedSE.value()
-    srs_config["std_dev"] = []
+    srs_config["ui"] = []
     for row in range(plugin.dockwidget.QTableW_StraRS.rowCount()):
-        srs_config["std_dev"].append(float(plugin.dockwidget.QTableW_StraRS.item(row, 3).text()))
+        srs_config["ui"].append(float(plugin.dockwidget.QTableW_StraRS.item(row, 3).text()))
 
 
     min_distance = float(plugin.dockwidget.minDistance_StraRS.value())

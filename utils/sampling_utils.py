@@ -48,7 +48,7 @@ def check_min_distance(point, index, distance, points):
 def get_num_samples_by_area_based_proportion(srs_table, total_std_error):
     total_pixel_count = float(sum(mask(srs_table["pixel_count"], srs_table["On"])))
     ratio_pixel_count = [p_c / total_pixel_count for p_c in mask(srs_table["pixel_count"], srs_table["On"])]
-    Si = [(float(std_dev)*(1-float(std_dev))) ** 0.5 for std_dev in mask(srs_table["std_dev"], srs_table["On"])]
+    Si = [(float(ui)*(1-float(ui))) ** 0.5 for ui in mask(srs_table["ui"], srs_table["On"])]
     total_num_samples = (sum([rpc*si for rpc, si in zip(ratio_pixel_count, Si)])/total_std_error)**2
 
     num_samples = []
@@ -128,17 +128,17 @@ def update_srs_table_content(dockwidget, srs_table):
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
                     item_table.setToolTip("Total number of samples for this class, this is generated\n"
                                           "automatically based on the area proportion by the activated\n"
-                                          "classes, overall expected standard error and its standard\n"
-                                          "deviation.")
+                                          "classes, overall expected standard error and its user\n"
+                                          "accuracy expected value.")
                     if not srs_table["On"][m]:
                         item_table.setForeground(QColor("lightGrey"))
                         item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                     dockwidget.QTableW_StraRS.setItem(m, n, item_table)
-            if key == "Std Dev":
+            if key == "Ui":
                 for m in range(srs_table["row_count"]):
-                    item_table = QTableWidgetItem(srs_table["std_dev"][m])
+                    item_table = QTableWidgetItem(srs_table["ui"][m])
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                    item_table.setToolTip("Set the standard deviation for this class")
+                    item_table.setToolTip("User accuracy expected")
                     if not srs_table["On"][m]:
                         item_table.setForeground(QColor("lightGrey"))
                         item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
@@ -247,9 +247,9 @@ def fill_stratified_sampling_table(dockwidget):
             srs_table["On"] = [True] * srs_table["row_count"]
 
         if srs_method == "area based proportion":
-            srs_table["header"] = ["Pix Val", "Color", "Num Samples", "Std Dev", "On"]
+            srs_table["header"] = ["Pix Val", "Color", "Num Samples", "Ui", "On"]
             srs_table["column_count"] = len(srs_table["header"])
-            srs_table["std_dev"] = [str(0.01)]*srs_table["row_count"]
+            srs_table["ui"] = [str(0.01)]*srs_table["row_count"]
             srs_table["pixel_count"] = list(
                 get_pixel_count_by_pixel_values(dockwidget.QCBox_CategMap_StraRS.currentLayer(),
                                                 int(dockwidget.QCBox_band_CategMap_StraRS.currentText()),
@@ -281,7 +281,7 @@ def update_stratified_sampling_table(dockwidget, changes_from):
 
     if changes_from == "TableContent":
         num_samples = []
-        std_dev = []
+        ui = []
         on = []
 
         for row in range(dockwidget.QTableW_StraRS.rowCount()):
@@ -290,7 +290,7 @@ def update_stratified_sampling_table(dockwidget, changes_from):
                 num_samples_in_row = srs_table["num_samples"][row]
             num_samples.append(num_samples_in_row)
             if srs_method == "area based proportion":
-                std_dev.append(dockwidget.QTableW_StraRS.item(row, 3).text())
+                ui.append(dockwidget.QTableW_StraRS.item(row, 3).text())
                 if dockwidget.QTableW_StraRS.item(row, 4).checkState() == 2:
                     on.append(True)
                 if dockwidget.QTableW_StraRS.item(row, 4).checkState() == 0:
@@ -299,7 +299,7 @@ def update_stratified_sampling_table(dockwidget, changes_from):
         if srs_method == "fixed values":
             srs_table["num_samples"] = num_samples
         if srs_method == "area based proportion":
-            srs_table["std_dev"] = std_dev
+            srs_table["ui"] = ui
             srs_table["On"] = on
             if srs_table["num_samples"] != num_samples:
                 # only change the number of samples keeping the total samples

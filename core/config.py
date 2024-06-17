@@ -338,6 +338,16 @@ def restore(yml_file_path):
                 yaml_config["sampling_design"]["stratified_random_sampling"]['overall_std_error'])
 
         srs_table = yaml_config["sampling_design"]["stratified_random_sampling"]['stratified_random_sampling_table']
+
+        # import Ui from old versions
+        if CONFIG_FILE_VERSION < 240600:
+            if srs_table and 'std_dev' in srs_table:
+                srs_table['ui'] = srs_table.pop('std_dev')
+            # change the header 'Std Dev' to 'Ui' in the header list inside srs_table
+            if srs_table and 'Std Dev' in srs_table['header']:
+                # replace the header python list 'Std Dev' to 'Ui'
+                srs_table['header'][srs_table['header'].index('Std Dev')] = 'Ui'
+
         srs_method = "fixed values" if AcATaMa.dockwidget.QCBox_StraRS_Method.currentText().startswith("Fixed values") \
             else "area based proportion"
         AcATaMa.dockwidget.srs_tables[AcATaMa.dockwidget.QCBox_CategMap_StraRS.currentText()] = {}

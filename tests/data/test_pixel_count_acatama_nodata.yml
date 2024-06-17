@@ -43,7 +43,7 @@
           - Pix Val
           - Color
           - Num Samples
-          - Std Dev
+          - Ui
           - 'On'
           num_samples:
           - '210'
@@ -54,7 +54,7 @@
           - 418
           - 8822
           row_count: 3
-          std_dev:
+          ui:
           - '0.01'
           - '0.01'
           - '0.01'
