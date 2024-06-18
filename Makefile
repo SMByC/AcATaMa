@@ -46,9 +46,9 @@ PY_FILES = \
 
 UI_FILES = 
 
-EXTRAS = metadata.txt
+EXTRAS = metadata.txt LICENSE README.md
 
-EXTRA_DIRS = core utils gui ui icons
+EXTRA_DIRS = core utils gui ui icons extlibs
 
 COMPILED_RESOURCE_FILES = resources.py
 
@@ -58,8 +58,6 @@ PEP8EXCLUDE=pydev,resources.py,conf.py,third_party,ui
 #################################################
 # Normally you would not need to edit below here
 #################################################
-
-HELP = README.md
 
 PLUGIN_UPLOAD = python3 plugin_upload.py -u xaviercll
 
@@ -109,7 +107,6 @@ deploy: compile doc transcompile
 	cp -vf $(COMPILED_RESOURCE_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 	cp -vf $(EXTRAS) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 	cp -vfr i18n $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vfr $(HELP) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/help
 	# Copy extra directories if any
 	cp -vfr $(EXTRA_DIRS) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 
