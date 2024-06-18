@@ -11,7 +11,7 @@ from paver.easy import *
 options(
     plugin=Bunch(
         name='AcATaMa',
-        ext_libs='extlibs',
+        ext_libs=path('extlibs'),
         source_dir=path('.'),
         package_dir=path('.'),
         tests=['test', 'tests'],
