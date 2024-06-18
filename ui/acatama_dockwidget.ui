@@ -208,7 +208,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                    <item>
                     <widget class="QLabel" name="label_10">
                      <property name="text">
-                      <string>Simple Random Sampling
+                      <string>Simple Sampling
 </string>
                      </property>
                      <property name="alignment">
@@ -509,7 +509,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                    <item>
                     <widget class="QLabel" name="label_9">
                      <property name="text">
-                      <string>Stratified Random Sampling
+                      <string>Stratified Sampling
 </string>
                      </property>
                      <property name="alignment">
