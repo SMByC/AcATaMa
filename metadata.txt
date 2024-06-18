@@ -3,7 +3,7 @@ name=AcATaMa
 description=AcATaMa is a powerful and complete Qgis plugin for accuracy assessment that provides comprehensive support for sampling, response design and estimation.
 about=AcATaMa is a powerful and complete Qgis plugin for accuracy assessment designed for land use/land cover classification, including supervised/unsupervised classification or any thematic map. It provides comprehensive support for sampling, response design and estimation within a design-based inference framework. The primary goal of AcATaMa is to equip users with the necessary tools to comply with international guidance and best practices for sampling design, estimation of land category areas and changes, and map accuracy assessment.
 
-version=23.4
+version=24.6
 qgisMinimumVersion=3.0
 qgisMaximumVersion=3.99
 
@@ -15,15 +15,28 @@ tracker=https://github.com/SMByC/AcATaMa/issues
 repository=https://github.com/SMByC/AcATaMa
 
 changelog=
-    23.4:
-    - Added a new mechanism to compute in parallel the counting of the unique pixel values (thematic classes)
-      required for stratified sampling design and analysis using area based proportion.
-    - Added the option for systematic sampling to set the initial inset from left-top corner using a random value.
-    - Added the external library Dask in the plugin to allow parallel computing in some processes.
-    - Added all the tests to verify and check the accuracy assessment results in the different sampling types.
-    - Fixed an issue for the standard deviation in the overall accuracy for the post-stratify estimators
-    - Fixed the slot event for load the file and select the layer in the ComboBox for Qgis layers
-    - Adjusted all the exercises with the all configurations of the plugin and added the missing ones.
+    24.6:
+    - Integrating the Continuous Change Detection (CCD) plugin inside the response design window in Acatama. CCD helps to analyze the trends and breakpoints of change of the samples over multi-year, using Landsat and Sentinel through Google Earth Engine.
+    - Save and restore the CCD configuration inside the configuration Yaml file of Acatama
+    - Added overall accuracy in the error matrix, adjusted some labels in results
+    - Added coefficient of variation and uncertainty in the Class area adjusted table in the analysis results
+    - Adjusting the scale/zoom factor of the views in the response design window
+    - Ensure if exist the instance avoiding popup error when closing the plugin
+    - Save and restore the auto next sample button status
+    - Fix saving the path for not local files
+    - Improving some tooltips in the response design window
+    - Improving some text in sampling design tab
+    - Show a warning dialog about the problem of editing the labeling buttons when some samples are labeled
+    - Fix checking the duplicate thematic class when the thematic map is not selected
+    - Check if the thematic map is loaded to show the auto fill button
+    - Check if exists a duplicate thematic class when creating the buttons for labeling
+    - Modify button creation ID in order to avoid empty rows or delete ones in the labeling buttons table
+    - Added a function to auto-fill the labeling buttons based on the current thematic map symbology
+    - Update the labeling status of the sampling layer for the thematic map selected
+    - Redistribute the samples number by area based proportion keeping the total of samples and check if new value is over the maximum value to avoid negatives in the samples
+    - No allow negative numbers or string in the table for fixed values by categories in stratified sampling
+    - Correction of column name from Standard deviation by class to User accuracy expected in the stratified random sampling table
+    - Improving some part of the documentation
     - All commits in: https://github.com/SMByC/AcATaMa/commits
 
 tags=accuracy,accuracy assessment,thematic,classification,sample,sampling design,points,remote sensing
