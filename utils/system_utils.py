@@ -107,6 +107,20 @@ def open_file(filename):
         os.startfile(filename)
 
 
+def output_file_is_OK(output_file):
+    if output_file == '':
+        return False
+    if not os.path.exists(os.path.dirname(output_file)):
+        QMessageBox.critical(None, "AcATaMa", "Error: The output file path does not exist:\n\n {}"
+                             .format(os.path.dirname(output_file)), QMessageBox.Ok)
+        return False
+    if not os.access(output_file, os.W_OK):
+        QMessageBox.critical(None, "AcATaMa", "Error: The output file is not writable:\n\n {}"
+                             .format(output_file), QMessageBox.Ok)
+        return False
+    return True
+
+
 class block_signals_to(object):
     """Block all signals emits from specific QT object"""
     def __init__(self, object_to_block):

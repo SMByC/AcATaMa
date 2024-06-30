@@ -40,7 +40,7 @@ from AcATaMa.utils.others_utils import set_nodata_format
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_filepath_in, get_file_path_of_layer
 from AcATaMa.utils.sampling_utils import update_stratified_sampling_table, fill_stratified_sampling_table, \
     reload_StraRS_table
-from AcATaMa.utils.system_utils import error_handler, block_signals_to
+from AcATaMa.utils.system_utils import error_handler, block_signals_to, output_file_is_OK
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -627,7 +627,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
         file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save AcATaMa configuration and state"),
                                                   suggested_filename, self.tr("Yaml (*.yaml *.yml);;All files (*.*)"))
-        if file_out != '':
+        if output_file_is_OK(file_out):
             config.save(file_out)
             self.suggested_yml_file = file_out
             iface.messageBar().pushMessage("AcATaMa", "Configuration file saved successfully", level=Qgis.Success)
@@ -666,7 +666,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save sampling file with the response_design"),
                                                   suggested_filename,
                                                   self.tr("GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"))
-        if file_out != '':
+        if output_file_is_OK(file_out):
             response_design.save_sampling_labeled(file_out)
             iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=Qgis.Success)
 

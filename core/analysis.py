@@ -29,7 +29,7 @@ from AcATaMa.core.map import Map
 from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.gui import accuracy_assessment_results
 from AcATaMa.utils.qgis_utils import get_file_path_of_layer
-from AcATaMa.utils.system_utils import wait_process
+from AcATaMa.utils.system_utils import wait_process, output_file_is_OK
 
 
 class Analysis(object):
@@ -243,7 +243,7 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
         file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Export accuracy assessment results to csv"),
                                                   suggested_filename,
                                                   self.tr("CSV files (*.csv);;All files (*.*)"))
-        if file_out != '':
+        if output_file_is_OK(file_out):
             try:
                 accuracy_assessment_results.export_to_csv(self.analysis, file_out,
                                                           self.analysis.csv_separator,

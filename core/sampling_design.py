@@ -31,7 +31,8 @@ from AcATaMa.core.point import RandomPoint
 from AcATaMa.core.map import Map
 from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.utils.qgis_utils import load_layer, valid_file_selected_in
-from AcATaMa.utils.system_utils import wait_process, error_handler
+from AcATaMa.utils.system_utils import wait_process, error_handler, output_file_is_OK
+
 
 
 @error_handler
@@ -205,7 +206,7 @@ def do_stratified_random_sampling(dockwidget):
                                                  dockwidget.tr("Select the output file to save the sampling"),
                                                  suggested_filename,
                                                  dockwidget.tr("GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"))
-    if output_file == '':
+    if not output_file_is_OK(output_file):
         return
 
     # define the random seed
@@ -309,7 +310,7 @@ def do_systematic_sampling(dockwidget):
                                                  dockwidget.tr("Select the output file to save the sampling"),
                                                  suggested_filename,
                                                  dockwidget.tr("GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"))
-    if output_file == '':
+    if not output_file_is_OK(output_file):
         return
 
     # define the random seed
