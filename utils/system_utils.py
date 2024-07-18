@@ -114,8 +114,8 @@ def output_file_is_OK(output_file):
         QMessageBox.critical(None, "AcATaMa", "Error: The output file path does not exist:\n\n {}"
                              .format(os.path.dirname(output_file)), QMessageBox.Ok)
         return False
-    if not os.access(output_file, os.W_OK):
-        QMessageBox.critical(None, "AcATaMa", "Error: The output file is not writable:\n\n {}"
+    if not os.access(os.path.dirname(output_file), os.W_OK):
+        QMessageBox.critical(None, "AcATaMa", "Error: The output file path is not writable:\n\n {}"
                              .format(output_file), QMessageBox.Ok)
         return False
     return True
