@@ -122,7 +122,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QPBtn_CategMapClassesSelection_SimpRS.setEnabled(False)
         self.QPBtn_CategMapClassesSelection_SimpRS.clicked.connect(lambda: self.select_categorical_map_classes("simple"))
         # generation options
-        self.widget_generate_SimpRS.QPBtn_GenerateSamples.clicked.connect(lambda: do_simple_random_sampling(self))
+        self.widget_generate_SimpRS.QPBtn_GenerateSamples.clicked.connect(do_simple_random_sampling)
         # update progress bar limits
         self.numberOfSamples_SimpRS.valueChanged.connect(
             lambda: self.widget_generate_SimpRS.QPBar_GenerateSamples.setValue(0))
@@ -151,14 +151,14 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.TotalExpectedSE.valueChanged.connect(lambda: update_stratified_sampling_table(self, "TotalExpectedSE"))
         self.QTableW_StraRS.itemChanged.connect(lambda: update_stratified_sampling_table(self, "TableContent"))
         # generation options
-        self.widget_generate_StraRS.QPBtn_GenerateSamples.clicked.connect(lambda: do_stratified_random_sampling(self))
+        self.widget_generate_StraRS.QPBtn_GenerateSamples.clicked.connect(do_stratified_random_sampling)
 
         # disable sampling tab at start
         self.scrollAreaWidgetContents_S.setDisabled(True)
 
         # ######### Systematic Sampling ######### #
         # generation options
-        self.widget_generate_SystS.QPBtn_GenerateSamples.clicked.connect(lambda: do_systematic_sampling(self))
+        self.widget_generate_SystS.QPBtn_GenerateSamples.clicked.connect(do_systematic_sampling)
         self.PointsSpacing_SystS.valueChanged.connect(self.update_systematic_sampling_progressbar)
         self.QCBox_InitialInsetMode_SystS.currentIndexChanged[int].connect(lambda index: self.InitialInsetFixed_SystS.setVisible(True if index == 1 else False))
         self.InitialInsetFixed_SystS.setHidden(True)
@@ -177,14 +177,6 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QCBox_band_CategMap_SystS.currentIndexChanged.connect(self.select_categorical_map_SystS)
         self.QPBtn_CategMapClassesSelection_SystS.setEnabled(False)
         self.QPBtn_CategMapClassesSelection_SystS.clicked.connect(lambda: self.select_categorical_map_classes("systematic"))
-        # others
-        self.widget_generate_SystS.QPBar_GenerateSamples.setMaximum(1)
-        self.widget_generate_SystS.QPBar_GenerateSamples.setFormat("%v / %m* samples")
-        self.widget_generate_SystS.QPBar_GenerateSamples.setToolTip(
-            "The total of samples (*) is an estimation based only by\n"
-            "the grid definition; the nodata value, the post-stratify\n"
-            "and neighborhood aggregation filters make the generated\n"
-            "samples less than the total.")
 
         # ######### Response Design tab ######### #
         # set properties to QgsMapLayerComboBox

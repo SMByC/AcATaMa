@@ -29,8 +29,18 @@ def test_simple_post_stratified_random_sampling(plugin, unwrap, tmpdir):
     output_file = tmpdir.join('test_simple_post_stratified_random_sampling.gpkg')
 
     sampling = Sampling("simple", thematic_map, categorical_map, output_file=str(output_file))
-    sampling.generate_sampling_points(total_of_samples, min_distance, classes_selected, neighbor_aggregation,
-                                      random_seed, plugin.dockwidget.widget_generate_SimpRS.QPBar_GenerateSamples)
+    # create a mummy QgsTask object
+    task = type("QgsTask", (object,), {"setProgress": lambda x: None, "isCanceled": lambda: False})
+    # config arguments
+    sampling_conf = {
+        "total_of_samples": total_of_samples,
+        "min_distance": min_distance,
+        "classes_selected": classes_selected,
+        "neighbor_aggregation": neighbor_aggregation,
+        "random_seed": random_seed
+    }
+    # run the sampling
+    sampling.generate_sampling_points(task, sampling_conf)
 
     with fiona.open(pytest.tests_data_dir / "simple_post_stratified_random_sampling.gpkg") as source, \
             fiona.open(str(output_file)) as target:
@@ -74,8 +84,18 @@ def test_stratified_random_sampling(plugin, unwrap, tmpdir):
 
     sampling = Sampling("stratified", thematic_map, categorical_map, sampling_method,
                         srs_config=srs_config, output_file=str(output_file))
-    sampling.generate_sampling_points(total_of_samples, min_distance, classes_for_sampling, neighbor_aggregation,
-                                      random_seed, plugin.dockwidget.widget_generate_StraRS.QPBar_GenerateSamples)
+    # create a mummy QgsTask object
+    task = type("QgsTask", (object,), {"setProgress": lambda x: None, "isCanceled": lambda: False})
+    # config arguments
+    sampling_conf = {
+        "total_of_samples": total_of_samples,
+        "min_distance": min_distance,
+        "classes_selected": classes_for_sampling,
+        "neighbor_aggregation": neighbor_aggregation,
+        "random_seed": random_seed
+    }
+    # run the sampling
+    sampling.generate_sampling_points(task, sampling_conf)
 
     with fiona.open(pytest.tests_data_dir / "stratified_random_sampling.gpkg") as source, \
             fiona.open(str(output_file)) as target:
@@ -107,9 +127,20 @@ def test_systematic_post_stratified_random_sampling(plugin, unwrap, tmpdir):
     output_file = tmpdir.join('test_systematic_post_stratified_random_sampling.gpkg')
 
     sampling = Sampling("systematic", thematic_map, categorical_map, output_file=str(output_file))
-    sampling.generate_systematic_sampling_points(points_spacing, initial_inset, max_xy_offset,
-                                                 classes_selected, neighbor_aggregation, random_seed,
-                                                 plugin.dockwidget.widget_generate_SystS.QPBar_GenerateSamples)
+    # create a mummy QgsTask object
+    task = type("QgsTask", (object,), {"setProgress": lambda x: None, "isCanceled": lambda: False})
+    # config arguments
+    sampling_conf = {
+        "total_of_samples": plugin.dockwidget.widget_generate_SystS.QPBar_GenerateSamples.maximum(),
+        "points_spacing": points_spacing,
+        "initial_inset": initial_inset,
+        "max_xy_offset": max_xy_offset,
+        "classes_selected": classes_selected,
+        "neighbor_aggregation": neighbor_aggregation,
+        "random_seed": random_seed
+    }
+    # run the sampling
+    sampling.generate_systematic_sampling_points(task, sampling_conf)
 
     with fiona.open(pytest.tests_data_dir / "systematic_sampling.gpkg") as source, \
             fiona.open(str(output_file)) as target:
@@ -145,9 +176,20 @@ def test_systematic_post_stratified_with_initial_inset_random(plugin, unwrap, tm
     initial_inset = random.uniform(0, points_spacing)
 
     sampling = Sampling("systematic", thematic_map, categorical_map, output_file=str(output_file))
-    sampling.generate_systematic_sampling_points(points_spacing, initial_inset, max_xy_offset,
-                                                 classes_selected, neighbor_aggregation, random_seed,
-                                                 plugin.dockwidget.widget_generate_SystS.QPBar_GenerateSamples)
+    # create a mummy QgsTask object
+    task = type("QgsTask", (object,), {"setProgress": lambda x: None, "isCanceled": lambda: False})
+    # config arguments
+    sampling_conf = {
+        "total_of_samples": plugin.dockwidget.widget_generate_SystS.QPBar_GenerateSamples.maximum(),
+        "points_spacing": points_spacing,
+        "initial_inset": initial_inset,
+        "max_xy_offset": max_xy_offset,
+        "classes_selected": classes_selected,
+        "neighbor_aggregation": neighbor_aggregation,
+        "random_seed": random_seed
+    }
+    # run the sampling
+    sampling.generate_systematic_sampling_points(task, sampling_conf)
 
     with fiona.open(pytest.tests_data_dir / "systematic sampling random inset.gpkg") as source, \
             fiona.open(str(output_file)) as target:

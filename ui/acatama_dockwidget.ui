@@ -806,7 +806,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QGroupBox" name="QGBox_3">
+                 <widget class="QGroupBox" name="widget_minDistance_StraRS">
                   <property name="title">
                    <string>Sampling Options</string>
                   </property>
@@ -869,7 +869,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                <zorder>widget_generate_StraRS</zorder>
                <zorder>widget_StratifiedSampling</zorder>
                <zorder>verticalSpacer_4</zorder>
-               <zorder>QGBox_3</zorder>
+               <zorder>widget_minDistance_StraRS</zorder>
               </widget>
               <widget class="QWidget" name="tab_SystematicSampling">
                <attribute name="title">
@@ -900,7 +900,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QGroupBox" name="QGBox_5">
+                 <widget class="QGroupBox" name="widget_SystS_step1">
                   <property name="title">
                    <string>Step 1</string>
                   </property>
@@ -968,7 +968,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QGroupBox" name="QGBox_6">
+                 <widget class="QGroupBox" name="widget_SystS_step2">
                   <property name="title">
                    <string>Step 2</string>
                   </property>
