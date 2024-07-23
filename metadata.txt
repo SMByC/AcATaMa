@@ -3,7 +3,7 @@ name=AcATaMa
 description=AcATaMa is a powerful and complete Qgis plugin for accuracy assessment that provides comprehensive support for sampling, response design and estimation.
 about=AcATaMa is a powerful and complete Qgis plugin for accuracy assessment designed for land use/land cover classification, including supervised/unsupervised classification or any thematic map. It provides comprehensive support for sampling, response design and estimation within a design-based inference framework. The primary goal of AcATaMa is to equip users with the necessary tools to comply with international guidance and best practices for sampling design, estimation of land category areas and changes, and map accuracy assessment.
 
-version=24.6
+version=24.7
 qgisMinimumVersion=3.0
 qgisMaximumVersion=3.99
 
@@ -15,6 +15,10 @@ tracker=https://github.com/SMByC/AcATaMa/issues
 repository=https://github.com/SMByC/AcATaMa
 
 changelog=
+    24.7:
+    - Refactored the process to generate the sampling using QgsTask as a background process allows the QGIS instance to remain unblocked. This enables the user to terminate the sampling process at any time, which is important for some sampling scenarios that never reach the total number of samples due to some (hard) restrictions in the sampling conditions.
+    - Other minor improvements and bug fixes
+    - All commits in: https://github.com/SMByC/AcATaMa/commits
     24.6:
     - Integrating the Continuous Change Detection (CCD) plugin inside the response design window in Acatama. CCD helps to analyze the trends and breakpoints of change of the samples over multi-year, using Landsat and Sentinel through Google Earth Engine.
     - Save and restore the CCD configuration inside the configuration Yaml file of Acatama
