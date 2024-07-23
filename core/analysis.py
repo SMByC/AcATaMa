@@ -186,7 +186,7 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
                     "The thematic map \"{}\" does not have a valid map unit, considering \"{}\" as the base unit!".format(
                         self.analysis.thematic_map.qgs_layer.name(),
                         QgsUnitTypes.toString(self.analysis.dist_unit)),
-                    level=Qgis.Warning, duration=-1)
+                    level=Qgis.Warning, duration=0)
 
         self.area_unit.currentIndexChanged.connect(lambda: self.reload(msg_bar=False))
         self.z_score.valueChanged.connect(lambda: self.reload(msg_bar=False))
@@ -229,7 +229,7 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
         if msg_bar:
             self.MsgBar.pushMessage(
                 "Reload successfully from response design state for \"{}\"".format(
-                    AcATaMa.dockwidget.QCBox_SamplingFile_A.currentText()), level=Qgis.Success)
+                    AcATaMa.dockwidget.QCBox_SamplingFile_A.currentText()), level=Qgis.Success, duration=10)
 
     def export_to_csv(self):
         # get file path to suggest where to save but not in tmp directory
@@ -249,10 +249,10 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
                                                           self.analysis.csv_separator,
                                                           self.analysis.csv_decimal)
                 self.MsgBar.pushMessage(
-                    "File saved successfully \"{}\"".format(os.path.basename(file_out)), level=Qgis.Success)
+                    "File saved successfully \"{}\"".format(os.path.basename(file_out)), level=Qgis.Success, duration=10)
             except Exception as err:
                 self.MsgBar.pushMessage(
-                    "Failed saving the csv file: {}".format(err), level=Qgis.Critical, duration=-1)
+                    "Failed saving the csv file: {}".format(err), level=Qgis.Critical, duration=10)
 
     def closeEvent(self, event):
         self.closing()

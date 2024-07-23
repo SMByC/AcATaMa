@@ -278,7 +278,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         if layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
             clear_and_unset_the_thematic_map()
             iface.messageBar().pushMessage("AcATaMa", "Error, thematic map must be byte or integer as data type.",
-                                           level=Qgis.Warning)
+                                           level=Qgis.Warning, duration=10)
             return
         # set band count
         self.QCBox_band_ThematicMap.clear()
@@ -382,7 +382,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.QCBox_band_CategMap_SimpRS.clear()
             self.QPBtn_CategMapClassesSelection_SimpRS.setEnabled(False)
             iface.messageBar().pushMessage("AcATaMa", "Error, categorical map must be byte or integer as data type.",
-                                           level=Qgis.Warning)
+                                           level=Qgis.Warning, duration=10)
             return
         # fill band list
         if self.QCBox_band_CategMap_SimpRS.count() != categorical_map_layer.bandCount():
@@ -416,7 +416,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.QGBox_Sampling_Method.setEnabled(False)
             iface.messageBar().pushMessage("AcATaMa",
                                            "Error, categorical map must be byte or integer as data type.",
-                                           level=Qgis.Warning)
+                                           level=Qgis.Warning, duration=10)
             return
         # set band count
         self.QCBox_band_CategMap_StraRS.clear()
@@ -445,7 +445,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.QCBox_band_CategMap_SystS.clear()
             self.QPBtn_CategMapClassesSelection_SystS.setEnabled(False)
             iface.messageBar().pushMessage("AcATaMa", "Error, categorical map must be byte or integer as data type.",
-                                           level=Qgis.Warning)
+                                           level=Qgis.Warning, duration=10)
             return
         # fill band list
         if self.QCBox_band_CategMap_SystS.count() != categorical_map_layer.bandCount():
@@ -577,7 +577,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.set_sampling_file_in_analysis()
         else:
             iface.messageBar().pushMessage("AcATaMa", "No sampling file selected",
-                                           level=Qgis.Warning)
+                                           level=Qgis.Warning, duration=10)
 
     @pyqtSlot()
     def set_grid_setting(self, item):
@@ -599,7 +599,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             # restore configuration and response design state
             config.restore(file_path)
             self.suggested_yml_file = file_path
-            iface.messageBar().pushMessage("AcATaMa", "Configuration and state restored successfully", level=Qgis.Success)
+            iface.messageBar().pushMessage("AcATaMa", "Configuration and state restored successfully",
+                                           level=Qgis.Success, duration=10)
 
     @pyqtSlot()
     @error_handler
@@ -622,14 +623,15 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         if output_file_is_OK(file_out):
             config.save(file_out)
             self.suggested_yml_file = file_out
-            iface.messageBar().pushMessage("AcATaMa", "Configuration file saved successfully", level=Qgis.Success)
+            iface.messageBar().pushMessage("AcATaMa", "Configuration file saved successfully",
+                                           level=Qgis.Success, duration=10)
 
     @pyqtSlot()
     @error_handler
     def file_dialog_save_sampling_labeled(self):
         if not valid_file_selected_in(self.QCBox_SamplingFile):
             iface.messageBar().pushMessage("AcATaMa", "Error, please first select a sampling file",
-                                           level=Qgis.Warning)
+                                           level=Qgis.Warning, duration=10)
             return
         # get instance
         sampling_layer = self.QCBox_SamplingFile.currentLayer()
@@ -646,7 +648,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         else:
             iface.messageBar().pushMessage("AcATaMa",
                                            "Error, the response design for the sampling selected has not been initiated",
-                                           level=Qgis.Warning)
+                                           level=Qgis.Warning, duration=10)
             return
         # get file path to suggest where to save but not in tmp directory
         file_path = get_file_path_of_layer(self.QCBox_SamplingFile.currentLayer())
@@ -660,7 +662,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                                                   self.tr("GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"))
         if output_file_is_OK(file_out):
             response_design.save_sampling_labeled(file_out)
-            iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=Qgis.Success)
+            iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=Qgis.Success, duration=10)
 
     @pyqtSlot()
     @error_handler
@@ -676,7 +678,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         sampling_layer = self.QCBox_SamplingFile.currentLayer()
         if not sampling_layer:
             iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid sampling file.",
-                                           level=Qgis.Warning)
+                                           level=Qgis.Warning, duration=10)
             return
 
         self.response_design_window = \

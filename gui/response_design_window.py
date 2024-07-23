@@ -192,13 +192,13 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
                             "Could not to load the layer '{}' in the view {}: no such file {}".format(
                                 layer_name,
                                 "'{}'".format(view_config["view_name"]) if view_config["view_name"] else view_widget.id + 1,
-                                view_config["render_file_path"]), level=Qgis.Warning, duration=-1)
+                                view_config["render_file_path"]), level=Qgis.Warning, duration=0)
                     else:
                         self.MsgBar.pushMessage(
                             "Could not to load the layer '{}' in the view {} (for network layers use save/load a Qgis project)".format(
                                 layer_name,
                                 "'{}'".format(view_config["view_name"]) if view_config["view_name"] else view_widget.id + 1),
-                            level=Qgis.Warning, duration=-1)
+                            level=Qgis.Warning, duration=0)
                     # TODO: restore size by view widget
                     # view_widget.resize(*view_config["view_size"])
                     view_widget.QLabel_ViewName.setText(view_config["view_name"])
