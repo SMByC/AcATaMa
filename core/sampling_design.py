@@ -48,6 +48,8 @@ def do_simple_random_sampling():
         return
     if AcATaMa.dockwidget.QGBox_SimpRSwithCR.isChecked():
         if not valid_file_selected_in(AcATaMa.dockwidget.QCBox_CategMap_SimpRS, "categorical map"):
+            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratify option is enabled but not configured",
+                                           level=Qgis.Warning, duration=10)
             return
 
     # get and define some variables
@@ -66,7 +68,7 @@ def do_simple_random_sampling():
             if not classes_selected:
                 raise Exception
         except:
-            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratify option enabled but none of the classes were selected",
+            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratify option is enabled but none of the classes were selected",
                                            level=Qgis.Warning, duration=10)
             return
     else:
@@ -360,6 +362,11 @@ def do_systematic_sampling():
     # first check input files requirements
     if not valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicMap, "thematic map"):
         return
+    if AcATaMa.dockwidget.QGBox_SystSwithCR.isChecked():
+        if not valid_file_selected_in(AcATaMa.dockwidget.QCBox_CategMap_SystS, "categorical map"):
+            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratify option enabled but not configured",
+                                           level=Qgis.Warning, duration=10)
+            return
 
     # get and define some variables
     thematic_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicMap,
@@ -378,7 +385,7 @@ def do_systematic_sampling():
             if not classes_selected:
                 raise Exception
         except:
-            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratify option enabled but none of the classes were selected",
+            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratify option is enabled but none of the classes were selected",
                                            level=Qgis.Warning, duration=10)
             return
     else:
