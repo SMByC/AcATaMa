@@ -210,6 +210,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         self.widget_ccd.setVisible(False)
         ccd_widget_layout = self.widget_ccd.layout()
         try:
+            from qgis.PyQt.QtWebKit import QWebSettings  # check first if the QtWebKit is available in QT5 client
             from CCD_Plugin.CCD_Plugin import CCD_Plugin
             from CCD_Plugin.gui.CCD_Plugin_dockwidget import CCD_PluginDockWidget
             from CCD_Plugin.utils.config import get_plugin_config, restore_plugin_config
