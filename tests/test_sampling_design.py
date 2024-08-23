@@ -22,10 +22,10 @@ def test_simple_post_stratified_random_sampling(plugin, unwrap, tmpdir):
     classes_selected = [int(p) for p in plugin.dockwidget.QPBtn_CategMapClassesSelection_SimpRS.text().split(",")]
     total_of_samples = int(plugin.dockwidget.numberOfSamples_SimpRS.value())
     min_distance = float(plugin.dockwidget.minDistance_SimpRS.value())
-    number_of_neighbors = int(plugin.dockwidget.widget_generate_SimpRS.QCBox_NumberOfNeighbors.currentText())
-    same_class_of_neighbors = int(plugin.dockwidget.widget_generate_SimpRS.QCBox_SameClassOfNeighbors.currentText())
+    number_of_neighbors = int(plugin.dockwidget.QCBox_NumberOfNeighbors_SimpRS.currentText())
+    same_class_of_neighbors = int(plugin.dockwidget.QCBox_SameClassOfNeighbors_SimpRS.currentText())
     neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
-    random_seed = int(plugin.dockwidget.widget_generate_SimpRS.random_seed_by_user.text())
+    random_seed = int(plugin.dockwidget.random_seed_by_user_SimpRS.text())
     output_file = tmpdir.join('test_simple_post_stratified_random_sampling.gpkg')
 
     sampling = Sampling("simple", thematic_map, categorical_map, output_file=str(output_file))
@@ -67,8 +67,8 @@ def test_stratified_random_sampling(plugin, unwrap, tmpdir):
         classes_for_sampling.append(int(plugin.dockwidget.QTableW_StraRS.item(row, 0).text()))
         total_of_samples.append(plugin.dockwidget.QTableW_StraRS.item(row, 2).text())
     total_of_samples = [int(ns) for ns in total_of_samples]
-    number_of_neighbors = int(plugin.dockwidget.widget_generate_StraRS.QCBox_NumberOfNeighbors.currentText())
-    same_class_of_neighbors = int(plugin.dockwidget.widget_generate_StraRS.QCBox_SameClassOfNeighbors.currentText())
+    number_of_neighbors = int(plugin.dockwidget.QCBox_NumberOfNeighbors_StraRS.currentText())
+    same_class_of_neighbors = int(plugin.dockwidget.QCBox_SameClassOfNeighbors_StraRS.currentText())
     neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
     sampling_method = "area based proportion"
     srs_config = {}
@@ -79,7 +79,7 @@ def test_stratified_random_sampling(plugin, unwrap, tmpdir):
 
 
     min_distance = float(plugin.dockwidget.minDistance_StraRS.value())
-    random_seed = int(plugin.dockwidget.widget_generate_StraRS.random_seed_by_user.text())
+    random_seed = int(plugin.dockwidget.random_seed_by_user_StraRS.text())
     output_file = tmpdir.join('test_stratified_random_sampling.gpkg')
 
     sampling = Sampling("stratified", thematic_map, categorical_map, sampling_method,
@@ -120,10 +120,10 @@ def test_systematic_post_stratified_random_sampling(plugin, unwrap, tmpdir):
     max_xy_offset = float(plugin.dockwidget.MaxXYoffset_SystS.value())
 
     classes_selected = [int(p) for p in plugin.dockwidget.QPBtn_CategMapClassesSelection_SystS.text().split(",")]
-    number_of_neighbors = int(plugin.dockwidget.widget_generate_SystS.QCBox_NumberOfNeighbors.currentText())
-    same_class_of_neighbors = int(plugin.dockwidget.widget_generate_SystS.QCBox_SameClassOfNeighbors.currentText())
+    number_of_neighbors = int(plugin.dockwidget.QCBox_NumberOfNeighbors_SystS.currentText())
+    same_class_of_neighbors = int(plugin.dockwidget.QCBox_SameClassOfNeighbors_SystS.currentText())
     neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
-    random_seed = int(plugin.dockwidget.widget_generate_SystS.random_seed_by_user.text())
+    random_seed = int(plugin.dockwidget.random_seed_by_user_SystS.text())
     output_file = tmpdir.join('test_systematic_post_stratified_random_sampling.gpkg')
 
     sampling = Sampling("systematic", thematic_map, categorical_map, output_file=str(output_file))
@@ -131,7 +131,7 @@ def test_systematic_post_stratified_random_sampling(plugin, unwrap, tmpdir):
     task = type("QgsTask", (object,), {"setProgress": lambda x: None, "isCanceled": lambda: False})
     # config arguments
     sampling_conf = {
-        "total_of_samples": plugin.dockwidget.widget_generate_SystS.QPBar_GenerateSamples.maximum(),
+        "total_of_samples": plugin.dockwidget.QPBar_GenerateSamples_SystS.maximum(),
         "points_spacing": points_spacing,
         "initial_inset": initial_inset,
         "max_xy_offset": max_xy_offset,
@@ -165,10 +165,10 @@ def test_systematic_post_stratified_with_initial_inset_random(plugin, unwrap, tm
     max_xy_offset = float(plugin.dockwidget.MaxXYoffset_SystS.value())
 
     classes_selected = [int(p) for p in plugin.dockwidget.QPBtn_CategMapClassesSelection_SystS.text().split(",")]
-    number_of_neighbors = int(plugin.dockwidget.widget_generate_SystS.QCBox_NumberOfNeighbors.currentText())
-    same_class_of_neighbors = int(plugin.dockwidget.widget_generate_SystS.QCBox_SameClassOfNeighbors.currentText())
+    number_of_neighbors = int(plugin.dockwidget.QCBox_NumberOfNeighbors_SystS.currentText())
+    same_class_of_neighbors = int(plugin.dockwidget.QCBox_SameClassOfNeighbors_SystS.currentText())
     neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
-    random_seed = int(plugin.dockwidget.widget_generate_SystS.random_seed_by_user.text())
+    random_seed = int(plugin.dockwidget.random_seed_by_user_SystS.text())
     output_file = tmpdir.join('test_systematic_post_stratified_with_initial_inset_random.gpkg')
 
     # set initial inset
@@ -180,7 +180,7 @@ def test_systematic_post_stratified_with_initial_inset_random(plugin, unwrap, tm
     task = type("QgsTask", (object,), {"setProgress": lambda x: None, "isCanceled": lambda: False})
     # config arguments
     sampling_conf = {
-        "total_of_samples": plugin.dockwidget.widget_generate_SystS.QPBar_GenerateSamples.maximum(),
+        "total_of_samples": plugin.dockwidget.QPBar_GenerateSamples_SystS.maximum(),
         "points_spacing": points_spacing,
         "initial_inset": initial_inset,
         "max_xy_offset": max_xy_offset,

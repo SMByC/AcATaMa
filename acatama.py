@@ -21,7 +21,7 @@
 import os.path
 import shutil
 
-from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
+from qgis.PyQt.QtCore import QCoreApplication, Qt
 from qgis.PyQt.QtWidgets import QAction, QMessageBox
 from qgis.PyQt.QtGui import QIcon
 
@@ -29,6 +29,7 @@ from AcATaMa.core.analysis import AccuracyAssessmentWindow
 from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget
 from AcATaMa.gui.about_dialog import AboutDialog
 from AcATaMa.gui.response_design_window import ResponseDesignWindow
+from AcATaMa.gui.sampling_design_window import SamplingDesignWindow
 from AcATaMa.utils.qgis_utils import unload_layer
 
 # Initialize Qt resources from file resources.py
@@ -137,6 +138,10 @@ class AcATaMa(object):
 
     def onClosePlugin(self):
         """Cleanup necessary items here when plugin dockwidget is closed"""
+        if SamplingDesignWindow.is_opened:
+            self.dockwidget.sampling_design_window.closing()
+            self.dockwidget.sampling_design_window.reject(is_ok_to_close=True)
+
         if ResponseDesignWindow.is_opened:
             self.dockwidget.response_design_window.closing()
             self.dockwidget.response_design_window.reject(is_ok_to_close=True)

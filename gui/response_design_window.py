@@ -49,13 +49,13 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
     is_opened = False
     view_widgets = []
     current_sample = None
-    instance = None
+    inst = None
 
     def __init__(self, sampling_layer, columns, rows):
         QDialog.__init__(self)
         self.sampling_layer = sampling_layer
         self.setupUi(self)
-        ResponseDesignWindow.instance = self
+        ResponseDesignWindow.inst = self
 
         # flags
         self.setWindowFlags(self.windowFlags() | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint)
@@ -260,10 +260,10 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         ResponseDesignWindow.is_opened = True
         # adjust some objects in the dockwidget while response design window is opened
-        AcATaMa.dockwidget.QGBox_SamplingFile.setDisabled(True)
+        AcATaMa.dockwidget.QGBox_ThematicMap.setDisabled(True)
+        AcATaMa.dockwidget.QGBox_SamplingDesign.setDisabled(True)
         AcATaMa.dockwidget.QGBox_GridSettings.setDisabled(True)
-        AcATaMa.dockwidget.QGBox_LabelingStatus.setDisabled(True)
-        AcATaMa.dockwidget.QGBox_saveSamplingLabeled.setDisabled(True)
+        AcATaMa.dockwidget.QPBtn_saveSamplingLabeled.setDisabled(True)
         AcATaMa.dockwidget.QPBtn_OpenResponseDesignWindow.setText("Response design is opened, click to show")
 
         super(ResponseDesignWindow, self).show()
@@ -596,9 +596,9 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
                 if buttons_config[row]["thematic_class"] is not None and buttons_config[row]["thematic_class"] != "":
                     self.response_design.with_thematic_classes = True
 
-        # reload sampling file status in analysis tab
+        # reload analysis status in accuracy assessment
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        AcATaMa.dockwidget.set_sampling_file_in_analysis()
+        AcATaMa.dockwidget.update_analysis_state()
         # reload the current sample status
         self.update_sample_status()
 
@@ -639,11 +639,11 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
 
         ResponseDesignWindow.is_opened = False
         # restore the states for some objects in the dockwidget
-        AcATaMa.dockwidget.QGBox_SamplingFile.setEnabled(True)
+        AcATaMa.dockwidget.QGBox_ThematicMap.setEnabled(True)
+        AcATaMa.dockwidget.QGBox_SamplingDesign.setEnabled(True)
         AcATaMa.dockwidget.QGBox_GridSettings.setEnabled(True)
-        AcATaMa.dockwidget.QGBox_LabelingStatus.setEnabled(True)
-        AcATaMa.dockwidget.QGBox_saveSamplingLabeled.setEnabled(True)
-        AcATaMa.dockwidget.QPBtn_OpenResponseDesignWindow.setText("Open response design window")
+        AcATaMa.dockwidget.QPBtn_saveSamplingLabeled.setEnabled(True)
+        AcATaMa.dockwidget.QPBtn_OpenResponseDesignWindow.setText("Response design window")
         self.reject(is_ok_to_close=True)
 
     def reject(self, is_ok_to_close=False):

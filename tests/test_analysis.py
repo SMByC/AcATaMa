@@ -17,7 +17,7 @@ def test_accuracy_assessment_simple_html(plugin, unwrap):
 
     # get accuracy assessment results in html
     accuracy_assessment = AccuracyAssessmentWindow()
-    accuracy_assessment.analysis.estimator = plugin.dockwidget.QCBox_SamplingEstimator_A.currentText()
+    accuracy_assessment.analysis.estimator = plugin.dockwidget.QCBox_SamplingEstimator.currentText()
     accuracy_assessment.analysis.compute()
     # set content results in HTML
     result_html_computed = accuracy_assessment_results.get_html(accuracy_assessment.analysis)
@@ -39,7 +39,7 @@ def test_accuracy_assessment_simple_post_stratify_html(plugin, unwrap):
 
     # get accuracy assessment results in html
     accuracy_assessment = AccuracyAssessmentWindow()
-    accuracy_assessment.analysis.estimator = plugin.dockwidget.QCBox_SamplingEstimator_A.currentText()
+    accuracy_assessment.analysis.estimator = plugin.dockwidget.QCBox_SamplingEstimator.currentText()
     accuracy_assessment.analysis.compute()
     # set content results in HTML
     result_html_computed = accuracy_assessment_results.get_html(accuracy_assessment.analysis)
@@ -61,7 +61,7 @@ def test_accuracy_assessment_systematic_html(plugin, unwrap):
 
     # get accuracy assessment results in html
     accuracy_assessment = AccuracyAssessmentWindow()
-    accuracy_assessment.analysis.estimator = plugin.dockwidget.QCBox_SamplingEstimator_A.currentText()
+    accuracy_assessment.analysis.estimator = plugin.dockwidget.QCBox_SamplingEstimator.currentText()
     accuracy_assessment.analysis.compute()
     # set content results in HTML
     result_html_computed = accuracy_assessment_results.get_html(accuracy_assessment.analysis)
@@ -83,7 +83,7 @@ def test_accuracy_assessment_systematic_post_stratify_html(plugin, unwrap):
 
     # get accuracy assessment results in html
     accuracy_assessment = AccuracyAssessmentWindow()
-    accuracy_assessment.analysis.estimator = plugin.dockwidget.QCBox_SamplingEstimator_A.currentText()
+    accuracy_assessment.analysis.estimator = plugin.dockwidget.QCBox_SamplingEstimator.currentText()
     accuracy_assessment.analysis.compute()
     # set content results in HTML
     result_html_computed = accuracy_assessment_results.get_html(accuracy_assessment.analysis)
@@ -105,7 +105,7 @@ def test_accuracy_assessment_stratified_html(plugin, unwrap):
 
     # get accuracy assessment results in html
     accuracy_assessment = AccuracyAssessmentWindow()
-    accuracy_assessment.analysis.estimator = plugin.dockwidget.QCBox_SamplingEstimator_A.currentText()
+    accuracy_assessment.analysis.estimator = plugin.dockwidget.QCBox_SamplingEstimator.currentText()
     accuracy_assessment.analysis.compute()
     # set content results in HTML
     result_html_computed = accuracy_assessment_results.get_html(accuracy_assessment.analysis)

@@ -21,7 +21,7 @@
 import os
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QWidget, QDialog, QTableWidgetItem, QPushButton
+from qgis.PyQt.QtWidgets import QDialog, QTableWidgetItem, QPushButton
 from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtGui import QColor
 
@@ -31,32 +31,10 @@ from AcATaMa.utils.system_utils import error_handler
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'generate_samples_widget.ui'))
+    plugin_folder, 'ui', 'post_stratification_classes_dialog.ui'))
 
 
-class GenerateSamplingWidget(QWidget, FORM_CLASS):
-    def __init__(self, parent=None):
-        QWidget.__init__(self, parent)
-        self.setupUi(self)
-        ######
-        self.widget_neighbour_aggregation.setHidden(True)
-        self.widget_random_sampling_options.setHidden(True)
-        # fill QCBox_SameClassOfNeighbors
-        self.fill_same_class_of_neighbors()
-        self.QCBox_NumberOfNeighbors.currentIndexChanged.connect(self.fill_same_class_of_neighbors)
-
-    @pyqtSlot()
-    def fill_same_class_of_neighbors(self):
-        self.QCBox_SameClassOfNeighbors.clear()
-        number_of_neighbor = int(self.QCBox_NumberOfNeighbors.currentText())
-        self.QCBox_SameClassOfNeighbors.addItems([str(x) for x in range(1, number_of_neighbor+1)])
-
-
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'select_categorical_map_classes.ui'))
-
-
-class SelectCategoricalMapClasses(QDialog, FORM_CLASS):
+class PostStratificationClassesDialog(QDialog, FORM_CLASS):
     instances = {}
 
     def __init__(self, categorical_map_layer, categorical_map_band, set_classes_selected=None):
@@ -69,7 +47,7 @@ class SelectCategoricalMapClasses(QDialog, FORM_CLASS):
                                                                     set_classes_selected != "click to select" else [])]
         if self.create_table():
             # save instance
-            SelectCategoricalMapClasses.instances[(categorical_map_layer, categorical_map_band)] = self
+            PostStratificationClassesDialog.instances[(categorical_map_layer, categorical_map_band)] = self
 
     @error_handler
     def create_table(self):
@@ -124,7 +102,7 @@ class SelectCategoricalMapClasses(QDialog, FORM_CLASS):
         self.tableOfClasses.resizeColumnsToContents()
         self.tableOfClasses.resizeRowsToContents()
         # adjust the dialog based on table content
-        dialog_width = self.tableOfClasses.horizontalHeader().length() + 50
+        dialog_width = self.tableOfClasses.horizontalHeader().length() + 80
         self.resize(dialog_width, self.height())
         return True
 

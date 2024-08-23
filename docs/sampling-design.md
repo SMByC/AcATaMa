@@ -32,8 +32,8 @@ Selecting the sampling design is crucial and could be based on the population/da
 your needs. At the moment we have implemented three main sampling designs: simple random, stratified random, and
 systematic sampling and all are probability sampling designs. For example, use simple random for a population without
 strata. Stratified random is commonly employed for sampling within each stratum of the classes of the stratified map.
-And the systematic protocol to have some strata sampled systematically. But also we implemented post-stratify methods
-for simple random and systematic sampling to ensure that samples randomly generated are only on specific strata.
+And the systematic protocol to have some strata sampled systematically. But also we implemented post-stratification 
+methods for simple random and systematic sampling to ensure that samples randomly generated are only on specific strata.
 
 ## Simple random sampling
 

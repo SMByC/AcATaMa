@@ -151,7 +151,7 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
         self.DialogButtons.button(QDialogButtonBox.Save).clicked.connect(self.export_to_csv)
 
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile_A.currentLayer()
+        sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile.currentLayer()
 
         # get AccuracyAssessment or init new instance
         if sampling_layer:
@@ -200,20 +200,21 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
         if self.analysis.response_design.total_labeled == 0:
             iface.messageBar().pushMessage("AcATaMa",
                                            "The accuracy assessment needs at least one sample labeled",
-                                           level=Qgis.Warning)
+                                           level=Qgis.Warning, duration=10)
             return
 
         AccuracyAssessmentWindow.is_opened = True
         # first, set the estimator for accuracy assessment from dropdown selected
-        self.analysis.estimator = AcATaMa.dockwidget.QCBox_SamplingEstimator_A.currentText()
+        self.analysis.estimator = AcATaMa.dockwidget.QCBox_SamplingEstimator.currentText()
         # second, compute the accuracy assessment
         self.analysis.compute()
         # set content results in HTML
         self.ResultsHTML.setHtml(accuracy_assessment_results.get_html(self.analysis))
         self.ResultsHTML.zoomOut()
 
+        AcATaMa.dockwidget.QGBox_ThematicMap.setDisabled(True)
+        AcATaMa.dockwidget.QGBox_SamplingDesign.setDisabled(True)
         AcATaMa.dockwidget.QPBtn_ComputeTheAccurasyAssessment.setText("Accuracy assessment is opened, click to show")
-        AcATaMa.dockwidget.QGBox_SamplingSelection_A.setDisabled(True)
         super(AccuracyAssessmentWindow, self).show()
 
     def reload(self, msg_bar=True):
@@ -229,12 +230,12 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
         if msg_bar:
             self.MsgBar.pushMessage(
                 "Reload successfully from response design state for \"{}\"".format(
-                    AcATaMa.dockwidget.QCBox_SamplingFile_A.currentText()), level=Qgis.Success, duration=10)
+                    AcATaMa.dockwidget.QCBox_SamplingFile.currentText()), level=Qgis.Success, duration=10)
 
     def export_to_csv(self):
         # get file path to suggest where to save but not in tmp directory
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        file_path = get_file_path_of_layer(AcATaMa.dockwidget.QCBox_SamplingFile_A.currentLayer())
+        file_path = get_file_path_of_layer(AcATaMa.dockwidget.QCBox_SamplingFile.currentLayer())
         path, filename = os.path.split(file_path)
         if AcATaMa.dockwidget.tmp_dir in path:
             path = os.path.split(get_file_path_of_layer(AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer()))[0]
@@ -263,9 +264,12 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
         Do this before close the accuracy assessment windows
         """
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        from AcATaMa.gui.response_design_window import ResponseDesignWindow
+        if not ResponseDesignWindow.is_opened:
+            AcATaMa.dockwidget.QGBox_ThematicMap.setEnabled(True)
+            AcATaMa.dockwidget.QGBox_SamplingDesign.setEnabled(True)
         AccuracyAssessmentWindow.is_opened = False
         AcATaMa.dockwidget.QPBtn_ComputeTheAccurasyAssessment.setText("Compute the accuracy assessment")
-        AcATaMa.dockwidget.QGBox_SamplingSelection_A.setEnabled(True)
         self.reject(is_ok_to_close=True)
 
     def reject(self, is_ok_to_close=False):

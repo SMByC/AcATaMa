@@ -93,7 +93,7 @@ The variances of the general, user and producer accuracy are estimated with refe
 ### Error matrix of estimated area proportion
 
 The absolute counts of the sample are converted into estimated area proportions using the equation (9) in Olofsson et
-al. (2014) for post-stratify simple or systematic sampling or stratified sampling with the map classes defined as the
+al. (2014) for post-stratification simple or systematic sampling or stratified sampling with the map classes defined as the
 strata.
 
 ### Quadratic error matrix for estimated area proportion

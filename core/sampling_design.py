@@ -37,18 +37,19 @@ from AcATaMa.utils.system_utils import error_handler, output_file_is_OK
 
 def do_simple_random_sampling():
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+    from AcATaMa.gui.sampling_design_window import SamplingDesignWindow as sampling_design
 
     # check if the sampling is processing
-    if AcATaMa.dockwidget.widget_generate_SimpRS.QPBtn_GenerateSamples.text() == "FINISH":
+    if sampling_design.inst.QPBtn_GenerateSamples_SimpRS.text() == "FINISH":
         globals()['sampling_task'].cancel()
         return
 
     # first check input files requirements
     if not valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicMap, "thematic map"):
         return
-    if AcATaMa.dockwidget.QGBox_SimpRSwithCR.isChecked():
-        if not valid_file_selected_in(AcATaMa.dockwidget.QCBox_CategMap_SimpRS, "categorical map"):
-            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratify option is enabled but not configured",
+    if sampling_design.inst.QGBox_SimpRSwithCR.isChecked():
+        if not valid_file_selected_in(sampling_design.inst.QCBox_CategMap_SimpRS, "categorical map"):
+            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratification option is enabled but not configured",
                                            level=Qgis.Warning, duration=10)
             return
 
@@ -56,19 +57,19 @@ def do_simple_random_sampling():
     thematic_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicMap,
                        band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
                        nodata=float(AcATaMa.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
-    total_of_samples = int(AcATaMa.dockwidget.numberOfSamples_SimpRS.value())
-    min_distance = float(AcATaMa.dockwidget.minDistance_SimpRS.value())
+    total_of_samples = int(sampling_design.inst.numberOfSamples_SimpRS.value())
+    min_distance = float(sampling_design.inst.minDistance_SimpRS.value())
 
-    # simple random sampling in categorical map
-    if AcATaMa.dockwidget.QGBox_SimpRSwithCR.isChecked():
-        categorical_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_CategMap_SimpRS,
-                              band=int(AcATaMa.dockwidget.QCBox_band_CategMap_SimpRS.currentText()))
+    # post-stratification of the simple random sampling
+    if sampling_design.inst.QGBox_SimpRSwithCR.isChecked():
+        categorical_map = Map(file_selected_combo_box=sampling_design.inst.QCBox_CategMap_SimpRS,
+                              band=int(sampling_design.inst.QCBox_band_CategMap_SimpRS.currentText()))
         try:
-            classes_selected = [int(p) for p in AcATaMa.dockwidget.QPBtn_CategMapClassesSelection_SimpRS.text().split(",")]
+            classes_selected = [int(p) for p in sampling_design.inst.QPBtn_CategMapClassesSelection_SimpRS.text().split(",")]
             if not classes_selected:
                 raise Exception
         except:
-            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratify option is enabled but none of the classes were selected",
+            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratification option is enabled but none of the classes were selected",
                                            level=Qgis.Warning, duration=10)
             return
     else:
@@ -76,9 +77,9 @@ def do_simple_random_sampling():
         classes_selected = None
 
     # check neighbors aggregation
-    if AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_neighbour_aggregation.isChecked():
-        number_of_neighbors = int(AcATaMa.dockwidget.widget_generate_SimpRS.QCBox_NumberOfNeighbors.currentText())
-        same_class_of_neighbors = int(AcATaMa.dockwidget.widget_generate_SimpRS.QCBox_SameClassOfNeighbors.currentText())
+    if sampling_design.inst.QGBox_neighbour_aggregation_SimpRS.isChecked():
+        number_of_neighbors = int(sampling_design.inst.QCBox_NumberOfNeighbors_SimpRS.currentText())
+        same_class_of_neighbors = int(sampling_design.inst.QCBox_SameClassOfNeighbors_SimpRS.currentText())
         neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
     else:
         neighbor_aggregation = None
@@ -86,7 +87,7 @@ def do_simple_random_sampling():
     # first select the target file for save the sampling file
     suggested_filename = os.path.join(os.path.dirname(thematic_map.file_path),
                                       "simple {}sampling.gpkg".format("post-stratified " if categorical_map else ""))
-    output_file, _ = QFileDialog.getSaveFileName(AcATaMa.dockwidget,
+    output_file, _ = QFileDialog.getSaveFileName(sampling_design.inst,
                                                  AcATaMa.dockwidget.tr("Select the output file to save the sampling"),
                                                  suggested_filename,
                                                  AcATaMa.dockwidget.tr("GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"))
@@ -94,8 +95,8 @@ def do_simple_random_sampling():
         return
 
     # define the random seed
-    if AcATaMa.dockwidget.widget_generate_SimpRS.with_random_seed_by_user.isChecked():
-        random_seed = AcATaMa.dockwidget.widget_generate_SimpRS.random_seed_by_user.text()
+    if sampling_design.inst.with_random_seed_by_user_SimpRS.isChecked():
+        random_seed = sampling_design.inst.random_seed_by_user_SimpRS.text()
         try:
             random_seed = int(random_seed)
         except:
@@ -104,11 +105,11 @@ def do_simple_random_sampling():
         random_seed = None
 
     # before process
-    AcATaMa.dockwidget.widget_generate_SimpRS.QPBtn_GenerateSamples.setText("FINISH")
-    AcATaMa.dockwidget.widget_generate_SimpRS.QPBtn_GenerateSamples.setStyleSheet("background-color: red")
-    AcATaMa.dockwidget.widget_RandomSampling.setEnabled(False)
-    AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_neighbour_aggregation.setEnabled(False)
-    AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_random_sampling_options.setEnabled(False)
+    sampling_design.inst.QPBtn_GenerateSamples_SimpRS.setText("FINISH")
+    sampling_design.inst.QPBtn_GenerateSamples_SimpRS.setStyleSheet("background-color: red")
+    sampling_design.inst.widget_RandomSampling.setEnabled(False)
+    sampling_design.inst.QGBox_neighbour_aggregation_SimpRS.setEnabled(False)
+    sampling_design.inst.QGBox_random_sampling_options_SimpRS.setEnabled(False)
 
     # process the sampling in a QGIS task
     sampling = Sampling("simple", thematic_map, categorical_map, output_file=output_file)
@@ -120,7 +121,7 @@ def do_simple_random_sampling():
         on_finished=simple_random_sampling_finished, sampling_conf=sampling_conf)
 
     globals()['sampling_task'].progressChanged.connect(
-        lambda value: AcATaMa.dockwidget.widget_generate_SimpRS.QPBar_GenerateSamples.setValue(math.ceil(total_of_samples * value / 100)))
+        lambda value: sampling_design.inst.QPBar_GenerateSamples_SimpRS.setValue(math.ceil(total_of_samples * value / 100)))
 
     QgsApplication.taskManager().addTask(globals()['sampling_task'])
 
@@ -128,14 +129,15 @@ def do_simple_random_sampling():
 @error_handler
 def simple_random_sampling_finished(exception, result=None):
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+    from AcATaMa.gui.sampling_design_window import SamplingDesignWindow as sampling_design
 
     # restoring
-    AcATaMa.dockwidget.widget_generate_SimpRS.QPBtn_GenerateSamples.setText("Generate samples")
-    AcATaMa.dockwidget.widget_generate_SimpRS.QPBtn_GenerateSamples.setStyleSheet("")
-    AcATaMa.dockwidget.widget_RandomSampling.setEnabled(True)
-    AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_neighbour_aggregation.setEnabled(True)
-    AcATaMa.dockwidget.widget_generate_SimpRS.QGBox_random_sampling_options.setEnabled(True)
-    AcATaMa.dockwidget.widget_generate_SimpRS.QPBar_GenerateSamples.setValue(0)
+    sampling_design.inst.QPBtn_GenerateSamples_SimpRS.setText("Generate samples")
+    sampling_design.inst.QPBtn_GenerateSamples_SimpRS.setStyleSheet("")
+    sampling_design.inst.widget_RandomSampling.setEnabled(True)
+    sampling_design.inst.QGBox_neighbour_aggregation_SimpRS.setEnabled(True)
+    sampling_design.inst.QGBox_random_sampling_options_SimpRS.setEnabled(True)
+    sampling_design.inst.QPBar_GenerateSamples_SimpRS.setValue(0)
 
     if exception is not None or result is None:
         raise Exception("Error in sampling process: {}".format(exception))
@@ -175,9 +177,8 @@ def simple_random_sampling_finished(exception, result=None):
     AcATaMa.dockwidget.QCBox_SamplingFile.setLayer(sampling_layer_generated)
     if sampling_layer_generated not in ResponseDesign.instances:
         ResponseDesign(sampling_layer_generated)
-    AcATaMa.dockwidget.QCBox_SamplingFile_A.setLayer(sampling_layer_generated)
-    AcATaMa.dockwidget.QCBox_SamplingEstimator_A.setCurrentIndex(-1)
-    AcATaMa.dockwidget.QCBox_SamplingEstimator_A.setCurrentIndex(0 if sampling.categorical_map is None else 1)
+    AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(-1)
+    AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(0 if sampling.categorical_map is None else 1)
 
     # open the sampling report
     # TODO
@@ -185,33 +186,34 @@ def simple_random_sampling_finished(exception, result=None):
 
 def do_stratified_random_sampling():
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+    from AcATaMa.gui.sampling_design_window import SamplingDesignWindow as sampling_design
 
     # check if the sampling is processing
-    if AcATaMa.dockwidget.widget_generate_StraRS.QPBtn_GenerateSamples.text() == "FINISH":
+    if sampling_design.inst.QPBtn_GenerateSamples_StraRS.text() == "FINISH":
         globals()['sampling_task'].cancel()
         return
 
     # first check input files requirements
     if not valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicMap, "thematic map"):
         return
-    if not valid_file_selected_in(AcATaMa.dockwidget.QCBox_CategMap_StraRS, "categorical map"):
+    if not valid_file_selected_in(sampling_design.inst.QCBox_CategMap_StraRS, "categorical map"):
         return
 
     # get and define some variables
     thematic_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicMap,
                        band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
                        nodata=float(AcATaMa.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
-    categorical_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_CategMap_StraRS,
-                          band=int(AcATaMa.dockwidget.QCBox_band_CategMap_StraRS.currentText()),
-                          nodata=float(AcATaMa.dockwidget.nodata_CategMap_StraRS.text().strip() or "nan"))
-    min_distance = float(AcATaMa.dockwidget.minDistance_StraRS.value())
+    categorical_map = Map(file_selected_combo_box=sampling_design.inst.QCBox_CategMap_StraRS,
+                          band=int(sampling_design.inst.QCBox_band_CategMap_StraRS.currentText()),
+                          nodata=float(sampling_design.inst.nodata_CategMap_StraRS.text().strip() or "nan"))
+    min_distance = float(sampling_design.inst.minDistance_StraRS.value())
 
     # get values from category table  #########
     classes_for_sampling = []
     total_of_samples_by_cat = []
-    for row in range(AcATaMa.dockwidget.QTableW_StraRS.rowCount()):
-        classes_for_sampling.append(int(AcATaMa.dockwidget.QTableW_StraRS.item(row, 0).text()))
-        total_of_samples_by_cat.append(AcATaMa.dockwidget.QTableW_StraRS.item(row, 2).text())
+    for row in range(sampling_design.inst.QTableW_StraRS.rowCount()):
+        classes_for_sampling.append(int(sampling_design.inst.QTableW_StraRS.item(row, 0).text()))
+        total_of_samples_by_cat.append(sampling_design.inst.QTableW_StraRS.item(row, 2).text())
     # convert and check if number of samples only positive integers
     try:
         total_of_samples_by_cat = [int(ns) for ns in total_of_samples_by_cat]
@@ -228,30 +230,30 @@ def do_stratified_random_sampling():
         return
 
     # check neighbors aggregation
-    if AcATaMa.dockwidget.widget_generate_StraRS.QGBox_neighbour_aggregation.isChecked():
-        number_of_neighbors = int(AcATaMa.dockwidget.widget_generate_StraRS.QCBox_NumberOfNeighbors.currentText())
-        same_class_of_neighbors = int(AcATaMa.dockwidget.widget_generate_StraRS.QCBox_SameClassOfNeighbors.currentText())
+    if sampling_design.inst.QGBox_neighbour_aggregation_StraRS.isChecked():
+        number_of_neighbors = int(sampling_design.inst.QCBox_NumberOfNeighbors_StraRS.currentText())
+        same_class_of_neighbors = int(sampling_design.inst.QCBox_SameClassOfNeighbors_StraRS.currentText())
         neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
     else:
         neighbor_aggregation = None
 
     # set the method of stratified sampling and save StraRS config
-    if AcATaMa.dockwidget.QCBox_StraRS_Method.currentText().startswith("Fixed values"):
+    if sampling_design.inst.QCBox_StraRS_Method.currentText().startswith("Fixed values"):
         sampling_method = "fixed values"
         srs_config = None
-    if AcATaMa.dockwidget.QCBox_StraRS_Method.currentText().startswith("Area based proportion"):
+    if sampling_design.inst.QCBox_StraRS_Method.currentText().startswith("Area based proportion"):
         sampling_method = "area based proportion"
         srs_config = {}
         # save total expected std error
-        srs_config["total_std_error"] = AcATaMa.dockwidget.TotalExpectedSE.value()
+        srs_config["total_std_error"] = sampling_design.inst.TotalExpectedSE.value()
         # get ui from table
         srs_config["ui"] = []
-        for row in range(AcATaMa.dockwidget.QTableW_StraRS.rowCount()):
-            srs_config["ui"].append(float(AcATaMa.dockwidget.QTableW_StraRS.item(row, 3).text()))
+        for row in range(sampling_design.inst.QTableW_StraRS.rowCount()):
+            srs_config["ui"].append(float(sampling_design.inst.QTableW_StraRS.item(row, 3).text()))
 
     # first select the target file for save the sampling file
     suggested_filename = os.path.join(os.path.dirname(thematic_map.file_path), "stratified sampling.gpkg")
-    output_file, _ = QFileDialog.getSaveFileName(AcATaMa.dockwidget,
+    output_file, _ = QFileDialog.getSaveFileName(sampling_design.inst,
                                                  AcATaMa.dockwidget.tr("Select the output file to save the sampling"),
                                                  suggested_filename,
                                                  AcATaMa.dockwidget.tr("GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"))
@@ -259,8 +261,8 @@ def do_stratified_random_sampling():
         return
 
     # define the random seed
-    if AcATaMa.dockwidget.widget_generate_StraRS.with_random_seed_by_user.isChecked():
-        random_seed = AcATaMa.dockwidget.widget_generate_StraRS.random_seed_by_user.text()
+    if sampling_design.inst.with_random_seed_by_user_StraRS.isChecked():
+        random_seed = sampling_design.inst.random_seed_by_user_StraRS.text()
         try:
             random_seed = int(random_seed)
         except:
@@ -269,12 +271,12 @@ def do_stratified_random_sampling():
         random_seed = None
 
     # before process
-    AcATaMa.dockwidget.widget_generate_StraRS.QPBtn_GenerateSamples.setText("FINISH")
-    AcATaMa.dockwidget.widget_generate_StraRS.QPBtn_GenerateSamples.setStyleSheet("background-color: red")
-    AcATaMa.dockwidget.widget_StratifiedSampling.setEnabled(False)
-    AcATaMa.dockwidget.widget_minDistance_StraRS.setEnabled(False)
-    AcATaMa.dockwidget.widget_generate_StraRS.QGBox_neighbour_aggregation.setEnabled(False)
-    AcATaMa.dockwidget.widget_generate_StraRS.QGBox_random_sampling_options.setEnabled(False)
+    sampling_design.inst.QPBtn_GenerateSamples_StraRS.setText("FINISH")
+    sampling_design.inst.QPBtn_GenerateSamples_StraRS.setStyleSheet("background-color: red")
+    sampling_design.inst.widget_StratifiedSampling.setEnabled(False)
+    sampling_design.inst.widget_minDistance_StraRS.setEnabled(False)
+    sampling_design.inst.QGBox_neighbour_aggregation_StraRS.setEnabled(False)
+    sampling_design.inst.QGBox_random_sampling_options_StraRS.setEnabled(False)
 
     # process the sampling in a QGIS task
     sampling = Sampling("stratified", thematic_map, categorical_map, sampling_method,
@@ -287,7 +289,7 @@ def do_stratified_random_sampling():
         on_finished=stratified_random_sampling_finished, sampling_conf=sampling_conf)
 
     globals()['sampling_task'].progressChanged.connect(
-        lambda value: AcATaMa.dockwidget.widget_generate_StraRS.QPBar_GenerateSamples.setValue(math.ceil(total_of_samples * value / 100)))
+        lambda value: sampling_design.inst.QPBar_GenerateSamples_StraRS.setValue(math.ceil(total_of_samples * value / 100)))
 
     QgsApplication.taskManager().addTask(globals()['sampling_task'])
 
@@ -295,15 +297,16 @@ def do_stratified_random_sampling():
 @error_handler
 def stratified_random_sampling_finished(exception, result=None):
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+    from AcATaMa.gui.sampling_design_window import SamplingDesignWindow as sampling_design
 
     # restoring
-    AcATaMa.dockwidget.widget_generate_StraRS.QPBtn_GenerateSamples.setText("Generate samples")
-    AcATaMa.dockwidget.widget_generate_StraRS.QPBtn_GenerateSamples.setStyleSheet("")
-    AcATaMa.dockwidget.widget_StratifiedSampling.setEnabled(True)
-    AcATaMa.dockwidget.widget_minDistance_StraRS.setEnabled(True)
-    AcATaMa.dockwidget.widget_generate_StraRS.QGBox_neighbour_aggregation.setEnabled(True)
-    AcATaMa.dockwidget.widget_generate_StraRS.QGBox_random_sampling_options.setEnabled(True)
-    AcATaMa.dockwidget.widget_generate_StraRS.QPBar_GenerateSamples.setValue(0)
+    sampling_design.inst.QPBtn_GenerateSamples_StraRS.setText("Generate samples")
+    sampling_design.inst.QPBtn_GenerateSamples_StraRS.setStyleSheet("")
+    sampling_design.inst.widget_StratifiedSampling.setEnabled(True)
+    sampling_design.inst.widget_minDistance_StraRS.setEnabled(True)
+    sampling_design.inst.QGBox_neighbour_aggregation_StraRS.setEnabled(True)
+    sampling_design.inst.QGBox_random_sampling_options_StraRS.setEnabled(True)
+    sampling_design.inst.QPBar_GenerateSamples_StraRS.setValue(0)
 
     if exception is not None or result is None:
         raise Exception("Error in sampling process: {}".format(exception))
@@ -343,9 +346,8 @@ def stratified_random_sampling_finished(exception, result=None):
     AcATaMa.dockwidget.QCBox_SamplingFile.setLayer(sampling_layer_generated)
     if sampling_layer_generated not in ResponseDesign.instances:
         ResponseDesign(sampling_layer_generated)
-    AcATaMa.dockwidget.QCBox_SamplingFile_A.setLayer(sampling_layer_generated)
-    AcATaMa.dockwidget.QCBox_SamplingEstimator_A.setCurrentIndex(-1)
-    AcATaMa.dockwidget.QCBox_SamplingEstimator_A.setCurrentIndex(2)
+    AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(-1)
+    AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(2)
 
     # open the sampling report
     # TODO
@@ -353,18 +355,19 @@ def stratified_random_sampling_finished(exception, result=None):
 
 def do_systematic_sampling():
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+    from AcATaMa.gui.sampling_design_window import SamplingDesignWindow as sampling_design
 
     # check if the sampling is processing
-    if AcATaMa.dockwidget.widget_generate_SystS.QPBtn_GenerateSamples.text() == "FINISH":
+    if sampling_design.inst.QPBtn_GenerateSamples_SystS.text() == "FINISH":
         globals()['sampling_task'].cancel()
         return
 
     # first check input files requirements
     if not valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicMap, "thematic map"):
         return
-    if AcATaMa.dockwidget.QGBox_SystSwithCR.isChecked():
-        if not valid_file_selected_in(AcATaMa.dockwidget.QCBox_CategMap_SystS, "categorical map"):
-            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratify option enabled but not configured",
+    if sampling_design.inst.QGBox_SystSwithCR.isChecked():
+        if not valid_file_selected_in(sampling_design.inst.QCBox_CategMap_SystS, "categorical map"):
+            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratification option enabled but not configured",
                                            level=Qgis.Warning, duration=10)
             return
 
@@ -372,20 +375,20 @@ def do_systematic_sampling():
     thematic_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicMap,
                        band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
                        nodata=float(AcATaMa.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
-    points_spacing = float(AcATaMa.dockwidget.PointsSpacing_SystS.value())
-    max_xy_offset = float(AcATaMa.dockwidget.MaxXYoffset_SystS.value())
-    total_of_samples = AcATaMa.dockwidget.widget_generate_SystS.QPBar_GenerateSamples.maximum()
+    points_spacing = float(sampling_design.inst.PointsSpacing_SystS.value())
+    max_xy_offset = float(sampling_design.inst.MaxXYoffset_SystS.value())
+    total_of_samples = sampling_design.inst.QPBar_GenerateSamples_SystS.maximum()
 
-    # systematic sampling in categorical map
-    if AcATaMa.dockwidget.QGBox_SystSwithCR.isChecked():
-        categorical_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_CategMap_SystS,
-                              band=int(AcATaMa.dockwidget.QCBox_band_CategMap_SystS.currentText()))
+    # post-stratification of the systematic sampling
+    if sampling_design.inst.QGBox_SystSwithCR.isChecked():
+        categorical_map = Map(file_selected_combo_box=sampling_design.inst.QCBox_CategMap_SystS,
+                              band=int(sampling_design.inst.QCBox_band_CategMap_SystS.currentText()))
         try:
-            classes_selected = [int(p) for p in AcATaMa.dockwidget.QPBtn_CategMapClassesSelection_SystS.text().split(",")]
+            classes_selected = [int(p) for p in sampling_design.inst.QPBtn_CategMapClassesSelection_SystS.text().split(",")]
             if not classes_selected:
                 raise Exception
         except:
-            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratify option is enabled but none of the classes were selected",
+            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratification option is enabled but none of the classes were selected",
                                            level=Qgis.Warning, duration=10)
             return
     else:
@@ -393,9 +396,9 @@ def do_systematic_sampling():
         classes_selected = None
 
     # check neighbors aggregation
-    if AcATaMa.dockwidget.widget_generate_SystS.QGBox_neighbour_aggregation.isChecked():
-        number_of_neighbors = int(AcATaMa.dockwidget.widget_generate_SystS.QCBox_NumberOfNeighbors.currentText())
-        same_class_of_neighbors = int(AcATaMa.dockwidget.widget_generate_SystS.QCBox_SameClassOfNeighbors.currentText())
+    if sampling_design.inst.QGBox_neighbour_aggregation_SystS.isChecked():
+        number_of_neighbors = int(sampling_design.inst.QCBox_NumberOfNeighbors_SystS.currentText())
+        same_class_of_neighbors = int(sampling_design.inst.QCBox_SameClassOfNeighbors_SystS.currentText())
         neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
     else:
         neighbor_aggregation = None
@@ -403,7 +406,7 @@ def do_systematic_sampling():
     # first select the target file for save the sampling file
     suggested_filename = os.path.join(os.path.dirname(thematic_map.file_path),
                                       "systematic {}sampling.gpkg".format("post-stratified " if categorical_map else ""))
-    output_file, _ = QFileDialog.getSaveFileName(AcATaMa.dockwidget,
+    output_file, _ = QFileDialog.getSaveFileName(sampling_design.inst,
                                                  AcATaMa.dockwidget.tr("Select the output file to save the sampling"),
                                                  suggested_filename,
                                                  AcATaMa.dockwidget.tr("GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"))
@@ -411,8 +414,8 @@ def do_systematic_sampling():
         return
 
     # define the random seed
-    if AcATaMa.dockwidget.widget_generate_SystS.with_random_seed_by_user.isChecked():
-        random_seed = AcATaMa.dockwidget.widget_generate_SystS.random_seed_by_user.text()
+    if sampling_design.inst.with_random_seed_by_user_SystS.isChecked():
+        random_seed = sampling_design.inst.random_seed_by_user_SystS.text()
         try:
             random_seed = int(random_seed)
         except:
@@ -421,20 +424,20 @@ def do_systematic_sampling():
         random_seed = None
 
     # define the initial inset
-    if AcATaMa.dockwidget.QCBox_InitialInsetMode_SystS.currentText() == "Random":
+    if sampling_design.inst.QCBox_InitialInsetMode_SystS.currentText() == "Random":
         random.seed(random_seed)
         initial_inset = random.uniform(0, points_spacing)
     else:
-        initial_inset = float(AcATaMa.dockwidget.InitialInsetFixed_SystS.value())
+        initial_inset = float(sampling_design.inst.InitialInsetFixed_SystS.value())
 
     # before process
-    AcATaMa.dockwidget.widget_generate_SystS.QPBtn_GenerateSamples.setText("FINISH")
-    AcATaMa.dockwidget.widget_generate_SystS.QPBtn_GenerateSamples.setStyleSheet("background-color: red")
-    AcATaMa.dockwidget.widget_SystS_step1.setEnabled(False)
-    AcATaMa.dockwidget.widget_SystS_step2.setEnabled(False)
-    AcATaMa.dockwidget.QGBox_SystSwithCR.setEnabled(False)
-    AcATaMa.dockwidget.widget_generate_SystS.QGBox_neighbour_aggregation.setEnabled(False)
-    AcATaMa.dockwidget.widget_generate_SystS.QGBox_random_sampling_options.setEnabled(False)
+    sampling_design.inst.QPBtn_GenerateSamples_SystS.setText("FINISH")
+    sampling_design.inst.QPBtn_GenerateSamples_SystS.setStyleSheet("background-color: red")
+    sampling_design.inst.widget_SystS_step1.setEnabled(False)
+    sampling_design.inst.widget_SystS_step2.setEnabled(False)
+    sampling_design.inst.QGBox_SystSwithCR.setEnabled(False)
+    sampling_design.inst.QGBox_neighbour_aggregation_SystS.setEnabled(False)
+    sampling_design.inst.QGBox_random_sampling_options_SystS.setEnabled(False)
 
     # process the sampling in a QGIS task
     sampling = Sampling("systematic", thematic_map, categorical_map, "grid with random offset",
@@ -448,7 +451,7 @@ def do_systematic_sampling():
         on_finished=systematic_sampling_finished, sampling_conf=sampling_conf)
 
     globals()['sampling_task'].progressChanged.connect(
-        lambda value: AcATaMa.dockwidget.widget_generate_SystS.QPBar_GenerateSamples.setValue(math.ceil(total_of_samples * value / 100)))
+        lambda value: sampling_design.inst.QPBar_GenerateSamples_SystS.setValue(math.ceil(total_of_samples * value / 100)))
 
     QgsApplication.taskManager().addTask(globals()['sampling_task'])
 
@@ -456,16 +459,17 @@ def do_systematic_sampling():
 @error_handler
 def systematic_sampling_finished(exception, result=None):
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+    from AcATaMa.gui.sampling_design_window import SamplingDesignWindow as sampling_design
 
     # restoring
-    AcATaMa.dockwidget.widget_generate_SystS.QPBtn_GenerateSamples.setText("Generate samples")
-    AcATaMa.dockwidget.widget_generate_SystS.QPBtn_GenerateSamples.setStyleSheet("")
-    AcATaMa.dockwidget.widget_SystS_step1.setEnabled(True)
-    AcATaMa.dockwidget.widget_SystS_step2.setEnabled(True)
-    AcATaMa.dockwidget.QGBox_SystSwithCR.setEnabled(True)
-    AcATaMa.dockwidget.widget_generate_SystS.QGBox_neighbour_aggregation.setEnabled(True)
-    AcATaMa.dockwidget.widget_generate_SystS.QGBox_random_sampling_options.setEnabled(True)
-    AcATaMa.dockwidget.widget_generate_SystS.QPBar_GenerateSamples.setValue(0)
+    sampling_design.inst.QPBtn_GenerateSamples_SystS.setText("Generate samples")
+    sampling_design.inst.QPBtn_GenerateSamples_SystS.setStyleSheet("")
+    sampling_design.inst.widget_SystS_step1.setEnabled(True)
+    sampling_design.inst.widget_SystS_step2.setEnabled(True)
+    sampling_design.inst.QGBox_SystSwithCR.setEnabled(True)
+    sampling_design.inst.QGBox_neighbour_aggregation_SystS.setEnabled(True)
+    sampling_design.inst.QGBox_random_sampling_options_SystS.setEnabled(True)
+    sampling_design.inst.QPBar_GenerateSamples_SystS.setValue(0)
 
     if exception is not None or result is None:
         raise Exception("Error in sampling process: {}".format(exception))
@@ -497,9 +501,8 @@ def systematic_sampling_finished(exception, result=None):
     AcATaMa.dockwidget.QCBox_SamplingFile.setLayer(sampling_layer_generated)
     if sampling_layer_generated not in ResponseDesign.instances:
         ResponseDesign(sampling_layer_generated)
-    AcATaMa.dockwidget.QCBox_SamplingFile_A.setLayer(sampling_layer_generated)
-    AcATaMa.dockwidget.QCBox_SamplingEstimator_A.setCurrentIndex(-1)
-    AcATaMa.dockwidget.QCBox_SamplingEstimator_A.setCurrentIndex(0 if sampling.categorical_map is None else 1)
+    AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(-1)
+    AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(0 if sampling.categorical_map is None else 1)
 
     # open the sampling report
     # TODO

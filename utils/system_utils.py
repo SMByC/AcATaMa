@@ -42,7 +42,7 @@ def error_handler(func):
             # select the message bar
             from AcATaMa.gui.response_design_window import ResponseDesignWindow
             if ResponseDesignWindow.is_opened:
-                msg_bar = ResponseDesignWindow.instance.MsgBar
+                msg_bar = ResponseDesignWindow.inst.MsgBar
             else:
                 msg_bar = iface.messageBar()
 

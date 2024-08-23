@@ -134,7 +134,7 @@ class RenderWidget(QWidget):
                 self.set_extents_and_scalefactor(extent)
             elif ResponseDesignWindow.current_sample:
                 ResponseDesignWindow.current_sample.fit_to(
-                    self.parent_view, ResponseDesignWindow.instance.radiusFitToSample.value())
+                    self.parent_view, ResponseDesignWindow.inst.radiusFitToSample.value())
 
             self.canvas.refresh()
             self.layer = layer
@@ -142,8 +142,8 @@ class RenderWidget(QWidget):
             if ResponseDesignWindow.current_sample:
                 self.marker.show(ResponseDesignWindow.current_sample)
             # update square rubber band for current and sampling unit markers
-            ResponseDesignWindow.instance.show_the_current_pixel()
-            ResponseDesignWindow.instance.show_the_sampling_unit()
+            ResponseDesignWindow.inst.show_the_current_pixel()
+            ResponseDesignWindow.inst.show_the_sampling_unit()
 
     def set_extents_and_scalefactor(self, extent):
         with block_signals_to(self.canvas):
@@ -224,9 +224,9 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
 
         # update square rubber band for current and sampling unit markers
         from AcATaMa.gui.response_design_window import ResponseDesignWindow
-        if ResponseDesignWindow.instance is not None:
-            ResponseDesignWindow.instance.show_the_current_pixel()
-            ResponseDesignWindow.instance.show_the_sampling_unit()
+        if ResponseDesignWindow.inst is not None:
+            ResponseDesignWindow.inst.show_the_current_pixel()
+            ResponseDesignWindow.inst.show_the_sampling_unit()
 
     def set_render_layer(self, layer):
         if not layer:

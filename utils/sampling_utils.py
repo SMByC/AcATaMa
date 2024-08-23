@@ -166,8 +166,8 @@ def update_srs_table_content(dockwidget, srs_table):
         total_num_samples = sum([int(x) for x in mask(srs_table["num_samples"], srs_table["On"])])
         dockwidget.TotalNumSamples.setText(str(total_num_samples))
         # set maximum and reset the value in progress bar status
-        dockwidget.widget_generate_StraRS.QPBar_GenerateSamples.setValue(0)
-        dockwidget.widget_generate_StraRS.QPBar_GenerateSamples.setMaximum(total_num_samples)
+        dockwidget.QPBar_GenerateSamples_StraRS.setValue(0)
+        dockwidget.QPBar_GenerateSamples_StraRS.setMaximum(total_num_samples)
 
 
 @wait_process
