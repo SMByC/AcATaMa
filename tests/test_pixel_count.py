@@ -40,10 +40,13 @@ def test_pixel_count_with_nodata_sequential(plugin, unwrap):
     input_yml_path = pytest.tests_data_dir / "test_pixel_count_acatama_nodata.yml"
     config_restore = unwrap(config.restore)
     config_restore(input_yml_path)
+    sampling_design = plugin.dockwidget.sampling_design_window
 
-    pixel_count = get_pixel_count_by_pixel_values_sequential(plugin.dockwidget.QCBox_ThematicMap.currentLayer(),
-                                                  band=int(plugin.dockwidget.QCBox_band_CategMap_StraRS.currentText()),
-                                                  nodata=float(plugin.dockwidget.nodata_CategMap_StraRS.text().strip() or "nan"))
+    pixel_count = get_pixel_count_by_pixel_values_sequential(
+        plugin.dockwidget.QCBox_ThematicMap.currentLayer(),
+        band=int(sampling_design.QCBox_band_CategMap_StraRS.currentText()),
+        nodata=float(sampling_design.nodata_CategMap_StraRS.text().strip() or "nan")
+    )
 
     assert pixel_count == {1: 10423, 2: 418, 5: 8822}
 
@@ -53,10 +56,13 @@ def test_pixel_count_with_nodata_parallel(plugin, unwrap):
     input_yml_path = pytest.tests_data_dir / "test_pixel_count_acatama_nodata.yml"
     config_restore = unwrap(config.restore)
     config_restore(input_yml_path)
+    sampling_design = plugin.dockwidget.sampling_design_window
 
-    pixel_count = get_pixel_count_by_pixel_values_parallel(plugin.dockwidget.QCBox_ThematicMap.currentLayer(),
-                                                  band=int(plugin.dockwidget.QCBox_band_CategMap_StraRS.currentText()),
-                                                  nodata=float(plugin.dockwidget.nodata_CategMap_StraRS.text().strip() or "nan"))
+    pixel_count = get_pixel_count_by_pixel_values_parallel(
+        plugin.dockwidget.QCBox_ThematicMap.currentLayer(),
+        band=int(sampling_design.QCBox_band_CategMap_StraRS.currentText()),
+        nodata=float(sampling_design.nodata_CategMap_StraRS.text().strip() or "nan")
+    )
 
     assert pixel_count == {1: 10423, 2: 418, 5: 8822}
 
