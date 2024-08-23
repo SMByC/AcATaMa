@@ -36,5 +36,5 @@ jobs:
         run: docker run --rm -v `pwd`:/tests_directory -t -w /tests_directory qgis/qgis:${QGIS_TEST_VERSION} sh -c "xvfb-run ${QGIS_COMMAND}"
       
       - name: Run tests
-        run: docker-compose -f .docker/docker-compose.gh.yml run qgis /usr/src/AcATaMa/.docker/run-docker-tests.sh
+        run: docker compose -f .docker/docker-compose.gh.yml run qgis /usr/src/AcATaMa/.docker/run-docker-tests.sh
 
