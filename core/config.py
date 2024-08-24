@@ -205,6 +205,7 @@ def save(file_out):
 @wait_process
 def restore(yml_file_path):
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+    from AcATaMa.gui.sampling_design_window import SamplingDesignWindow
 
     # load the yaml file
     with open(yml_file_path, 'r') as yaml_file:
@@ -219,6 +220,7 @@ def restore(yml_file_path):
     PostStratificationClassesDialog.instances = {}
     ResponseDesign.instances = {}
     ResponseDesignWindow.inst = None
+    AcATaMa.dockwidget.sampling_design_window = SamplingDesignWindow()
 
     def get_restore_path(_path):
         """check if the file path exists or try using relative path to the yml file"""
