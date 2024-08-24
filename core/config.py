@@ -79,77 +79,77 @@ def save(file_out):
          "nodata": AcATaMa.dockwidget.nodata_ThematicMap.text()}
 
     # ######### sampling design ######### #
-    sampling_design_window = AcATaMa.dockwidget.sampling_design_window
+    sampling_design = AcATaMa.dockwidget.sampling_design_window
     data["sampling_design"] = {}
-    data["sampling_design"]["tab_activated"] = sampling_design_window.tabs_SamplingStrategy.currentIndex()
+    data["sampling_design"]["tab_activated"] = sampling_design.tabs_SamplingStrategy.currentIndex()
     # simple random sampling
     data["sampling_design"]["simple_random_sampling"] = {
-        "num_samples": sampling_design_window.numberOfSamples_SimpRS.value(),
-        "min_distance": sampling_design_window.minDistance_SimpRS.value(),
+        "num_samples": sampling_design.numberOfSamples_SimpRS.value(),
+        "min_distance": sampling_design.minDistance_SimpRS.value(),
 
-        "post_stratify": sampling_design_window.QGBox_SimpRSwithCR.isChecked(),
-        "categ_map_path": get_current_file_path_in(sampling_design_window.QCBox_CategMap_SimpRS, show_message=False),
-        "categ_map_band": int(sampling_design_window.QCBox_band_CategMap_SimpRS.currentText())
-            if sampling_design_window.QCBox_band_CategMap_SimpRS.currentText() != '' else -1,
-        "classes_selected_for_sampling": sampling_design_window.QPBtn_CategMapClassesSelection_SimpRS.text()
-            if sampling_design_window.QPBtn_CategMapClassesSelection_SimpRS.text() != 'click to select' else None,
+        "post_stratify": sampling_design.QGBox_SimpRSwithCR.isChecked(),
+        "categ_map_path": get_current_file_path_in(sampling_design.QCBox_CategMap_SimpRS, show_message=False),
+        "categ_map_band": int(sampling_design.QCBox_band_CategMap_SimpRS.currentText())
+            if sampling_design.QCBox_band_CategMap_SimpRS.currentText() != '' else -1,
+        "classes_selected_for_sampling": sampling_design.QPBtn_CategMapClassesSelection_SimpRS.text()
+            if sampling_design.QPBtn_CategMapClassesSelection_SimpRS.text() != 'click to select' else None,
 
-        "with_neighbors_aggregation": sampling_design_window.QGBox_neighbour_aggregation_SimpRS.isChecked(),
-        "num_neighbors": sampling_design_window.QCBox_NumberOfNeighbors_SimpRS.currentText(),
-        "min_neighbors_with_the_same_class": sampling_design_window.QCBox_SameClassOfNeighbors_SimpRS.currentText(),
-        "random_sampling_options": sampling_design_window.QGBox_random_sampling_options_SimpRS.isChecked(),
-        "automatic_random_seed": sampling_design_window.automatic_random_seed_SimpRS.isChecked(),
-        "with_random_seed_by_user": sampling_design_window.with_random_seed_by_user_SimpRS.isChecked(),
-        "random_seed_by_user": sampling_design_window.random_seed_by_user_SimpRS.text(),
+        "with_neighbors_aggregation": sampling_design.QGBox_neighbour_aggregation_SimpRS.isChecked(),
+        "num_neighbors": sampling_design.QCBox_NumberOfNeighbors_SimpRS.currentText(),
+        "min_neighbors_with_the_same_class": sampling_design.QCBox_SameClassOfNeighbors_SimpRS.currentText(),
+        "random_sampling_options": sampling_design.QGBox_random_sampling_options_SimpRS.isChecked(),
+        "automatic_random_seed": sampling_design.automatic_random_seed_SimpRS.isChecked(),
+        "with_random_seed_by_user": sampling_design.with_random_seed_by_user_SimpRS.isChecked(),
+        "random_seed_by_user": sampling_design.random_seed_by_user_SimpRS.text(),
     }
     # stratified random sampling
-    srs_method = "fixed values" if sampling_design_window.QCBox_StraRS_Method.currentText().startswith("Fixed values") \
+    srs_method = "fixed values" if sampling_design.QCBox_StraRS_Method.currentText().startswith("Fixed values") \
         else "area based proportion"
-    with_srs_table = sampling_design_window.QCBox_CategMap_StraRS.currentText() in sampling_design_window.srs_tables and \
-        srs_method in sampling_design_window.srs_tables[sampling_design_window.QCBox_CategMap_StraRS.currentText()]
+    with_srs_table = sampling_design.QCBox_CategMap_StraRS.currentText() in sampling_design.srs_tables and \
+        srs_method in sampling_design.srs_tables[sampling_design.QCBox_CategMap_StraRS.currentText()]
     data["sampling_design"]["stratified_random_sampling"] = {
-        "categ_map_path": get_current_file_path_in(sampling_design_window.QCBox_CategMap_StraRS, show_message=False),
-        "categ_map_band": int(sampling_design_window.QCBox_band_CategMap_StraRS.currentText())
-            if sampling_design_window.QCBox_band_CategMap_StraRS.currentText() != '' else -1,
-        "categ_map_nodata": sampling_design_window.nodata_CategMap_StraRS.text(),
+        "categ_map_path": get_current_file_path_in(sampling_design.QCBox_CategMap_StraRS, show_message=False),
+        "categ_map_band": int(sampling_design.QCBox_band_CategMap_StraRS.currentText())
+            if sampling_design.QCBox_band_CategMap_StraRS.currentText() != '' else -1,
+        "categ_map_nodata": sampling_design.nodata_CategMap_StraRS.text(),
 
-        "sampling_random_method": sampling_design_window.QCBox_StraRS_Method.currentText(),
-        "overall_std_error": sampling_design_window.TotalExpectedSE.value(),
-        "stratified_random_sampling_table": sampling_design_window.srs_tables
-            [sampling_design_window.QCBox_CategMap_StraRS.currentText()][srs_method] if with_srs_table else None,
+        "sampling_random_method": sampling_design.QCBox_StraRS_Method.currentText(),
+        "overall_std_error": sampling_design.TotalExpectedSE.value(),
+        "stratified_random_sampling_table": sampling_design.srs_tables
+            [sampling_design.QCBox_CategMap_StraRS.currentText()][srs_method] if with_srs_table else None,
 
         # TODO:
         # save the values color table of the QCBox_CategMap_StraRS
 
-        "min_distance": sampling_design_window.minDistance_StraRS.value(),
-        "with_neighbors_aggregation": sampling_design_window.QGBox_neighbour_aggregation_StraRS.isChecked(),
-        "num_neighbors": sampling_design_window.QCBox_NumberOfNeighbors_StraRS.currentText(),
-        "min_neighbors_with_the_same_class": sampling_design_window.QCBox_SameClassOfNeighbors_StraRS.currentText(),
-        "random_sampling_options": sampling_design_window.QGBox_random_sampling_options_StraRS.isChecked(),
-        "automatic_random_seed": sampling_design_window.automatic_random_seed_StraRS.isChecked(),
-        "with_random_seed_by_user": sampling_design_window.with_random_seed_by_user_StraRS.isChecked(),
-        "random_seed_by_user": sampling_design_window.random_seed_by_user_StraRS.text(),
+        "min_distance": sampling_design.minDistance_StraRS.value(),
+        "with_neighbors_aggregation": sampling_design.QGBox_neighbour_aggregation_StraRS.isChecked(),
+        "num_neighbors": sampling_design.QCBox_NumberOfNeighbors_StraRS.currentText(),
+        "min_neighbors_with_the_same_class": sampling_design.QCBox_SameClassOfNeighbors_StraRS.currentText(),
+        "random_sampling_options": sampling_design.QGBox_random_sampling_options_StraRS.isChecked(),
+        "automatic_random_seed": sampling_design.automatic_random_seed_StraRS.isChecked(),
+        "with_random_seed_by_user": sampling_design.with_random_seed_by_user_StraRS.isChecked(),
+        "random_seed_by_user": sampling_design.random_seed_by_user_StraRS.text(),
     }
     # systematic sampling
     data["sampling_design"]["systematic_sampling"] = {
-        "points_spacing": sampling_design_window.PointsSpacing_SystS.value(),
-        "initial_inset_mode": sampling_design_window.QCBox_InitialInsetMode_SystS.currentText(),
-        "initial_inset": sampling_design_window.InitialInsetFixed_SystS.value(),
-        "max_xy_offset": sampling_design_window.MaxXYoffset_SystS.value(),
+        "points_spacing": sampling_design.PointsSpacing_SystS.value(),
+        "initial_inset_mode": sampling_design.QCBox_InitialInsetMode_SystS.currentText(),
+        "initial_inset": sampling_design.InitialInsetFixed_SystS.value(),
+        "max_xy_offset": sampling_design.MaxXYoffset_SystS.value(),
 
-        "post_stratify": sampling_design_window.QGBox_SystSwithCR.isChecked(),
-        "categ_map_path": get_current_file_path_in(sampling_design_window.QCBox_CategMap_SystS, show_message=False),
-        "categ_map_band": int(sampling_design_window.QCBox_band_CategMap_SystS.currentText())
-            if sampling_design_window.QCBox_band_CategMap_SystS.currentText() != '' else -1,
-        "classes_selected_for_sampling": sampling_design_window.QPBtn_CategMapClassesSelection_SystS.text()
-            if sampling_design_window.QPBtn_CategMapClassesSelection_SystS.text() != 'click to select' else None,
-        "with_neighbors_aggregation": sampling_design_window.QGBox_neighbour_aggregation_SystS.isChecked(),
-        "num_neighbors": sampling_design_window.QCBox_NumberOfNeighbors_SystS.currentText(),
-        "min_neighbors_with_the_same_class": sampling_design_window.QCBox_SameClassOfNeighbors_SystS.currentText(),
-        "random_sampling_options": sampling_design_window.QGBox_random_sampling_options_SystS.isChecked(),
-        "automatic_random_seed": sampling_design_window.automatic_random_seed_SystS.isChecked(),
-        "with_random_seed_by_user": sampling_design_window.with_random_seed_by_user_SystS.isChecked(),
-        "random_seed_by_user": sampling_design_window.random_seed_by_user_SystS.text(),
+        "post_stratify": sampling_design.QGBox_SystSwithCR.isChecked(),
+        "categ_map_path": get_current_file_path_in(sampling_design.QCBox_CategMap_SystS, show_message=False),
+        "categ_map_band": int(sampling_design.QCBox_band_CategMap_SystS.currentText())
+            if sampling_design.QCBox_band_CategMap_SystS.currentText() != '' else -1,
+        "classes_selected_for_sampling": sampling_design.QPBtn_CategMapClassesSelection_SystS.text()
+            if sampling_design.QPBtn_CategMapClassesSelection_SystS.text() != 'click to select' else None,
+        "with_neighbors_aggregation": sampling_design.QGBox_neighbour_aggregation_SystS.isChecked(),
+        "num_neighbors": sampling_design.QCBox_NumberOfNeighbors_SystS.currentText(),
+        "min_neighbors_with_the_same_class": sampling_design.QCBox_SameClassOfNeighbors_SystS.currentText(),
+        "random_sampling_options": sampling_design.QGBox_random_sampling_options_SystS.isChecked(),
+        "automatic_random_seed": sampling_design.automatic_random_seed_SystS.isChecked(),
+        "with_random_seed_by_user": sampling_design.with_random_seed_by_user_SystS.isChecked(),
+        "random_seed_by_user": sampling_design.random_seed_by_user_SystS.text(),
     }
 
     # ######### response design configuration ######### #
@@ -275,64 +275,64 @@ def restore(yml_file_path):
 
     # ######### sampling design configuration ######### #
     if "sampling_design" in yaml_config:
-        sampling_design_window = AcATaMa.dockwidget.sampling_design_window
-        sampling_design_window.tabs_SamplingStrategy.setCurrentIndex(yaml_config["sampling_design"]["tab_activated"])
+        sampling_design = AcATaMa.dockwidget.sampling_design_window
+        sampling_design.tabs_SamplingStrategy.setCurrentIndex(yaml_config["sampling_design"]["tab_activated"])
 
         # simple random sampling
-        sampling_design_window.numberOfSamples_SimpRS.setValue(
+        sampling_design.numberOfSamples_SimpRS.setValue(
             yaml_config["sampling_design"]["simple_random_sampling"]['num_samples'])
-        sampling_design_window.minDistance_SimpRS.setValue(
+        sampling_design.minDistance_SimpRS.setValue(
             yaml_config["sampling_design"]["simple_random_sampling"]['min_distance'])
-        sampling_design_window.QGBox_SimpRSwithCR.setChecked(
+        sampling_design.QGBox_SimpRSwithCR.setChecked(
             yaml_config["sampling_design"]["simple_random_sampling"]['post_stratify'])
-        sampling_design_window.widget_SimpRSwithCR.setVisible(
+        sampling_design.widget_SimpRSwithCR.setVisible(
             yaml_config["sampling_design"]["simple_random_sampling"]['post_stratify'])
-        load_and_select_filepath_in(sampling_design_window.QCBox_CategMap_SimpRS,
+        load_and_select_filepath_in(sampling_design.QCBox_CategMap_SimpRS,
                                     get_restore_path(yaml_config["sampling_design"]["simple_random_sampling"]['categ_map_path']))
-        sampling_design_window.select_categorical_map_SimpRS()
-        sampling_design_window.QCBox_band_CategMap_SimpRS.setCurrentIndex(
+        sampling_design.select_categorical_map_SimpRS()
+        sampling_design.QCBox_band_CategMap_SimpRS.setCurrentIndex(
             yaml_config["sampling_design"]["simple_random_sampling"]['categ_map_band'] - 1)
-        sampling_design_window.QPBtn_CategMapClassesSelection_SimpRS.setText(
+        sampling_design.QPBtn_CategMapClassesSelection_SimpRS.setText(
             yaml_config["sampling_design"]["simple_random_sampling"]['classes_selected_for_sampling']
             if yaml_config["sampling_design"]["simple_random_sampling"]['classes_selected_for_sampling'] else "click to select")
 
-        sampling_design_window.QGBox_neighbour_aggregation_SimpRS.setChecked(
+        sampling_design.QGBox_neighbour_aggregation_SimpRS.setChecked(
             yaml_config["sampling_design"]["simple_random_sampling"]['with_neighbors_aggregation'])
-        sampling_design_window.widget_neighbour_aggregation_SimpRS.setVisible(
+        sampling_design.widget_neighbour_aggregation_SimpRS.setVisible(
             yaml_config["sampling_design"]["simple_random_sampling"]['with_neighbors_aggregation'])
-        select_item_in(sampling_design_window.QCBox_NumberOfNeighbors_SimpRS,
+        select_item_in(sampling_design.QCBox_NumberOfNeighbors_SimpRS,
                        yaml_config["sampling_design"]["simple_random_sampling"]['num_neighbors'])
-        select_item_in(sampling_design_window.QCBox_SameClassOfNeighbors_SimpRS,
+        select_item_in(sampling_design.QCBox_SameClassOfNeighbors_SimpRS,
                        yaml_config["sampling_design"]["simple_random_sampling"]['min_neighbors_with_the_same_class'])
-        sampling_design_window.QGBox_random_sampling_options_SimpRS.setChecked(
+        sampling_design.QGBox_random_sampling_options_SimpRS.setChecked(
             yaml_config["sampling_design"]["simple_random_sampling"]['random_sampling_options'])
-        sampling_design_window.widget_random_sampling_options_SimpRS.setVisible(
+        sampling_design.widget_random_sampling_options_SimpRS.setVisible(
             yaml_config["sampling_design"]["simple_random_sampling"]['random_sampling_options'])
-        sampling_design_window.automatic_random_seed_SimpRS.setChecked(
+        sampling_design.automatic_random_seed_SimpRS.setChecked(
             yaml_config["sampling_design"]["simple_random_sampling"]['automatic_random_seed'])
-        sampling_design_window.with_random_seed_by_user_SimpRS.setChecked(
+        sampling_design.with_random_seed_by_user_SimpRS.setChecked(
             yaml_config["sampling_design"]["simple_random_sampling"]['with_random_seed_by_user'])
-        sampling_design_window.random_seed_by_user_SimpRS.setText(
+        sampling_design.random_seed_by_user_SimpRS.setText(
             yaml_config["sampling_design"]["simple_random_sampling"]['random_seed_by_user'])
 
         # stratified random sampling
-        load_and_select_filepath_in(sampling_design_window.QCBox_CategMap_StraRS,
+        load_and_select_filepath_in(sampling_design.QCBox_CategMap_StraRS,
                                     get_restore_path(yaml_config["sampling_design"]["stratified_random_sampling"]['categ_map_path']))
-        sampling_design_window.select_categorical_map_StraRS(sampling_design_window.QCBox_CategMap_StraRS.currentLayer())
-        sampling_design_window.QCBox_band_CategMap_StraRS.setCurrentIndex(
+        sampling_design.select_categorical_map_StraRS(sampling_design.QCBox_CategMap_StraRS.currentLayer())
+        sampling_design.QCBox_band_CategMap_StraRS.setCurrentIndex(
             yaml_config["sampling_design"]["stratified_random_sampling"]['categ_map_band'] - 1)
         # nodata
         nodata = set_nodata_format(yaml_config["sampling_design"]["stratified_random_sampling"]["categ_map_nodata"])
         if CONFIG_FILE_VERSION == 191121 and nodata == "-1":
-            sampling_design_window.nodata_CategMap_StraRS.setText("nan")
+            sampling_design.nodata_CategMap_StraRS.setText("nan")
         else:
-            sampling_design_window.nodata_CategMap_StraRS.setText(nodata)
+            sampling_design.nodata_CategMap_StraRS.setText(nodata)
 
-        with block_signals_to(sampling_design_window.QCBox_StraRS_Method):
-            select_item_in(sampling_design_window.QCBox_StraRS_Method,
+        with block_signals_to(sampling_design.QCBox_StraRS_Method):
+            select_item_in(sampling_design.QCBox_StraRS_Method,
                            yaml_config["sampling_design"]["stratified_random_sampling"]['sampling_random_method'])
-        with block_signals_to(sampling_design_window.TotalExpectedSE):
-            sampling_design_window.TotalExpectedSE.setValue(
+        with block_signals_to(sampling_design.TotalExpectedSE):
+            sampling_design.TotalExpectedSE.setValue(
                 yaml_config["sampling_design"]["stratified_random_sampling"]['overall_std_error'])
 
         srs_table = yaml_config["sampling_design"]["stratified_random_sampling"]['stratified_random_sampling_table']
@@ -346,89 +346,89 @@ def restore(yml_file_path):
                 # replace the header python list 'Std Dev' to 'Ui'
                 srs_table['header'][srs_table['header'].index('Std Dev')] = 'Ui'
 
-        srs_method = "fixed values" if sampling_design_window.QCBox_StraRS_Method.currentText().startswith("Fixed values") \
+        srs_method = "fixed values" if sampling_design.QCBox_StraRS_Method.currentText().startswith("Fixed values") \
             else "area based proportion"
-        sampling_design_window.srs_tables[sampling_design_window.QCBox_CategMap_StraRS.currentText()] = {}
-        sampling_design_window.srs_tables[sampling_design_window.QCBox_CategMap_StraRS.currentText()][srs_method] = srs_table
-        fill_stratified_sampling_table(sampling_design_window)
+        sampling_design.srs_tables[sampling_design.QCBox_CategMap_StraRS.currentText()] = {}
+        sampling_design.srs_tables[sampling_design.QCBox_CategMap_StraRS.currentText()][srs_method] = srs_table
+        fill_stratified_sampling_table(sampling_design)
         # restore the pixel count by pixel value
         if srs_table and 'pixel_count' in srs_table:
             from AcATaMa.utils.others_utils import storage_pixel_count_by_pixel_values
             global storage_pixel_count_by_pixel_values
             storage_pixel_count_by_pixel_values[
-                (sampling_design_window.QCBox_CategMap_StraRS.currentLayer(),
-                 int(sampling_design_window.QCBox_band_CategMap_StraRS.currentText()),
-                 set_nodata_format(sampling_design_window.nodata_CategMap_StraRS.text().strip() or "nan"))
+                (sampling_design.QCBox_CategMap_StraRS.currentLayer(),
+                 int(sampling_design.QCBox_band_CategMap_StraRS.currentText()),
+                 set_nodata_format(sampling_design.nodata_CategMap_StraRS.text().strip() or "nan"))
             ] = dict(zip(srs_table['values_and_colors_table']['Pixel Value'], srs_table['pixel_count']))
 
         # TODO:
         # restore the values color table of the QCBox_CategMap_StraRS saved
 
-        sampling_design_window.minDistance_StraRS.setValue(
+        sampling_design.minDistance_StraRS.setValue(
             yaml_config["sampling_design"]["stratified_random_sampling"]['min_distance'])
-        sampling_design_window.QGBox_neighbour_aggregation_StraRS.setChecked(
+        sampling_design.QGBox_neighbour_aggregation_StraRS.setChecked(
             yaml_config["sampling_design"]["stratified_random_sampling"]['with_neighbors_aggregation'])
-        sampling_design_window.widget_neighbour_aggregation_StraRS.setVisible(
+        sampling_design.widget_neighbour_aggregation_StraRS.setVisible(
             yaml_config["sampling_design"]["stratified_random_sampling"]['with_neighbors_aggregation'])
-        select_item_in(sampling_design_window.QCBox_NumberOfNeighbors_StraRS,
+        select_item_in(sampling_design.QCBox_NumberOfNeighbors_StraRS,
                        yaml_config["sampling_design"]["stratified_random_sampling"]['num_neighbors'])
-        select_item_in(sampling_design_window.QCBox_SameClassOfNeighbors_StraRS,
+        select_item_in(sampling_design.QCBox_SameClassOfNeighbors_StraRS,
                        yaml_config["sampling_design"]["stratified_random_sampling"]['min_neighbors_with_the_same_class'])
-        sampling_design_window.QGBox_random_sampling_options_StraRS.setChecked(
+        sampling_design.QGBox_random_sampling_options_StraRS.setChecked(
             yaml_config["sampling_design"]["stratified_random_sampling"]['random_sampling_options'])
-        sampling_design_window.widget_random_sampling_options_StraRS.setVisible(
+        sampling_design.widget_random_sampling_options_StraRS.setVisible(
             yaml_config["sampling_design"]["stratified_random_sampling"]['random_sampling_options'])
-        sampling_design_window.automatic_random_seed_StraRS.setChecked(
+        sampling_design.automatic_random_seed_StraRS.setChecked(
             yaml_config["sampling_design"]["stratified_random_sampling"]['automatic_random_seed'])
-        sampling_design_window.with_random_seed_by_user_StraRS.setChecked(
+        sampling_design.with_random_seed_by_user_StraRS.setChecked(
             yaml_config["sampling_design"]["stratified_random_sampling"]['with_random_seed_by_user'])
-        sampling_design_window.random_seed_by_user_StraRS.setText(
+        sampling_design.random_seed_by_user_StraRS.setText(
             yaml_config["sampling_design"]["stratified_random_sampling"]['random_seed_by_user'])
 
         # systematic sampling
         if "systematic_sampling" in yaml_config["sampling_design"]:
-            sampling_design_window.PointsSpacing_SystS.setValue(
+            sampling_design.PointsSpacing_SystS.setValue(
                 yaml_config["sampling_design"]["systematic_sampling"]['points_spacing'])
             if "initial_inset_mode" in yaml_config["sampling_design"]["systematic_sampling"]:
-                select_item_in(sampling_design_window.QCBox_InitialInsetMode_SystS,
+                select_item_in(sampling_design.QCBox_InitialInsetMode_SystS,
                                yaml_config["sampling_design"]["systematic_sampling"]['initial_inset_mode'])
             else:
-                select_item_in(sampling_design_window.QCBox_InitialInsetMode_SystS, "Fixed")
-            sampling_design_window.InitialInsetFixed_SystS.setValue(
+                select_item_in(sampling_design.QCBox_InitialInsetMode_SystS, "Fixed")
+            sampling_design.InitialInsetFixed_SystS.setValue(
                 yaml_config["sampling_design"]["systematic_sampling"]['initial_inset'])
-            sampling_design_window.MaxXYoffset_SystS.setValue(
+            sampling_design.MaxXYoffset_SystS.setValue(
                 yaml_config["sampling_design"]["systematic_sampling"]['max_xy_offset'])
 
-            sampling_design_window.QGBox_SystSwithCR.setChecked(
+            sampling_design.QGBox_SystSwithCR.setChecked(
                 yaml_config["sampling_design"]["systematic_sampling"]['post_stratify'])
-            sampling_design_window.widget_SystSwithCR.setVisible(
+            sampling_design.widget_SystSwithCR.setVisible(
                 yaml_config["sampling_design"]["systematic_sampling"]['post_stratify'])
-            load_and_select_filepath_in(sampling_design_window.QCBox_CategMap_SystS,
+            load_and_select_filepath_in(sampling_design.QCBox_CategMap_SystS,
                                         get_restore_path(yaml_config["sampling_design"]["systematic_sampling"]['categ_map_path']))
-            sampling_design_window.select_categorical_map_SystS()
-            sampling_design_window.QCBox_band_CategMap_SystS.setCurrentIndex(
+            sampling_design.select_categorical_map_SystS()
+            sampling_design.QCBox_band_CategMap_SystS.setCurrentIndex(
                 yaml_config["sampling_design"]["systematic_sampling"]['categ_map_band'] - 1)
-            sampling_design_window.QPBtn_CategMapClassesSelection_SystS.setText(
+            sampling_design.QPBtn_CategMapClassesSelection_SystS.setText(
                 yaml_config["sampling_design"]["systematic_sampling"]['classes_selected_for_sampling']
                 if yaml_config["sampling_design"]["systematic_sampling"]['classes_selected_for_sampling'] else "click to select")
 
-            sampling_design_window.QGBox_neighbour_aggregation_SystS.setChecked(
+            sampling_design.QGBox_neighbour_aggregation_SystS.setChecked(
                 yaml_config["sampling_design"]["systematic_sampling"]['with_neighbors_aggregation'])
-            sampling_design_window.widget_neighbour_aggregation_SystS.setVisible(
+            sampling_design.widget_neighbour_aggregation_SystS.setVisible(
                 yaml_config["sampling_design"]["systematic_sampling"]['with_neighbors_aggregation'])
-            select_item_in(sampling_design_window.QCBox_NumberOfNeighbors_SystS,
+            select_item_in(sampling_design.QCBox_NumberOfNeighbors_SystS,
                            yaml_config["sampling_design"]["systematic_sampling"]['num_neighbors'])
-            select_item_in(sampling_design_window.QCBox_SameClassOfNeighbors_SystS,
+            select_item_in(sampling_design.QCBox_SameClassOfNeighbors_SystS,
                            yaml_config["sampling_design"]["systematic_sampling"]['min_neighbors_with_the_same_class'])
-            sampling_design_window.QGBox_random_sampling_options_SystS.setChecked(
+            sampling_design.QGBox_random_sampling_options_SystS.setChecked(
                 yaml_config["sampling_design"]["systematic_sampling"]['random_sampling_options'])
-            sampling_design_window.widget_random_sampling_options_SystS.setVisible(
+            sampling_design.widget_random_sampling_options_SystS.setVisible(
                 yaml_config["sampling_design"]["systematic_sampling"]['random_sampling_options'])
-            sampling_design_window.automatic_random_seed_SystS.setChecked(
+            sampling_design.automatic_random_seed_SystS.setChecked(
                 yaml_config["sampling_design"]["systematic_sampling"]['automatic_random_seed'])
-            sampling_design_window.with_random_seed_by_user_SystS.setChecked(
+            sampling_design.with_random_seed_by_user_SystS.setChecked(
                 yaml_config["sampling_design"]["systematic_sampling"]['with_random_seed_by_user'])
-            sampling_design_window.random_seed_by_user_SystS.setText(
+            sampling_design.random_seed_by_user_SystS.setText(
                 yaml_config["sampling_design"]["systematic_sampling"]['random_seed_by_user'])
 
     # ######### response_design configuration ######### #
