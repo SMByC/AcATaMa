@@ -19,7 +19,21 @@ the reference classification.
 ### Sampling unit
 
 The sampling unit is a structure that defines a specified space that defines the basis for the comparison of the
-thematic map and reference data and with that defines the space for labeling protocol.
+thematic map and reference data and with that defines the space for labeling protocol. The sampling unit in an accuracy
+assessment protocol is crucial because it determines how the landscape is partitioned and represented, influencing the
+measurement of agreement and disagreement between the map and reference data. When a single pixel is used as the spatial
+unit, a critical decision must be made regarding the labeling process—whether to assign labels based solely on what is
+observed within each individual pixel or to consider the surrounding context. (Stehman and Czaplewski, 1998)
+
+When using blocks of pixels (e.g., a 3x3 pixel block) as the sampling unit, the surrounding area is considered, which
+can reduce sensitivity to georeferencing errors, smooth out small-scale misalignments, and provide a more accurate
+representation of the land cover. However, blocks can introduce heterogeneity within the sampling unit, which could
+complicate analysis. On the other hand, pixel-based sampling units are better suited for very detailed assessments. (
+Stehman and Wickham, 2011)
+
+There isn't a universally 'best' spatial assessment unit for accuracy assessment in thematic maps. The choice should be
+based on the specific needs of the assessment. If minimizing location errors is critical, a larger unit like a block of
+pixels might be preferred. If precision and detail are more important, pixel-based assessments might be the best option.
 
 ### Reference data
 

@@ -40,3 +40,5 @@ proposed:
 Finally, the results that are obtained when the sampling points are completed. This example presents the results with
 the different estimators, associated with the types of sampling such as simple random, systematic, stratified and 
 post-stratified.
+
+Next >> [References](./references)
