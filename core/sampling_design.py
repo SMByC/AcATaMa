@@ -49,8 +49,8 @@ def do_simple_random_sampling():
         return
     if sampling_design.QGBox_SimpRSwithCR.isChecked():
         if not valid_file_selected_in(sampling_design.QCBox_CategMap_SimpRS, "categorical map"):
-            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratification option is enabled but not configured",
-                                           level=Qgis.Warning, duration=10)
+            sampling_design.MsgBar.pushMessage("Error, post-stratification option is enabled but not configured",
+                                               level=Qgis.Warning, duration=10)
             return
 
     # get and define some variables
@@ -69,8 +69,8 @@ def do_simple_random_sampling():
             if not classes_selected:
                 raise Exception
         except:
-            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratification option is enabled but none of the classes were selected",
-                                           level=Qgis.Warning, duration=10)
+            sampling_design.MsgBar.pushMessage("Error, post-stratification option is enabled but none of the classes were selected",
+                                               level=Qgis.Warning, duration=10)
             return
     else:
         categorical_map = None
@@ -147,32 +147,30 @@ def simple_random_sampling_finished(exception, result=None):
 
     # zero points
     if sampling.samples_generated < sampling_conf["total_of_samples"] and sampling.samples_generated == 0:
-        iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any random points with this settings",
-                                       level=Qgis.Warning, duration=10)
+        sampling_design.MsgBar.pushMessage("Error, could not generate any random points with this settings",
+                                           level=Qgis.Warning, duration=10)
         return
 
     # success
     if sampling.samples_generated == sampling_conf["total_of_samples"]:
         sampling_layer_generated = load_layer(sampling.output_file)
-        iface.messageBar().pushMessage("AcATaMa", "Successful simple random sampling with {} samples generated"
-                                       .format(sampling.samples_generated), level=Qgis.Success, duration=20)
+        sampling_design.MsgBar.pushMessage("Successful simple random sampling with {} samples generated"
+                                           .format(sampling.samples_generated), level=Qgis.Success, duration=20)
     # success but not completed
     if sampling_conf["total_of_samples"] > sampling.samples_generated > 0:
         sampling_layer_generated = load_layer(sampling.output_file)
-        iface.messageBar().pushMessage("AcATaMa",
-                                       "Simple random sampling successful, {} random points generated out of a total "
-                                       "of {}, sampling process finished".format(
+        sampling_design.MsgBar.pushMessage("Simple random sampling successful, {} random points generated out of a total "
+                                           "of {}, sampling process finished".format(
                                            sampling.samples_generated, sampling_conf["total_of_samples"]),
-                                       level=Qgis.Info, duration=20)
+                                           level=Qgis.Info, duration=20)
     # check the thematic map unit to calculate the minimum distances
     if sampling_conf["min_distance"] > 0:
         if sampling.thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
-            iface.messageBar().pushMessage("AcATaMa",
-                                           "The thematic map \"{}\" does not have a valid map unit, AcATaMa is using "
-                                           "\"{}\" as the base unit to calculate the minimum distances.".format(
+            sampling_design.MsgBar.pushMessage("The thematic map \"{}\" does not have a valid map unit, AcATaMa is using "
+                                               "\"{}\" as the base unit to calculate the minimum distances.".format(
                                                sampling.thematic_map.qgs_layer.name(),
                                                QgsUnitTypes.toString(sampling_layer_generated.crs().mapUnits())),
-                                           level=Qgis.Warning, duration=20)
+                                               level=Qgis.Warning, duration=20)
     # select the sampling file generated in respond design and analysis tab
     AcATaMa.dockwidget.QCBox_SamplingFile.setLayer(sampling_layer_generated)
     if sampling_layer_generated not in ResponseDesign.instances:
@@ -220,13 +218,13 @@ def do_stratified_random_sampling():
         if True in [ns < 0 for ns in total_of_samples_by_cat]:
             raise Exception
     except:
-        iface.messageBar().pushMessage("AcATaMa", "Error, the number of samples should be only positive integers",
-                                       level=Qgis.Warning, duration=10)
+        sampling_design.MsgBar.pushMessage("Error, the number of samples should be only positive integers",
+                                           level=Qgis.Warning, duration=10)
         return
     total_of_samples = sum(total_of_samples_by_cat)
     if total_of_samples == 0:
-        iface.messageBar().pushMessage("AcATaMa", "Error, no number of samples configured!",
-                                       level=Qgis.Warning, duration=10)
+        sampling_design.MsgBar.pushMessage("Error, no number of samples configured!",
+                                           level=Qgis.Warning, duration=10)
         return
 
     # check neighbors aggregation
@@ -316,32 +314,30 @@ def stratified_random_sampling_finished(exception, result=None):
 
     # zero points
     if sampling.samples_generated < sum(sampling_conf["total_of_samples"]) and sampling.samples_generated == 0:
-        iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any stratified random points with this settings",
-                                                  level=Qgis.Warning, duration=10)
+        sampling_design.MsgBar.pushMessage("Error, could not generate any stratified random points with this settings",
+                                           level=Qgis.Warning, duration=10)
         return
 
     # success
     if sampling.samples_generated == sum(sampling_conf["total_of_samples"]):
         sampling_layer_generated = load_layer(sampling.output_file)
-        iface.messageBar().pushMessage("AcATaMa", "Successful stratified random sampling with {} samples generated"
-                                       .format(sampling.samples_generated), level=Qgis.Success, duration=20)
+        sampling_design.MsgBar.pushMessage("Successful stratified random sampling with {} samples generated"
+                                           .format(sampling.samples_generated), level=Qgis.Success, duration=20)
     # success but not completed
     if sampling.samples_generated < sum(sampling_conf["total_of_samples"]) and sampling.samples_generated > 0:
         sampling_layer_generated = load_layer(sampling.output_file)
-        iface.messageBar().pushMessage("AcATaMa",
-                                       "Stratified random sampling successful, {} random points generated out of a total "
-                                       "of {}, sampling process finished".format(
-                                        sampling.samples_generated, sum(sampling_conf["total_of_samples"])),
-                                       level=Qgis.Info, duration=20)
+        sampling_design.MsgBar.pushMessage("Stratified random sampling successful, {} random points generated out of a total "
+                                           "of {}, sampling process finished".format(
+                                           sampling.samples_generated, sum(sampling_conf["total_of_samples"])),
+                                           level=Qgis.Info, duration=20)
     # check the thematic map unit to calculate the minimum distances
     if sampling_conf["min_distance"] > 0:
         if sampling.thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
-            iface.messageBar().pushMessage("AcATaMa",
-                                           "The thematic map \"{}\" does not have a valid map unit, AcATaMa is using "
-                                           "\"{}\" as the base unit to calculate the minimum distances.".format(
-                                                sampling.thematic_map.qgs_layer.name(),
+            sampling_design.MsgBar.pushMessage("The thematic map \"{}\" does not have a valid map unit, AcATaMa is using "
+                                               "\"{}\" as the base unit to calculate the minimum distances.".format(
+                                               sampling.thematic_map.qgs_layer.name(),
                                                 QgsUnitTypes.toString(sampling_layer_generated.crs().mapUnits())),
-                                           level=Qgis.Warning, duration=20)
+                                               level=Qgis.Warning, duration=20)
     # select the sampling file generated in respond design and analysis tab
     AcATaMa.dockwidget.QCBox_SamplingFile.setLayer(sampling_layer_generated)
     if sampling_layer_generated not in ResponseDesign.instances:
@@ -367,8 +363,8 @@ def do_systematic_sampling():
         return
     if sampling_design.QGBox_SystSwithCR.isChecked():
         if not valid_file_selected_in(sampling_design.QCBox_CategMap_SystS, "categorical map"):
-            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratification option enabled but not configured",
-                                           level=Qgis.Warning, duration=10)
+            sampling_design.MsgBar.pushMessage("Error, post-stratification option enabled but not configured",
+                                               level=Qgis.Warning, duration=10)
             return
 
     # get and define some variables
@@ -388,8 +384,8 @@ def do_systematic_sampling():
             if not classes_selected:
                 raise Exception
         except:
-            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratification option is enabled but none of the classes were selected",
-                                           level=Qgis.Warning, duration=10)
+            sampling_design.MsgBar.pushMessage("Error, post-stratification option is enabled but none of the classes were selected",
+                                               level=Qgis.Warning, duration=10)
             return
     else:
         categorical_map = None
@@ -479,23 +475,22 @@ def systematic_sampling_finished(exception, result=None):
 
     # zero points
     if sampling.samples_generated < sampling_conf["total_of_samples"] and sampling.samples_generated == 0:
-        iface.messageBar().pushMessage("AcATaMa", "Error, could not generate any random points with this settings",
-                                       level=Qgis.Warning, duration=10)
+        sampling_design.MsgBar.pushMessage("Error, could not generate any random points with this settings",
+                                           level=Qgis.Warning, duration=10)
         return
 
     # success
     if sampling.samples_generated == sampling_conf["total_of_samples"]:
         sampling_layer_generated = load_layer(sampling.output_file)
-        iface.messageBar().pushMessage("AcATaMa", "Successful systematic sampling with {} samples generated".format(
-                                        sampling.samples_generated), level=Qgis.Success, duration=20)
+        sampling_design.MsgBar.pushMessage("Successful systematic sampling with {} samples generated".format(
+                                           sampling.samples_generated), level=Qgis.Success, duration=20)
     # success but not completed
     if sampling_conf["total_of_samples"] > sampling.samples_generated > 0:
         sampling_layer_generated = load_layer(sampling.output_file)
-        iface.messageBar().pushMessage("AcATaMa",
-                                       "Systematic random sampling successful, {} random points generated out of a total "
-                                       "of {}, sampling process finished".format(
-                                        sampling.samples_generated, sampling_conf["total_of_samples"]),
-                                       level=Qgis.Success, duration=20)
+        sampling_design.MsgBar.pushMessage("Systematic random sampling successful, {} random points generated out of a total "
+                                           "of {}, sampling process finished".format(
+                                           sampling.samples_generated, sampling_conf["total_of_samples"]),
+                                           level=Qgis.Success, duration=20)
 
     # select the sampling file generated in respond design and analysis tab
     AcATaMa.dockwidget.QCBox_SamplingFile.setLayer(sampling_layer_generated)
