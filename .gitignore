@@ -3,4 +3,4 @@ AcATaMa*.zip
 resources.py
 venv
 .idea
-!/extlibs/
+extlibs/
