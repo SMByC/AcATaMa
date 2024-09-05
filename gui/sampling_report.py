@@ -52,8 +52,7 @@ def get_samples_distribution_table(map_layer, points, area_unit):
         map_value = map_layer.get_pixel_value_from_pnt(point)
         if map_value not in samples_in_pix_val:
             samples_in_pix_val[map_value] = 0
-        else:
-            samples_in_pix_val[map_value] += 1
+        samples_in_pix_val[map_value] += 1
 
     values_and_colors_table = get_values_and_colors_table(map_layer.qgs_layer, map_layer.band, map_layer.nodata)
     pixel_area_base = map_layer.qgs_layer.rasterUnitsPerPixelX() * map_layer.qgs_layer.rasterUnitsPerPixelY()
