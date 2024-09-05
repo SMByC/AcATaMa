@@ -152,8 +152,14 @@ def save(file_out):
         "random_seed_by_user": sampling_design.random_seed_by_user_SystS.text(),
     }
 
-    # ######### response design configuration ######### #
+    # ######### sampling report configuration ######### #
+    from AcATaMa.gui.sampling_report import SamplingReport
     sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile.currentLayer()
+    if sampling_layer and sampling_layer in SamplingReport.instances:
+        sampling_report = SamplingReport.instances[sampling_layer]
+        data["sampling_report"] = sampling_report.report
+
+    # ######### response design configuration ######### #
     if sampling_layer in ResponseDesign.instances:
         response_design = ResponseDesign.instances[sampling_layer]
         data["sampling_layer"] = get_file_path_of_layer(response_design.sampling_layer)
@@ -518,6 +524,13 @@ def restore(yml_file_path):
             response_design.ccd_plugin_opened = yaml_config["ccd_plugin_opened"]
     else:
         response_design = None
+
+    # ######### sampling report configuration ######### #
+    from AcATaMa.gui.sampling_report import SamplingReport
+    if "sampling_report" in yaml_config:
+        if "sampling_layer" in yaml_config and sampling_layer:
+            SamplingReport(sampling_layer, report=yaml_config["sampling_report"])
+            AcATaMa.dockwidget.QPBtn_openSamplingReport.setEnabled(True)
 
     # ######### accuracy assessment ######### #
     # restore accuracy assessment settings

@@ -31,6 +31,7 @@ from AcATaMa.gui.about_dialog import AboutDialog
 from AcATaMa.gui.response_design_window import ResponseDesignWindow
 from AcATaMa.gui.sampling_design_window import SamplingDesignWindow
 from AcATaMa.utils.qgis_utils import unload_layer
+from AcATaMa.gui.sampling_report import SamplingReport
 
 # Initialize Qt resources from file resources.py
 from . import resources
@@ -149,6 +150,9 @@ class AcATaMa(object):
         if AccuracyAssessmentWindow.is_opened:
             self.dockwidget.accuracy_assessment_window.closing()
             self.dockwidget.accuracy_assessment_window.reject(is_ok_to_close=True)
+
+        if SamplingReport.instance_opened:
+            SamplingReport.instance_opened.close()
 
         self.removes_temporary_files()
 

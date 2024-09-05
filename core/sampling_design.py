@@ -22,7 +22,6 @@ import os
 import random
 import math
 
-from qgis.utils import iface
 from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.QtWidgets import QFileDialog
 from qgis.core import QgsGeometry, QgsField, QgsFields, QgsSpatialIndex, QgsFeature, Qgis, \
@@ -33,6 +32,7 @@ from AcATaMa.core.map import Map
 from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.utils.qgis_utils import load_layer, valid_file_selected_in
 from AcATaMa.utils.system_utils import error_handler, output_file_is_OK
+from AcATaMa.gui.sampling_report import SamplingReport
 
 
 def do_simple_random_sampling():
@@ -113,7 +113,7 @@ def do_simple_random_sampling():
 
     # process the sampling in a QGIS task
     sampling = Sampling("simple", thematic_map, categorical_map, output_file=output_file)
-    sampling_conf = {"total_of_samples": total_of_samples, "min_distance": min_distance,
+    sampling_conf = {"sampling_type": "simple", "total_of_samples": total_of_samples, "min_distance": min_distance,
                      "classes_selected": classes_selected, "neighbor_aggregation": neighbor_aggregation,
                      "random_seed": random_seed}
     globals()['sampling_task'] = QgsTask.fromFunction(
@@ -151,26 +151,8 @@ def simple_random_sampling_finished(exception, result=None):
                                            level=Qgis.Warning, duration=10)
         return
 
-    # success
-    if sampling.samples_generated == sampling_conf["total_of_samples"]:
-        sampling_layer_generated = load_layer(sampling.output_file)
-        sampling_design.MsgBar.pushMessage("Successful simple random sampling with {} samples generated"
-                                           .format(sampling.samples_generated), level=Qgis.Success, duration=20)
-    # success but not completed
-    if sampling_conf["total_of_samples"] > sampling.samples_generated > 0:
-        sampling_layer_generated = load_layer(sampling.output_file)
-        sampling_design.MsgBar.pushMessage("Simple random sampling successful, {} random points generated out of a total "
-                                           "of {}, sampling process finished".format(
-                                           sampling.samples_generated, sampling_conf["total_of_samples"]),
-                                           level=Qgis.Info, duration=20)
-    # check the thematic map unit to calculate the minimum distances
-    if sampling_conf["min_distance"] > 0:
-        if sampling.thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
-            sampling_design.MsgBar.pushMessage("The thematic map \"{}\" does not have a valid map unit, AcATaMa is using "
-                                               "\"{}\" as the base unit to calculate the minimum distances.".format(
-                                               sampling.thematic_map.qgs_layer.name(),
-                                               QgsUnitTypes.toString(sampling_layer_generated.crs().mapUnits())),
-                                               level=Qgis.Warning, duration=20)
+    sampling_layer_generated = load_layer(sampling.output_file)
+
     # select the sampling file generated in respond design and analysis tab
     AcATaMa.dockwidget.QCBox_SamplingFile.setLayer(sampling_layer_generated)
     if sampling_layer_generated not in ResponseDesign.instances:
@@ -178,8 +160,30 @@ def simple_random_sampling_finished(exception, result=None):
     AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(-1)
     AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(0 if sampling.categorical_map is None else 1)
 
-    # open the sampling report
-    # TODO
+    ### sampling report
+    sampling_report = SamplingReport(sampling_layer_generated, sampling, sampling_conf)
+    sampling_report.show()
+    AcATaMa.dockwidget.QPBtn_openSamplingReport.setEnabled(True)
+
+    # success
+    if sampling.samples_generated == sampling_conf["total_of_samples"]:
+        sampling_report.MsgBar.pushMessage("Successful simple random sampling: {} samples generated"
+                                           .format(sampling.samples_generated), level=Qgis.Success, duration=40)
+    # success but not completed
+    if sampling_conf["total_of_samples"] > sampling.samples_generated > 0:
+        sampling_report.MsgBar.pushMessage("Simple random sampling successful: {} random points generated out of a total "
+                                           "of {}. The generated sample can be smaller than the target total due to "
+                                           "sampling type and some restrictions in the sampling conditions.".format(
+                                           sampling.samples_generated, sampling_conf["total_of_samples"]),
+                                           level=Qgis.Info, duration=40)
+    # check the thematic map unit to calculate the minimum distances
+    if sampling_conf["min_distance"] > 0:
+        if sampling.thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
+            sampling_report.MsgBar.pushMessage("The thematic map \"{}\" does not have a valid map unit, AcATaMa is using "
+                                               "\"{}\" as the base unit to calculate the minimum distances.".format(
+                                               sampling.thematic_map.qgs_layer.name(),
+                                               QgsUnitTypes.toString(sampling_layer_generated.crs().mapUnits())),
+                                               level=Qgis.Warning, duration=20)
 
 
 def do_stratified_random_sampling():
@@ -279,7 +283,7 @@ def do_stratified_random_sampling():
     # process the sampling in a QGIS task
     sampling = Sampling("stratified", thematic_map, categorical_map, sampling_method,
                         srs_config=srs_config, output_file=output_file)
-    sampling_conf = {"total_of_samples": total_of_samples_by_cat, "min_distance": min_distance,
+    sampling_conf = {"sampling_type": "stratified", "total_of_samples": total_of_samples_by_cat, "min_distance": min_distance,
                      "classes_selected": classes_for_sampling, "neighbor_aggregation": neighbor_aggregation,
                      "random_seed": random_seed}
     globals()['sampling_task'] = QgsTask.fromFunction(
@@ -318,26 +322,8 @@ def stratified_random_sampling_finished(exception, result=None):
                                            level=Qgis.Warning, duration=10)
         return
 
-    # success
-    if sampling.samples_generated == sum(sampling_conf["total_of_samples"]):
-        sampling_layer_generated = load_layer(sampling.output_file)
-        sampling_design.MsgBar.pushMessage("Successful stratified random sampling with {} samples generated"
-                                           .format(sampling.samples_generated), level=Qgis.Success, duration=20)
-    # success but not completed
-    if sampling.samples_generated < sum(sampling_conf["total_of_samples"]) and sampling.samples_generated > 0:
-        sampling_layer_generated = load_layer(sampling.output_file)
-        sampling_design.MsgBar.pushMessage("Stratified random sampling successful, {} random points generated out of a total "
-                                           "of {}, sampling process finished".format(
-                                           sampling.samples_generated, sum(sampling_conf["total_of_samples"])),
-                                           level=Qgis.Info, duration=20)
-    # check the thematic map unit to calculate the minimum distances
-    if sampling_conf["min_distance"] > 0:
-        if sampling.thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
-            sampling_design.MsgBar.pushMessage("The thematic map \"{}\" does not have a valid map unit, AcATaMa is using "
-                                               "\"{}\" as the base unit to calculate the minimum distances.".format(
-                                               sampling.thematic_map.qgs_layer.name(),
-                                                QgsUnitTypes.toString(sampling_layer_generated.crs().mapUnits())),
-                                               level=Qgis.Warning, duration=20)
+    sampling_layer_generated = load_layer(sampling.output_file)
+
     # select the sampling file generated in respond design and analysis tab
     AcATaMa.dockwidget.QCBox_SamplingFile.setLayer(sampling_layer_generated)
     if sampling_layer_generated not in ResponseDesign.instances:
@@ -345,8 +331,30 @@ def stratified_random_sampling_finished(exception, result=None):
     AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(-1)
     AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(2)
 
-    # open the sampling report
-    # TODO
+    ### sampling report
+    sampling_report = SamplingReport(sampling_layer_generated, sampling, sampling_conf)
+    sampling_report.show()
+    AcATaMa.dockwidget.QPBtn_openSamplingReport.setEnabled(True)
+
+    # success
+    if sampling.samples_generated == sum(sampling_conf["total_of_samples"]):
+        sampling_report.MsgBar.pushMessage("Successful stratified random sampling: {} samples generated"
+                                           .format(sampling.samples_generated), level=Qgis.Success, duration=40)
+    # success but not completed
+    if sampling.samples_generated < sum(sampling_conf["total_of_samples"]) and sampling.samples_generated > 0:
+        sampling_report.MsgBar.pushMessage("Stratified random sampling successful: {} random points generated out of a total "
+                                           "of {}. The generated sample can be smaller than the target total due to "
+                                           "sampling type and some restrictions in the sampling conditions.".format(
+                                           sampling.samples_generated, sum(sampling_conf["total_of_samples"])),
+                                           level=Qgis.Info, duration=40)
+    # check the thematic map unit to calculate the minimum distances
+    if sampling_conf["min_distance"] > 0:
+        if sampling.thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
+            sampling_report.MsgBar.pushMessage("The thematic map \"{}\" does not have a valid map unit, AcATaMa is using "
+                                               "\"{}\" as the base unit to calculate the minimum distances.".format(
+                                               sampling.thematic_map.qgs_layer.name(),
+                                                QgsUnitTypes.toString(sampling_layer_generated.crs().mapUnits())),
+                                               level=Qgis.Warning, duration=20)
 
 
 def do_systematic_sampling():
@@ -438,7 +446,7 @@ def do_systematic_sampling():
     # process the sampling in a QGIS task
     sampling = Sampling("systematic", thematic_map, categorical_map, "grid with random offset",
                         output_file=output_file)
-    sampling_conf = {"total_of_samples": total_of_samples, "points_spacing": points_spacing,
+    sampling_conf = {"sampling_type": "systematic", "total_of_samples": total_of_samples, "points_spacing": points_spacing,
                      "initial_inset": initial_inset, "max_xy_offset": max_xy_offset,
                      "classes_selected": classes_selected, "neighbor_aggregation": neighbor_aggregation,
                      "random_seed": random_seed}
@@ -479,18 +487,7 @@ def systematic_sampling_finished(exception, result=None):
                                            level=Qgis.Warning, duration=10)
         return
 
-    # success
-    if sampling.samples_generated == sampling_conf["total_of_samples"]:
-        sampling_layer_generated = load_layer(sampling.output_file)
-        sampling_design.MsgBar.pushMessage("Successful systematic sampling with {} samples generated".format(
-                                           sampling.samples_generated), level=Qgis.Success, duration=20)
-    # success but not completed
-    if sampling_conf["total_of_samples"] > sampling.samples_generated > 0:
-        sampling_layer_generated = load_layer(sampling.output_file)
-        sampling_design.MsgBar.pushMessage("Systematic random sampling successful, {} random points generated out of a total "
-                                           "of {}, sampling process finished".format(
-                                           sampling.samples_generated, sampling_conf["total_of_samples"]),
-                                           level=Qgis.Success, duration=20)
+    sampling_layer_generated = load_layer(sampling.output_file)
 
     # select the sampling file generated in respond design and analysis tab
     AcATaMa.dockwidget.QCBox_SamplingFile.setLayer(sampling_layer_generated)
@@ -499,8 +496,22 @@ def systematic_sampling_finished(exception, result=None):
     AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(-1)
     AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(0 if sampling.categorical_map is None else 1)
 
-    # open the sampling report
-    # TODO
+    ### sampling report
+    sampling_report = SamplingReport(sampling_layer_generated, sampling, sampling_conf)
+    sampling_report.show()
+    AcATaMa.dockwidget.QPBtn_openSamplingReport.setEnabled(True)
+
+    # success
+    if sampling.samples_generated == sampling_conf["total_of_samples"]:
+        sampling_report.MsgBar.pushMessage("Successful systematic sampling: {} samples generated".format(
+                                           sampling.samples_generated), level=Qgis.Success, duration=40)
+    # success but not completed
+    if sampling_conf["total_of_samples"] > sampling.samples_generated > 0:
+        sampling_report.MsgBar.pushMessage("Systematic random sampling successful: {} random points generated out of a total "
+                                           "of {}. The generated sample can be smaller than the target total due to "
+                                           "sampling type and some restrictions in the sampling conditions.".format(
+                                           sampling.samples_generated, sampling_conf["total_of_samples"]),
+                                           level=Qgis.Success, duration=40)
 
 
 class Sampling(object):

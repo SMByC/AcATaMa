@@ -37,6 +37,7 @@ from AcATaMa.gui.sampling_design_window import SamplingDesignWindow
 from AcATaMa.utils.others_utils import set_nodata_format
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_filepath_in, get_file_path_of_layer
 from AcATaMa.utils.system_utils import error_handler, block_signals_to, output_file_is_OK
+from AcATaMa.gui.sampling_report import SamplingReport
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -105,7 +106,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QCBox_SamplingFile.layerChanged.connect(self.update_analysis_state)
         # show the sampling design window when press the QPBtn_OpenSamplingDesignWindow
         self.QPBtn_OpenSamplingDesignWindow.clicked.connect(self.open_sampling_design_window)
-
+        self.QPBtn_openSamplingReport.setDisabled(True)
+        self.QPBtn_openSamplingReport.clicked.connect(self.open_sampling_report)
+        self.QCBox_SamplingFile.layerChanged.connect(self.update_sampling_report_state)
 
         # ######### Response Design tab ######### #
         # set properties to QgsMapLayerComboBox
@@ -203,6 +206,23 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                 response_design.with_thematic_classes = True
             # reload analysis status in accuracy assessment
             self.update_analysis_state()
+
+
+    @pyqtSlot("QgsMapLayer*")
+    def update_sampling_report_state(self, sampling_layer=None):
+        if sampling_layer is None:
+            sampling_layer = self.QCBox_SamplingFile.currentLayer()
+
+        if sampling_layer:
+            # sampling file valid
+            if sampling_layer in SamplingReport.instances:
+                self.QPBtn_openSamplingReport.setEnabled(True)
+            else:
+                self.QPBtn_openSamplingReport.setDisabled(True)
+
+        if SamplingReport.instance_opened:
+            SamplingReport.instance_opened.close()
+
 
     @pyqtSlot("QgsMapLayer*")
     def update_response_design_state(self, sampling_layer=None):
@@ -361,6 +381,28 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
         # open dialog
         self.sampling_design_window.show()
+
+    @pyqtSlot()
+    @error_handler
+    def open_sampling_report(self):
+        sampling_layer = self.QCBox_SamplingFile.currentLayer()
+        if sampling_layer and sampling_layer in SamplingReport.instances:
+            sampling_report = SamplingReport.instances[sampling_layer]
+        else:
+            return
+
+        if SamplingReport.instance_opened:
+            # an instance of response design dialog is already created
+            # brings that instance to front even if it is minimized
+            sampling_report.setWindowState(sampling_report.windowState()
+                                           & ~Qt.WindowMinimized | Qt.WindowActive)
+            sampling_report.raise_()
+            sampling_report.activateWindow()
+            return
+
+        # open dialog
+        sampling_report.show()
+
 
     @pyqtSlot()
     @error_handler

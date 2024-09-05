@@ -30,6 +30,7 @@ from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.gui import accuracy_assessment_results
 from AcATaMa.utils.qgis_utils import get_file_path_of_layer
 from AcATaMa.utils.system_utils import wait_process, output_file_is_OK
+from AcATaMa.core.config import AREA_UNITS
 
 
 class Analysis(object):
@@ -126,12 +127,6 @@ class Analysis(object):
         self.pixel_area_value = self.pixel_area_base * QgsUnitTypes.fromUnitToUnitFactor(self.base_area_unit, self.area_unit)
         self.pixel_area_unit = QgsUnitTypes.toAbbreviatedString(self.area_unit)
 
-
-# Qgis 3 areas units, int values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-AREA_UNITS = [QgsUnitTypes.AreaSquareMeters, QgsUnitTypes.AreaSquareKilometers, QgsUnitTypes.AreaSquareFeet,
-              QgsUnitTypes.AreaSquareYards, QgsUnitTypes.AreaSquareMiles, QgsUnitTypes.AreaHectares,
-              QgsUnitTypes.AreaAcres, QgsUnitTypes.AreaSquareNauticalMiles, QgsUnitTypes.AreaSquareDegrees,
-              QgsUnitTypes.AreaSquareCentimeters, QgsUnitTypes.AreaSquareMillimeters]
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
