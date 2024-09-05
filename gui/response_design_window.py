@@ -426,7 +426,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
 
     def highlight_thematic_pixel(self):
         # highlight thematic pixel respectively of the current sampling point
-        thematic_pixel = self.current_sample.get_thematic_pixel()
+        thematic_pixel = self.current_sample.get_thematic_pixel_edges()
         if thematic_pixel and self.current_sample.label_id:
             fill_color = QColor(self.response_design.buttons_config[self.current_sample.label_id]["color"])
             highlight_pixel_tile = \
@@ -460,7 +460,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         pixel_buffer = int(self.SamplingUnit_Size.currentText())
         self.response_design.sampling_unit_pixel_buffer = pixel_buffer
         if pixel_buffer > 0:
-            sampling_unit = self.current_sample.get_thematic_pixel(with_buffer=pixel_buffer)
+            sampling_unit = self.current_sample.get_thematic_pixel_edges(with_buffer=pixel_buffer)
             if sampling_unit:
                 self.sampling_unit = Tile(*sampling_unit, self.response_design.sampling_unit_color)
                 self.sampling_unit.show()
@@ -470,7 +470,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         # show the edges of the thematic pixel of the current sample
         if self.pixel_tile:
             self.pixel_tile.hide()
-        thematic_pixel = self.current_sample.get_thematic_pixel()
+        thematic_pixel = self.current_sample.get_thematic_pixel_edges()
         if thematic_pixel:
             self.pixel_tile = Tile(*thematic_pixel, QColor("black"))
             self.pixel_tile.show()

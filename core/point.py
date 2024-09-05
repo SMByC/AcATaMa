@@ -155,7 +155,7 @@ class LabelingPoint(Point):
         with block_signals_to(view_widget.render_widget.canvas):
             view_widget.render_widget.set_extents_and_scalefactor(fit_extent)
 
-    def get_thematic_pixel(self, with_buffer=0):
+    def get_thematic_pixel_edges(self, with_buffer=0):
         """Get the edges of the thematic pixel respectively of the current labeling point"""
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         if not valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicMap):
