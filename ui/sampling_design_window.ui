@@ -171,7 +171,7 @@
                 <item>
                  <widget class="QLabel" name="label_12">
                   <property name="text">
-                   <string>Use a categorical map (which can be the same thematic file) to validate random sampling exclusively within the selected classes.</string>
+                   <string>Use a layer with categorical values (which can be the same thematic file) to validate random sampling exclusively within the selected classes.</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -747,7 +747,7 @@
                    </sizepolicy>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reset the categorical value table, reloading the layer style, pixel count and restoring default values&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reset the table, reloading the layer style, pixel count and restoring default values&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="text">
                    <string/>
@@ -898,7 +898,7 @@
              <item>
               <widget class="QLabel" name="label_17">
                <property name="text">
-                <string>Select/browse the categorical map for stratified the random sampling (e.g. it can be the same thematic file):</string>
+                <string>Select/browse a categorical map for post-stratified the random sampling (e.g. it can be the same thematic file):</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -1304,7 +1304,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                 <item>
                  <widget class="QLabel" name="label_33">
                   <property name="text">
-                   <string>Use a categorical map (which can be the same thematic file) to validate random sampling exclusively within the selected classes.</string>
+                   <string>Use a layer with categorical values (which can be the same thematic file) to validate random sampling exclusively within the selected classes.</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignJustify|Qt::AlignVCenter</set>

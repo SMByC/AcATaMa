@@ -7,7 +7,7 @@ layout: default
 <img src="img/thematic_map.png" width="80%" style="margin: auto;display: block;">
 
 The thematic map is the raster layer that you want to quantify the quality of the data through the accuracy assessment 
-protocol. It must be a categorical raster layer **with byte or integer as data type** with a specific pixel-value/color 
+protocol. It must be a layer with categorical values **with byte or integer as data type** with a specific pixel-value/color 
 associated, otherwise AcATaMa will prompt the user to apply an automatic pixel-value/color, but this is temporal 
 (unless you save it, see below).
 

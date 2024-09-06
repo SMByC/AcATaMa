@@ -61,14 +61,14 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         # set properties to QgsMapLayerComboBox
         self.QCBox_CategMap_SimpRS.setCurrentIndex(-1)
         self.QCBox_CategMap_SimpRS.setFilters(QgsMapLayerProxyModel.RasterLayer)
-        # call to browse the categorical map
+        # call to browse the post-stratification map
         self.QPBtn_browseCategMap_SimpRS.clicked.connect(lambda: self.browser_dialog_to_load_file(
             self.QCBox_CategMap_SimpRS,
-            dialog_title=self.tr("Select the categorical map"),
+            dialog_title=self.tr("Select the post-stratification map"),
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
-        # select and check the categorical map
-        self.QCBox_CategMap_SimpRS.layerChanged.connect(self.select_categorical_map_SimpRS)
-        self.QCBox_band_CategMap_SimpRS.currentIndexChanged.connect(self.select_categorical_map_SimpRS)
+        # select and check the post-stratification map
+        self.QCBox_CategMap_SimpRS.layerChanged.connect(self.select_post_stratification_map_SimpRS)
+        self.QCBox_band_CategMap_SimpRS.currentIndexChanged.connect(self.select_post_stratification_map_SimpRS)
         self.QPBtn_CategMapClassesSelection_SimpRS.setEnabled(False)
         self.QPBtn_CategMapClassesSelection_SimpRS.clicked.connect(
             lambda: self.select_post_stratification_classes("simple"))
@@ -89,18 +89,18 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         # set properties to QgsMapLayerComboBox
         self.QCBox_CategMap_StraRS.setCurrentIndex(-1)
         self.QCBox_CategMap_StraRS.setFilters(QgsMapLayerProxyModel.RasterLayer)
-        # call to browse the categorical raster
+        # call to browse the post-stratification raster
         self.QPBtn_browseCategMap_StraRS.clicked.connect(lambda: self.browser_dialog_to_load_file(
             self.QCBox_CategMap_StraRS,
-            dialog_title=self.tr("Select the categorical map"),
+            dialog_title=self.tr("Select the post-stratification map"),
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
-        # select and check the categorical map
-        self.QCBox_CategMap_StraRS.layerChanged.connect(self.select_categorical_map_StraRS)
+        # select and check the post-stratification map
+        self.QCBox_CategMap_StraRS.layerChanged.connect(self.select_post_stratification_map_StraRS)
         self.QCBox_band_CategMap_StraRS.currentIndexChanged.connect(self.reset_StraRS_method)
         self.nodata_CategMap_StraRS.textChanged.connect(self.reset_StraRS_method)
         # init variable for save tables content
         self.srs_tables = {}
-        # fill table of categorical map
+        # fill table of post-stratification map
         self.widget_TotalExpectedSE.setHidden(True)
         self.QCBox_StraRS_Method.currentIndexChanged.connect(lambda: fill_stratified_sampling_table(self))
         self.QPBtn_reloadSrsTable.clicked.connect(lambda: reload_StraRS_table(self))
@@ -124,7 +124,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
             lambda index: self.InitialInsetFixed_SystS.setVisible(True if index == 1 else False))
         self.InitialInsetFixed_SystS.setHidden(True)
         self.InitialInsetFixed_SystS.valueChanged.connect(self.update_systematic_sampling_progressbar)
-        # select and check the categorical map
+        # select and check the post-stratification map
         self.widget_SystSwithCR.setHidden(True)
         # set properties to QgsMapLayerComboBox
         self.QCBox_CategMap_SystS.setCurrentIndex(-1)
@@ -132,10 +132,10 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         # post-stratification sampling
         self.QPBtn_browseCategMap_SystS.clicked.connect(lambda: self.browser_dialog_to_load_file(
             self.QCBox_CategMap_SystS,
-            dialog_title=self.tr("Select the categorical map"),
+            dialog_title=self.tr("Select the post-stratification map"),
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
-        self.QCBox_CategMap_SystS.layerChanged.connect(self.select_categorical_map_SystS)
-        self.QCBox_band_CategMap_SystS.currentIndexChanged.connect(self.select_categorical_map_SystS)
+        self.QCBox_CategMap_SystS.layerChanged.connect(self.select_post_stratification_map_SystS)
+        self.QCBox_band_CategMap_SystS.currentIndexChanged.connect(self.select_post_stratification_map_SystS)
         self.QPBtn_CategMapClassesSelection_SystS.setEnabled(False)
         self.QPBtn_CategMapClassesSelection_SystS.clicked.connect(
             lambda: self.select_post_stratification_classes("systematic"))
@@ -235,57 +235,57 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         number_of_neighbor = int(QCBox_NumberOfNeighbors.currentText())
         QCBox_SameClassOfNeighbors.addItems([str(x) for x in range(1, number_of_neighbor + 1)])
 
-    def select_categorical_map_SimpRS(self):
+    def select_post_stratification_map_SimpRS(self):
         self.QPBtn_CategMapClassesSelection_SimpRS.setText("click to select")
         # first check
-        if not valid_file_selected_in(self.QCBox_CategMap_SimpRS, "categorical map"):
+        if not valid_file_selected_in(self.QCBox_CategMap_SimpRS, "post-stratification map"):
             self.QCBox_band_CategMap_SimpRS.clear()
             self.QPBtn_CategMapClassesSelection_SimpRS.setEnabled(False)
             return
-        categorical_map_layer = self.QCBox_CategMap_SimpRS.currentLayer()
-        categorical_map_band = self.QCBox_band_CategMap_SimpRS.currentText()
-        categorical_map_band = int(categorical_map_band) if categorical_map_band else 1
-        categorical_map_band = 1 if categorical_map_band > categorical_map_layer.bandCount() else categorical_map_band
-        # check if categorical map data type is integer or byte
-        if categorical_map_layer.dataProvider().dataType(categorical_map_band) not in [1, 2, 3, 4, 5]:
+        post_stratification_map_layer = self.QCBox_CategMap_SimpRS.currentLayer()
+        post_stratification_map_band = self.QCBox_band_CategMap_SimpRS.currentText()
+        post_stratification_map_band = int(post_stratification_map_band) if post_stratification_map_band else 1
+        post_stratification_map_band = 1 if post_stratification_map_band > post_stratification_map_layer.bandCount() else post_stratification_map_band
+        # check if post-stratification map data type is integer or byte
+        if post_stratification_map_layer.dataProvider().dataType(post_stratification_map_band) not in [1, 2, 3, 4, 5]:
             self.QCBox_CategMap_SimpRS.setCurrentIndex(-1)
             self.QCBox_band_CategMap_SimpRS.clear()
             self.QPBtn_CategMapClassesSelection_SimpRS.setEnabled(False)
-            iface.messageBar().pushMessage("AcATaMa", "Error, categorical map must be byte or integer as data type.",
+            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratification map must be byte or integer as data type.",
                                            level=Qgis.Warning, duration=10)
             return
         # fill band list
-        if self.QCBox_band_CategMap_SimpRS.count() != categorical_map_layer.bandCount():
+        if self.QCBox_band_CategMap_SimpRS.count() != post_stratification_map_layer.bandCount():
             with block_signals_to(self.QCBox_band_CategMap_SimpRS):
                 self.QCBox_band_CategMap_SimpRS.clear()
-                self.QCBox_band_CategMap_SimpRS.addItems([str(x) for x in range(1, categorical_map_layer.bandCount() + 1)])
+                self.QCBox_band_CategMap_SimpRS.addItems([str(x) for x in range(1, post_stratification_map_layer.bandCount() + 1)])
         # enable pixel value selection
         self.QPBtn_CategMapClassesSelection_SimpRS.setEnabled(True)
-        # update button categorical classes selection
-        if (categorical_map_layer, categorical_map_band) in PostStratificationClassesDialog.instances:
-            classes_selection_dialog = PostStratificationClassesDialog.instances[(categorical_map_layer, categorical_map_band)]
+        # update button post-stratification classes selection
+        if (post_stratification_map_layer, post_stratification_map_band) in PostStratificationClassesDialog.instances:
+            classes_selection_dialog = PostStratificationClassesDialog.instances[(post_stratification_map_layer, post_stratification_map_band)]
             pixel_values_selected = classes_selection_dialog.classes_selected
             if pixel_values_selected:
                 self.QPBtn_CategMapClassesSelection_SimpRS.setText(", ".join(classes_selection_dialog.classes_selected))
 
     @pyqtSlot("QgsMapLayer*")
-    def select_categorical_map_StraRS(self, layer):
+    def select_post_stratification_map_StraRS(self, layer):
         # first deselect/clear sampling method
         self.QCBox_StraRS_Method.setCurrentIndex(-1)
         # check
-        if not valid_file_selected_in(self.QCBox_CategMap_StraRS, "categorical map"):
+        if not valid_file_selected_in(self.QCBox_CategMap_StraRS, "post-stratification map"):
             self.QCBox_band_CategMap_StraRS.clear()
             self.nodata_CategMap_StraRS.setText("")
             self.QGBox_Sampling_Method.setEnabled(False)
             return
-        # check if categorical map data type is integer or byte
+        # check if post-stratification map data type is integer or byte
         if layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
             self.QCBox_CategMap_StraRS.setCurrentIndex(-1)
             self.QCBox_band_CategMap_StraRS.clear()
             self.nodata_CategMap_StraRS.setText("")
             self.QGBox_Sampling_Method.setEnabled(False)
             iface.messageBar().pushMessage("AcATaMa",
-                                           "Error, categorical map must be byte or integer as data type.",
+                                           "Error, post-stratification map must be byte or integer as data type.",
                                            level=Qgis.Warning, duration=10)
             return
         # set band count
@@ -299,54 +299,54 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
             return
         self.nodata_CategMap_StraRS.setText(set_nodata_format(get_nodata_value(layer)))
 
-    def select_categorical_map_SystS(self):
+    def select_post_stratification_map_SystS(self):
         self.QPBtn_CategMapClassesSelection_SystS.setText("click to select")
         # first check
-        if not valid_file_selected_in(self.QCBox_CategMap_SystS, "categorical map"):
+        if not valid_file_selected_in(self.QCBox_CategMap_SystS, "post-stratification map"):
             self.QCBox_band_CategMap_SystS.clear()
             self.QPBtn_CategMapClassesSelection_SystS.setEnabled(False)
             return
-        categorical_map_layer = self.QCBox_CategMap_SystS.currentLayer()
-        categorical_map_band = self.QCBox_band_CategMap_SystS.currentText()
-        categorical_map_band = int(categorical_map_band) if categorical_map_band else 1
-        categorical_map_band = 1 if categorical_map_band > categorical_map_layer.bandCount() else categorical_map_band
-        # check if categorical map data type is integer or byte
-        if categorical_map_layer.dataProvider().dataType(categorical_map_band) not in [1, 2, 3, 4, 5]:
+        post_stratification_map_layer = self.QCBox_CategMap_SystS.currentLayer()
+        post_stratification_map_band = self.QCBox_band_CategMap_SystS.currentText()
+        post_stratification_map_band = int(post_stratification_map_band) if post_stratification_map_band else 1
+        post_stratification_map_band = 1 if post_stratification_map_band > post_stratification_map_layer.bandCount() else post_stratification_map_band
+        # check if post-stratification map data type is integer or byte
+        if post_stratification_map_layer.dataProvider().dataType(post_stratification_map_band) not in [1, 2, 3, 4, 5]:
             self.QCBox_CategMap_SystS.setCurrentIndex(-1)
             self.QCBox_band_CategMap_SystS.clear()
             self.QPBtn_CategMapClassesSelection_SystS.setEnabled(False)
-            iface.messageBar().pushMessage("AcATaMa", "Error, categorical map must be byte or integer as data type.",
+            iface.messageBar().pushMessage("AcATaMa", "Error, post-stratification map must be byte or integer as data type.",
                                            level=Qgis.Warning, duration=10)
             return
         # fill band list
-        if self.QCBox_band_CategMap_SystS.count() != categorical_map_layer.bandCount():
+        if self.QCBox_band_CategMap_SystS.count() != post_stratification_map_layer.bandCount():
             with block_signals_to(self.QCBox_band_CategMap_SystS):
                 self.QCBox_band_CategMap_SystS.clear()
-                self.QCBox_band_CategMap_SystS.addItems([str(x) for x in range(1, categorical_map_layer.bandCount() + 1)])
+                self.QCBox_band_CategMap_SystS.addItems([str(x) for x in range(1, post_stratification_map_layer.bandCount() + 1)])
         # enable pixel value selection
         self.QPBtn_CategMapClassesSelection_SystS.setEnabled(True)
-        # update button categorical classes selection
-        if (categorical_map_layer, categorical_map_band) in PostStratificationClassesDialog.instances:
-            classes_selection_dialog = PostStratificationClassesDialog.instances[(categorical_map_layer, categorical_map_band)]
+        # update button post-stratification classes selection
+        if (post_stratification_map_layer, post_stratification_map_band) in PostStratificationClassesDialog.instances:
+            classes_selection_dialog = PostStratificationClassesDialog.instances[(post_stratification_map_layer, post_stratification_map_band)]
             pixel_values_selected = classes_selection_dialog.classes_selected
             if pixel_values_selected:
                 self.QPBtn_CategMapClassesSelection_SystS.setText(", ".join(classes_selection_dialog.classes_selected))
 
     def select_post_stratification_classes(self, sampling_design_type):
         if sampling_design_type == "simple":
-            categorical_map_layer = self.QCBox_CategMap_SimpRS.currentLayer()
-            categorical_map_band = int(self.QCBox_band_CategMap_SimpRS.currentText())
+            post_stratification_map_layer = self.QCBox_CategMap_SimpRS.currentLayer()
+            post_stratification_map_band = int(self.QCBox_band_CategMap_SimpRS.currentText())
             QPBtn_CategMapClassesSelection = self.QPBtn_CategMapClassesSelection_SimpRS
         if sampling_design_type == "systematic":
-            categorical_map_layer = self.QCBox_CategMap_SystS.currentLayer()
-            categorical_map_band = int(self.QCBox_band_CategMap_SystS.currentText())
+            post_stratification_map_layer = self.QCBox_CategMap_SystS.currentLayer()
+            post_stratification_map_band = int(self.QCBox_band_CategMap_SystS.currentText())
             QPBtn_CategMapClassesSelection = self.QPBtn_CategMapClassesSelection_SystS
 
         # check if instance already exists
-        if (categorical_map_layer, categorical_map_band) in PostStratificationClassesDialog.instances:
-            classes_selection_dialog = PostStratificationClassesDialog.instances[(categorical_map_layer, categorical_map_band)]
+        if (post_stratification_map_layer, post_stratification_map_band) in PostStratificationClassesDialog.instances:
+            classes_selection_dialog = PostStratificationClassesDialog.instances[(post_stratification_map_layer, post_stratification_map_band)]
         else:
-            classes_selection_dialog = PostStratificationClassesDialog(categorical_map_layer, categorical_map_band,
+            classes_selection_dialog = PostStratificationClassesDialog(post_stratification_map_layer, post_stratification_map_band,
                                                                        QPBtn_CategMapClassesSelection.text())
         # get classes picked by user
         classes_selection_dialog.exec_()

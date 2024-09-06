@@ -295,7 +295,7 @@ def restore(yml_file_path):
             yaml_config["sampling_design"]["simple_random_sampling"]['post_stratify'])
         load_and_select_filepath_in(sampling_design.QCBox_CategMap_SimpRS,
                                     get_restore_path(yaml_config["sampling_design"]["simple_random_sampling"]['categ_map_path']))
-        sampling_design.select_categorical_map_SimpRS()
+        sampling_design.select_post_stratification_map_SimpRS()
         sampling_design.QCBox_band_CategMap_SimpRS.setCurrentIndex(
             yaml_config["sampling_design"]["simple_random_sampling"]['categ_map_band'] - 1)
         sampling_design.QPBtn_CategMapClassesSelection_SimpRS.setText(
@@ -324,7 +324,7 @@ def restore(yml_file_path):
         # stratified random sampling
         load_and_select_filepath_in(sampling_design.QCBox_CategMap_StraRS,
                                     get_restore_path(yaml_config["sampling_design"]["stratified_random_sampling"]['categ_map_path']))
-        sampling_design.select_categorical_map_StraRS(sampling_design.QCBox_CategMap_StraRS.currentLayer())
+        sampling_design.select_post_stratification_map_StraRS(sampling_design.QCBox_CategMap_StraRS.currentLayer())
         sampling_design.QCBox_band_CategMap_StraRS.setCurrentIndex(
             yaml_config["sampling_design"]["stratified_random_sampling"]['categ_map_band'] - 1)
         # nodata
@@ -411,7 +411,7 @@ def restore(yml_file_path):
                 yaml_config["sampling_design"]["systematic_sampling"]['post_stratify'])
             load_and_select_filepath_in(sampling_design.QCBox_CategMap_SystS,
                                         get_restore_path(yaml_config["sampling_design"]["systematic_sampling"]['categ_map_path']))
-            sampling_design.select_categorical_map_SystS()
+            sampling_design.select_post_stratification_map_SystS()
             sampling_design.QCBox_band_CategMap_SystS.setCurrentIndex(
                 yaml_config["sampling_design"]["systematic_sampling"]['categ_map_band'] - 1)
             sampling_design.QPBtn_CategMapClassesSelection_SystS.setText(

@@ -172,7 +172,7 @@ def update_srs_table_content(dockwidget, srs_table):
 
 @wait_process
 def reload_StraRS_table(dockwidget):
-    """Reset the categorical value table, reloading the layer style, pixel count and restoring default values"""
+    """Reset the table, reloading the layer style, pixel count and restoring default values"""
     # clear table
     dockwidget.QTableW_StraRS.setRowCount(0)
     dockwidget.QTableW_StraRS.setColumnCount(0)
@@ -221,7 +221,7 @@ def fill_stratified_sampling_table(dockwidget):
 
     if dockwidget.QCBox_CategMap_StraRS.currentText() in dockwidget.srs_tables.keys() and \
         srs_method in dockwidget.srs_tables[dockwidget.QCBox_CategMap_StraRS.currentText()].keys():
-        # restore values saved for number of samples configured for selected categorical file
+        # restore values saved for number of samples configured for selected post-stratification file
         srs_table = dockwidget.srs_tables[dockwidget.QCBox_CategMap_StraRS.currentText()][srs_method]
     else:
         from AcATaMa.core.map import get_values_and_colors_table

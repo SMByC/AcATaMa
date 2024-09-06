@@ -108,10 +108,10 @@ class SamplingReport(QDialog, FORM_CLASS):
                                            self.sampling.points.values(),
                                            AREA_UNITS[self.area_unit.currentIndex()])
         post_stratification_table = \
-            get_samples_distribution_table(self.sampling.categorical_map,
+            get_samples_distribution_table(self.sampling.post_stratification_map,
                                            self.sampling.points.values(),
                                            AREA_UNITS[self.area_unit.currentIndex()]) \
-            if self.sampling.categorical_map else None
+            if self.sampling.post_stratification_map else None
 
         self.report = {
             "general": {
@@ -123,8 +123,8 @@ class SamplingReport(QDialog, FORM_CLASS):
                 "points_spacing": self.sampling_conf["points_spacing"] if self.sampling_conf["sampling_type"] == "systematic" else None,
                 "initial_inset": self.sampling_conf["initial_inset"] if self.sampling_conf["sampling_type"] == "systematic" else None,
                 "max_xy_offset": self.sampling_conf["max_xy_offset"] if self.sampling_conf["sampling_type"] == "systematic" else None,
-                "post_stratification_map": self.sampling.categorical_map.qgs_layer.name() if self.sampling.categorical_map else None,
-                "post_stratification_classes": self.sampling_conf["classes_selected"] if self.sampling.categorical_map else None,
+                "post_stratification_map": self.sampling.post_stratification_map.qgs_layer.name() if self.sampling.post_stratification_map else None,
+                "post_stratification_classes": self.sampling_conf["classes_selected"] if self.sampling.post_stratification_map else None,
                 "neighbor_aggregation": self.sampling_conf["neighbor_aggregation"],
                 "random_seed": self.sampling_conf["random_seed"],
                 "area_unit": self.area_unit.currentIndex(),
@@ -140,7 +140,7 @@ class SamplingReport(QDialog, FORM_CLASS):
                 "post_stratification": post_stratification_table,
                 "samples_not_in_post_stratification":
                     self.sampling.samples_generated - sum(post_stratification_table["num_samples"])
-                    if self.sampling.categorical_map else None
+                    if self.sampling.post_stratification_map else None
             }
         }
 

@@ -48,7 +48,7 @@ def do_simple_random_sampling():
     if not valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicMap, "thematic map"):
         return
     if sampling_design.QGBox_SimpRSwithCR.isChecked():
-        if not valid_file_selected_in(sampling_design.QCBox_CategMap_SimpRS, "categorical map"):
+        if not valid_file_selected_in(sampling_design.QCBox_CategMap_SimpRS, "post-stratification map"):
             sampling_design.MsgBar.pushMessage("Error, post-stratification option is enabled but not configured",
                                                level=Qgis.Warning, duration=10)
             return
@@ -62,8 +62,8 @@ def do_simple_random_sampling():
 
     # post-stratification of the simple random sampling
     if sampling_design.QGBox_SimpRSwithCR.isChecked():
-        categorical_map = Map(file_selected_combo_box=sampling_design.QCBox_CategMap_SimpRS,
-                              band=int(sampling_design.QCBox_band_CategMap_SimpRS.currentText()))
+        post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_CategMap_SimpRS,
+                                      band=int(sampling_design.QCBox_band_CategMap_SimpRS.currentText()))
         try:
             classes_selected = [int(p) for p in sampling_design.QPBtn_CategMapClassesSelection_SimpRS.text().split(",")]
             if not classes_selected:
@@ -73,7 +73,7 @@ def do_simple_random_sampling():
                                                level=Qgis.Warning, duration=10)
             return
     else:
-        categorical_map = None
+        post_stratification_map = None
         classes_selected = None
 
     # check neighbors aggregation
@@ -86,7 +86,7 @@ def do_simple_random_sampling():
 
     # first select the target file for save the sampling file
     suggested_filename = os.path.join(os.path.dirname(thematic_map.file_path),
-                                      "simple {}sampling.gpkg".format("post-stratified " if categorical_map else ""))
+                                      "simple {}sampling.gpkg".format("post-stratified " if post_stratification_map else ""))
     output_file, _ = QFileDialog.getSaveFileName(sampling_design,
                                                  AcATaMa.dockwidget.tr("Select the output file to save the sampling"),
                                                  suggested_filename,
@@ -112,7 +112,7 @@ def do_simple_random_sampling():
     sampling_design.QGBox_random_sampling_options_SimpRS.setEnabled(False)
 
     # process the sampling in a QGIS task
-    sampling = Sampling("simple", thematic_map, categorical_map, output_file=output_file)
+    sampling = Sampling("simple", thematic_map, post_stratification_map, output_file=output_file)
     sampling_conf = {"sampling_type": "simple", "total_of_samples": total_of_samples, "min_distance": min_distance,
                      "classes_selected": classes_selected, "neighbor_aggregation": neighbor_aggregation,
                      "random_seed": random_seed}
@@ -158,7 +158,7 @@ def simple_random_sampling_finished(exception, result=None):
     if sampling_layer_generated not in ResponseDesign.instances:
         ResponseDesign(sampling_layer_generated)
     AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(-1)
-    AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(0 if sampling.categorical_map is None else 1)
+    AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(0 if sampling.post_stratification_map is None else 1)
 
     ### sampling report
     sampling_report = SamplingReport(sampling_layer_generated, sampling, sampling_conf)
@@ -198,16 +198,16 @@ def do_stratified_random_sampling():
     # first check input files requirements
     if not valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicMap, "thematic map"):
         return
-    if not valid_file_selected_in(sampling_design.QCBox_CategMap_StraRS, "categorical map"):
+    if not valid_file_selected_in(sampling_design.QCBox_CategMap_StraRS, "post-stratification map"):
         return
 
     # get and define some variables
     thematic_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicMap,
                        band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
                        nodata=float(AcATaMa.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
-    categorical_map = Map(file_selected_combo_box=sampling_design.QCBox_CategMap_StraRS,
-                          band=int(sampling_design.QCBox_band_CategMap_StraRS.currentText()),
-                          nodata=float(sampling_design.nodata_CategMap_StraRS.text().strip() or "nan"))
+    post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_CategMap_StraRS,
+                                  band=int(sampling_design.QCBox_band_CategMap_StraRS.currentText()),
+                                  nodata=float(sampling_design.nodata_CategMap_StraRS.text().strip() or "nan"))
     min_distance = float(sampling_design.minDistance_StraRS.value())
 
     # get values from category table  #########
@@ -281,7 +281,7 @@ def do_stratified_random_sampling():
     sampling_design.QGBox_random_sampling_options_StraRS.setEnabled(False)
 
     # process the sampling in a QGIS task
-    sampling = Sampling("stratified", thematic_map, categorical_map, sampling_method,
+    sampling = Sampling("stratified", thematic_map, post_stratification_map, sampling_method,
                         srs_config=srs_config, output_file=output_file)
     sampling_conf = {"sampling_type": "stratified", "total_of_samples": total_of_samples_by_cat, "min_distance": min_distance,
                      "classes_selected": classes_for_sampling, "neighbor_aggregation": neighbor_aggregation,
@@ -370,7 +370,7 @@ def do_systematic_sampling():
     if not valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicMap, "thematic map"):
         return
     if sampling_design.QGBox_SystSwithCR.isChecked():
-        if not valid_file_selected_in(sampling_design.QCBox_CategMap_SystS, "categorical map"):
+        if not valid_file_selected_in(sampling_design.QCBox_CategMap_SystS, "post-stratification map"):
             sampling_design.MsgBar.pushMessage("Error, post-stratification option enabled but not configured",
                                                level=Qgis.Warning, duration=10)
             return
@@ -385,8 +385,8 @@ def do_systematic_sampling():
 
     # post-stratification of the systematic sampling
     if sampling_design.QGBox_SystSwithCR.isChecked():
-        categorical_map = Map(file_selected_combo_box=sampling_design.QCBox_CategMap_SystS,
-                              band=int(sampling_design.QCBox_band_CategMap_SystS.currentText()))
+        post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_CategMap_SystS,
+                                      band=int(sampling_design.QCBox_band_CategMap_SystS.currentText()))
         try:
             classes_selected = [int(p) for p in sampling_design.QPBtn_CategMapClassesSelection_SystS.text().split(",")]
             if not classes_selected:
@@ -396,7 +396,7 @@ def do_systematic_sampling():
                                                level=Qgis.Warning, duration=10)
             return
     else:
-        categorical_map = None
+        post_stratification_map = None
         classes_selected = None
 
     # check neighbors aggregation
@@ -409,7 +409,7 @@ def do_systematic_sampling():
 
     # first select the target file for save the sampling file
     suggested_filename = os.path.join(os.path.dirname(thematic_map.file_path),
-                                      "systematic {}sampling.gpkg".format("post-stratified " if categorical_map else ""))
+                                      "systematic {}sampling.gpkg".format("post-stratified " if post_stratification_map else ""))
     output_file, _ = QFileDialog.getSaveFileName(sampling_design,
                                                  AcATaMa.dockwidget.tr("Select the output file to save the sampling"),
                                                  suggested_filename,
@@ -444,7 +444,7 @@ def do_systematic_sampling():
     sampling_design.QGBox_random_sampling_options_SystS.setEnabled(False)
 
     # process the sampling in a QGIS task
-    sampling = Sampling("systematic", thematic_map, categorical_map, "grid with random offset",
+    sampling = Sampling("systematic", thematic_map, post_stratification_map, "grid with random offset",
                         output_file=output_file)
     sampling_conf = {"sampling_type": "systematic", "total_of_samples": total_of_samples, "points_spacing": points_spacing,
                      "initial_inset": initial_inset, "max_xy_offset": max_xy_offset,
@@ -494,7 +494,7 @@ def systematic_sampling_finished(exception, result=None):
     if sampling_layer_generated not in ResponseDesign.instances:
         ResponseDesign(sampling_layer_generated)
     AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(-1)
-    AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(0 if sampling.categorical_map is None else 1)
+    AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(0 if sampling.post_stratification_map is None else 1)
 
     ### sampling report
     sampling_report = SamplingReport(sampling_layer_generated, sampling, sampling_conf)
@@ -516,10 +516,10 @@ def systematic_sampling_finished(exception, result=None):
 
 class Sampling(object):
 
-    def __init__(self, sampling_design_type, thematic_map, categorical_map, sampling_method=None, srs_config=None, output_file=None):
+    def __init__(self, sampling_design_type, thematic_map, post_stratification_map, sampling_method=None, srs_config=None, output_file=None):
         self.sampling_design_type = sampling_design_type
         self.thematic_map = thematic_map
-        self.categorical_map = categorical_map
+        self.post_stratification_map = post_stratification_map
         # for stratified sampling
         self.sampling_method = sampling_method
         # save some stratified sampling configuration
@@ -705,12 +705,12 @@ class Sampling(object):
                 return False
 
         if self.sampling_design_type in ["simple", "systematic"]:
-            if not sampling_point.in_categorical_map_post_stratify(self.classes_for_sampling, self.categorical_map):
+            if not sampling_point.in_post_stratification_map(self.classes_for_sampling, self.post_stratification_map):
                 return False
 
         if self.sampling_design_type == "stratified":
-            if not sampling_point.in_categorical_map_StraRS(self.classes_for_sampling, self.total_of_samples,
-                                                            self.categorical_map, self.samples_in_categories):
+            if not sampling_point.in_post_stratification_map_StraRS(self.classes_for_sampling, self.total_of_samples,
+                                                                    self.post_stratification_map, self.samples_in_categories):
                 return False
 
         if self.neighbor_aggregation and \
