@@ -138,7 +138,7 @@ It set automatically from image if the layer has the nodata value set.</string>
            <number>0</number>
           </property>
           <item>
-           <widget class="QWidget" name="widget_26" native="true">
+           <widget class="QWidget" name="widget_sampling_file" native="true">
             <layout class="QHBoxLayout" name="horizontalLayout_26">
              <property name="leftMargin">
               <number>0</number>
@@ -260,7 +260,7 @@ It set automatically from image if the layer has the nodata value set.</string>
           <item>
            <widget class="QPushButton" name="QPBtn_openSamplingReport">
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open the sampling report for the current sample. This report is only for samples that have been generated with AcATaMa. You can save and restore it using the AcATaMa yaml file.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open the sampling report for the current sample. This report is only for samples that have been generated with AcATaMa. You can save and restore it using the AcATaMa yaml file (version &gt;= 24.8).&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
              <string>Sampling report</string>

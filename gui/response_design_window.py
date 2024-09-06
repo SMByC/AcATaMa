@@ -639,8 +639,12 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
 
         ResponseDesignWindow.is_opened = False
         # restore the states for some objects in the dockwidget
-        AcATaMa.dockwidget.QGBox_ThematicMap.setEnabled(True)
-        AcATaMa.dockwidget.QGBox_SamplingDesign.setEnabled(True)
+        from AcATaMa.gui.sampling_design_window import SamplingDesignWindow
+        from AcATaMa.core.analysis import AccuracyAssessmentWindow
+        if not SamplingDesignWindow.is_opened and not AccuracyAssessmentWindow.is_opened:
+            AcATaMa.dockwidget.QGBox_ThematicMap.setEnabled(True)
+        if not AccuracyAssessmentWindow.is_opened:
+            AcATaMa.dockwidget.QGBox_SamplingDesign.setEnabled(True)
         AcATaMa.dockwidget.QGBox_GridSettings.setEnabled(True)
         AcATaMa.dockwidget.QPBtn_saveSamplingLabeled.setEnabled(True)
         AcATaMa.dockwidget.QPBtn_OpenResponseDesignWindow.setText("Response design window")

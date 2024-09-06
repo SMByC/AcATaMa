@@ -260,8 +260,10 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
         """
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         from AcATaMa.gui.response_design_window import ResponseDesignWindow
-        if not ResponseDesignWindow.is_opened:
+        from AcATaMa.gui.sampling_design_window import SamplingDesignWindow
+        if not SamplingDesignWindow.is_opened and not ResponseDesignWindow.is_opened:
             AcATaMa.dockwidget.QGBox_ThematicMap.setEnabled(True)
+        if not ResponseDesignWindow.is_opened:
             AcATaMa.dockwidget.QGBox_SamplingDesign.setEnabled(True)
         AccuracyAssessmentWindow.is_opened = False
         AcATaMa.dockwidget.QPBtn_ComputeTheAccurasyAssessment.setText("Compute the accuracy assessment")

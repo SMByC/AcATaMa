@@ -218,6 +218,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
     def show(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         AcATaMa.dockwidget.QGBox_ThematicMap.setEnabled(False)
+        AcATaMa.dockwidget.widget_sampling_file.setEnabled(False)
         SamplingDesignWindow.is_opened = True
         AcATaMa.dockwidget.QPBtn_OpenSamplingDesignWindow.setText("Sampling design is opened, click to show")
 
@@ -418,8 +419,12 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         Do this before close the response design window
         """
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        from AcATaMa.core.analysis import AccuracyAssessmentWindow
+        from AcATaMa.gui.response_design_window import ResponseDesignWindow
         AcATaMa.dockwidget.QPBtn_OpenSamplingDesignWindow.setText("Sampling design window")
-        AcATaMa.dockwidget.QGBox_ThematicMap.setEnabled(True)
+        AcATaMa.dockwidget.widget_sampling_file.setEnabled(True)
+        if not ResponseDesignWindow.is_opened and not AccuracyAssessmentWindow.is_opened:
+            AcATaMa.dockwidget.QGBox_ThematicMap.setEnabled(True)
         SamplingDesignWindow.is_opened = False
         self.thematic_map = None
         self.reject(is_ok_to_close=True)
