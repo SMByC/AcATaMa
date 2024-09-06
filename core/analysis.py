@@ -30,7 +30,6 @@ from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.gui import accuracy_assessment_results
 from AcATaMa.utils.qgis_utils import get_file_path_of_layer
 from AcATaMa.utils.system_utils import wait_process, output_file_is_OK
-from AcATaMa.core.config import AREA_UNITS
 
 
 class Analysis(object):
@@ -166,7 +165,7 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
 
         # fill the area units
         self.area_unit.clear()
-        for area_unit in AREA_UNITS:
+        for area_unit in sorted(QgsUnitTypes.AreaUnit, key=lambda x: x.value):
             self.area_unit.addItem("{} ({})".format(QgsUnitTypes.toString(area_unit),
                                                     QgsUnitTypes.toAbbreviatedString(area_unit)))
         # set the area unit saved or based on the sampling file by default
@@ -216,7 +215,7 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         # set adjust variables from window
         self.analysis.z_score = self.z_score.value()
-        self.analysis.area_unit = AREA_UNITS[self.area_unit.currentIndex()]
+        self.analysis.area_unit = QgsUnitTypes.AreaUnit(self.area_unit.currentIndex())
         # first compute the accuracy assessment
         self.analysis.compute()
         # set content results in HTML

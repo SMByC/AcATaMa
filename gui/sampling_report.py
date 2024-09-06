@@ -26,7 +26,6 @@ from qgis.PyQt.QtWidgets import QDialog
 from qgis.core import QgsUnitTypes
 
 from AcATaMa.core.map import get_values_and_colors_table
-from AcATaMa.core.config import AREA_UNITS
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -83,20 +82,22 @@ class SamplingReport(QDialog, FORM_CLASS):
         self.sampling_layer = sampling_layer
         self.sampling = sampling
         self.sampling_conf = sampling_conf
+        # fill the area units
+        if sampling:
+            self.area_unit.clear()
+            for area_unit in sorted(QgsUnitTypes.AreaUnit, key=lambda x: x.value):
+                self.area_unit.addItem("{} ({})".format(QgsUnitTypes.toString(area_unit),
+                                                        QgsUnitTypes.toAbbreviatedString(area_unit)))
+            self.area_unit.currentIndexChanged.connect(self.reload)
+            self.area_unit.setCurrentIndex(QgsUnitTypes.distanceToAreaUnit(sampling_layer.crs().mapUnits()))
+        else:
+            self.area_unit.hide()
+
         if report is not None:
             self.report = report
         else:
             self.generate_sampling_report()
 
-        # fill the area units
-        if sampling:
-            self.area_unit.clear()
-            for area_unit in AREA_UNITS:
-                self.area_unit.addItem("{} ({})".format(QgsUnitTypes.toString(area_unit),
-                                                        QgsUnitTypes.toAbbreviatedString(area_unit)))
-            self.area_unit.currentIndexChanged.connect(self.reload)
-        else:
-            self.area_unit.hide()
         self.sampling_report.zoomOut()
 
         SamplingReport.instances[sampling_layer] = self
@@ -106,11 +107,11 @@ class SamplingReport(QDialog, FORM_CLASS):
         thematic_map_table = \
             get_samples_distribution_table(self.sampling.thematic_map,
                                            self.sampling.points.values(),
-                                           AREA_UNITS[self.area_unit.currentIndex()])
+                                           QgsUnitTypes.AreaUnit(self.area_unit.currentIndex()))
         post_stratification_table = \
             get_samples_distribution_table(self.sampling.post_stratification_map,
                                            self.sampling.points.values(),
-                                           AREA_UNITS[self.area_unit.currentIndex()]) \
+                                           QgsUnitTypes.AreaUnit(self.area_unit.currentIndex())) \
             if self.sampling.post_stratification_map else None
 
         self.report = {
@@ -279,7 +280,7 @@ class SamplingReport(QDialog, FORM_CLASS):
                     <th>Total Pixels</th>
                     <th>Total Area ({area_unit})</th>
                 </tr>
-        """.format(area_unit=QgsUnitTypes.toAbbreviatedString(AREA_UNITS[self.report["general"]["area_unit"]]))
+        """.format(area_unit=QgsUnitTypes.toAbbreviatedString(QgsUnitTypes.AreaUnit(self.report["general"]["area_unit"])))
         for i, pix_val in enumerate(self.report["samples"]["thematic_map"]["pix_val"]):
             html += """
                 <tr>
@@ -322,7 +323,7 @@ class SamplingReport(QDialog, FORM_CLASS):
                         <th>Total Pixels</th>
                         <th>Total Area ({area_unit})</th>
                     </tr>
-            """.format(area_unit=QgsUnitTypes.toAbbreviatedString(AREA_UNITS[self.report["general"]["area_unit"]]))
+            """.format(area_unit=QgsUnitTypes.toAbbreviatedString(QgsUnitTypes.AreaUnit(self.report["general"]["area_unit"])))
             for i, pix_val in enumerate(self.report["samples"]["post_stratification"]["pix_val"]):
                 html += """
                     <tr>
