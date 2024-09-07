@@ -126,6 +126,7 @@ class SamplingReport(QDialog, FORM_CLASS):
                 "max_xy_offset": self.sampling_conf["max_xy_offset"] if self.sampling_conf["sampling_type"] == "systematic" else None,
                 "post_stratification_map": self.sampling.post_stratification_map.qgs_layer.name() if self.sampling.post_stratification_map else None,
                 "post_stratification_classes": self.sampling_conf["classes_selected"] if self.sampling.post_stratification_map else None,
+                "stratified_method": self.sampling.sampling_method if self.sampling_conf["sampling_type"] == "stratified" else None,
                 "neighbor_aggregation": self.sampling_conf["neighbor_aggregation"],
                 "random_seed": self.sampling_conf["random_seed"],
                 "area_unit": self.area_unit.currentIndex(),
@@ -247,15 +248,28 @@ class SamplingReport(QDialog, FORM_CLASS):
                 </tr>
             """.format(min_distance=self.report["general"]["min_distance"])
 
+        if self.report["general"]["sampling_type"] in ["simple", "systematic"]:
+            html += """
+                    <tr>
+                        <th>Post-Stratification Map</th>
+                        <td>{post_stratification_map}</td>
+                    </tr>
+                    <tr>
+                        <th>Post-Stratification Classes</th>
+                        <td>{post_stratification_classes}</td>
+                    </tr>
+                """.format(post_stratification_map=self.report["general"]["post_stratification_map"],
+                           post_stratification_classes=self.report["general"]["post_stratification_classes"])
+
+        if self.report["general"]["sampling_type"] == "stratified":
+            html += """
+                    <tr>
+                        <th>Stratified method</th>
+                        <td>{stratified_method}</td>
+                    </tr>
+                """.format(stratified_method=self.report["general"]["stratified_method"].capitalize())
+
         html += """
-                <tr>
-                    <th>Post-Stratification Map</th>
-                    <td>{post_stratification_map}</td>
-                </tr>
-                <tr>
-                    <th>Post-Stratification Classes</th>
-                    <td>{post_stratification_classes}</td>
-                </tr>
                 <tr>
                     <th>Neighbor Aggregation</th>
                     <td>{neighbor_aggregation}</td>
@@ -265,9 +279,7 @@ class SamplingReport(QDialog, FORM_CLASS):
                     <td>{random_seed}</td>
                 </tr>
             </table>
-            """.format(post_stratification_map=self.report["general"]["post_stratification_map"],
-                       post_stratification_classes=self.report["general"]["post_stratification_classes"],
-                       neighbor_aggregation=self.report["general"]["neighbor_aggregation"],
+            """.format(neighbor_aggregation=self.report["general"]["neighbor_aggregation"],
                        random_seed=self.report["general"]["random_seed"])
 
         html += """
