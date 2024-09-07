@@ -131,7 +131,7 @@ class SamplingReport(QDialog, FORM_CLASS):
                 "post_stratification_classes": self.sampling_conf["classes_selected"] if self.sampling.post_stratification_map else None,
                 "stratified_method": self.sampling.sampling_method if self.sampling_conf["sampling_type"] == "stratified" else None,
                 "neighbor_aggregation": self.sampling_conf["neighbor_aggregation"],
-                "random_seed": self.sampling_conf["random_seed"],
+                "random_seed": self.sampling_conf["random_seed"] if self.sampling_conf["random_seed"] is not None else "Auto",
                 "area_unit": self.area_unit.currentIndex(),
             },
             "stats": {  # TODO
