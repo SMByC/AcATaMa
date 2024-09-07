@@ -164,7 +164,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                 <enum>Qt::StrongFocus</enum>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select a sampling file or create a new one in the sampling design window&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sample file to work with. Select an existing sample file or create a new one in the Sampling design window&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="editable">
                 <bool>false</bool>
@@ -206,7 +206,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                 </size>
                </property>
                <property name="toolTip">
-                <string>Load file</string>
+                <string>Load a sampling file</string>
                </property>
                <property name="text">
                 <string>...</string>
@@ -404,7 +404,7 @@ It set automatically from image if the layer has the nodata value set.</string>
           <bool>true</bool>
          </property>
          <property name="toolTip">
-          <string>The status of the response design for this sampling file</string>
+          <string>The status of the response design for the selected sample file</string>
          </property>
          <property name="minimum">
           <number>0</number>
@@ -426,7 +426,7 @@ It set automatically from image if the layer has the nodata value set.</string>
        <item>
         <widget class="QPushButton" name="QPBtn_OpenResponseDesignWindow">
          <property name="toolTip">
-          <string>Apply response design to the selected sampling file</string>
+          <string>Apply response design for the selected sample file</string>
          </property>
          <property name="text">
           <string>Response design window</string>
