@@ -81,12 +81,12 @@ def save(file_out):
         "num_samples": sampling_design.numberOfSamples_SimpRS.value(),
         "min_distance": sampling_design.minDistance_SimpRS.value(),
 
-        "post_stratify": sampling_design.QGBox_SimpRSwithCR.isChecked(),
-        "categ_map_path": get_current_file_path_in(sampling_design.QCBox_CategMap_SimpRS, show_message=False),
-        "categ_map_band": int(sampling_design.QCBox_band_CategMap_SimpRS.currentText())
-            if sampling_design.QCBox_band_CategMap_SimpRS.currentText() != '' else -1,
-        "classes_selected_for_sampling": sampling_design.QPBtn_CategMapClassesSelection_SimpRS.text()
-            if sampling_design.QPBtn_CategMapClassesSelection_SimpRS.text() != 'click to select' else None,
+        "post_stratify": sampling_design.QGBox_SimpRSwithPS.isChecked(),
+        "categ_map_path": get_current_file_path_in(sampling_design.QCBox_PostStratMap_SimpRS, show_message=False),
+        "categ_map_band": int(sampling_design.QCBox_band_PostStratMap_SimpRS.currentText())
+            if sampling_design.QCBox_band_PostStratMap_SimpRS.currentText() != '' else -1,
+        "classes_selected_for_sampling": sampling_design.QPBtn_PostStratMapClasses_SimpRS.text()
+            if sampling_design.QPBtn_PostStratMapClasses_SimpRS.text() != 'click to select' else None,
 
         "with_neighbors_aggregation": sampling_design.QGBox_neighbour_aggregation_SimpRS.isChecked(),
         "num_neighbors": sampling_design.QCBox_NumberOfNeighbors_SimpRS.currentText(),
@@ -99,21 +99,21 @@ def save(file_out):
     # stratified random sampling
     srs_method = "fixed values" if sampling_design.QCBox_StraRS_Method.currentText().startswith("Fixed values") \
         else "area based proportion"
-    with_srs_table = sampling_design.QCBox_CategMap_StraRS.currentText() in sampling_design.srs_tables and \
-        srs_method in sampling_design.srs_tables[sampling_design.QCBox_CategMap_StraRS.currentText()]
+    with_srs_table = sampling_design.QCBox_StratMap_StraRS.currentText() in sampling_design.srs_tables and \
+        srs_method in sampling_design.srs_tables[sampling_design.QCBox_StratMap_StraRS.currentText()]
     data["sampling_design"]["stratified_random_sampling"] = {
-        "categ_map_path": get_current_file_path_in(sampling_design.QCBox_CategMap_StraRS, show_message=False),
-        "categ_map_band": int(sampling_design.QCBox_band_CategMap_StraRS.currentText())
-            if sampling_design.QCBox_band_CategMap_StraRS.currentText() != '' else -1,
-        "categ_map_nodata": sampling_design.nodata_CategMap_StraRS.text(),
+        "categ_map_path": get_current_file_path_in(sampling_design.QCBox_StratMap_StraRS, show_message=False),
+        "categ_map_band": int(sampling_design.QCBox_band_StratMap_StraRS.currentText())
+            if sampling_design.QCBox_band_StratMap_StraRS.currentText() != '' else -1,
+        "categ_map_nodata": sampling_design.nodata_StratMap_StraRS.text(),
 
         "sampling_random_method": sampling_design.QCBox_StraRS_Method.currentText(),
         "overall_std_error": sampling_design.TotalExpectedSE.value(),
         "stratified_random_sampling_table": sampling_design.srs_tables
-            [sampling_design.QCBox_CategMap_StraRS.currentText()][srs_method] if with_srs_table else None,
+            [sampling_design.QCBox_StratMap_StraRS.currentText()][srs_method] if with_srs_table else None,
 
         # TODO:
-        # save the values color table of the QCBox_CategMap_StraRS
+        # save the values color table of the QCBox_StratMap_StraRS
 
         "min_distance": sampling_design.minDistance_StraRS.value(),
         "with_neighbors_aggregation": sampling_design.QGBox_neighbour_aggregation_StraRS.isChecked(),
@@ -131,12 +131,12 @@ def save(file_out):
         "initial_inset": sampling_design.InitialInsetFixed_SystS.value(),
         "max_xy_offset": sampling_design.MaxXYoffset_SystS.value(),
 
-        "post_stratify": sampling_design.QGBox_SystSwithCR.isChecked(),
-        "categ_map_path": get_current_file_path_in(sampling_design.QCBox_CategMap_SystS, show_message=False),
-        "categ_map_band": int(sampling_design.QCBox_band_CategMap_SystS.currentText())
-            if sampling_design.QCBox_band_CategMap_SystS.currentText() != '' else -1,
-        "classes_selected_for_sampling": sampling_design.QPBtn_CategMapClassesSelection_SystS.text()
-            if sampling_design.QPBtn_CategMapClassesSelection_SystS.text() != 'click to select' else None,
+        "post_stratify": sampling_design.QGBox_SystSwithPS.isChecked(),
+        "categ_map_path": get_current_file_path_in(sampling_design.QCBox_PostStratMap_SystS, show_message=False),
+        "categ_map_band": int(sampling_design.QCBox_band_PostStratMap_SystS.currentText())
+            if sampling_design.QCBox_band_PostStratMap_SystS.currentText() != '' else -1,
+        "classes_selected_for_sampling": sampling_design.QPBtn_PostStratMapClasses_SystS.text()
+            if sampling_design.QPBtn_PostStratMapClasses_SystS.text() != 'click to select' else None,
         "with_neighbors_aggregation": sampling_design.QGBox_neighbour_aggregation_SystS.isChecked(),
         "num_neighbors": sampling_design.QCBox_NumberOfNeighbors_SystS.currentText(),
         "min_neighbors_with_the_same_class": sampling_design.QCBox_SameClassOfNeighbors_SystS.currentText(),
@@ -283,16 +283,16 @@ def restore(yml_file_path):
             yaml_config["sampling_design"]["simple_random_sampling"]['num_samples'])
         sampling_design.minDistance_SimpRS.setValue(
             yaml_config["sampling_design"]["simple_random_sampling"]['min_distance'])
-        sampling_design.QGBox_SimpRSwithCR.setChecked(
+        sampling_design.QGBox_SimpRSwithPS.setChecked(
             yaml_config["sampling_design"]["simple_random_sampling"]['post_stratify'])
-        sampling_design.widget_SimpRSwithCR.setVisible(
+        sampling_design.widget_SimpRSwithPS.setVisible(
             yaml_config["sampling_design"]["simple_random_sampling"]['post_stratify'])
-        load_and_select_filepath_in(sampling_design.QCBox_CategMap_SimpRS,
+        load_and_select_filepath_in(sampling_design.QCBox_PostStratMap_SimpRS,
                                     get_restore_path(yaml_config["sampling_design"]["simple_random_sampling"]['categ_map_path']))
         sampling_design.select_post_stratification_map_SimpRS()
-        sampling_design.QCBox_band_CategMap_SimpRS.setCurrentIndex(
+        sampling_design.QCBox_band_PostStratMap_SimpRS.setCurrentIndex(
             yaml_config["sampling_design"]["simple_random_sampling"]['categ_map_band'] - 1)
-        sampling_design.QPBtn_CategMapClassesSelection_SimpRS.setText(
+        sampling_design.QPBtn_PostStratMapClasses_SimpRS.setText(
             yaml_config["sampling_design"]["simple_random_sampling"]['classes_selected_for_sampling']
             if yaml_config["sampling_design"]["simple_random_sampling"]['classes_selected_for_sampling'] else "click to select")
 
@@ -316,17 +316,17 @@ def restore(yml_file_path):
             yaml_config["sampling_design"]["simple_random_sampling"]['random_seed_by_user'])
 
         # stratified random sampling
-        load_and_select_filepath_in(sampling_design.QCBox_CategMap_StraRS,
+        load_and_select_filepath_in(sampling_design.QCBox_StratMap_StraRS,
                                     get_restore_path(yaml_config["sampling_design"]["stratified_random_sampling"]['categ_map_path']))
-        sampling_design.select_post_stratification_map_StraRS(sampling_design.QCBox_CategMap_StraRS.currentLayer())
-        sampling_design.QCBox_band_CategMap_StraRS.setCurrentIndex(
+        sampling_design.select_post_stratification_map_StraRS(sampling_design.QCBox_StratMap_StraRS.currentLayer())
+        sampling_design.QCBox_band_StratMap_StraRS.setCurrentIndex(
             yaml_config["sampling_design"]["stratified_random_sampling"]['categ_map_band'] - 1)
         # nodata
         nodata = set_nodata_format(yaml_config["sampling_design"]["stratified_random_sampling"]["categ_map_nodata"])
         if CONFIG_FILE_VERSION == 191121 and nodata == "-1":
-            sampling_design.nodata_CategMap_StraRS.setText("nan")
+            sampling_design.nodata_StratMap_StraRS.setText("nan")
         else:
-            sampling_design.nodata_CategMap_StraRS.setText(nodata)
+            sampling_design.nodata_StratMap_StraRS.setText(nodata)
 
         with block_signals_to(sampling_design.QCBox_StraRS_Method):
             select_item_in(sampling_design.QCBox_StraRS_Method,
@@ -348,21 +348,21 @@ def restore(yml_file_path):
 
         srs_method = "fixed values" if sampling_design.QCBox_StraRS_Method.currentText().startswith("Fixed values") \
             else "area based proportion"
-        sampling_design.srs_tables[sampling_design.QCBox_CategMap_StraRS.currentText()] = {}
-        sampling_design.srs_tables[sampling_design.QCBox_CategMap_StraRS.currentText()][srs_method] = srs_table
+        sampling_design.srs_tables[sampling_design.QCBox_StratMap_StraRS.currentText()] = {}
+        sampling_design.srs_tables[sampling_design.QCBox_StratMap_StraRS.currentText()][srs_method] = srs_table
         fill_stratified_sampling_table(sampling_design)
         # restore the pixel count by pixel value
         if srs_table and 'pixel_count' in srs_table:
             from AcATaMa.utils.others_utils import storage_pixel_count_by_pixel_values
             global storage_pixel_count_by_pixel_values
             storage_pixel_count_by_pixel_values[
-                (sampling_design.QCBox_CategMap_StraRS.currentLayer(),
-                 int(sampling_design.QCBox_band_CategMap_StraRS.currentText()),
-                 set_nodata_format(sampling_design.nodata_CategMap_StraRS.text().strip() or "nan"))
+                (sampling_design.QCBox_StratMap_StraRS.currentLayer(),
+                 int(sampling_design.QCBox_band_StratMap_StraRS.currentText()),
+                 set_nodata_format(sampling_design.nodata_StratMap_StraRS.text().strip() or "nan"))
             ] = dict(zip(srs_table['values_and_colors_table']['Pixel Value'], srs_table['pixel_count']))
 
         # TODO:
-        # restore the values color table of the QCBox_CategMap_StraRS saved
+        # restore the values color table of the QCBox_StratMap_StraRS saved
 
         sampling_design.minDistance_StraRS.setValue(
             yaml_config["sampling_design"]["stratified_random_sampling"]['min_distance'])
@@ -399,16 +399,16 @@ def restore(yml_file_path):
             sampling_design.MaxXYoffset_SystS.setValue(
                 yaml_config["sampling_design"]["systematic_sampling"]['max_xy_offset'])
 
-            sampling_design.QGBox_SystSwithCR.setChecked(
+            sampling_design.QGBox_SystSwithPS.setChecked(
                 yaml_config["sampling_design"]["systematic_sampling"]['post_stratify'])
-            sampling_design.widget_SystSwithCR.setVisible(
+            sampling_design.widget_SystSwithPS.setVisible(
                 yaml_config["sampling_design"]["systematic_sampling"]['post_stratify'])
-            load_and_select_filepath_in(sampling_design.QCBox_CategMap_SystS,
+            load_and_select_filepath_in(sampling_design.QCBox_PostStratMap_SystS,
                                         get_restore_path(yaml_config["sampling_design"]["systematic_sampling"]['categ_map_path']))
             sampling_design.select_post_stratification_map_SystS()
-            sampling_design.QCBox_band_CategMap_SystS.setCurrentIndex(
+            sampling_design.QCBox_band_PostStratMap_SystS.setCurrentIndex(
                 yaml_config["sampling_design"]["systematic_sampling"]['categ_map_band'] - 1)
-            sampling_design.QPBtn_CategMapClassesSelection_SystS.setText(
+            sampling_design.QPBtn_PostStratMapClasses_SystS.setText(
                 yaml_config["sampling_design"]["systematic_sampling"]['classes_selected_for_sampling']
                 if yaml_config["sampling_design"]["systematic_sampling"]['classes_selected_for_sampling'] else "click to select")
 

@@ -142,7 +142,7 @@
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QGroupBox" name="QGBox_SimpRSwithCR">
+           <widget class="QGroupBox" name="QGBox_SimpRSwithPS">
             <property name="title">
              <string>Post-stratification of the sample (optional)</string>
             </property>
@@ -154,7 +154,7 @@
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_16">
              <item>
-              <widget class="QWidget" name="widget_SimpRSwithCR" native="true">
+              <widget class="QWidget" name="widget_SimpRSwithPS" native="true">
                <layout class="QVBoxLayout" name="verticalLayout_15">
                 <property name="leftMargin">
                  <number>0</number>
@@ -200,7 +200,7 @@
                     <number>0</number>
                    </property>
                    <item>
-                    <widget class="QgsMapLayerComboBox" name="QCBox_CategMap_SimpRS">
+                    <widget class="QgsMapLayerComboBox" name="QCBox_PostStratMap_SimpRS">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                        <horstretch>0</horstretch>
@@ -219,7 +219,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QToolButton" name="QPBtn_browseCategMap_SimpRS">
+                    <widget class="QToolButton" name="QPBtn_browsePostStratMap_SimpRS">
                      <property name="maximumSize">
                       <size>
                        <width>30</width>
@@ -235,7 +235,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QComboBox" name="QCBox_band_CategMap_SimpRS">
+                    <widget class="QComboBox" name="QCBox_band_PostStratMap_SimpRS">
                      <property name="maximumSize">
                       <size>
                        <width>50</width>
@@ -273,7 +273,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="QPBtn_CategMapClassesSelection_SimpRS">
+                    <widget class="QPushButton" name="QPBtn_PostStratMapClasses_SimpRS">
                      <property name="minimumSize">
                       <size>
                        <width>180</width>
@@ -892,13 +892,16 @@
           <item row="0" column="0">
            <widget class="QGroupBox" name="QGBox_2">
             <property name="title">
-             <string>Categorical Map</string>
+             <string>Stratification Map</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_18">
              <item>
               <widget class="QLabel" name="label_17">
+               <property name="toolTip">
+                <string>In rare cases, a different map is used for sampling and validation</string>
+               </property>
                <property name="text">
-                <string>Select/browse a categorical map for post-stratified the random sampling (e.g. it can be the same thematic file):</string>
+                <string>Select the map on which you wish to stratify the samples. Typically, it is the selected thematic map:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -927,7 +930,7 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QgsMapLayerComboBox" name="QCBox_CategMap_StraRS">
+                 <widget class="QgsMapLayerComboBox" name="QCBox_StratMap_StraRS">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -946,7 +949,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QToolButton" name="QPBtn_browseCategMap_StraRS">
+                 <widget class="QToolButton" name="QPBtn_browseStratMap_StraRS">
                   <property name="maximumSize">
                    <size>
                     <width>30</width>
@@ -962,7 +965,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QComboBox" name="QCBox_band_CategMap_StraRS">
+                 <widget class="QComboBox" name="QCBox_band_StratMap_StraRS">
                   <property name="maximumSize">
                    <size>
                     <width>50</width>
@@ -975,7 +978,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="nodata_CategMap_StraRS">
+                 <widget class="QLineEdit" name="nodata_StratMap_StraRS">
                   <property name="maximumSize">
                    <size>
                     <width>80</width>
@@ -1275,7 +1278,7 @@ It set automatically from image if the layer has the nodata value set.</string>
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QGroupBox" name="QGBox_SystSwithCR">
+           <widget class="QGroupBox" name="QGBox_SystSwithPS">
             <property name="title">
              <string>Post-stratification of the sample (optional)</string>
             </property>
@@ -1287,7 +1290,7 @@ It set automatically from image if the layer has the nodata value set.</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_32">
              <item>
-              <widget class="QWidget" name="widget_SystSwithCR" native="true">
+              <widget class="QWidget" name="widget_SystSwithPS" native="true">
                <layout class="QVBoxLayout" name="verticalLayout_33">
                 <property name="leftMargin">
                  <number>0</number>
@@ -1333,7 +1336,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                     <number>0</number>
                    </property>
                    <item>
-                    <widget class="QgsMapLayerComboBox" name="QCBox_CategMap_SystS">
+                    <widget class="QgsMapLayerComboBox" name="QCBox_PostStratMap_SystS">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                        <horstretch>0</horstretch>
@@ -1352,7 +1355,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QToolButton" name="QPBtn_browseCategMap_SystS">
+                    <widget class="QToolButton" name="QPBtn_browsePostStratMap_SystS">
                      <property name="maximumSize">
                       <size>
                        <width>30</width>
@@ -1368,7 +1371,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QComboBox" name="QCBox_band_CategMap_SystS">
+                    <widget class="QComboBox" name="QCBox_band_PostStratMap_SystS">
                      <property name="maximumSize">
                       <size>
                        <width>50</width>
@@ -1406,7 +1409,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="QPBtn_CategMapClassesSelection_SystS">
+                    <widget class="QPushButton" name="QPBtn_PostStratMapClasses_SystS">
                      <property name="minimumSize">
                       <size>
                        <width>180</width>
@@ -1721,9 +1724,9 @@ It set automatically from image if the layer has the nodata value set.</string>
    </hints>
   </connection>
   <connection>
-   <sender>QGBox_SystSwithCR</sender>
+   <sender>QGBox_SystSwithPS</sender>
    <signal>clicked(bool)</signal>
-   <receiver>widget_SystSwithCR</receiver>
+   <receiver>widget_SystSwithPS</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1737,9 +1740,9 @@ It set automatically from image if the layer has the nodata value set.</string>
    </hints>
   </connection>
   <connection>
-   <sender>QGBox_SimpRSwithCR</sender>
+   <sender>QGBox_SimpRSwithPS</sender>
    <signal>clicked(bool)</signal>
-   <receiver>widget_SimpRSwithCR</receiver>
+   <receiver>widget_SimpRSwithPS</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">

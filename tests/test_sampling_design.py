@@ -18,9 +18,9 @@ def test_simple_post_stratified_random_sampling(plugin, unwrap, tmpdir):
     thematic_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
                        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
                        nodata=float(plugin.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
-    post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_CategMap_SimpRS,
-                                  band=int(sampling_design.QCBox_band_CategMap_SimpRS.currentText()))
-    classes_selected = [int(p) for p in sampling_design.QPBtn_CategMapClassesSelection_SimpRS.text().split(",")]
+    post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SimpRS,
+                                  band=int(sampling_design.QCBox_band_PostStratMap_SimpRS.currentText()))
+    classes_selected = [int(p) for p in sampling_design.QPBtn_PostStratMapClasses_SimpRS.text().split(",")]
     total_of_samples = int(sampling_design.numberOfSamples_SimpRS.value())
     min_distance = float(sampling_design.minDistance_SimpRS.value())
     number_of_neighbors = int(sampling_design.QCBox_NumberOfNeighbors_SimpRS.currentText())
@@ -60,8 +60,8 @@ def test_stratified_random_sampling(plugin, unwrap, tmpdir):
     thematic_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
                        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
                        nodata=float(plugin.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
-    post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_CategMap_StraRS,
-                                  band=int(sampling_design.QCBox_band_CategMap_StraRS.currentText()))
+    post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_StratMap_StraRS,
+                                  band=int(sampling_design.QCBox_band_StratMap_StraRS.currentText()))
 
     classes_for_sampling = []
     total_of_samples = []
@@ -116,13 +116,13 @@ def test_systematic_post_stratified_random_sampling(plugin, unwrap, tmpdir):
     thematic_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
                        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
                        nodata=float(plugin.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
-    post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_CategMap_SystS,
-                                  band=int(sampling_design.QCBox_band_CategMap_SystS.currentText()))
+    post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SystS,
+                                  band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()))
     points_spacing = float(sampling_design.PointsSpacing_SystS.value())
     initial_inset = float(sampling_design.InitialInsetFixed_SystS.value())
     max_xy_offset = float(sampling_design.MaxXYoffset_SystS.value())
 
-    classes_selected = [int(p) for p in sampling_design.QPBtn_CategMapClassesSelection_SystS.text().split(",")]
+    classes_selected = [int(p) for p in sampling_design.QPBtn_PostStratMapClasses_SystS.text().split(",")]
     number_of_neighbors = int(sampling_design.QCBox_NumberOfNeighbors_SystS.currentText())
     same_class_of_neighbors = int(sampling_design.QCBox_SameClassOfNeighbors_SystS.currentText())
     neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
@@ -163,12 +163,12 @@ def test_systematic_post_stratified_with_initial_inset_random(plugin, unwrap, tm
     thematic_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
                        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
                        nodata=float(plugin.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
-    post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_CategMap_SystS,
-                                  band=int(sampling_design.QCBox_band_CategMap_SystS.currentText()))
+    post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SystS,
+                                  band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()))
     points_spacing = float(sampling_design.PointsSpacing_SystS.value())
     max_xy_offset = float(sampling_design.MaxXYoffset_SystS.value())
 
-    classes_selected = [int(p) for p in sampling_design.QPBtn_CategMapClassesSelection_SystS.text().split(",")]
+    classes_selected = [int(p) for p in sampling_design.QPBtn_PostStratMapClasses_SystS.text().split(",")]
     number_of_neighbors = int(sampling_design.QCBox_NumberOfNeighbors_SystS.currentText())
     same_class_of_neighbors = int(sampling_design.QCBox_SameClassOfNeighbors_SystS.currentText())
     neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)

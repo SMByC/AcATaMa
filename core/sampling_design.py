@@ -47,8 +47,8 @@ def do_simple_random_sampling():
     # first check input files requirements
     if not valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicMap, "thematic map"):
         return
-    if sampling_design.QGBox_SimpRSwithCR.isChecked():
-        if not valid_file_selected_in(sampling_design.QCBox_CategMap_SimpRS, "post-stratification map"):
+    if sampling_design.QGBox_SimpRSwithPS.isChecked():
+        if not valid_file_selected_in(sampling_design.QCBox_PostStratMap_SimpRS, "post-stratification map"):
             sampling_design.MsgBar.pushMessage("Error, post-stratification option is enabled but not configured",
                                                level=Qgis.Warning, duration=10)
             return
@@ -61,11 +61,11 @@ def do_simple_random_sampling():
     min_distance = float(sampling_design.minDistance_SimpRS.value())
 
     # post-stratification of the simple random sampling
-    if sampling_design.QGBox_SimpRSwithCR.isChecked():
-        post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_CategMap_SimpRS,
-                                      band=int(sampling_design.QCBox_band_CategMap_SimpRS.currentText()))
+    if sampling_design.QGBox_SimpRSwithPS.isChecked():
+        post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SimpRS,
+                                      band=int(sampling_design.QCBox_band_PostStratMap_SimpRS.currentText()))
         try:
-            classes_selected = [int(p) for p in sampling_design.QPBtn_CategMapClassesSelection_SimpRS.text().split(",")]
+            classes_selected = [int(p) for p in sampling_design.QPBtn_PostStratMapClasses_SimpRS.text().split(",")]
             if not classes_selected:
                 raise Exception
         except:
@@ -198,16 +198,16 @@ def do_stratified_random_sampling():
     # first check input files requirements
     if not valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicMap, "thematic map"):
         return
-    if not valid_file_selected_in(sampling_design.QCBox_CategMap_StraRS, "post-stratification map"):
+    if not valid_file_selected_in(sampling_design.QCBox_StratMap_StraRS, "post-stratification map"):
         return
 
     # get and define some variables
     thematic_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicMap,
                        band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
                        nodata=float(AcATaMa.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
-    post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_CategMap_StraRS,
-                                  band=int(sampling_design.QCBox_band_CategMap_StraRS.currentText()),
-                                  nodata=float(sampling_design.nodata_CategMap_StraRS.text().strip() or "nan"))
+    post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_StratMap_StraRS,
+                                  band=int(sampling_design.QCBox_band_StratMap_StraRS.currentText()),
+                                  nodata=float(sampling_design.nodata_StratMap_StraRS.text().strip() or "nan"))
     min_distance = float(sampling_design.minDistance_StraRS.value())
 
     # get values from category table  #########
@@ -369,8 +369,8 @@ def do_systematic_sampling():
     # first check input files requirements
     if not valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicMap, "thematic map"):
         return
-    if sampling_design.QGBox_SystSwithCR.isChecked():
-        if not valid_file_selected_in(sampling_design.QCBox_CategMap_SystS, "post-stratification map"):
+    if sampling_design.QGBox_SystSwithPS.isChecked():
+        if not valid_file_selected_in(sampling_design.QCBox_PostStratMap_SystS, "post-stratification map"):
             sampling_design.MsgBar.pushMessage("Error, post-stratification option enabled but not configured",
                                                level=Qgis.Warning, duration=10)
             return
@@ -384,11 +384,11 @@ def do_systematic_sampling():
     total_of_samples = sampling_design.QPBar_GenerateSamples_SystS.maximum()
 
     # post-stratification of the systematic sampling
-    if sampling_design.QGBox_SystSwithCR.isChecked():
-        post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_CategMap_SystS,
-                                      band=int(sampling_design.QCBox_band_CategMap_SystS.currentText()))
+    if sampling_design.QGBox_SystSwithPS.isChecked():
+        post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SystS,
+                                      band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()))
         try:
-            classes_selected = [int(p) for p in sampling_design.QPBtn_CategMapClassesSelection_SystS.text().split(",")]
+            classes_selected = [int(p) for p in sampling_design.QPBtn_PostStratMapClasses_SystS.text().split(",")]
             if not classes_selected:
                 raise Exception
         except:
@@ -439,7 +439,7 @@ def do_systematic_sampling():
     sampling_design.QPBtn_GenerateSamples_SystS.setStyleSheet("background-color: red")
     sampling_design.widget_SystS_step1.setEnabled(False)
     sampling_design.widget_SystS_step2.setEnabled(False)
-    sampling_design.QGBox_SystSwithCR.setEnabled(False)
+    sampling_design.QGBox_SystSwithPS.setEnabled(False)
     sampling_design.QGBox_neighbour_aggregation_SystS.setEnabled(False)
     sampling_design.QGBox_random_sampling_options_SystS.setEnabled(False)
 
@@ -470,7 +470,7 @@ def systematic_sampling_finished(exception, result=None):
     sampling_design.QPBtn_GenerateSamples_SystS.setStyleSheet("")
     sampling_design.widget_SystS_step1.setEnabled(True)
     sampling_design.widget_SystS_step2.setEnabled(True)
-    sampling_design.QGBox_SystSwithCR.setEnabled(True)
+    sampling_design.QGBox_SystSwithPS.setEnabled(True)
     sampling_design.QGBox_neighbour_aggregation_SystS.setEnabled(True)
     sampling_design.QGBox_random_sampling_options_SystS.setEnabled(True)
     sampling_design.QPBar_GenerateSamples_SystS.setValue(0)
