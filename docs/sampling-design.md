@@ -37,6 +37,8 @@ methods for simple random and systematic sampling to ensure that samples randoml
 
 ## Simple random sampling
 
+<img src="img/simple_sampling.svg" width="25%" style="margin: auto;display: block;">
+
 It is appropriate if the sample size is large enough to ensure that all classes are adequately represented. It could be
 useful to serve the needs of a wide group of users.
 
@@ -46,6 +48,8 @@ Less complex statistical estimators compared to other sampling designs.
 _**Disadvantages**_: Underestimates the less representative classes. Not well distributed spatially
 
 ## Stratified random sampling
+
+<img src="img/stratified_sampling.svg" width="25%" style="margin: auto;display: block;">
 
 It is useful for reporting results when strata are of interest and the precision of accuracy and area estimates need to
 be improved. As a result, it is one of the most commonly used. It is used in conjunction with prior knowledge to
@@ -63,7 +67,7 @@ probabilities of inclusion, this makes it difficult to calculate the estimators
 
 ## Systematic random sampling
 
-<img src="img/systematic_sampling.png" width="50%" style="margin: auto;display: block;">
+<img src="img/systematic_sampling_info.svg" width="40%" style="margin: auto;display: block;">
 
 ### Aligned systematic sampling
 
