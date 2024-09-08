@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>688</width>
-    <height>668</height>
+    <height>711</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,20 +46,36 @@
        <string>Simple Sampling</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
-       <property name="leftMargin">
-        <number>6</number>
-       </property>
        <item>
-        <widget class="QLabel" name="label_8">
-         <property name="text">
-          <string>Simple random sampling along the thematic map where each pixel has an equal chance of being selected.</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
+        <widget class="QWidget" name="widget_2" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_8">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;img height=&quot;110&quot;  src=&quot;:/plugins/AcATaMa/icons/simple_sampling.svg&quot;/&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_8">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Simple random sampling along the thematic map where each pixel has has the same probability of being selected, with optional conditions and constraints</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
@@ -550,20 +566,36 @@
        <string>Stratified Sampling</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_10">
-       <property name="leftMargin">
-        <number>6</number>
-       </property>
        <item>
-        <widget class="QLabel" name="label_11">
-         <property name="text">
-          <string>Stratified random sampling in smaller areas (strata) with a specific number of samples for each stratum, set manually or relative to their area proportion.</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
+        <widget class="QWidget" name="widget_18" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_10">
+          <item>
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;img height=&quot;110&quot;  src=&quot;:/plugins/AcATaMa/icons/stratified_sampling.svg&quot;/&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_11">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>A stratified random sampling design divides the population into distinct strata, and then randomly selects samples from each stratum, either manually or relative to their area proportion, to ensure balanced representation across all strata.</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
@@ -1141,16 +1173,35 @@ It set automatically from image if the layer has the nodata value set.</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_7">
        <item>
-        <widget class="QLabel" name="label_25">
-         <property name="text">
-          <string>Sampling along a regular grid with a random offset to the original grid spot.</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
+        <widget class="QWidget" name="widget_3" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;img height=&quot;110&quot;  src=&quot;:/plugins/AcATaMa/icons/systematic_sampling.svg&quot;/&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_25">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Systematic random sampling involves selecting samples at regular intervals along a grid, starting from a random or fixed point from the top-left corner, and then applying a random offset to the original grid location.</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
@@ -1177,7 +1228,7 @@ It set automatically from image if the layer has the nodata value set.</string>
              <item>
               <widget class="QLabel" name="label_7">
                <property name="text">
-                <string>Apply random offset to point spacing</string>
+                <string>Apply a random offset from the grid position</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>

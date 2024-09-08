@@ -20,5 +20,8 @@
         <file>icons/setup.svg</file>
         <file>icons/autofill.svg</file>
         <file>icons/ccd_plugin.svg</file>
+        <file>icons/simple_sampling.svg</file>
+        <file>icons/stratified_sampling.svg</file>
+        <file>icons/systematic_sampling.svg</file>
     </qresource>
 </RCC>
