@@ -23,7 +23,6 @@ from collections import OrderedDict
 import yaml
 
 from AcATaMa.gui.post_stratification_classes_dialog import PostStratificationClassesDialog
-from AcATaMa.gui.response_design_window import ResponseDesignWindow
 
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
@@ -206,6 +205,9 @@ def save(file_out):
 def restore(yml_file_path):
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
     from AcATaMa.gui.sampling_design_window import SamplingDesignWindow
+    from AcATaMa.gui.response_design_window import ResponseDesignWindow
+    from AcATaMa.core.analysis import AccuracyAssessmentWindow
+    from AcATaMa.gui.sampling_report import SamplingReport
 
     # load the yaml file
     with open(yml_file_path, 'r') as yaml_file:
@@ -215,6 +217,19 @@ def restore(yml_file_path):
             iface.messageBar().pushMessage("AcATaMa", "Error while read the AcATaMa configuration file: {}".format(err),
                                            level=Qgis.Critical, duration=20)
             return
+
+    # close the windows opened
+    if SamplingDesignWindow.is_opened:
+        AcATaMa.dockwidget.sampling_design_window.closing()
+        AcATaMa.dockwidget.sampling_design_window.reject(is_ok_to_close=True)
+    if ResponseDesignWindow.is_opened:
+        AcATaMa.dockwidget.response_design_window.closing()
+        AcATaMa.dockwidget.response_design_window.reject(is_ok_to_close=True)
+    if AccuracyAssessmentWindow.is_opened:
+        AcATaMa.dockwidget.accuracy_assessment_window.closing()
+        AcATaMa.dockwidget.accuracy_assessment_window.reject(is_ok_to_close=True)
+    if SamplingReport.instance_opened:
+        SamplingReport.instance_opened.close()
 
     # clear some stuff
     PostStratificationClassesDialog.instances = {}
