@@ -63,7 +63,8 @@ def do_simple_random_sampling():
     # post-stratification of the simple random sampling
     if sampling_design.QGBox_SimpRSwithPS.isChecked():
         post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SimpRS,
-                                      band=int(sampling_design.QCBox_band_PostStratMap_SimpRS.currentText()))
+                                      band=int(sampling_design.QCBox_band_PostStratMap_SimpRS.currentText()),
+                                      nodata=float(sampling_design.nodata_PostStratMap_SimpRS.text().strip() or "nan"))
         try:
             classes_selected = [int(p) for p in sampling_design.QPBtn_PostStratMapClasses_SimpRS.text().split(",")]
             if not classes_selected:
@@ -212,20 +213,20 @@ def do_stratified_random_sampling():
 
     # get values from category table  #########
     classes_for_sampling = []
-    total_of_samples_by_cat = []
+    total_of_samples_by_stratum = []
     for row in range(sampling_design.QTableW_StraRS.rowCount()):
         classes_for_sampling.append(int(sampling_design.QTableW_StraRS.item(row, 0).text()))
-        total_of_samples_by_cat.append(sampling_design.QTableW_StraRS.item(row, 2).text())
+        total_of_samples_by_stratum.append(sampling_design.QTableW_StraRS.item(row, 2).text())
     # convert and check if number of samples only positive integers
     try:
-        total_of_samples_by_cat = [int(ns) for ns in total_of_samples_by_cat]
-        if True in [ns < 0 for ns in total_of_samples_by_cat]:
+        total_of_samples_by_stratum = [int(ns) for ns in total_of_samples_by_stratum]
+        if True in [ns < 0 for ns in total_of_samples_by_stratum]:
             raise Exception
     except:
         sampling_design.MsgBar.pushMessage("Error, the number of samples should be only positive integers",
                                            level=Qgis.Warning, duration=10)
         return
-    total_of_samples = sum(total_of_samples_by_cat)
+    total_of_samples = sum(total_of_samples_by_stratum)
     if total_of_samples == 0:
         sampling_design.MsgBar.pushMessage("Error, no number of samples configured!",
                                            level=Qgis.Warning, duration=10)
@@ -283,7 +284,7 @@ def do_stratified_random_sampling():
     # process the sampling in a QGIS task
     sampling = Sampling("stratified", thematic_map, post_stratification_map, sampling_method,
                         srs_config=srs_config, output_file=output_file)
-    sampling_conf = {"sampling_type": "stratified", "total_of_samples": total_of_samples_by_cat, "min_distance": min_distance,
+    sampling_conf = {"sampling_type": "stratified", "total_of_samples": total_of_samples_by_stratum, "min_distance": min_distance,
                      "classes_selected": classes_for_sampling, "neighbor_aggregation": neighbor_aggregation,
                      "random_seed": random_seed}
     globals()['sampling_task'] = QgsTask.fromFunction(
@@ -386,7 +387,8 @@ def do_systematic_sampling():
     # post-stratification of the systematic sampling
     if sampling_design.QGBox_SystSwithPS.isChecked():
         post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SystS,
-                                      band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()))
+                                      band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()),
+                                      nodata=float(sampling_design.nodata_PostStratMap_SystS.text().strip() or "nan"))
         try:
             classes_selected = [int(p) for p in sampling_design.QPBtn_PostStratMapClasses_SystS.text().split(",")]
             if not classes_selected:

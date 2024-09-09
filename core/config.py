@@ -84,6 +84,7 @@ def save(file_out):
         "post_stratification_map_path": get_current_file_path_in(sampling_design.QCBox_PostStratMap_SimpRS, show_message=False),
         "post_stratification_map_band": int(sampling_design.QCBox_band_PostStratMap_SimpRS.currentText())
             if sampling_design.QCBox_band_PostStratMap_SimpRS.currentText() != '' else -1,
+        "post_stratification_map_nodata": sampling_design.nodata_PostStratMap_SimpRS.text(),
         "classes_selected_for_sampling": sampling_design.QPBtn_PostStratMapClasses_SimpRS.text()
             if sampling_design.QPBtn_PostStratMapClasses_SimpRS.text() != 'click to select' else None,
 
@@ -134,6 +135,7 @@ def save(file_out):
         "post_stratification_map_path": get_current_file_path_in(sampling_design.QCBox_PostStratMap_SystS, show_message=False),
         "post_stratification_map_band": int(sampling_design.QCBox_band_PostStratMap_SystS.currentText())
             if sampling_design.QCBox_band_PostStratMap_SystS.currentText() != '' else -1,
+        "post_stratification_map_nodata": sampling_design.nodata_PostStratMap_SystS.text(),
         "classes_selected_for_sampling": sampling_design.QPBtn_PostStratMapClasses_SystS.text()
             if sampling_design.QPBtn_PostStratMapClasses_SystS.text() != 'click to select' else None,
         "with_neighbors_aggregation": sampling_design.QGBox_neighbour_aggregation_SystS.isChecked(),
@@ -335,9 +337,14 @@ def restore(yml_file_path):
             yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification'])
         load_and_select_filepath_in(sampling_design.QCBox_PostStratMap_SimpRS,
                                     get_restore_path(yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification_map_path']))
-        sampling_design.select_post_stratification_map_SimpRS()
+        sampling_design.update_post_stratification_map_SimpRS(item_changed="layer")
         sampling_design.QCBox_band_PostStratMap_SimpRS.setCurrentIndex(
             yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification_map_band'] - 1)
+        sampling_design.update_post_stratification_map_SimpRS(item_changed="band")
+        if "post_stratification_map_nodata" in yaml_config["sampling_design"]["simple_random_sampling"]:
+            nodata = set_nodata_format(yaml_config["sampling_design"]["simple_random_sampling"]["post_stratification_map_nodata"])
+            sampling_design.nodata_PostStratMap_SimpRS.setText(nodata)
+        sampling_design.update_post_stratification_map_SimpRS(item_changed="nodata")
         sampling_design.QPBtn_PostStratMapClasses_SimpRS.setText(
             yaml_config["sampling_design"]["simple_random_sampling"]['classes_selected_for_sampling']
             if yaml_config["sampling_design"]["simple_random_sampling"]['classes_selected_for_sampling'] else "click to select")
@@ -364,7 +371,7 @@ def restore(yml_file_path):
         # stratified random sampling
         load_and_select_filepath_in(sampling_design.QCBox_StratMap_StraRS,
                                     get_restore_path(yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_path']))
-        sampling_design.select_post_stratification_map_StraRS(sampling_design.QCBox_StratMap_StraRS.currentLayer())
+        sampling_design.update_stratification_map_StraRS(sampling_design.QCBox_StratMap_StraRS.currentLayer())
         sampling_design.QCBox_band_StratMap_StraRS.setCurrentIndex(
             yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_band'] - 1)
         # nodata
@@ -451,9 +458,14 @@ def restore(yml_file_path):
                 yaml_config["sampling_design"]["systematic_sampling"]['post_stratification'])
             load_and_select_filepath_in(sampling_design.QCBox_PostStratMap_SystS,
                                         get_restore_path(yaml_config["sampling_design"]["systematic_sampling"]['post_stratification_map_path']))
-            sampling_design.select_post_stratification_map_SystS()
+            sampling_design.update_post_stratification_map_SystS(item_changed="layer")
             sampling_design.QCBox_band_PostStratMap_SystS.setCurrentIndex(
                 yaml_config["sampling_design"]["systematic_sampling"]['post_stratification_map_band'] - 1)
+            sampling_design.update_post_stratification_map_SystS(item_changed="band")
+            if "post_stratification_map_nodata" in yaml_config["sampling_design"]["systematic_sampling"]:
+                nodata = set_nodata_format(yaml_config["sampling_design"]["systematic_sampling"]["post_stratification_map_nodata"])
+                sampling_design.nodata_PostStratMap_SystS.setText(nodata)
+            sampling_design.update_post_stratification_map_SystS(item_changed="nodata")
             sampling_design.QPBtn_PostStratMapClasses_SystS.setText(
                 yaml_config["sampling_design"]["systematic_sampling"]['classes_selected_for_sampling']
                 if yaml_config["sampling_design"]["systematic_sampling"]['classes_selected_for_sampling'] else "click to select")

@@ -37,24 +37,28 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 class PostStratificationClassesDialog(QDialog, FORM_CLASS):
     instances = {}
 
-    def __init__(self, post_stratification_map_layer, post_stratification_map_band, set_classes_selected=None):
+    def __init__(self, post_stratification_map_layer, post_stratification_map_band, post_stratification_map_nodata, set_classes_selected=None):
         QDialog.__init__(self)
         self.setupUi(self)
         self.post_stratification_map_layer = post_stratification_map_layer
         self.post_stratification_map_band = post_stratification_map_band
+        self.post_stratification_map_nodata = post_stratification_map_nodata
         self.classes_selected = \
             [i.strip() for i in (set_classes_selected.split(',') if set_classes_selected and
                                                                     set_classes_selected != "click to select" else [])]
         if self.create_table():
             # save instance
-            PostStratificationClassesDialog.instances[(post_stratification_map_layer, post_stratification_map_band)] = self
+            PostStratificationClassesDialog.instances[
+                (post_stratification_map_layer, post_stratification_map_band, post_stratification_map_nodata)] = self
 
     @error_handler
     def create_table(self):
         header = ["Pix Val", "Color", "Select"]
         # get color table from raster
         classes_table = {"values_and_colors_table": get_values_and_colors_table(
-            self.post_stratification_map_layer, band=self.post_stratification_map_band)}
+            self.post_stratification_map_layer,
+            band=self.post_stratification_map_band,
+            nodata=self.post_stratification_map_nodata)}
 
         if not classes_table["values_and_colors_table"]:
             # clear table

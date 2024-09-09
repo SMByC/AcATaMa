@@ -19,7 +19,8 @@ def test_simple_post_stratified_random_sampling(plugin, unwrap, tmpdir):
                        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
                        nodata=float(plugin.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
     post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SimpRS,
-                                  band=int(sampling_design.QCBox_band_PostStratMap_SimpRS.currentText()))
+                                  band=int(sampling_design.QCBox_band_PostStratMap_SimpRS.currentText()),
+                                  nodata=float(sampling_design.nodata_PostStratMap_SimpRS.text().strip() or "nan"))
     classes_selected = [int(p) for p in sampling_design.QPBtn_PostStratMapClasses_SimpRS.text().split(",")]
     total_of_samples = int(sampling_design.numberOfSamples_SimpRS.value())
     min_distance = float(sampling_design.minDistance_SimpRS.value())
@@ -61,7 +62,8 @@ def test_stratified_random_sampling(plugin, unwrap, tmpdir):
                        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
                        nodata=float(plugin.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
     post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_StratMap_StraRS,
-                                  band=int(sampling_design.QCBox_band_StratMap_StraRS.currentText()))
+                                  band=int(sampling_design.QCBox_band_StratMap_StraRS.currentText()),
+                                  nodata=float(sampling_design.nodata_StratMap_StraRS.text().strip() or "nan"))
 
     classes_for_sampling = []
     total_of_samples = []
@@ -117,7 +119,8 @@ def test_systematic_post_stratified_random_sampling(plugin, unwrap, tmpdir):
                        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
                        nodata=float(plugin.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
     post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SystS,
-                                  band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()))
+                                  band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()),
+                                  nodata=float(sampling_design.nodata_PostStratMap_SystS.text().strip() or "nan"))
     points_spacing = float(sampling_design.PointsSpacing_SystS.value())
     initial_inset = float(sampling_design.InitialInsetFixed_SystS.value())
     max_xy_offset = float(sampling_design.MaxXYoffset_SystS.value())
@@ -164,7 +167,8 @@ def test_systematic_post_stratified_with_initial_inset_random(plugin, unwrap, tm
                        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
                        nodata=float(plugin.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
     post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SystS,
-                                  band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()))
+                                  band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()),
+                                  nodata=float(sampling_design.nodata_PostStratMap_SystS.text().strip() or "nan"))
     points_spacing = float(sampling_design.PointsSpacing_SystS.value())
     max_xy_offset = float(sampling_design.MaxXYoffset_SystS.value())
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>688</width>
-    <height>711</height>
+    <height>773</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -260,6 +260,23 @@
                      </property>
                      <property name="toolTip">
                       <string>Band</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="nodata_PostStratMap_SimpRS">
+                     <property name="maximumSize">
+                      <size>
+                       <width>80</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="toolTip">
+                      <string>Nodata Value.
+It set automatically from image if the layer has the nodata value set.</string>
+                     </property>
+                     <property name="placeholderText">
+                      <string>nan</string>
                      </property>
                     </widget>
                    </item>
@@ -1431,6 +1448,23 @@ It set automatically from image if the layer has the nodata value set.</string>
                      </property>
                      <property name="toolTip">
                       <string>Band</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="nodata_PostStratMap_SystS">
+                     <property name="maximumSize">
+                      <size>
+                       <width>80</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="toolTip">
+                      <string>Nodata Value.
+It set automatically from image if the layer has the nodata value set.</string>
+                     </property>
+                     <property name="placeholderText">
+                      <string>nan</string>
                      </property>
                     </widget>
                    </item>

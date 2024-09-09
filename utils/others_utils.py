@@ -259,3 +259,11 @@ def set_nodata_format(value):
     if value == int(value):
         return str(int(value))
     return str(value)
+
+def get_nodata_format(value):
+    # return nodata value as None or integer
+    if isinstance(value, str):
+        value = value.strip()
+    if value is None or value == "" or value == "nan" or (isinstance(value, float) and np.isnan(value)):
+        return None
+    return int(value)
