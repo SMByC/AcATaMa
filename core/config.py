@@ -80,9 +80,9 @@ def save(file_out):
         "num_samples": sampling_design.numberOfSamples_SimpRS.value(),
         "min_distance": sampling_design.minDistance_SimpRS.value(),
 
-        "post_stratify": sampling_design.QGBox_SimpRSwithPS.isChecked(),
-        "categ_map_path": get_current_file_path_in(sampling_design.QCBox_PostStratMap_SimpRS, show_message=False),
-        "categ_map_band": int(sampling_design.QCBox_band_PostStratMap_SimpRS.currentText())
+        "post_stratification": sampling_design.QGBox_SimpRSwithPS.isChecked(),
+        "post_stratification_map_path": get_current_file_path_in(sampling_design.QCBox_PostStratMap_SimpRS, show_message=False),
+        "post_stratification_map_band": int(sampling_design.QCBox_band_PostStratMap_SimpRS.currentText())
             if sampling_design.QCBox_band_PostStratMap_SimpRS.currentText() != '' else -1,
         "classes_selected_for_sampling": sampling_design.QPBtn_PostStratMapClasses_SimpRS.text()
             if sampling_design.QPBtn_PostStratMapClasses_SimpRS.text() != 'click to select' else None,
@@ -101,10 +101,10 @@ def save(file_out):
     with_srs_table = sampling_design.QCBox_StratMap_StraRS.currentText() in sampling_design.srs_tables and \
         srs_method in sampling_design.srs_tables[sampling_design.QCBox_StratMap_StraRS.currentText()]
     data["sampling_design"]["stratified_random_sampling"] = {
-        "categ_map_path": get_current_file_path_in(sampling_design.QCBox_StratMap_StraRS, show_message=False),
-        "categ_map_band": int(sampling_design.QCBox_band_StratMap_StraRS.currentText())
+        "stratification_map_path": get_current_file_path_in(sampling_design.QCBox_StratMap_StraRS, show_message=False),
+        "stratification_map_band": int(sampling_design.QCBox_band_StratMap_StraRS.currentText())
             if sampling_design.QCBox_band_StratMap_StraRS.currentText() != '' else -1,
-        "categ_map_nodata": sampling_design.nodata_StratMap_StraRS.text(),
+        "stratification_map_nodata": sampling_design.nodata_StratMap_StraRS.text(),
 
         "sampling_random_method": sampling_design.QCBox_StraRS_Method.currentText(),
         "overall_std_error": sampling_design.TotalExpectedSE.value(),
@@ -130,9 +130,9 @@ def save(file_out):
         "initial_inset": sampling_design.InitialInsetFixed_SystS.value(),
         "max_xy_offset": sampling_design.MaxXYoffset_SystS.value(),
 
-        "post_stratify": sampling_design.QGBox_SystSwithPS.isChecked(),
-        "categ_map_path": get_current_file_path_in(sampling_design.QCBox_PostStratMap_SystS, show_message=False),
-        "categ_map_band": int(sampling_design.QCBox_band_PostStratMap_SystS.currentText())
+        "post_stratification": sampling_design.QGBox_SystSwithPS.isChecked(),
+        "post_stratification_map_path": get_current_file_path_in(sampling_design.QCBox_PostStratMap_SystS, show_message=False),
+        "post_stratification_map_band": int(sampling_design.QCBox_band_PostStratMap_SystS.currentText())
             if sampling_design.QCBox_band_PostStratMap_SystS.currentText() != '' else -1,
         "classes_selected_for_sampling": sampling_design.QPBtn_PostStratMapClasses_SystS.text()
             if sampling_design.QPBtn_PostStratMapClasses_SystS.text() != 'click to select' else None,
@@ -269,6 +269,37 @@ def restore(yml_file_path):
     if "sampling_design" in yaml_config and "pixel_values_categ_map" in yaml_config["sampling_design"]["simple_random_sampling"]:
         yaml_config["sampling_design"]["simple_random_sampling"]['classes_selected_for_sampling'] = \
             yaml_config["sampling_design"]["simple_random_sampling"].pop("pixel_values_categ_map")
+    # old post stratification section
+    if "post_stratify" in yaml_config["sampling_design"]["simple_random_sampling"]:
+        yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification'] = \
+            yaml_config["sampling_design"]["simple_random_sampling"].pop("post_stratify")
+    if "post_stratify" in yaml_config["sampling_design"]["systematic_sampling"]:
+        yaml_config["sampling_design"]["systematic_sampling"]['post_stratification'] = \
+            yaml_config["sampling_design"]["systematic_sampling"].pop("post_stratify")
+    # old post stratification map path
+    if "categ_map_path" in yaml_config["sampling_design"]["simple_random_sampling"]:
+        yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification_map_path'] = \
+            yaml_config["sampling_design"]["simple_random_sampling"].pop("categ_map_path")
+    if "categ_map_path" in yaml_config["sampling_design"]["systematic_sampling"]:
+        yaml_config["sampling_design"]["systematic_sampling"]['post_stratification_map_path'] = \
+            yaml_config["sampling_design"]["systematic_sampling"].pop("categ_map_path")
+    if "categ_map_path" in yaml_config["sampling_design"]["stratified_random_sampling"]:
+        yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_path'] = \
+            yaml_config["sampling_design"]["stratified_random_sampling"].pop("categ_map_path")
+    # old post stratification map band
+    if "categ_map_band" in yaml_config["sampling_design"]["simple_random_sampling"]:
+        yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification_map_band'] = \
+            yaml_config["sampling_design"]["simple_random_sampling"].pop("categ_map_band")
+    if "categ_map_band" in yaml_config["sampling_design"]["systematic_sampling"]:
+        yaml_config["sampling_design"]["systematic_sampling"]['post_stratification_map_band'] = \
+            yaml_config["sampling_design"]["systematic_sampling"].pop("categ_map_band")
+    if "categ_map_band" in yaml_config["sampling_design"]["stratified_random_sampling"]:
+        yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_band'] = \
+            yaml_config["sampling_design"]["stratified_random_sampling"].pop("categ_map_band")
+    # old post stratification map nodata
+    if "categ_map_nodata" in yaml_config["sampling_design"]["stratified_random_sampling"]:
+        yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_nodata'] = \
+            yaml_config["sampling_design"]["stratified_random_sampling"].pop("categ_map_nodata")
 
     # restore the thematic map
     if yaml_config["thematic_map"]["path"]:
@@ -299,14 +330,14 @@ def restore(yml_file_path):
         sampling_design.minDistance_SimpRS.setValue(
             yaml_config["sampling_design"]["simple_random_sampling"]['min_distance'])
         sampling_design.QGBox_SimpRSwithPS.setChecked(
-            yaml_config["sampling_design"]["simple_random_sampling"]['post_stratify'])
+            yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification'])
         sampling_design.widget_SimpRSwithPS.setVisible(
-            yaml_config["sampling_design"]["simple_random_sampling"]['post_stratify'])
+            yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification'])
         load_and_select_filepath_in(sampling_design.QCBox_PostStratMap_SimpRS,
-                                    get_restore_path(yaml_config["sampling_design"]["simple_random_sampling"]['categ_map_path']))
+                                    get_restore_path(yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification_map_path']))
         sampling_design.select_post_stratification_map_SimpRS()
         sampling_design.QCBox_band_PostStratMap_SimpRS.setCurrentIndex(
-            yaml_config["sampling_design"]["simple_random_sampling"]['categ_map_band'] - 1)
+            yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification_map_band'] - 1)
         sampling_design.QPBtn_PostStratMapClasses_SimpRS.setText(
             yaml_config["sampling_design"]["simple_random_sampling"]['classes_selected_for_sampling']
             if yaml_config["sampling_design"]["simple_random_sampling"]['classes_selected_for_sampling'] else "click to select")
@@ -332,12 +363,12 @@ def restore(yml_file_path):
 
         # stratified random sampling
         load_and_select_filepath_in(sampling_design.QCBox_StratMap_StraRS,
-                                    get_restore_path(yaml_config["sampling_design"]["stratified_random_sampling"]['categ_map_path']))
+                                    get_restore_path(yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_path']))
         sampling_design.select_post_stratification_map_StraRS(sampling_design.QCBox_StratMap_StraRS.currentLayer())
         sampling_design.QCBox_band_StratMap_StraRS.setCurrentIndex(
-            yaml_config["sampling_design"]["stratified_random_sampling"]['categ_map_band'] - 1)
+            yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_band'] - 1)
         # nodata
-        nodata = set_nodata_format(yaml_config["sampling_design"]["stratified_random_sampling"]["categ_map_nodata"])
+        nodata = set_nodata_format(yaml_config["sampling_design"]["stratified_random_sampling"]["stratification_map_nodata"])
         if CONFIG_FILE_VERSION == 191121 and nodata == "-1":
             sampling_design.nodata_StratMap_StraRS.setText("nan")
         else:
@@ -415,14 +446,14 @@ def restore(yml_file_path):
                 yaml_config["sampling_design"]["systematic_sampling"]['max_xy_offset'])
 
             sampling_design.QGBox_SystSwithPS.setChecked(
-                yaml_config["sampling_design"]["systematic_sampling"]['post_stratify'])
+                yaml_config["sampling_design"]["systematic_sampling"]['post_stratification'])
             sampling_design.widget_SystSwithPS.setVisible(
-                yaml_config["sampling_design"]["systematic_sampling"]['post_stratify'])
+                yaml_config["sampling_design"]["systematic_sampling"]['post_stratification'])
             load_and_select_filepath_in(sampling_design.QCBox_PostStratMap_SystS,
-                                        get_restore_path(yaml_config["sampling_design"]["systematic_sampling"]['categ_map_path']))
+                                        get_restore_path(yaml_config["sampling_design"]["systematic_sampling"]['post_stratification_map_path']))
             sampling_design.select_post_stratification_map_SystS()
             sampling_design.QCBox_band_PostStratMap_SystS.setCurrentIndex(
-                yaml_config["sampling_design"]["systematic_sampling"]['categ_map_band'] - 1)
+                yaml_config["sampling_design"]["systematic_sampling"]['post_stratification_map_band'] - 1)
             sampling_design.QPBtn_PostStratMapClasses_SystS.setText(
                 yaml_config["sampling_design"]["systematic_sampling"]['classes_selected_for_sampling']
                 if yaml_config["sampling_design"]["systematic_sampling"]['classes_selected_for_sampling'] else "click to select")
