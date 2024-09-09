@@ -193,7 +193,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         #
         self.InitialInsetFixed_SystS.setSuffix(" {}".format(str_unit))
         self.InitialInsetFixed_SystS.setToolTip(
-            "Initial inset distance from left-top\n(units based on thematic map selected)")
+            "Initial inset distance\n(units based on thematic map selected)")
         self.InitialInsetFixed_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
         self.InitialInsetFixed_SystS.setDecimals(
             4 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,

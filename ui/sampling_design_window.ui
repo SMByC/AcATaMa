@@ -1291,7 +1291,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                 <item row="1" column="0">
                  <widget class="QLabel" name="label_27">
                   <property name="text">
-                   <string>Initial inset from LT sides:</string>
+                   <string>Initial inset from TL corner:</string>
                   </property>
                  </widget>
                 </item>
@@ -1305,7 +1305,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                 <item row="1" column="1">
                  <widget class="QComboBox" name="QCBox_InitialInsetMode_SystS">
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the initial inset from left-top corner using a random value (from 0 to point spacing) or using a fixed value by user&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the initial inset from top-left corner using a random value (from 0 to point spacing) or using a fixed value by user&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <item>
                    <property name="text">
