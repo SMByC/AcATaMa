@@ -236,13 +236,9 @@ def get_pixel_count_by_pixel_values_sequential(layer, band, pixel_values=None, n
 # set nodata format for the text line boxes
 
 def set_nodata_format(value):
-    if isinstance(value, str) and not value.strip():
+    if isinstance(value, str) and (not value.strip() or (value.lower() == "nan")):
         return ""
     value = float(value)
-    if np.isnan(value):
-        return str(value)
-    if value <= -1000 or value >= 1000:
-        return np.format_float_scientific(value)
     if value == int(value):
         return str(int(value))
     return str(value)
@@ -253,4 +249,4 @@ def get_nodata_format(value):
         value = value.strip()
     if value is None or value == "" or value == "nan" or (isinstance(value, float) and np.isnan(value)):
         return None
-    return int(value)
+    return int(float(value))

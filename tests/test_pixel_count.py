@@ -75,6 +75,6 @@ def test_pixel_count_and_auto_symbology(plugin, unwrap, tmpdir):
 
     layer = load_layer(str(layer_unsetnodata))
     auto_symbology_classification_render(layer, 1)
-    pixel_count = get_pixel_count_by_pixel_values(layer, band=1, nodata="nan")
+    pixel_count = get_pixel_count_by_pixel_values(layer, band=1, nodata=None)
 
     assert pixel_count == {-2147483647: 15785, 1: 10423, 2: 418, 5: 8822}
