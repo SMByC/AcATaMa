@@ -38,7 +38,7 @@ from AcATaMa.utils.system_utils import wait_process, block_signals_to
 from AcATaMa.utils.sampling_utils import fill_stratified_sampling_table
 from AcATaMa.utils.qgis_utils import get_current_file_path_in, get_file_path_of_layer, load_and_select_filepath_in, \
     select_item_in
-from AcATaMa.utils.others_utils import set_nodata_format, get_plugin_version
+from AcATaMa.utils.others_utils import set_nodata_format, get_plugin_version, get_nodata_format
 
 CONFIG_FILE_VERSION = None
 
@@ -411,7 +411,7 @@ def restore(yml_file_path):
             storage_pixel_count_by_pixel_values[
                 (sampling_design.QCBox_StratMap_StraRS.currentLayer(),
                  int(sampling_design.QCBox_band_StratMap_StraRS.currentText()),
-                 set_nodata_format(sampling_design.nodata_StratMap_StraRS.text().strip() or "nan"))
+                 get_nodata_format(sampling_design.nodata_StratMap_StraRS.text()))
             ] = dict(zip(srs_table['values_and_colors_table']['Pixel Value'], srs_table['pixel_count']))
 
         # TODO:

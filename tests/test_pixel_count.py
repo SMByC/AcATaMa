@@ -5,7 +5,7 @@ from osgeo import gdal
 from AcATaMa.core import config
 from AcATaMa.core.map import auto_symbology_classification_render
 from AcATaMa.utils.others_utils import get_pixel_count_by_pixel_values, get_pixel_count_by_pixel_values_sequential, \
-    get_pixel_count_by_pixel_values_parallel
+    get_pixel_count_by_pixel_values_parallel, get_nodata_format
 from AcATaMa.utils.qgis_utils import load_layer
 
 
@@ -45,7 +45,7 @@ def test_pixel_count_with_nodata_sequential(plugin, unwrap):
     pixel_count = get_pixel_count_by_pixel_values_sequential(
         plugin.dockwidget.QCBox_ThematicMap.currentLayer(),
         band=int(sampling_design.QCBox_band_StratMap_StraRS.currentText()),
-        nodata=float(sampling_design.nodata_StratMap_StraRS.text().strip() or "nan")
+        nodata=get_nodata_format(sampling_design.nodata_StratMap_StraRS.text())
     )
 
     assert pixel_count == {1: 10423, 2: 418, 5: 8822}
@@ -61,7 +61,7 @@ def test_pixel_count_with_nodata_parallel(plugin, unwrap):
     pixel_count = get_pixel_count_by_pixel_values_parallel(
         plugin.dockwidget.QCBox_ThematicMap.currentLayer(),
         band=int(sampling_design.QCBox_band_StratMap_StraRS.currentText()),
-        nodata=float(sampling_design.nodata_StratMap_StraRS.text().strip() or "nan")
+        nodata=get_nodata_format(sampling_design.nodata_StratMap_StraRS.text())
     )
 
     assert pixel_count == {1: 10423, 2: 418, 5: 8822}

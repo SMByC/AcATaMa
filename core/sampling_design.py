@@ -33,6 +33,7 @@ from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.utils.qgis_utils import load_layer, valid_file_selected_in
 from AcATaMa.utils.system_utils import error_handler, output_file_is_OK
 from AcATaMa.gui.sampling_report import SamplingReport
+from AcATaMa.utils.others_utils import get_nodata_format
 
 
 def do_simple_random_sampling():
@@ -56,7 +57,7 @@ def do_simple_random_sampling():
     # get and define some variables
     thematic_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicMap,
                        band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
-                       nodata=float(AcATaMa.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
+                       nodata=get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text()))
     total_of_samples = int(sampling_design.numberOfSamples_SimpRS.value())
     min_distance = float(sampling_design.minDistance_SimpRS.value())
 
@@ -64,7 +65,7 @@ def do_simple_random_sampling():
     if sampling_design.QGBox_SimpRSwithPS.isChecked():
         post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SimpRS,
                                       band=int(sampling_design.QCBox_band_PostStratMap_SimpRS.currentText()),
-                                      nodata=float(sampling_design.nodata_PostStratMap_SimpRS.text().strip() or "nan"))
+                                      nodata=get_nodata_format(sampling_design.nodata_PostStratMap_SimpRS.text()))
         try:
             classes_selected = [int(p) for p in sampling_design.QPBtn_PostStratMapClasses_SimpRS.text().split(",")]
             if not classes_selected:
@@ -205,10 +206,10 @@ def do_stratified_random_sampling():
     # get and define some variables
     thematic_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicMap,
                        band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
-                       nodata=float(AcATaMa.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
+                       nodata=get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text().strip()))
     post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_StratMap_StraRS,
                                   band=int(sampling_design.QCBox_band_StratMap_StraRS.currentText()),
-                                  nodata=float(sampling_design.nodata_StratMap_StraRS.text().strip() or "nan"))
+                                  nodata=get_nodata_format(sampling_design.nodata_StratMap_StraRS.text()))
     min_distance = float(sampling_design.minDistance_StraRS.value())
 
     # get values from category table  #########
@@ -379,7 +380,7 @@ def do_systematic_sampling():
     # get and define some variables
     thematic_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicMap,
                        band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
-                       nodata=float(AcATaMa.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
+                       nodata=get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text()))
     points_spacing = float(sampling_design.PointsSpacing_SystS.value())
     max_xy_offset = float(sampling_design.MaxXYoffset_SystS.value())
     total_of_samples = sampling_design.QPBar_GenerateSamples_SystS.maximum()
@@ -388,7 +389,7 @@ def do_systematic_sampling():
     if sampling_design.QGBox_SystSwithPS.isChecked():
         post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SystS,
                                       band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()),
-                                      nodata=float(sampling_design.nodata_PostStratMap_SystS.text().strip() or "nan"))
+                                      nodata=get_nodata_format(sampling_design.nodata_PostStratMap_SystS.text()))
         try:
             classes_selected = [int(p) for p in sampling_design.QPBtn_PostStratMapClasses_SystS.text().split(",")]
             if not classes_selected:

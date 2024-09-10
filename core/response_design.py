@@ -29,6 +29,7 @@ from qgis.utils import iface
 from AcATaMa.core.point import LabelingPoint
 from AcATaMa.core.map import Map
 from AcATaMa.utils.system_utils import wait_process
+from AcATaMa.utils.others_utils import get_nodata_format
 
 
 class ResponseDesign(object):
@@ -185,7 +186,7 @@ class ResponseDesign(object):
             from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
             thematic_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicMap,
                                band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
-                               nodata=float(AcATaMa.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
+                               nodata=get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text()))
 
         points_ordered = sorted(self.points, key=lambda p: p.sample_id)
         for point in points_ordered:

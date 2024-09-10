@@ -30,6 +30,7 @@ from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.gui import accuracy_assessment_results
 from AcATaMa.utils.qgis_utils import get_file_path_of_layer
 from AcATaMa.utils.system_utils import wait_process, output_file_is_OK
+from AcATaMa.utils.others_utils import get_nodata_format
 
 
 class Analysis(object):
@@ -49,7 +50,7 @@ class Analysis(object):
         self.thematic_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicMap,
                                 band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
                                      if AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText() else None,
-                                nodata=float(AcATaMa.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
+                                nodata=get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text()))
         self.thematic_pixels_count = {}
         # dialog settings
         self.area_unit = None

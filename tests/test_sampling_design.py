@@ -5,6 +5,7 @@ from shapely.geometry import shape
 from AcATaMa.core import config
 from AcATaMa.core.map import Map
 from AcATaMa.core.sampling_design import Sampling
+from AcATaMa.utils.others_utils import get_nodata_format
 
 
 def test_simple_post_stratified_random_sampling(plugin, unwrap, tmpdir):
@@ -17,10 +18,10 @@ def test_simple_post_stratified_random_sampling(plugin, unwrap, tmpdir):
     # load simple post stratify random sampling config
     thematic_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
                        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
-                       nodata=float(plugin.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
+                       nodata=get_nodata_format(plugin.dockwidget.nodata_ThematicMap.text()))
     post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SimpRS,
                                   band=int(sampling_design.QCBox_band_PostStratMap_SimpRS.currentText()),
-                                  nodata=float(sampling_design.nodata_PostStratMap_SimpRS.text().strip() or "nan"))
+                                  nodata=get_nodata_format(sampling_design.nodata_PostStratMap_SimpRS.text()))
     classes_selected = [int(p) for p in sampling_design.QPBtn_PostStratMapClasses_SimpRS.text().split(",")]
     total_of_samples = int(sampling_design.numberOfSamples_SimpRS.value())
     min_distance = float(sampling_design.minDistance_SimpRS.value())
@@ -60,10 +61,10 @@ def test_stratified_random_sampling(plugin, unwrap, tmpdir):
     # load stratify random sampling area based proportion config
     thematic_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
                        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
-                       nodata=float(plugin.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
+                       nodata=get_nodata_format(plugin.dockwidget.nodata_ThematicMap.text()))
     post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_StratMap_StraRS,
                                   band=int(sampling_design.QCBox_band_StratMap_StraRS.currentText()),
-                                  nodata=float(sampling_design.nodata_StratMap_StraRS.text().strip() or "nan"))
+                                  nodata=get_nodata_format(sampling_design.nodata_StratMap_StraRS.text()))
 
     classes_for_sampling = []
     total_of_samples = []
@@ -117,10 +118,10 @@ def test_systematic_post_stratified_random_sampling(plugin, unwrap, tmpdir):
     # load simple post stratify random sampling config
     thematic_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
                        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
-                       nodata=float(plugin.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
+                       nodata=get_nodata_format(plugin.dockwidget.nodata_ThematicMap.text()))
     post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SystS,
                                   band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()),
-                                  nodata=float(sampling_design.nodata_PostStratMap_SystS.text().strip() or "nan"))
+                                  nodata=get_nodata_format(sampling_design.nodata_PostStratMap_SystS.text()))
     points_spacing = float(sampling_design.PointsSpacing_SystS.value())
     initial_inset = float(sampling_design.InitialInsetFixed_SystS.value())
     max_xy_offset = float(sampling_design.MaxXYoffset_SystS.value())
@@ -165,10 +166,10 @@ def test_systematic_post_stratified_with_initial_inset_random(plugin, unwrap, tm
     # load simple post stratify random sampling config
     thematic_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
                        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
-                       nodata=float(plugin.dockwidget.nodata_ThematicMap.text().strip() or "nan"))
+                       nodata=get_nodata_format(plugin.dockwidget.nodata_ThematicMap.text()))
     post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SystS,
                                   band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()),
-                                  nodata=float(sampling_design.nodata_PostStratMap_SystS.text().strip() or "nan"))
+                                  nodata=get_nodata_format(sampling_design.nodata_PostStratMap_SystS.text()))
     points_spacing = float(sampling_design.PointsSpacing_SystS.value())
     max_xy_offset = float(sampling_design.MaxXYoffset_SystS.value())
 

@@ -23,7 +23,7 @@ from qgis.PyQt.QtWidgets import QTableWidgetItem
 from qgis.PyQt.QtGui import QColor
 
 from AcATaMa.utils.system_utils import wait_process, block_signals_to
-from AcATaMa.utils.others_utils import mask, get_pixel_count_by_pixel_values, set_nodata_format
+from AcATaMa.utils.others_utils import mask, get_pixel_count_by_pixel_values, get_nodata_format
 
 
 def check_min_distance(point, index, distance, points):
@@ -192,7 +192,7 @@ def reload_StraRS_table(dockwidget):
         global storage_pixel_count_by_pixel_values
         layer = dockwidget.QCBox_StratMap_StraRS.currentLayer()
         band = int(dockwidget.QCBox_band_StratMap_StraRS.currentText())
-        nodata = set_nodata_format(float(dockwidget.nodata_StratMap_StraRS.text().strip() or "nan"))
+        nodata = get_nodata_format(dockwidget.nodata_StratMap_StraRS.text())
         if (layer, band, nodata) in storage_pixel_count_by_pixel_values:
             del storage_pixel_count_by_pixel_values[(layer, band, nodata)]
 
@@ -229,7 +229,7 @@ def fill_stratified_sampling_table(dockwidget):
         srs_table = {"values_and_colors_table": get_values_and_colors_table(
             dockwidget.QCBox_StratMap_StraRS.currentLayer(),
             band=int(dockwidget.QCBox_band_StratMap_StraRS.currentText()),
-            nodata=float(dockwidget.nodata_StratMap_StraRS.text().strip() or "nan"))}
+            nodata=get_nodata_format(dockwidget.nodata_StratMap_StraRS.text()))}
 
         if not srs_table["values_and_colors_table"]:
             # clear table
@@ -254,7 +254,7 @@ def fill_stratified_sampling_table(dockwidget):
                 get_pixel_count_by_pixel_values(dockwidget.QCBox_StratMap_StraRS.currentLayer(),
                                                 int(dockwidget.QCBox_band_StratMap_StraRS.currentText()),
                                                 srs_table["values_and_colors_table"]["Pixel Value"],
-                                                float(dockwidget.nodata_StratMap_StraRS.text().strip() or "nan")).values())
+                                                get_nodata_format(dockwidget.nodata_StratMap_StraRS.text())).values())
             total_std_error = dockwidget.TotalExpectedSE.value()
             srs_table["On"] = [True] * srs_table["row_count"]
             srs_table["num_samples"] = get_num_samples_by_area_based_proportion(srs_table, total_std_error)

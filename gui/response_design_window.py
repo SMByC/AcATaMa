@@ -38,6 +38,7 @@ from AcATaMa.utils.qgis_utils import valid_file_selected_in, get_current_file_pa
 from AcATaMa.core.map import get_values_and_colors_table
 from AcATaMa.utils.system_utils import open_file, block_signals_to, error_handler
 from AcATaMa.gui.response_design_view_widget import LabelingViewWidget
+from AcATaMa.utils.others_utils import get_nodata_format
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -865,7 +866,7 @@ class ThematicMapClasses(QDialog, FORM_CLASS):
         thematic_table = {"values_and_colors_table": get_values_and_colors_table(
             AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer(),
             band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
-            nodata=float(AcATaMa.dockwidget.nodata_ThematicMap.text().strip() or "nan"))}
+            nodata=get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text()))}
 
         if not thematic_table["values_and_colors_table"]:
             # clear table
