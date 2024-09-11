@@ -138,7 +138,9 @@ def update_srs_table_content(dockwidget, srs_table):
                 for m in range(srs_table["row_count"]):
                     item_table = QTableWidgetItem(srs_table["ui"][m])
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                    item_table.setToolTip("User accuracy expected")
+                    item_table.setToolTip("User's accuracy confidence for this map class.\n\n"
+                                          "0.6 - 0.8 for unstable classes\n"
+                                          "0.8 - 0.95 for stable classes")
                     if not srs_table["On"][m]:
                         item_table.setForeground(QColor("lightGrey"))
                         item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
@@ -249,7 +251,7 @@ def fill_stratified_sampling_table(dockwidget):
         if srs_method == "area based proportion":
             srs_table["header"] = ["Pix Val", "Color", "Num Samples", "Ui", "On"]
             srs_table["column_count"] = len(srs_table["header"])
-            srs_table["ui"] = [str(0.01)]*srs_table["row_count"]
+            srs_table["ui"] = [str(0.8)]*srs_table["row_count"]
             srs_table["pixel_count"] = list(
                 get_pixel_count_by_pixel_values(dockwidget.QCBox_StratMap_StraRS.currentLayer(),
                                                 int(dockwidget.QCBox_band_StratMap_StraRS.currentText()),

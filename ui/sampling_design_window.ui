@@ -65,7 +65,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Simple random sampling along the thematic map where each pixel has has the same probability of being selected, with optional conditions and constraints</string>
+             <string>Simple random sampling along the thematic map where each pixel has the same probability of being selected, with optional conditions and constraints</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -825,6 +825,9 @@ It set automatically from image if the layer has the nodata value set.</string>
                 </item>
                 <item row="0" column="1">
                  <widget class="QDoubleSpinBox" name="TotalExpectedSE">
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The standard error of the estimated overall accuracy that we would like to achieve.&lt;/p&gt;&lt;p&gt;This is S(Ô), Eq. (13) in Olofsson et al. (2014)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
                   <property name="decimals">
                    <number>4</number>
                   </property>
@@ -838,7 +841,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                    <double>0.000100000000000</double>
                   </property>
                   <property name="value">
-                   <double>0.005000000000000</double>
+                   <double>0.010000000000000</double>
                   </property>
                  </widget>
                 </item>
