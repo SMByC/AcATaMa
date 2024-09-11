@@ -292,7 +292,7 @@ def update_stratified_sampling_table(dockwidget, changes_from):
         srs_method = "area based proportion"
     srs_table = dockwidget.srs_tables[dockwidget.QCBox_StratMap_StraRS.currentText()][srs_method]
 
-    if changes_from == "TotalExpectedSE":
+    if changes_from in ["TotalExpectedSE", "MinimumSamplesPerStratum"]:
         srs_table["num_samples"] = \
             get_num_samples_by_area_based_proportion(srs_table, dockwidget.TotalExpectedSE.value())
 
@@ -330,6 +330,13 @@ def update_stratified_sampling_table(dockwidget, changes_from):
             else:
                 srs_table["num_samples"] = \
                     get_num_samples_by_area_based_proportion(srs_table, dockwidget.TotalExpectedSE.value())
+
+    # adjusts the number of samples based on minimum samples per stratum
+    minimum_samples_per_stratum = dockwidget.MinimumSamplesPerStratum.value()
+    if srs_method == "area based proportion":
+        for idx, ns in enumerate(srs_table["num_samples"]):
+            if srs_table["On"][idx] and int(ns) < minimum_samples_per_stratum:
+                srs_table["num_samples"][idx] = str(minimum_samples_per_stratum)
 
     # update content
     update_srs_table_content(dockwidget, srs_table)

@@ -107,6 +107,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         # for each item changed in table, save and update it
         self.TotalExpectedSE.valueChanged.connect(lambda: update_stratified_sampling_table(self, "TotalExpectedSE"))
         self.QTableW_StraRS.itemChanged.connect(lambda: update_stratified_sampling_table(self, "TableContent"))
+        self.MinimumSamplesPerStratum.valueChanged.connect(lambda: update_stratified_sampling_table(self, "MinimumSamplesPerStratum"))
         # number of neighbors aggregation
         self.fill_same_class_of_neighbors(self.QCBox_NumberOfNeighbors_StraRS, self.QCBox_SameClassOfNeighbors_StraRS)
         self.QCBox_NumberOfNeighbors_StraRS.currentIndexChanged.connect(lambda: self.fill_same_class_of_neighbors(

@@ -109,6 +109,7 @@ def save(file_out):
 
         "sampling_random_method": sampling_design.QCBox_StraRS_Method.currentText(),
         "overall_std_error": sampling_design.TotalExpectedSE.value(),
+        "minimum_samples_per_stratum": sampling_design.MinimumSamplesPerStratum.value(),
         "stratified_random_sampling_table": sampling_design.srs_tables
             [sampling_design.QCBox_StratMap_StraRS.currentText()][srs_method] if with_srs_table else None,
 
@@ -387,6 +388,10 @@ def restore(yml_file_path):
         with block_signals_to(sampling_design.TotalExpectedSE):
             sampling_design.TotalExpectedSE.setValue(
                 yaml_config["sampling_design"]["stratified_random_sampling"]['overall_std_error'])
+        if "minimum_samples_per_stratum" in yaml_config["sampling_design"]["stratified_random_sampling"]:
+            with block_signals_to(sampling_design.MinimumSamplesPerStratum):
+                sampling_design.MinimumSamplesPerStratum.setValue(
+                    yaml_config["sampling_design"]["stratified_random_sampling"]['minimum_samples_per_stratum'])
 
         srs_table = yaml_config["sampling_design"]["stratified_random_sampling"]['stratified_random_sampling_table']
 

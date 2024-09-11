@@ -19,4 +19,7 @@ layout: default
   for accuracy assessment. International Journal of Remote Sensing, 32(15), 4407-4429.
 * Foody, G. M. (2020). Explaining the unsuitability of the kappa coefficient in the assessment and comparison of the
   accuracy of thematic maps obtained by image classification. Remote Sensing of Environment, 239, 111630.
-
+* Van Genderen, J. L., Lock, B. F., & Vass, P. A. (1978). Remote sensing: statistical testing of thematic map accuracy. 
+  Remote Sensing of Environment, 7(1), 3-14.
+* Hay, A. M. (1979). Sampling designs to test land-use map accuracy. Photogrammetric Engineering and Remote Sensing, 
+  45(4), 529-533.

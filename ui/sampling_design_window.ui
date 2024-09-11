@@ -845,6 +845,26 @@ It set automatically from image if the layer has the nodata value set.</string>
                   </property>
                  </widget>
                 </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_4">
+                  <property name="text">
+                   <string>Minimum samples per stratum:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QSpinBox" name="MinimumSamplesPerStratum">
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Determining the optimal minimum sample size requires consideration of several factors, however a minimum sample size of 30 (Van Genderen et al, 1978) or 50 (Stehman &amp;amp; Foody, 2019; Hay, 1979) per selected stratum is generally recommended to ensure statistical significance.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                  <property name="maximum">
+                   <number>999</number>
+                  </property>
+                  <property name="value">
+                   <number>30</number>
+                  </property>
+                 </widget>
+                </item>
                </layout>
               </widget>
              </item>
