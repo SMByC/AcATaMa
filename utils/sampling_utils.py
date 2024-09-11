@@ -105,6 +105,19 @@ def update_srs_table_content(dockwidget, srs_table):
         dockwidget.QTableW_StraRS.setRowCount(srs_table["row_count"])
         dockwidget.QTableW_StraRS.setColumnCount(srs_table["column_count"])
 
+        # first check and disable the classes with zero pixels on the map
+        for n, key in enumerate(srs_table["header"]):
+            if key == "On":
+                for m in range(srs_table["row_count"]):
+                    if srs_table["pixel_count"][m] == 0:
+                        srs_table["On"][m] = False
+                        item_table = QTableWidgetItem()
+                        item_table.setFlags(item_table.flags() & ~Qt.ItemIsEnabled)
+                        item_table.setCheckState(Qt.Unchecked)
+                        item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                        item_table.setToolTip("DISABLED: This class has 0 pixels on the map")
+                        dockwidget.QTableW_StraRS.setItem(m, n, item_table)
+
         # enter data onto Table
         for n, key in enumerate(srs_table["header"]):
             if key == "Pix Val":
@@ -147,15 +160,16 @@ def update_srs_table_content(dockwidget, srs_table):
                     dockwidget.QTableW_StraRS.setItem(m, n, item_table)
             if key == "On":
                 for m in range(srs_table["row_count"]):
-                    item_table = QTableWidgetItem()
-                    item_table.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
-                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                    item_table.setToolTip("Enable/disable this class")
-                    if srs_table["On"][m]:
-                        item_table.setCheckState(Qt.Checked)
-                    else:
-                        item_table.setCheckState(Qt.Unchecked)
-                    dockwidget.QTableW_StraRS.setItem(m, n, item_table)
+                    if srs_table["pixel_count"][m] > 0:
+                        item_table = QTableWidgetItem()
+                        item_table.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
+                        item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                        item_table.setToolTip("Enable/disable this class")
+                        if srs_table["On"][m]:
+                            item_table.setCheckState(Qt.Checked)
+                        else:
+                            item_table.setCheckState(Qt.Unchecked)
+                        dockwidget.QTableW_StraRS.setItem(m, n, item_table)
 
         # hidden row labels
         dockwidget.QTableW_StraRS.verticalHeader().setVisible(False)
@@ -242,8 +256,14 @@ def fill_stratified_sampling_table(dockwidget):
             return
         srs_table["row_count"] = len(list(srs_table["values_and_colors_table"].values())[0])
 
+        srs_table["pixel_count"] = list(
+            get_pixel_count_by_pixel_values(dockwidget.QCBox_StratMap_StraRS.currentLayer(),
+                                            int(dockwidget.QCBox_band_StratMap_StraRS.currentText()),
+                                            srs_table["values_and_colors_table"]["Pixel Value"],
+                                            get_nodata_format(dockwidget.nodata_StratMap_StraRS.text())).values())
+
         if srs_method == "fixed values":
-            srs_table["header"] = ["Pix Val", "Color", "Num Samples"]
+            srs_table["header"] = ["Pix Val", "Color", "Num Samples", "On"]
             srs_table["column_count"] = len(srs_table["header"])
             srs_table["num_samples"] = [str(0)]*srs_table["row_count"]
             srs_table["On"] = [True] * srs_table["row_count"]
@@ -252,11 +272,6 @@ def fill_stratified_sampling_table(dockwidget):
             srs_table["header"] = ["Pix Val", "Color", "Num Samples", "Ui", "On"]
             srs_table["column_count"] = len(srs_table["header"])
             srs_table["ui"] = [str(0.8)]*srs_table["row_count"]
-            srs_table["pixel_count"] = list(
-                get_pixel_count_by_pixel_values(dockwidget.QCBox_StratMap_StraRS.currentLayer(),
-                                                int(dockwidget.QCBox_band_StratMap_StraRS.currentText()),
-                                                srs_table["values_and_colors_table"]["Pixel Value"],
-                                                get_nodata_format(dockwidget.nodata_StratMap_StraRS.text())).values())
             total_std_error = dockwidget.TotalExpectedSE.value()
             srs_table["On"] = [True] * srs_table["row_count"]
             srs_table["num_samples"] = get_num_samples_by_area_based_proportion(srs_table, total_std_error)
@@ -291,6 +306,11 @@ def update_stratified_sampling_table(dockwidget, changes_from):
             if not num_samples_in_row.isdigit() or int(num_samples_in_row) < 0:
                 num_samples_in_row = srs_table["num_samples"][row]
             num_samples.append(num_samples_in_row)
+            if srs_method == "fixed values":
+                if dockwidget.QTableW_StraRS.item(row, 3).checkState() == 2:
+                    on.append(True)
+                if dockwidget.QTableW_StraRS.item(row, 3).checkState() == 0:
+                    on.append(False)
             if srs_method == "area based proportion":
                 ui.append(dockwidget.QTableW_StraRS.item(row, 3).text())
                 if dockwidget.QTableW_StraRS.item(row, 4).checkState() == 2:
@@ -300,6 +320,7 @@ def update_stratified_sampling_table(dockwidget, changes_from):
 
         if srs_method == "fixed values":
             srs_table["num_samples"] = num_samples
+            srs_table["On"] = on
         if srs_method == "area based proportion":
             srs_table["ui"] = ui
             srs_table["On"] = on
