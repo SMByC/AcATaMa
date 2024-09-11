@@ -275,6 +275,11 @@ def fill_stratified_sampling_table(dockwidget):
             total_std_error = dockwidget.TotalExpectedSE.value()
             srs_table["On"] = [True] * srs_table["row_count"]
             srs_table["num_samples"] = get_num_samples_by_area_based_proportion(srs_table, total_std_error)
+            # adjust the number of samples based on minimum samples per stratum
+            minimum_samples_per_stratum = dockwidget.MinimumSamplesPerStratum.value()
+            for idx, ns in enumerate(srs_table["num_samples"]):
+                if 0 < int(ns) < minimum_samples_per_stratum:
+                    srs_table["num_samples"][idx] = str(minimum_samples_per_stratum)
 
         # save srs table
         if dockwidget.QCBox_StratMap_StraRS.currentText() not in dockwidget.srs_tables.keys():
