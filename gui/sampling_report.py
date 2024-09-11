@@ -370,6 +370,32 @@ class SamplingReport(QDialog, FORM_CLASS):
                     <i>* Samples in no-data or outside</i>
                 """.format(num_samples=self.report["samples"]["samples_not_in_post_stratification"])
 
+        ### warning boxes
+
+        # minimum samples in strata
+        if self.report["general"]["sampling_type"] == "stratified" or (
+                self.report["general"]["sampling_type"] in ["simple", "systematic"] and self.report["general"]["post_stratification_map"]):
+
+            table = self.report["samples"]["thematic_map"] if not self.report["samples"]["post_stratification"] else self.report["samples"]["post_stratification"]
+            min_sample_size = min([num_samples for num_samples in table["num_samples"] if num_samples > 0])
+            if min_sample_size < 30:
+                html += """
+                    <br>
+                    <hr style="border-top: 2px dashed #3b3b3b;">
+                    
+                    <div style="background-color: #fffff3;">
+                        <p style="font-size: 80%; color: #3b3b3b">
+                        <span style="font-weight: bold;">Warning: Check minimum samples in strata</span><br>
+                        Using stratified or post-stratified sampling for map data analysis, land use/land cover 
+                        classification and similar topics, a minimum sample size of 30 (Van Genderen et al., 1978) or 
+                        50 (Stehman & Foody, 2019; Hay, 1979) per evaluated stratum is generally recommended to ensure 
+                        statistical significance. However, determining the optimal minimum sample size requires 
+                        consideration of several factors such as data type, the specific research objectives, and the 
+                        desired level of precision.
+                        </p>
+                    </div>
+                """
+
         html += """
             </body>
         """

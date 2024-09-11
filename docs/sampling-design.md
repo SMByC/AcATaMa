@@ -32,7 +32,7 @@ Selecting the sampling design is crucial and could be based on the population/da
 your needs. At the moment we have implemented three main sampling designs: simple random, stratified random, and
 systematic sampling and all are probability sampling designs. For example, use simple random for a population without
 strata. Stratified random is commonly employed for sampling within each stratum of the classes of the stratified map.
-And the systematic protocol to have some strata sampled systematically. But also we implemented post-stratification 
+And the systematic protocol to have some strata sampled systematically. But also we implemented post-stratification
 methods for simple random and systematic sampling to ensure that samples randomly generated are only on specific strata.
 
 ## Simple random sampling
@@ -53,7 +53,7 @@ _**Disadvantages**_: Underestimates the less representative classes. Not well di
 
 It is useful for reporting results when strata are of interest and the precision of accuracy and area estimates need to
 be improved. As a result, it is one of the most commonly used. It is used in conjunction with prior knowledge to
-stratify the study area. This design is recommended by Olofsson et al. (2014) as a good practice option for ensuring 
+stratify the study area. This design is recommended by Olofsson et al. (2014) as a good practice option for ensuring
 that rare classes are well represented.
 
 _**Advantages**_: It allows to increase the sample size of the less common classes. It lowers the standard errors of the
@@ -72,11 +72,11 @@ probabilities of inclusion, this makes it difficult to calculate the estimators
 ### Aligned systematic sampling
 
 Distribute the sampling units equally for the entire study area. As long as the first sampling unit is randomly
-selected, we can say that systematic sampling is random. Simplicity is highly attractive to end users. The variance 
+selected, we can say that systematic sampling is random. Simplicity is highly attractive to end users. The variance
 depends on how the error is spatially distributed.
 
 _**Advantages**_: It distributes the sampling units equitably throughout the study area. As long as the first sampling
-unit is randomly selected, we can say that systematic sampling is random. Simplicity is highly attractive to end 
+unit is randomly selected, we can say that systematic sampling is random. Simplicity is highly attractive to end
 users. The variance depends on how the error is spatially distributed.
 
 _**Disadvantages**_: If the errors are located in certain areas of the population, systematic sampling will have a lower
@@ -115,9 +115,12 @@ stratified sampling is recommended. (Methods and Guidance from the Global Forest
 
 ### Sample size in stratified sampling
 
+#### Overall expected standard error
+
 <img src="img/overall_std_error.webp" width="35%" style="margin: auto;display: block;">
 
-For stratified sampling, Cochran (1977) provides the following sample size formula (Cochran, 1977 and Olofsson, et 
+The standard error of the estimated overall accuracy that we would like to achieve. For stratified sampling, Cochran 
+(1977) provides the following sample size formula (Cochran, 1977 and Olofsson, et
 al., 2014)
 
 <img src="img/ecuation_sample_size.webp" width="70%" style="margin: auto;display: block;">
@@ -127,21 +130,33 @@ mapped proportion of the area of class i, and Si is the standard deviation of st
 expected by class i. Since N is usually very large, the second term in the denominator of the above equation can be
 discarded.
 
+#### User's accuracy confidence
+
 <img src="img/user_accuracy.webp" width="35%" style="margin: auto;display: block;">
 
-The user's accuracy (Ui) is the probability that a pixel classified as class i is actually class i. The user's accuracy 
-is a measure of the reliability of the classification, in other words, the user's accuracy is the confidence for map 
+The user's accuracy (Ui) is the probability that a pixel classified as class i is actually class i. The user's accuracy
+is a measure of the reliability of the classification, in other words, the user's accuracy is the confidence for map
 classes. In general, the user's accuracy values are:
 
 - 0.6 - 0.8: for unstable classes
 - 0.8 - 0.95: for stable classes
 
-For example, based on a study from Olofsson et al. (2014) assessing the accuracy of forest change, the user's accuracy 
+For example, based on a study from Olofsson et al. (2014) assessing the accuracy of forest change, the user's accuracy
 values for the following classes could be:
 
 - 0.6 - 0.7: forest gain (very unstable class)
 - 0.7 - 0.8: deforestation (unstable class)
 - 0.8 - 0.9: stable forest (stable class)
 - 0.95: stable non-forest (very stable class)
+
+#### Minimum sample size per stratum
+
+<img src="img/minimum_sampling_per_stratum.webp" width="35%" style="margin: auto;display: block;">
+
+Using stratified or post-stratified sampling for map data analysis, land use/land cover classification and similar 
+topics, a minimum sample size of 30 (Van Genderen et al., 1978) or 50 (Stehman & Foody, 2019; Hay, 1979) per 
+evaluated stratum is generally recommended to ensure statistical significance. However, determining the optimal 
+minimum sample size requires consideration of several factors such as data type, the specific research objectives, 
+and the desired level of precision.
 
 Next >> [Response design](response-design.html)
