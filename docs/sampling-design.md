@@ -115,17 +115,16 @@ stratified sampling is recommended. (Methods and Guidance from the Global Forest
 
 ### Sample size in stratified sampling
 
-#### Overall expected standard error
+#### Overall expected standard error - S(Ô)
 
 <img src="img/overall_std_error.webp" width="35%" style="margin: auto;display: block;">
 
-The standard error of the estimated overall accuracy that we would like to achieve. For stratified sampling, Cochran 
-(1977) provides the following sample size formula (Cochran, 1977 and Olofsson, et
-al., 2014)
+The standard error of the estimated overall accuracy that you would like to achieve. For stratified sampling, Cochran 
+(1977) provides the following sample size formula (Cochran, 1977 and Olofsson, et al., 2014)
 
 <img src="img/ecuation_sample_size.webp" width="70%" style="margin: auto;display: block;">
 
-Where N=number of units in the study region, S(ô) is the standard error of the expected global accuracy, Wi is the
+Where N=number of units in the study region, S(Ô) is the standard error of the expected global accuracy, Wi is the
 mapped proportion of the area of class i, and Si is the standard deviation of stratum i and Ui is the accuracy
 expected by class i. Since N is usually very large, the second term in the denominator of the above equation can be
 discarded.

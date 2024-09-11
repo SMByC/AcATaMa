@@ -826,7 +826,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                 <item row="0" column="1">
                  <widget class="QDoubleSpinBox" name="TotalExpectedSE">
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The standard error of the estimated overall accuracy that we would like to achieve.&lt;/p&gt;&lt;p&gt;This is S(Ô), Eq. (13) in Olofsson et al. (2014)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The standard error of the estimated overall accuracy that you would like to achieve.&lt;/p&gt;&lt;p&gt;This is S(Ô), Eq. (13) in Olofsson et al. (2014)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="decimals">
                    <number>4</number>
