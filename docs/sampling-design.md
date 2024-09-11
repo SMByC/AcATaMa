@@ -106,19 +106,42 @@ Stehman (2001), a sample with 100 sampling units per class ensures that the accu
 deviation of no more than 0.05. Despite this aspect, the minimum value of the sampling units per land cover class could
 vary depending on the importance (Congalton & Green, 2019) (Stehman & Foody, 2019)
 
+### Sample size in simple and systematic sampling
+
 Simple and systematic random sampling are easy and practical designs, they represent homogeneous and proportional
 populations very well, and the sample size for each coverage or map class must be large enough to produce sufficiently
 precise estimates of area. However, when there are small or rare areas compared to the total area such as deforestation,
 stratified sampling is recommended. (Methods and Guidance from the Global Forest Observations Initiative, GFOI, 2020)
 
+### Sample size in stratified sampling
+
+<img src="img/overall_std_error.webp" width="35%" style="margin: auto;display: block;">
+
 For stratified sampling, Cochran (1977) provides the following sample size formula (Cochran, 1977 and Olofsson, et 
 al., 2014)
 
-<img src="img/ecuation_sample_size.webp" width="75%" style="margin: auto;display: block;">
+<img src="img/ecuation_sample_size.webp" width="70%" style="margin: auto;display: block;">
 
 Where N=number of units in the study region, S(ô) is the standard error of the expected global accuracy, Wi is the
 mapped proportion of the area of class i, and Si is the standard deviation of stratum i and Ui is the accuracy
 expected by class i. Since N is usually very large, the second term in the denominator of the above equation can be
 discarded.
+
+<img src="img/user_accuracy.webp" width="35%" style="margin: auto;display: block;">
+
+The user's accuracy (Ui) is the probability that a pixel classified as class i is actually class i. The user's accuracy 
+is a measure of the reliability of the classification, in other words, the user's accuracy is the confidence for map 
+classes. In general, the user's accuracy values are:
+
+- 0.6 - 0.8: for unstable classes
+- 0.8 - 0.95: for stable classes
+
+For example, based on a study from Olofsson et al. (2014) assessing the accuracy of forest change, the user's accuracy 
+values for the following classes could be:
+
+- 0.6 - 0.7: forest gain (very unstable class)
+- 0.7 - 0.8: deforestation (unstable class)
+- 0.8 - 0.9: stable forest (stable class)
+- 0.95: stable non-forest (very stable class)
 
 Next >> [Response design](response-design.html)
