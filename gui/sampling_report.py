@@ -121,15 +121,16 @@ class SamplingReport(QDialog, FORM_CLASS):
             "general": {
                 "sampling_layer": self.sampling_layer.name(),
                 "thematic_map": self.sampling.thematic_map.qgs_layer.name(),
-                "total_of_samples": self.sampling.samples_generated,
                 "sampling_type": self.sampling_conf["sampling_type"],
-                "min_distance": self.sampling_conf["min_distance"] if self.sampling_conf["sampling_type"] in ["simple", "stratified"] else None,
+                "stratified_method": self.sampling.sampling_method if self.sampling_conf["sampling_type"] == "stratified" else None,
+                "total_of_samples": self.sampling.samples_generated,
                 "points_spacing": self.sampling_conf["points_spacing"] if self.sampling_conf["sampling_type"] == "systematic" else None,
                 "initial_inset": self.sampling_conf["initial_inset"] if self.sampling_conf["sampling_type"] == "systematic" else None,
                 "max_xy_offset": self.sampling_conf["max_xy_offset"] if self.sampling_conf["sampling_type"] == "systematic" else None,
                 "post_stratification_map": self.sampling.post_stratification_map.qgs_layer.name() if self.sampling.post_stratification_map else None,
                 "post_stratification_classes": self.sampling_conf["classes_selected"] if self.sampling.post_stratification_map else None,
-                "stratified_method": self.sampling.sampling_method if self.sampling_conf["sampling_type"] == "stratified" else None,
+                "min_distance": "{} {}".format(self.sampling_conf["min_distance"], QgsUnitTypes.toString(self.sampling.thematic_map.qgs_layer.crs().mapUnits()))
+                    if self.sampling_conf["sampling_type"] in ["simple", "stratified"] else None,
                 "neighbor_aggregation": self.sampling_conf["neighbor_aggregation"],
                 "random_seed": self.sampling_conf["random_seed"] if self.sampling_conf["random_seed"] is not None else "Auto",
                 "area_unit": self.area_unit.currentIndex(),
@@ -140,6 +141,8 @@ class SamplingReport(QDialog, FORM_CLASS):
             },
             "samples": {
                 "thematic_map": thematic_map_table,
+                "total_of_samples_by_stratum": self.sampling_conf["total_of_samples"]
+                    if self.sampling_conf["sampling_type"] == "stratified" else None,
                 "samples_not_in_thematic_map":
                     self.sampling.samples_generated - sum(thematic_map_table["num_samples"]),
                 "post_stratification": post_stratification_table,
@@ -214,17 +217,27 @@ class SamplingReport(QDialog, FORM_CLASS):
                     <td>{thematic_map}</td>
                 </tr>
                 <tr>
-                    <th>Total of Samples</th>
-                    <td>{total_of_samples}</td>
-                </tr>
-                <tr>
                     <th>Sampling Type</th>
                     <td>{sampling_type}</td>
                 </tr>
             """.format(sampling_layer=self.report["general"]["sampling_layer"],
                        thematic_map=self.report["general"]["thematic_map"],
-                       total_of_samples=self.report["general"]["total_of_samples"],
                        sampling_type=sampling_type[self.report["general"]["sampling_type"]])
+
+        if self.report["general"]["sampling_type"] == "stratified":
+            html += """
+                    <tr>
+                        <th>Stratified method</th>
+                        <td>{stratified_method}</td>
+                    </tr>
+                """.format(stratified_method=self.report["general"]["stratified_method"].capitalize())
+
+        html += """
+                <tr>
+                    <th>Total of Samples</th>
+                    <td>{total_of_samples}</td>
+                </tr>
+            """.format(total_of_samples=self.report["general"]["total_of_samples"],)
 
         if self.report["general"]["sampling_type"] == "systematic":
             html += """
@@ -243,13 +256,6 @@ class SamplingReport(QDialog, FORM_CLASS):
             """.format(points_spacing=rf(self.report["general"]["points_spacing"]),
                        initial_inset=rf(self.report["general"]["initial_inset"]),
                        max_xy_offset=rf(self.report["general"]["max_xy_offset"]))
-        else:
-            html += """
-                <tr>
-                    <th>Min Distance</th>
-                    <td>{min_distance}</td>
-                </tr>
-            """.format(min_distance=self.report["general"]["min_distance"])
 
         if self.report["general"]["sampling_type"] in ["simple", "systematic"]:
             html += """
@@ -262,15 +268,15 @@ class SamplingReport(QDialog, FORM_CLASS):
                         <td>{post_stratification_classes}</td>
                     </tr>
                 """.format(post_stratification_map=self.report["general"]["post_stratification_map"],
-                           post_stratification_classes=self.report["general"]["post_stratification_classes"])
+                           post_stratification_classes=", ".join([str(x) for x in self.report["general"]["post_stratification_classes"]]))
 
-        if self.report["general"]["sampling_type"] == "stratified":
+        if self.report["general"]["sampling_type"] in ["simple", "stratified"]:
             html += """
                     <tr>
-                        <th>Stratified method</th>
-                        <td>{stratified_method}</td>
+                        <th>Min Distance</th>
+                        <td>{min_distance}</td>
                     </tr>
-                """.format(stratified_method=self.report["general"]["stratified_method"].capitalize())
+                """.format(min_distance=self.report["general"]["min_distance"])
 
         html += """
                 <tr>
@@ -282,7 +288,8 @@ class SamplingReport(QDialog, FORM_CLASS):
                     <td>{random_seed}</td>
                 </tr>
             </table>
-            """.format(neighbor_aggregation=self.report["general"]["neighbor_aggregation"],
+            """.format(neighbor_aggregation="{}/{}".format(self.report["general"]["neighbor_aggregation"][1],
+                                                            self.report["general"]["neighbor_aggregation"][0]) if self.report["general"]["neighbor_aggregation"] else None,
                        random_seed=self.report["general"]["random_seed"])
 
         html += """
@@ -372,6 +379,96 @@ class SamplingReport(QDialog, FORM_CLASS):
 
         ### warning boxes
 
+        html += """
+            <br/>
+            <p style="font-size: 80%; color: #3b3b3b">
+            ---------</p>
+        """
+
+        # simple num samples mismatch
+        if self.sampling_conf is not None and self.report["general"]["sampling_type"] == "simple":
+            desired_num_samples = self.sampling_conf["total_of_samples"]
+            actual_num_samples = self.report["samples"]["thematic_map"]["num_samples"]
+            if desired_num_samples != sum(actual_num_samples):
+                html += """
+                    <br/>
+                    <div style="background-color: #fffff3; font-size: 80%">
+                        <p style="font-size: 80%; color: #3b3b3b">
+                        <span style="font-weight: bold;">Warning: Desired/actual sample count mismatch!</span><br>
+                        The number of samples generated does not match the user’s desired number of samples. This is 
+                        generally acceptable, as the actual number may be smaller than the target due to the sampling 
+                        method and certain restrictions in the sampling conditions. However, if the discrepancy is 
+                        significantly large, please review the sampling design options.
+                        </p>
+                        
+                        <table>
+                            <tr>
+                                <th>Desired Samples</th>
+                                <th>Actual Samples</th>
+                                <th>Difference</th>
+                            </tr>
+                            <tr>
+                                <td>{desired_num_samples}</td>
+                                <td>{actual_num_samples}</td>
+                                <td>{difference}</td>
+                            </tr>
+                        </table>
+                    </div>
+                """.format(desired_num_samples=desired_num_samples,
+                           actual_num_samples=sum(actual_num_samples),
+                           difference=desired_num_samples - sum(actual_num_samples))
+
+        # stratified num samples mismatch
+        if self.sampling_conf is not None and self.report["general"]["sampling_type"] == "stratified":
+            desired_num_samples_per_stratum = self.sampling_conf["total_of_samples"]
+            actual_num_samples_per_stratum = self.report["samples"]["thematic_map"]["num_samples"]
+
+            # check if the original number of samples set by the user was reached
+            if sum(desired_num_samples_per_stratum) != sum(actual_num_samples_per_stratum):
+                # create a html table with the headers: Pix Val, Color, Desired Num Samples, Actual Num Samples, Difference
+                html += """
+                    <br/>
+                    <div style="background-color: #fffff3; font-size: 80%">
+                        <p style="font-size: 80%; color: #3b3b3b">
+                        <span style="font-weight: bold;">Warning: Desired/actual sample count mismatch!</span><br>
+                        The number of samples generated does not match the user’s desired number of samples. This is 
+                        generally acceptable, as the actual number may be smaller than the target due to the sampling 
+                        method and certain restrictions in the sampling conditions. However, if the discrepancy is 
+                        significantly large, please review the sampling design options.
+                        </p>
+                        
+                        <table>
+                            <tr>
+                                <th>Pix Val</th>
+                                <th>Color</th>
+                                <th>Desired Samples</th>
+                                <th>Actual Samples</th>
+                                <th>Difference</th>
+                            </tr>
+                """
+
+                for i, pix_val in enumerate(self.report["samples"]["thematic_map"]["pix_val"]):
+                    html += """
+                        <tr>
+                            <td>{pix_val}</td>
+                            <td style="background-color: rgb({r}, {g}, {b})"></td>
+                            <td>{desired_num_samples}</td>
+                            <td>{actual_num_samples}</td>
+                            <td>{difference}</td>
+                        </tr>
+                    """.format(pix_val=pix_val,
+                               r=self.report["samples"]["thematic_map"]["color"][i][0],
+                               g=self.report["samples"]["thematic_map"]["color"][i][1],
+                               b=self.report["samples"]["thematic_map"]["color"][i][2],
+                               desired_num_samples=desired_num_samples_per_stratum[i],
+                               actual_num_samples=actual_num_samples_per_stratum[i],
+                               difference=desired_num_samples_per_stratum[i] - actual_num_samples_per_stratum[i])
+
+                html += """
+                        </table>
+                    </div>
+                """
+
         # minimum samples in strata
         if self.report["general"]["sampling_type"] == "stratified" or (
                 self.report["general"]["sampling_type"] in ["simple", "systematic"] and self.report["general"]["post_stratification_map"]):
@@ -380,12 +477,10 @@ class SamplingReport(QDialog, FORM_CLASS):
             min_sample_size = min([num_samples for num_samples in table["num_samples"] if num_samples > 0])
             if min_sample_size < 30:
                 html += """
-                    <br>
-                    <hr style="border-top: 2px dashed #3b3b3b;">
-                    
+                    <br/>
                     <div style="background-color: #fffff3;">
                         <p style="font-size: 80%; color: #3b3b3b">
-                        <span style="font-weight: bold;">Warning: Check minimum samples in strata</span><br>
+                        <span style="font-weight: bold;">Warning: Check minimum samples in strata!</span><br>
                         Using stratified or post-stratified sampling for map data analysis, land use/land cover 
                         classification and similar topics, a minimum sample size of 30 (Van Genderen et al., 1978) or 
                         50 (Stehman & Foody, 2019; Hay, 1979) per evaluated stratum is generally recommended to ensure 
