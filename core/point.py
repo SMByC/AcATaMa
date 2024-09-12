@@ -89,8 +89,8 @@ class RandomPoint(Point):
         """Check if point is at least in one pixel values set in the post-stratification map
         """
         if classes_for_sampling is not None:
-            point_value_in_post_strat_map = int(post_stratification_map.get_pixel_value_from_pnt(self.QgsPnt))
-            if point_value_in_post_strat_map not in classes_for_sampling:
+            point_value_in_post_strat_map = post_stratification_map.get_pixel_value_from_pnt(self.QgsPnt)
+            if point_value_in_post_strat_map is None or int(point_value_in_post_strat_map) not in classes_for_sampling:
                 return False
         return True
 
