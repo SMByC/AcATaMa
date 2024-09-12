@@ -169,20 +169,18 @@ def simple_random_sampling_finished(exception, result=None):
 
     # success
     if sampling.samples_generated == sampling_conf["total_of_samples"]:
-        sampling_report.MsgBar.pushMessage("Successful simple random sampling: {} samples generated"
-                                           .format(sampling.samples_generated), level=Qgis.Success, duration=40)
+        sampling_report.MsgBar.pushMessage("Simple random sampling successful: {} samples generated"
+                                           .format(sampling.samples_generated), level=Qgis.Success, duration=20)
     # success but not completed
     if sampling_conf["total_of_samples"] > sampling.samples_generated > 0:
-        sampling_report.MsgBar.pushMessage("Simple random sampling successful: {} random points generated out of a total "
-                                           "of {}. The generated sample can be smaller than the target total due to "
-                                           "sampling type and some restrictions in the sampling conditions.".format(
+        sampling_report.MsgBar.pushMessage("Simple random sampling successful: {} samples generated from {}".format(
                                            sampling.samples_generated, sampling_conf["total_of_samples"]),
-                                           level=Qgis.Info, duration=40)
+                                           level=Qgis.Info, duration=20)
     # check the thematic map unit to calculate the minimum distances
     if sampling_conf["min_distance"] > 0:
         if sampling.thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
             sampling_report.MsgBar.pushMessage("The thematic map \"{}\" does not have a valid map unit, AcATaMa is using "
-                                               "\"{}\" as the base unit to calculate the minimum distances.".format(
+                                               "\"{}\" as the base unit to calculate the minimum distances".format(
                                                sampling.thematic_map.qgs_layer.name(),
                                                QgsUnitTypes.toString(sampling_layer_generated.crs().mapUnits())),
                                                level=Qgis.Warning, duration=20)
@@ -340,20 +338,18 @@ def stratified_random_sampling_finished(exception, result=None):
 
     # success
     if sampling.samples_generated == sum(sampling_conf["total_of_samples"]):
-        sampling_report.MsgBar.pushMessage("Successful stratified random sampling: {} samples generated"
-                                           .format(sampling.samples_generated), level=Qgis.Success, duration=40)
+        sampling_report.MsgBar.pushMessage("Stratified random sampling successful: {} samples generated"
+                                           .format(sampling.samples_generated), level=Qgis.Success, duration=20)
     # success but not completed
     if sampling.samples_generated < sum(sampling_conf["total_of_samples"]) and sampling.samples_generated > 0:
-        sampling_report.MsgBar.pushMessage("Stratified random sampling successful: {} random points generated out of a total "
-                                           "of {}. The generated sample can be smaller than the target total due to "
-                                           "sampling type and some restrictions in the sampling conditions.".format(
+        sampling_report.MsgBar.pushMessage("Stratified random sampling successful: {} samples generated from {}".format(
                                            sampling.samples_generated, sum(sampling_conf["total_of_samples"])),
-                                           level=Qgis.Info, duration=40)
+                                           level=Qgis.Info, duration=20)
     # check the thematic map unit to calculate the minimum distances
     if sampling_conf["min_distance"] > 0:
         if sampling.thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
             sampling_report.MsgBar.pushMessage("The thematic map \"{}\" does not have a valid map unit, AcATaMa is using "
-                                               "\"{}\" as the base unit to calculate the minimum distances.".format(
+                                               "\"{}\" as the base unit to calculate the minimum distances".format(
                                                sampling.thematic_map.qgs_layer.name(),
                                                 QgsUnitTypes.toString(sampling_layer_generated.crs().mapUnits())),
                                                level=Qgis.Warning, duration=20)
@@ -506,15 +502,13 @@ def systematic_sampling_finished(exception, result=None):
 
     # success
     if sampling.samples_generated == sampling_conf["total_of_samples"]:
-        sampling_report.MsgBar.pushMessage("Successful systematic sampling: {} samples generated".format(
-                                           sampling.samples_generated), level=Qgis.Success, duration=40)
+        sampling_report.MsgBar.pushMessage("Systematic random sampling successful: {} samples generated".format(
+                                           sampling.samples_generated), level=Qgis.Success, duration=20)
     # success but not completed
     if sampling_conf["total_of_samples"] > sampling.samples_generated > 0:
-        sampling_report.MsgBar.pushMessage("Systematic random sampling successful: {} random points generated out of a total "
-                                           "of {}. The generated sample can be smaller than the target total due to "
-                                           "sampling type and some restrictions in the sampling conditions.".format(
+        sampling_report.MsgBar.pushMessage("Systematic random sampling successful: {} samples generated from {}".format(
                                            sampling.samples_generated, sampling_conf["total_of_samples"]),
-                                           level=Qgis.Success, duration=40)
+                                           level=Qgis.Success, duration=20)
 
 
 class Sampling(object):
