@@ -142,10 +142,11 @@ def update_srs_table_content(srs_table):
                 for m in range(srs_table["row_count"]):
                     item_table = QTableWidgetItem(srs_table["num_samples"][m])
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                    item_table.setToolTip("Total number of samples for this class, this is generated\n"
-                                          "automatically based on the area proportion by the activated\n"
-                                          "classes, overall expected standard error and its user\n"
-                                          "accuracy expected value.")
+                    if sampling_design.QCBox_StraRS_Method.currentText().startswith("Area based proportion"):
+                        item_table.setToolTip("Total number of samples for this class, this is generated\n"
+                                              "automatically based on the area proportion by the activated\n"
+                                              "classes, overall expected standard error and its user\n"
+                                              "accuracy expected value.")
                     if not srs_table["On"][m]:
                         item_table.setForeground(QColor("lightGrey"))
                         item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
