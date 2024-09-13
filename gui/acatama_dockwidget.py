@@ -98,6 +98,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
         # select and check the thematic map
         self.QCBox_ThematicMap.layerChanged.connect(self.select_thematic_map)
+        self.QCBox_band_ThematicMap.currentIndexChanged.connect(self.update_thematic_map_band)
+        self.nodata_ThematicMap.textChanged.connect(self.update_thematic_map_nodata)
 
         # ######### Sampling tab ######### #
         # disable sampling window
@@ -207,6 +209,32 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             # reload analysis status in accuracy assessment
             self.update_analysis_state()
 
+    @pyqtSlot(int)
+    def update_thematic_map_band(self, band_idx):
+        thematic_map_layer = self.QCBox_ThematicMap.currentLayer()
+
+        # set nodata value of thematic map in nodata field
+        self.nodata_ThematicMap.setText(set_nodata_format(get_nodata_value(thematic_map_layer, band_idx+1)))
+
+        # update the band selected in the sampling design window
+        if thematic_map_layer == self.sampling_design_window.QCBox_PostStratMap_SimpRS.currentLayer():
+            self.sampling_design_window.QCBox_band_PostStratMap_SimpRS.setCurrentIndex(band_idx)
+        if thematic_map_layer == self.sampling_design_window.QCBox_SamplingMap_StraRS.currentLayer():
+            self.sampling_design_window.QCBox_band_SamplingMap_StraRS.setCurrentIndex(band_idx)
+        if thematic_map_layer == self.sampling_design_window.QCBox_PostStratMap_SystS.currentLayer():
+            self.sampling_design_window.QCBox_band_PostStratMap_SystS.setCurrentIndex(band_idx)
+
+    @pyqtSlot(str)
+    def update_thematic_map_nodata(self, nodata):
+        thematic_map_layer = self.QCBox_ThematicMap.currentLayer()
+
+        # update the nodata value in the sampling design window
+        if thematic_map_layer == self.sampling_design_window.QCBox_PostStratMap_SimpRS.currentLayer():
+            self.sampling_design_window.nodata_PostStratMap_SimpRS.setText(nodata)
+        if thematic_map_layer == self.sampling_design_window.QCBox_SamplingMap_StraRS.currentLayer():
+            self.sampling_design_window.nodata_SamplingMap_StraRS.setText(nodata)
+        if thematic_map_layer == self.sampling_design_window.QCBox_PostStratMap_SystS.currentLayer():
+            self.sampling_design_window.nodata_PostStratMap_SystS.setText(nodata)
 
     @pyqtSlot("QgsMapLayer*")
     def update_sampling_report_state(self, sampling_layer=None):
