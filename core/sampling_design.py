@@ -114,7 +114,7 @@ def do_simple_random_sampling():
     sampling_design.QGBox_random_sampling_options_SimpRS.setEnabled(False)
 
     # process the sampling in a QGIS task
-    sampling = Sampling("simple", thematic_map, post_stratification_map, output_file=output_file)
+    sampling = Sampling("simple", thematic_map, post_stratification_map=post_stratification_map, output_file=output_file)
     sampling_conf = {"sampling_type": "simple", "total_of_samples": total_of_samples, "min_distance": min_distance,
                      "classes_selected": classes_selected, "neighbor_aggregation": neighbor_aggregation,
                      "random_seed": random_seed}
@@ -198,16 +198,16 @@ def do_stratified_random_sampling():
     # first check input files requirements
     if not valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicMap, "thematic map"):
         return
-    if not valid_file_selected_in(sampling_design.QCBox_StratMap_StraRS, "post-stratification map"):
+    if not valid_file_selected_in(sampling_design.QCBox_SamplingMap_StraRS, "sampling map"):
         return
 
     # get and define some variables
     thematic_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicMap,
                        band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
                        nodata=get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text().strip()))
-    post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_StratMap_StraRS,
-                                  band=int(sampling_design.QCBox_band_StratMap_StraRS.currentText()),
-                                  nodata=get_nodata_format(sampling_design.nodata_StratMap_StraRS.text()))
+    sampling_map = Map(file_selected_combo_box=sampling_design.QCBox_SamplingMap_StraRS,
+                       band=int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText()),
+                       nodata=get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text()))
     min_distance = float(sampling_design.minDistance_StraRS.value())
 
     # get values from category table  #########
@@ -281,8 +281,8 @@ def do_stratified_random_sampling():
     sampling_design.QGBox_random_sampling_options_StraRS.setEnabled(False)
 
     # process the sampling in a QGIS task
-    sampling = Sampling("stratified", thematic_map, post_stratification_map, sampling_method,
-                        srs_config=srs_config, output_file=output_file)
+    sampling = Sampling("stratified", thematic_map, sampling_map=sampling_map,
+                        sampling_method=sampling_method, srs_config=srs_config, output_file=output_file)
     sampling_conf = {"sampling_type": "stratified", "total_of_samples": total_of_samples_by_stratum, "min_distance": min_distance,
                      "classes_selected": classes_for_sampling, "neighbor_aggregation": neighbor_aggregation,
                      "random_seed": random_seed}
@@ -443,8 +443,8 @@ def do_systematic_sampling():
     sampling_design.QGBox_random_sampling_options_SystS.setEnabled(False)
 
     # process the sampling in a QGIS task
-    sampling = Sampling("systematic", thematic_map, post_stratification_map, "grid with random offset",
-                        output_file=output_file)
+    sampling = Sampling("systematic", thematic_map, post_stratification_map=post_stratification_map,
+                        sampling_method="grid with random offset", output_file=output_file)
     sampling_conf = {"sampling_type": "systematic", "total_of_samples": total_of_samples, "points_spacing": points_spacing,
                      "initial_inset": initial_inset, "max_xy_offset": max_xy_offset,
                      "classes_selected": classes_selected, "neighbor_aggregation": neighbor_aggregation,
@@ -513,9 +513,10 @@ def systematic_sampling_finished(exception, result=None):
 
 class Sampling(object):
 
-    def __init__(self, sampling_design_type, thematic_map, post_stratification_map, sampling_method=None, srs_config=None, output_file=None):
+    def __init__(self, sampling_design_type, thematic_map, sampling_map=None, post_stratification_map=None, sampling_method=None, srs_config=None, output_file=None):
         self.sampling_design_type = sampling_design_type
         self.thematic_map = thematic_map
+        self.sampling_map = sampling_map
         self.post_stratification_map = post_stratification_map
         # for stratified sampling
         self.sampling_method = sampling_method
@@ -707,7 +708,7 @@ class Sampling(object):
 
         if self.sampling_design_type == "stratified":
             if not sampling_point.in_max_samples_in_stratum(self.classes_for_sampling, self.total_of_samples,
-                                                            self.post_stratification_map, self.samples_in_strata):
+                                                            self.sampling_map, self.samples_in_strata):
                 return False
 
         if self.neighbor_aggregation and \

@@ -99,11 +99,14 @@ def get_num_samples_by_keeping_total_samples(srs_table, new_num_samples):
 
 
 @wait_process
-def update_srs_table_content(dockwidget, srs_table):
-    with block_signals_to(dockwidget.QTableW_StraRS):
+def update_srs_table_content(srs_table):
+    from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+    sampling_design = AcATaMa.dockwidget.sampling_design_window
+
+    with block_signals_to(sampling_design.QTableW_StraRS):
         # init table
-        dockwidget.QTableW_StraRS.setRowCount(srs_table["row_count"])
-        dockwidget.QTableW_StraRS.setColumnCount(srs_table["column_count"])
+        sampling_design.QTableW_StraRS.setRowCount(srs_table["row_count"])
+        sampling_design.QTableW_StraRS.setColumnCount(srs_table["column_count"])
 
         # first check and disable the classes with zero pixels on the map
         for n, key in enumerate(srs_table["header"]):
@@ -116,7 +119,7 @@ def update_srs_table_content(dockwidget, srs_table):
                         item_table.setCheckState(Qt.Unchecked)
                         item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
                         item_table.setToolTip("DISABLED: This class has 0 pixels on the map")
-                        dockwidget.QTableW_StraRS.setItem(m, n, item_table)
+                        sampling_design.QTableW_StraRS.setItem(m, n, item_table)
 
         # enter data onto Table
         for n, key in enumerate(srs_table["header"]):
@@ -125,7 +128,7 @@ def update_srs_table_content(dockwidget, srs_table):
                     item_table = QTableWidgetItem(str(item))
                     item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                    dockwidget.QTableW_StraRS.setItem(m, n, item_table)
+                    sampling_design.QTableW_StraRS.setItem(m, n, item_table)
             if key == "Color":
                 for m in range(srs_table["row_count"]):
                     item_table = QTableWidgetItem()
@@ -134,7 +137,7 @@ def update_srs_table_content(dockwidget, srs_table):
                                                     srs_table["values_and_colors_table"]["Green"][m],
                                                     srs_table["values_and_colors_table"]["Blue"][m],
                                                     srs_table["values_and_colors_table"]["Alpha"][m]))
-                    dockwidget.QTableW_StraRS.setItem(m, n, item_table)
+                    sampling_design.QTableW_StraRS.setItem(m, n, item_table)
             if key == "Num Samples":
                 for m in range(srs_table["row_count"]):
                     item_table = QTableWidgetItem(srs_table["num_samples"][m])
@@ -146,7 +149,7 @@ def update_srs_table_content(dockwidget, srs_table):
                     if not srs_table["On"][m]:
                         item_table.setForeground(QColor("lightGrey"))
                         item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-                    dockwidget.QTableW_StraRS.setItem(m, n, item_table)
+                    sampling_design.QTableW_StraRS.setItem(m, n, item_table)
             if key == "Ui":
                 for m in range(srs_table["row_count"]):
                     item_table = QTableWidgetItem(srs_table["ui"][m])
@@ -157,7 +160,7 @@ def update_srs_table_content(dockwidget, srs_table):
                     if not srs_table["On"][m]:
                         item_table.setForeground(QColor("lightGrey"))
                         item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-                    dockwidget.QTableW_StraRS.setItem(m, n, item_table)
+                    sampling_design.QTableW_StraRS.setItem(m, n, item_table)
             if key == "On":
                 for m in range(srs_table["row_count"]):
                     if srs_table["pixel_count"][m] > 0:
@@ -169,98 +172,102 @@ def update_srs_table_content(dockwidget, srs_table):
                             item_table.setCheckState(Qt.Checked)
                         else:
                             item_table.setCheckState(Qt.Unchecked)
-                        dockwidget.QTableW_StraRS.setItem(m, n, item_table)
+                        sampling_design.QTableW_StraRS.setItem(m, n, item_table)
 
         # hidden row labels
-        dockwidget.QTableW_StraRS.verticalHeader().setVisible(False)
+        sampling_design.QTableW_StraRS.verticalHeader().setVisible(False)
         # add Header
-        dockwidget.QTableW_StraRS.setHorizontalHeaderLabels(srs_table["header"])
+        sampling_design.QTableW_StraRS.setHorizontalHeaderLabels(srs_table["header"])
         # adjust size of Table
-        dockwidget.QTableW_StraRS.resizeColumnsToContents()
-        dockwidget.QTableW_StraRS.resizeRowsToContents()
+        sampling_design.QTableW_StraRS.resizeColumnsToContents()
+        sampling_design.QTableW_StraRS.resizeRowsToContents()
         # set label total samples
         total_num_samples = sum([int(x) for x in mask(srs_table["num_samples"], srs_table["On"])])
-        dockwidget.TotalNumSamples.setText(str(total_num_samples))
+        sampling_design.TotalNumSamples.setText(str(total_num_samples))
         # set maximum and reset the value in progress bar status
-        dockwidget.QPBar_GenerateSamples_StraRS.setValue(0)
-        dockwidget.QPBar_GenerateSamples_StraRS.setMaximum(total_num_samples)
+        sampling_design.QPBar_GenerateSamples_StraRS.setValue(0)
+        sampling_design.QPBar_GenerateSamples_StraRS.setMaximum(total_num_samples)
 
 
 @wait_process
-def reload_StraRS_table(dockwidget):
+def reload_StraRS_table():
     """Reset the table, reloading the layer style, pixel count and restoring default values"""
+    from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+    sampling_design = AcATaMa.dockwidget.sampling_design_window
     # clear table
-    dockwidget.QTableW_StraRS.setRowCount(0)
-    dockwidget.QTableW_StraRS.setColumnCount(0)
+    sampling_design.QTableW_StraRS.setRowCount(0)
+    sampling_design.QTableW_StraRS.setColumnCount(0)
 
-    if dockwidget.QCBox_StraRS_Method.currentText().startswith("Fixed values"):
+    if sampling_design.QCBox_StraRS_Method.currentText().startswith("Fixed values"):
         srs_method = "fixed values"
-    if dockwidget.QCBox_StraRS_Method.currentText().startswith("Area based proportion"):
+    if sampling_design.QCBox_StraRS_Method.currentText().startswith("Area based proportion"):
         srs_method = "area based proportion"
 
     # delete style
-    if dockwidget.QCBox_StratMap_StraRS.currentText() in dockwidget.srs_tables.keys() and \
-        srs_method in dockwidget.srs_tables[dockwidget.QCBox_StratMap_StraRS.currentText()].keys():
-        del dockwidget.srs_tables[dockwidget.QCBox_StratMap_StraRS.currentText()][srs_method]
+    if sampling_design.QCBox_SamplingMap_StraRS.currentText() in sampling_design.srs_tables.keys() and \
+        srs_method in sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()].keys():
+        del sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()][srs_method]
     # delete pixel count
     if srs_method == "area based proportion":
         from AcATaMa.utils.others_utils import storage_pixel_count_by_pixel_values
         global storage_pixel_count_by_pixel_values
-        layer = dockwidget.QCBox_StratMap_StraRS.currentLayer()
-        band = int(dockwidget.QCBox_band_StratMap_StraRS.currentText())
-        nodata = get_nodata_format(dockwidget.nodata_StratMap_StraRS.text())
+        layer = sampling_design.QCBox_SamplingMap_StraRS.currentLayer()
+        band = int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText())
+        nodata = get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text())
         if (layer, band, nodata) in storage_pixel_count_by_pixel_values:
             del storage_pixel_count_by_pixel_values[(layer, band, nodata)]
 
-    fill_stratified_sampling_table(dockwidget)
+    fill_stratified_sampling_table()
 
 
-def fill_stratified_sampling_table(dockwidget):
+def fill_stratified_sampling_table():
+    from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+    sampling_design = AcATaMa.dockwidget.sampling_design_window
     try:
         # check the current selected file
-        dockwidget.QCBox_StratMap_StraRS.currentLayer().dataProvider()
+        sampling_design.QCBox_SamplingMap_StraRS.currentLayer().dataProvider()
         # check sampling method selected
-        if not dockwidget.QCBox_StraRS_Method.currentText():
+        if not sampling_design.QCBox_StraRS_Method.currentText():
             raise Exception
     except:
         # clear table
-        dockwidget.QTableW_StraRS.setRowCount(0)
-        dockwidget.QTableW_StraRS.setColumnCount(0)
+        sampling_design.QTableW_StraRS.setRowCount(0)
+        sampling_design.QTableW_StraRS.setColumnCount(0)
         return
 
-    if dockwidget.QCBox_StraRS_Method.currentText().startswith("Fixed values"):
+    if sampling_design.QCBox_StraRS_Method.currentText().startswith("Fixed values"):
         srs_method = "fixed values"
-        dockwidget.widget_TotalExpectedSE.setHidden(True)
-    if dockwidget.QCBox_StraRS_Method.currentText().startswith("Area based proportion"):
+        sampling_design.widget_TotalExpectedSE.setHidden(True)
+    if sampling_design.QCBox_StraRS_Method.currentText().startswith("Area based proportion"):
         srs_method = "area based proportion"
-        dockwidget.widget_TotalExpectedSE.setVisible(True)
+        sampling_design.widget_TotalExpectedSE.setVisible(True)
 
-    if dockwidget.QCBox_StratMap_StraRS.currentText() in dockwidget.srs_tables.keys() and \
-        srs_method in dockwidget.srs_tables[dockwidget.QCBox_StratMap_StraRS.currentText()].keys():
+    if sampling_design.QCBox_SamplingMap_StraRS.currentText() in sampling_design.srs_tables.keys() and \
+        srs_method in sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()].keys():
         # restore values saved for number of samples configured for selected post-stratification file
-        srs_table = dockwidget.srs_tables[dockwidget.QCBox_StratMap_StraRS.currentText()][srs_method]
+        srs_table = sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()][srs_method]
     else:
         from AcATaMa.core.map import get_values_and_colors_table
         # init a new stratified random sampling table
         srs_table = {"values_and_colors_table": get_values_and_colors_table(
-            dockwidget.QCBox_StratMap_StraRS.currentLayer(),
-            band=int(dockwidget.QCBox_band_StratMap_StraRS.currentText()),
-            nodata=get_nodata_format(dockwidget.nodata_StratMap_StraRS.text()))}
+            layer=sampling_design.QCBox_SamplingMap_StraRS.currentLayer(),
+            band=int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText()),
+            nodata=get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text()))}
 
         if not srs_table["values_and_colors_table"]:
             # clear table
-            dockwidget.QTableW_StraRS.setRowCount(0)
-            dockwidget.QTableW_StraRS.setColumnCount(0)
+            sampling_design.QTableW_StraRS.setRowCount(0)
+            sampling_design.QTableW_StraRS.setColumnCount(0)
             # deselect
-            dockwidget.QCBox_StraRS_Method.setCurrentIndex(-1)
+            sampling_design.QCBox_StraRS_Method.setCurrentIndex(-1)
             return
         srs_table["row_count"] = len(list(srs_table["values_and_colors_table"].values())[0])
 
         srs_table["pixel_count"] = list(
-            get_pixel_count_by_pixel_values(dockwidget.QCBox_StratMap_StraRS.currentLayer(),
-                                            int(dockwidget.QCBox_band_StratMap_StraRS.currentText()),
+            get_pixel_count_by_pixel_values(sampling_design.QCBox_SamplingMap_StraRS.currentLayer(),
+                                            int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText()),
                                             srs_table["values_and_colors_table"]["Pixel Value"],
-                                            get_nodata_format(dockwidget.nodata_StratMap_StraRS.text())).values())
+                                            get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text())).values())
 
         if srs_method == "fixed values":
             srs_table["header"] = ["Pix Val", "Color", "Num Samples", "On"]
@@ -272,55 +279,57 @@ def fill_stratified_sampling_table(dockwidget):
             srs_table["header"] = ["Pix Val", "Color", "Num Samples", "Ui", "On"]
             srs_table["column_count"] = len(srs_table["header"])
             srs_table["ui"] = [str(0.8)]*srs_table["row_count"]
-            total_std_error = dockwidget.TotalExpectedSE.value()
+            total_std_error = sampling_design.TotalExpectedSE.value()
             srs_table["On"] = [True] * srs_table["row_count"]
             srs_table["num_samples"] = get_num_samples_by_area_based_proportion(srs_table, total_std_error)
             # adjust the number of samples based on minimum samples per stratum
-            minimum_samples_per_stratum = dockwidget.MinimumSamplesPerStratum.value()
+            minimum_samples_per_stratum = sampling_design.MinimumSamplesPerStratum.value()
             for idx, ns in enumerate(srs_table["num_samples"]):
                 if 0 < int(ns) < minimum_samples_per_stratum:
                     srs_table["num_samples"][idx] = str(minimum_samples_per_stratum)
 
         # save srs table
-        if dockwidget.QCBox_StratMap_StraRS.currentText() not in dockwidget.srs_tables.keys():
-            dockwidget.srs_tables[dockwidget.QCBox_StratMap_StraRS.currentText()] = {}
-        dockwidget.srs_tables[dockwidget.QCBox_StratMap_StraRS.currentText()][srs_method] = srs_table
+        if sampling_design.QCBox_SamplingMap_StraRS.currentText() not in sampling_design.srs_tables.keys():
+            sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()] = {}
+        sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()][srs_method] = srs_table
 
     # update content
-    update_srs_table_content(dockwidget, srs_table)
+    update_srs_table_content(srs_table)
 
 
-def update_stratified_sampling_table(dockwidget, changes_from):
-    if dockwidget.QCBox_StraRS_Method.currentText().startswith("Fixed values"):
+def update_stratified_sampling_table(changes_from):
+    from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+    sampling_design = AcATaMa.dockwidget.sampling_design_window
+    if sampling_design.QCBox_StraRS_Method.currentText().startswith("Fixed values"):
         srs_method = "fixed values"
-    if dockwidget.QCBox_StraRS_Method.currentText().startswith("Area based proportion"):
+    if sampling_design.QCBox_StraRS_Method.currentText().startswith("Area based proportion"):
         srs_method = "area based proportion"
-    srs_table = dockwidget.srs_tables[dockwidget.QCBox_StratMap_StraRS.currentText()][srs_method]
+    srs_table = sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()][srs_method]
 
     if changes_from in ["TotalExpectedSE", "MinimumSamplesPerStratum"]:
         srs_table["num_samples"] = \
-            get_num_samples_by_area_based_proportion(srs_table, dockwidget.TotalExpectedSE.value())
+            get_num_samples_by_area_based_proportion(srs_table, sampling_design.TotalExpectedSE.value())
 
     if changes_from == "TableContent":
         num_samples = []
         ui = []
         on = []
 
-        for row in range(dockwidget.QTableW_StraRS.rowCount()):
-            num_samples_in_row = dockwidget.QTableW_StraRS.item(row, 2).text()
+        for row in range(sampling_design.QTableW_StraRS.rowCount()):
+            num_samples_in_row = sampling_design.QTableW_StraRS.item(row, 2).text()
             if not num_samples_in_row.isdigit() or int(num_samples_in_row) < 0:
                 num_samples_in_row = srs_table["num_samples"][row]
             num_samples.append(num_samples_in_row)
             if srs_method == "fixed values":
-                if dockwidget.QTableW_StraRS.item(row, 3).checkState() == 2:
+                if sampling_design.QTableW_StraRS.item(row, 3).checkState() == 2:
                     on.append(True)
-                if dockwidget.QTableW_StraRS.item(row, 3).checkState() == 0:
+                if sampling_design.QTableW_StraRS.item(row, 3).checkState() == 0:
                     on.append(False)
             if srs_method == "area based proportion":
-                ui.append(dockwidget.QTableW_StraRS.item(row, 3).text())
-                if dockwidget.QTableW_StraRS.item(row, 4).checkState() == 2:
+                ui.append(sampling_design.QTableW_StraRS.item(row, 3).text())
+                if sampling_design.QTableW_StraRS.item(row, 4).checkState() == 2:
                     on.append(True)
-                if dockwidget.QTableW_StraRS.item(row, 4).checkState() == 0:
+                if sampling_design.QTableW_StraRS.item(row, 4).checkState() == 0:
                     on.append(False)
 
         if srs_method == "fixed values":
@@ -334,17 +343,17 @@ def update_stratified_sampling_table(dockwidget, changes_from):
                 srs_table["num_samples"] = get_num_samples_by_keeping_total_samples(srs_table, num_samples)
             else:
                 srs_table["num_samples"] = \
-                    get_num_samples_by_area_based_proportion(srs_table, dockwidget.TotalExpectedSE.value())
+                    get_num_samples_by_area_based_proportion(srs_table, sampling_design.TotalExpectedSE.value())
 
     # adjusts the number of samples based on minimum samples per stratum
-    minimum_samples_per_stratum = dockwidget.MinimumSamplesPerStratum.value()
+    minimum_samples_per_stratum = sampling_design.MinimumSamplesPerStratum.value()
     if srs_method == "area based proportion":
         for idx, ns in enumerate(srs_table["num_samples"]):
             if srs_table["On"][idx] and int(ns) < minimum_samples_per_stratum:
                 srs_table["num_samples"][idx] = str(minimum_samples_per_stratum)
 
     # update content
-    update_srs_table_content(dockwidget, srs_table)
+    update_srs_table_content(srs_table)
     # save srs table
-    dockwidget.srs_tables[dockwidget.QCBox_StratMap_StraRS.currentText()][srs_method] = srs_table
+    sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()][srs_method] = srs_table
 

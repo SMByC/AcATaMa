@@ -187,7 +187,7 @@
                 <item>
                  <widget class="QLabel" name="label_12">
                   <property name="text">
-                   <string>Use a layer with categorical values (which can be the same thematic file) to validate random sampling exclusively within the selected classes.</string>
+                   <string>Use a layer with categorical values (the thematic map by default) to validate random sampling exclusively within the selected classes.</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -254,12 +254,15 @@
                     <widget class="QComboBox" name="QCBox_band_PostStratMap_SimpRS">
                      <property name="maximumSize">
                       <size>
-                       <width>50</width>
+                       <width>65</width>
                        <height>16777215</height>
                       </size>
                      </property>
                      <property name="toolTip">
                       <string>Band</string>
+                     </property>
+                     <property name="sizeAdjustPolicy">
+                      <enum>QComboBox::AdjustToContents</enum>
                      </property>
                     </widget>
                    </item>
@@ -400,6 +403,9 @@ It set automatically from image if the layer has the nodata value set.</string>
                    </property>
                    <item row="0" column="1">
                     <widget class="QComboBox" name="QCBox_NumberOfNeighbors_SimpRS">
+                     <property name="sizeAdjustPolicy">
+                      <enum>QComboBox::AdjustToContents</enum>
+                     </property>
                      <item>
                       <property name="text">
                        <string>8</string>
@@ -432,7 +438,11 @@ It set automatically from image if the layer has the nodata value set.</string>
                     </widget>
                    </item>
                    <item row="1" column="1">
-                    <widget class="QComboBox" name="QCBox_SameClassOfNeighbors_SimpRS"/>
+                    <widget class="QComboBox" name="QCBox_SameClassOfNeighbors_SimpRS">
+                     <property name="sizeAdjustPolicy">
+                      <enum>QComboBox::AdjustToContents</enum>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </widget>
@@ -687,6 +697,9 @@ It set automatically from image if the layer has the nodata value set.</string>
                    </property>
                    <item row="0" column="1">
                     <widget class="QComboBox" name="QCBox_NumberOfNeighbors_StraRS">
+                     <property name="sizeAdjustPolicy">
+                      <enum>QComboBox::AdjustToContents</enum>
+                     </property>
                      <item>
                       <property name="text">
                        <string>8</string>
@@ -719,7 +732,11 @@ It set automatically from image if the layer has the nodata value set.</string>
                     </widget>
                    </item>
                    <item row="1" column="1">
-                    <widget class="QComboBox" name="QCBox_SameClassOfNeighbors_StraRS"/>
+                    <widget class="QComboBox" name="QCBox_SameClassOfNeighbors_StraRS">
+                     <property name="sizeAdjustPolicy">
+                      <enum>QComboBox::AdjustToContents</enum>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </widget>
@@ -964,16 +981,13 @@ It set automatically from image if the layer has the nodata value set.</string>
           <item row="0" column="0">
            <widget class="QGroupBox" name="QGBox_2">
             <property name="title">
-             <string>Stratification Map</string>
+             <string>Sampling Map</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_18">
              <item>
               <widget class="QLabel" name="label_17">
-               <property name="toolTip">
-                <string>In rare cases, a different map is used for sampling and validation</string>
-               </property>
                <property name="text">
-                <string>Select the map on which you wish to stratify the samples. Typically, it is the selected thematic map:</string>
+                <string>Select the map on which you wish to design and stratify the samples. The thematic map by default:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -1002,7 +1016,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QgsMapLayerComboBox" name="QCBox_StratMap_StraRS">
+                 <widget class="QgsMapLayerComboBox" name="QCBox_SamplingMap_StraRS">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -1011,6 +1025,9 @@ It set automatically from image if the layer has the nodata value set.</string>
                   </property>
                   <property name="focusPolicy">
                    <enum>Qt::StrongFocus</enum>
+                  </property>
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;NOTE: Normally this should be the thematic map, however in special user cases a different map would be used for sampling and validation. If so, Acatama only uses the thematic map to obtain the valid sampling area, but uses the sampling map to distribute the samples in the strata.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="editable">
                    <bool>false</bool>
@@ -1021,7 +1038,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QToolButton" name="QPBtn_browseStratMap_StraRS">
+                 <widget class="QToolButton" name="QPBtn_browseSamplingMap_StraRS">
                   <property name="maximumSize">
                    <size>
                     <width>30</width>
@@ -1037,20 +1054,23 @@ It set automatically from image if the layer has the nodata value set.</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QComboBox" name="QCBox_band_StratMap_StraRS">
+                 <widget class="QComboBox" name="QCBox_band_SamplingMap_StraRS">
                   <property name="maximumSize">
                    <size>
-                    <width>50</width>
+                    <width>65</width>
                     <height>16777215</height>
                    </size>
                   </property>
                   <property name="toolTip">
                    <string>Band</string>
                   </property>
+                  <property name="sizeAdjustPolicy">
+                   <enum>QComboBox::AdjustToContents</enum>
+                  </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="nodata_StratMap_StraRS">
+                 <widget class="QLineEdit" name="nodata_SamplingMap_StraRS">
                   <property name="maximumSize">
                    <size>
                     <width>80</width>
@@ -1398,7 +1418,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                 <item>
                  <widget class="QLabel" name="label_33">
                   <property name="text">
-                   <string>Use a layer with categorical values (which can be the same thematic file) to validate random sampling exclusively within the selected classes.</string>
+                   <string>Use a layer with categorical values (the thematic map by default) to validate random sampling exclusively within the selected classes.</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -1465,12 +1485,15 @@ It set automatically from image if the layer has the nodata value set.</string>
                     <widget class="QComboBox" name="QCBox_band_PostStratMap_SystS">
                      <property name="maximumSize">
                       <size>
-                       <width>50</width>
+                       <width>65</width>
                        <height>16777215</height>
                       </size>
                      </property>
                      <property name="toolTip">
                       <string>Band</string>
+                     </property>
+                     <property name="sizeAdjustPolicy">
+                      <enum>QComboBox::AdjustToContents</enum>
                      </property>
                     </widget>
                    </item>
@@ -1611,6 +1634,9 @@ It set automatically from image if the layer has the nodata value set.</string>
                    </property>
                    <item row="0" column="1">
                     <widget class="QComboBox" name="QCBox_NumberOfNeighbors_SystS">
+                     <property name="sizeAdjustPolicy">
+                      <enum>QComboBox::AdjustToContents</enum>
+                     </property>
                      <item>
                       <property name="text">
                        <string>8</string>
@@ -1643,7 +1669,11 @@ It set automatically from image if the layer has the nodata value set.</string>
                     </widget>
                    </item>
                    <item row="1" column="1">
-                    <widget class="QComboBox" name="QCBox_SameClassOfNeighbors_SystS"/>
+                    <widget class="QComboBox" name="QCBox_SameClassOfNeighbors_SystS">
+                     <property name="sizeAdjustPolicy">
+                      <enum>QComboBox::AdjustToContents</enum>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </widget>

@@ -81,12 +81,15 @@
            <widget class="QComboBox" name="QCBox_band_ThematicMap">
             <property name="maximumSize">
              <size>
-              <width>50</width>
+              <width>65</width>
               <height>16777215</height>
              </size>
             </property>
             <property name="toolTip">
              <string>Band</string>
+            </property>
+            <property name="sizeAdjustPolicy">
+             <enum>QComboBox::AdjustToContents</enum>
             </property>
            </widget>
           </item>

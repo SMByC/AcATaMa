@@ -44,8 +44,8 @@ def test_pixel_count_with_nodata_sequential(plugin, unwrap):
 
     pixel_count = get_pixel_count_by_pixel_values_sequential(
         plugin.dockwidget.QCBox_ThematicMap.currentLayer(),
-        band=int(sampling_design.QCBox_band_StratMap_StraRS.currentText()),
-        nodata=get_nodata_format(sampling_design.nodata_StratMap_StraRS.text())
+        band=int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText()),
+        nodata=get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text())
     )
 
     assert pixel_count == {1: 10423, 2: 418, 5: 8822}
@@ -60,8 +60,8 @@ def test_pixel_count_with_nodata_parallel(plugin, unwrap):
 
     pixel_count = get_pixel_count_by_pixel_values_parallel(
         plugin.dockwidget.QCBox_ThematicMap.currentLayer(),
-        band=int(sampling_design.QCBox_band_StratMap_StraRS.currentText()),
-        nodata=get_nodata_format(sampling_design.nodata_StratMap_StraRS.text())
+        band=int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText()),
+        nodata=get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text())
     )
 
     assert pixel_count == {1: 10423, 2: 418, 5: 8822}

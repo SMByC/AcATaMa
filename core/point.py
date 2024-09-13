@@ -89,19 +89,22 @@ class RandomPoint(Point):
         """Check if point is at least in one pixel values set in the post-stratification map
         """
         if classes_for_sampling is not None:
-            point_value_in_post_strat_map = post_stratification_map.get_pixel_value_from_pnt(self.QgsPnt)
-            if point_value_in_post_strat_map is None or int(point_value_in_post_strat_map) not in classes_for_sampling:
+            sample_value_in_post_strat_map = post_stratification_map.get_pixel_value_from_pnt(self.QgsPnt)
+            if sample_value_in_post_strat_map is None or int(sample_value_in_post_strat_map) not in classes_for_sampling:
                 return False
         return True
 
-    def in_max_samples_in_stratum(self, classes_for_sampling, total_of_samples, post_stratification_map, samples_in_strata):
+    def in_max_samples_in_stratum(self, classes_for_sampling, total_of_samples, sampling_map, samples_in_strata):
         """Check if point not exceed the maximum number of samples in the stratum
         where the point is located. Specific function for stratified sampling
         """
-        pixel_value_in_strat_map = int(post_stratification_map.get_pixel_value_from_pnt(self.QgsPnt))
-        if pixel_value_in_strat_map == post_stratification_map.nodata or pixel_value_in_strat_map not in classes_for_sampling:
+        sample_value_in_sampling_map = sampling_map.get_pixel_value_from_pnt(self.QgsPnt)
+        if sample_value_in_sampling_map is None:
             return False
-        self.index_pixel_value = classes_for_sampling.index(pixel_value_in_strat_map)
+        sample_value_in_sampling_map = int(sample_value_in_sampling_map)
+        if sample_value_in_sampling_map == sampling_map.nodata or sample_value_in_sampling_map not in classes_for_sampling:
+            return False
+        self.index_pixel_value = classes_for_sampling.index(sample_value_in_sampling_map)
         if samples_in_strata[self.index_pixel_value] >= total_of_samples[self.index_pixel_value]:
             return False
         return True

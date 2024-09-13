@@ -117,10 +117,20 @@ class SamplingReport(QDialog, FORM_CLASS):
         else:
             post_stratification_table = None
 
+        if self.sampling.sampling_map is not None and self.sampling.sampling_map.qgs_layer != self.sampling.thematic_map.qgs_layer:
+            sampling_map = self.sampling.sampling_map.qgs_layer.name()
+            sampling_map_table = get_samples_distribution_table(self.sampling.sampling_map,
+                                                                self.sampling.points.values(),
+                                                                QgsUnitTypes.AreaUnit(self.area_unit.currentIndex()))
+        else:
+            sampling_map = None
+            sampling_map_table = None
+
         self.report = {
             "general": {
                 "sampling_layer": self.sampling_layer.name(),
                 "thematic_map": self.sampling.thematic_map.qgs_layer.name(),
+                "sampling_map": sampling_map,
                 "sampling_type": self.sampling_conf["sampling_type"],
                 "stratified_method": self.sampling.sampling_method if self.sampling_conf["sampling_type"] == "stratified" else None,
                 "total_of_samples": self.sampling.samples_generated,
@@ -135,16 +145,16 @@ class SamplingReport(QDialog, FORM_CLASS):
                 "random_seed": self.sampling_conf["random_seed"] if self.sampling_conf["random_seed"] is not None else "Auto",
                 "area_unit": self.area_unit.currentIndex(),
             },
-            "stats": {  # TODO
-                "mean_distance": 0,
-                "density": 0
-            },
             "samples": {
                 "thematic_map": thematic_map_table,
                 "total_of_samples_by_stratum": self.sampling_conf["total_of_samples"]
                     if self.sampling_conf["sampling_type"] == "stratified" else None,
                 "samples_not_in_thematic_map":
                     self.sampling.samples_generated - sum(thematic_map_table["num_samples"]),
+                "sampling_map": sampling_map_table,
+                "samples_not_in_sampling_map":
+                    self.sampling.samples_generated - sum(sampling_map_table["num_samples"])
+                    if sampling_map_table else None,
                 "post_stratification": post_stratification_table,
                 "samples_not_in_post_stratification":
                     self.sampling.samples_generated - sum(post_stratification_table["num_samples"])
@@ -216,13 +226,23 @@ class SamplingReport(QDialog, FORM_CLASS):
                     <th>Thematic Map</th>
                     <td>{thematic_map}</td>
                 </tr>
+            """.format(sampling_layer=self.report["general"]["sampling_layer"],
+                       thematic_map=self.report["general"]["thematic_map"])
+        # sampling map
+        if self.report["general"]["sampling_map"]:
+            html += """
+                <tr>
+                    <th>Sampling Map</th>
+                    <td>{sampling_map}</td>
+                </tr>
+            """.format(sampling_map=self.report["general"]["sampling_map"])
+
+        html += """
                 <tr>
                     <th>Sampling Type</th>
                     <td>{sampling_type}</td>
                 </tr>
-            """.format(sampling_layer=self.report["general"]["sampling_layer"],
-                       thematic_map=self.report["general"]["thematic_map"],
-                       sampling_type=sampling_type[self.report["general"]["sampling_type"]])
+            """.format(sampling_type=sampling_type[self.report["general"]["sampling_type"]])
 
         if self.report["general"]["sampling_type"] == "stratified":
             html += """
@@ -333,6 +353,49 @@ class SamplingReport(QDialog, FORM_CLASS):
                 </table>
                 <i>* Samples in no-data or outside</i>
             """.format(num_samples=self.report["samples"]["samples_not_in_thematic_map"])
+
+        if self.report["samples"]["sampling_map"]:
+            html += """
+                <h3>Distribution of samples on the sampling map</h3>
+                <table>
+                    <tr>
+                        <th>Pix Val</th>
+                        <th>Color</th>
+                        <th>Num Samples</th>
+                        <th>Total Pixels</th>
+                        <th>Total Area ({area_unit})</th>
+                    </tr>
+            """.format(area_unit=QgsUnitTypes.toAbbreviatedString(QgsUnitTypes.AreaUnit(self.report["general"]["area_unit"])))
+            for i, pix_val in enumerate(self.report["samples"]["sampling_map"]["pix_val"]):
+                html += """
+                    <tr>
+                        <td>{pix_val}</td>
+                        <td style="background-color: rgb({r}, {g}, {b})"></td>
+                        <td>{num_samples}</td>
+                        <td>{total_pixels}</td>
+                        <td>{total_area}</td>
+                    </tr>
+                """.format(pix_val=pix_val,
+                           r=self.report["samples"]["sampling_map"]["color"][i][0],
+                           g=self.report["samples"]["sampling_map"]["color"][i][1],
+                           b=self.report["samples"]["sampling_map"]["color"][i][2],
+                           num_samples=self.report["samples"]["sampling_map"]["num_samples"][i],
+                           total_pixels=self.report["samples"]["sampling_map"]["total_pixels"][i],
+                           total_area=rf(self.report["samples"]["sampling_map"]["total_area"][i]))
+            html += """</table>"""
+            if self.report["samples"]["samples_not_in_sampling_map"] > 0:
+                html += """
+                    <h4>Samples not in the sampling map *</h4>
+                    <table>
+                        <tr>
+                            <th>Num Samples</th>
+                        </tr>
+                        <tr>
+                            <td>{num_samples}</td>
+                        </tr>
+                    </table>
+                    <i>* Samples in no-data or outside</i>
+                """.format(num_samples=self.report["samples"]["samples_not_in_sampling_map"])
 
         if self.report["samples"]["post_stratification"]:
             html += """
@@ -473,9 +536,15 @@ class SamplingReport(QDialog, FORM_CLASS):
         if self.report["general"]["sampling_type"] == "stratified" or (
                 self.report["general"]["sampling_type"] in ["simple", "systematic"] and self.report["general"]["post_stratification_map"]):
 
-            table = self.report["samples"]["thematic_map"] if not self.report["samples"]["post_stratification"] else self.report["samples"]["post_stratification"]
-            min_sample_size = min([num_samples for num_samples in table["num_samples"] if num_samples > 0])
-            if min_sample_size < 30:
+            if self.report["general"]["sampling_type"] == "stratified":
+                if self.report["samples"]["sampling_map"]:
+                    table = self.report["samples"]["sampling_map"]
+                else:
+                    table = self.report["samples"]["thematic_map"]
+            else:
+                table = self.report["samples"]["post_stratification"]
+
+            if min([num_samples for num_samples in table["num_samples"] if num_samples > 0]) < 30:
                 html += """
                     <br/>
                     <div style="background-color: #fffff3;">

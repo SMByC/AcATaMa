@@ -31,7 +31,8 @@ def test_simple_post_stratified_random_sampling(plugin, unwrap, tmpdir):
     random_seed = int(sampling_design.random_seed_by_user_SimpRS.text())
     output_file = tmpdir.join('test_simple_post_stratified_random_sampling.gpkg')
 
-    sampling = Sampling("simple", thematic_map, post_stratification_map, output_file=str(output_file))
+    sampling = Sampling("simple", thematic_map, post_stratification_map=post_stratification_map,
+                        output_file=str(output_file))
     # create a mummy QgsTask object
     task = type("QgsTask", (object,), {"setProgress": lambda x: None, "isCanceled": lambda: False})
     # config arguments
@@ -62,9 +63,9 @@ def test_stratified_random_sampling(plugin, unwrap, tmpdir):
     thematic_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
                        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
                        nodata=get_nodata_format(plugin.dockwidget.nodata_ThematicMap.text()))
-    post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_StratMap_StraRS,
-                                  band=int(sampling_design.QCBox_band_StratMap_StraRS.currentText()),
-                                  nodata=get_nodata_format(sampling_design.nodata_StratMap_StraRS.text()))
+    sampling_map = Map(file_selected_combo_box=sampling_design.QCBox_SamplingMap_StraRS,
+                                  band=int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText()),
+                                  nodata=get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text()))
 
     classes_for_sampling = []
     total_of_samples = []
@@ -87,8 +88,8 @@ def test_stratified_random_sampling(plugin, unwrap, tmpdir):
     random_seed = int(sampling_design.random_seed_by_user_StraRS.text())
     output_file = tmpdir.join('test_stratified_random_sampling.gpkg')
 
-    sampling = Sampling("stratified", thematic_map, post_stratification_map, sampling_method,
-                        srs_config=srs_config, output_file=str(output_file))
+    sampling = Sampling("stratified", thematic_map, sampling_map=sampling_map,
+                        sampling_method=sampling_method, srs_config=srs_config, output_file=str(output_file))
     # create a mummy QgsTask object
     task = type("QgsTask", (object,), {"setProgress": lambda x: None, "isCanceled": lambda: False})
     # config arguments
@@ -133,7 +134,8 @@ def test_systematic_post_stratified_random_sampling(plugin, unwrap, tmpdir):
     random_seed = int(sampling_design.random_seed_by_user_SystS.text())
     output_file = tmpdir.join('test_systematic_post_stratified_random_sampling.gpkg')
 
-    sampling = Sampling("systematic", thematic_map, post_stratification_map, output_file=str(output_file))
+    sampling = Sampling("systematic", thematic_map, post_stratification_map=post_stratification_map,
+                        output_file=str(output_file))
     # create a mummy QgsTask object
     task = type("QgsTask", (object,), {"setProgress": lambda x: None, "isCanceled": lambda: False})
     # config arguments
@@ -184,7 +186,8 @@ def test_systematic_post_stratified_with_initial_inset_random(plugin, unwrap, tm
     random.seed(random_seed)
     initial_inset = random.uniform(0, points_spacing)
 
-    sampling = Sampling("systematic", thematic_map, post_stratification_map, output_file=str(output_file))
+    sampling = Sampling("systematic", thematic_map, post_stratification_map=post_stratification_map,
+                        output_file=str(output_file))
     # create a mummy QgsTask object
     task = type("QgsTask", (object,), {"setProgress": lambda x: None, "isCanceled": lambda: False})
     # config arguments

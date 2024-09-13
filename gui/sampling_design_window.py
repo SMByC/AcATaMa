@@ -87,27 +87,28 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         self.widget_neighbour_aggregation_StraRS.setHidden(True)
         self.widget_random_sampling_options_StraRS.setHidden(True)
         # set properties to QgsMapLayerComboBox
-        self.QCBox_StratMap_StraRS.setCurrentIndex(-1)
-        self.QCBox_StratMap_StraRS.setFilters(QgsMapLayerProxyModel.RasterLayer)
+        self.QCBox_SamplingMap_StraRS.setCurrentIndex(-1)
+        self.QCBox_SamplingMap_StraRS.setFilters(QgsMapLayerProxyModel.RasterLayer)
         # call to browse the post-stratification raster
-        self.QPBtn_browseStratMap_StraRS.clicked.connect(lambda: self.browser_dialog_to_load_file(
-            self.QCBox_StratMap_StraRS,
+        self.QPBtn_browseSamplingMap_StraRS.clicked.connect(lambda: self.browser_dialog_to_load_file(
+            self.QCBox_SamplingMap_StraRS,
             dialog_title=self.tr("Select the post-stratification map"),
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
         # select and check the post-stratification map
-        self.QCBox_StratMap_StraRS.layerChanged.connect(self.update_stratification_map_StraRS)
-        self.QCBox_band_StratMap_StraRS.currentIndexChanged.connect(self.reset_StraRS_method)
-        self.nodata_StratMap_StraRS.textChanged.connect(self.reset_StraRS_method)
+        self.QCBox_SamplingMap_StraRS.layerChanged.connect(self.update_sampling_map_StraRS)
+        self.QCBox_band_SamplingMap_StraRS.currentIndexChanged.connect(self.reset_StraRS_method)
+        self.nodata_SamplingMap_StraRS.textChanged.connect(self.reset_StraRS_method)
         # init variable for save tables content
         self.srs_tables = {}
         # fill table of post-stratification map
         self.widget_TotalExpectedSE.setHidden(True)
-        self.QCBox_StraRS_Method.currentIndexChanged.connect(lambda: fill_stratified_sampling_table(self))
-        self.QPBtn_reloadSrsTable.clicked.connect(lambda: reload_StraRS_table(self))
+        self.QCBox_StraRS_Method.currentIndexChanged.connect(fill_stratified_sampling_table)
+        self.QPBtn_reloadSrsTable.clicked.connect(lambda: reload_StraRS_table())
         # for each item changed in table, save and update it
-        self.TotalExpectedSE.valueChanged.connect(lambda: update_stratified_sampling_table(self, "TotalExpectedSE"))
-        self.QTableW_StraRS.itemChanged.connect(lambda: update_stratified_sampling_table(self, "TableContent"))
-        self.MinimumSamplesPerStratum.valueChanged.connect(lambda: update_stratified_sampling_table(self, "MinimumSamplesPerStratum"))
+        self.TotalExpectedSE.valueChanged.connect(lambda: update_stratified_sampling_table("TotalExpectedSE"))
+        self.QTableW_StraRS.itemChanged.connect(lambda: update_stratified_sampling_table("TableContent"))
+        self.MinimumSamplesPerStratum.valueChanged.connect(lambda: update_stratified_sampling_table(
+            "MinimumSamplesPerStratum"))
         # number of neighbors aggregation
         self.fill_same_class_of_neighbors(self.QCBox_NumberOfNeighbors_StraRS, self.QCBox_SameClassOfNeighbors_StraRS)
         self.QCBox_NumberOfNeighbors_StraRS.currentIndexChanged.connect(lambda: self.fill_same_class_of_neighbors(
@@ -216,6 +217,12 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
                                           QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
         self.MaxXYoffset_SystS.setValue(0)
 
+        # select the new thematic map in the sampling design window
+        self.QCBox_SamplingMap_StraRS.setLayer(self.thematic_map)
+        self.QCBox_PostStratMap_SimpRS.setLayer(self.thematic_map)
+        self.QCBox_PostStratMap_SystS.setLayer(self.thematic_map)
+
+
     def show(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         AcATaMa.dockwidget.QGBox_ThematicMap.setEnabled(False)
@@ -248,7 +255,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
 
         post_stratification_map_layer = self.QCBox_PostStratMap_SimpRS.currentLayer()
 
-        if item_changed == "layer":
+        if item_changed == "layer" and self.QCBox_band_PostStratMap_SimpRS.currentText() == "":
             # fill band list
             if self.QCBox_band_PostStratMap_SimpRS.count() != post_stratification_map_layer.bandCount():
                 with block_signals_to(self.QCBox_band_PostStratMap_SimpRS):
@@ -290,35 +297,35 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
                 self.QPBtn_PostStratMapClasses_SimpRS.setText(", ".join(classes_selection_dialog.classes_selected))
 
     @pyqtSlot("QgsMapLayer*")
-    def update_stratification_map_StraRS(self, layer):
+    def update_sampling_map_StraRS(self, sampling_map):
         # first deselect/clear sampling method
         self.QCBox_StraRS_Method.setCurrentIndex(-1)
         # check
-        if not valid_file_selected_in(self.QCBox_StratMap_StraRS, "stratification map"):
-            self.QCBox_band_StratMap_StraRS.clear()
-            self.nodata_StratMap_StraRS.setText("")
+        if not valid_file_selected_in(self.QCBox_SamplingMap_StraRS, "stratification map"):
+            self.QCBox_band_SamplingMap_StraRS.clear()
+            self.nodata_SamplingMap_StraRS.setText("")
             self.QGBox_Sampling_Method.setEnabled(False)
             return
         # check if stratification map data type is integer or byte
-        if layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
-            self.QCBox_StratMap_StraRS.setCurrentIndex(-1)
-            self.QCBox_band_StratMap_StraRS.clear()
-            self.nodata_StratMap_StraRS.setText("")
+        if sampling_map.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
+            self.QCBox_SamplingMap_StraRS.setCurrentIndex(-1)
+            self.QCBox_band_SamplingMap_StraRS.clear()
+            self.nodata_SamplingMap_StraRS.setText("")
             self.QGBox_Sampling_Method.setEnabled(False)
             iface.messageBar().pushMessage("AcATaMa",
                                            "Error, stratification map must be byte or integer as data type.",
                                            level=Qgis.Warning, duration=10)
             return
         # set band count
-        self.QCBox_band_StratMap_StraRS.clear()
-        self.QCBox_band_StratMap_StraRS.addItems([str(x) for x in range(1, layer.bandCount() + 1)])
+        self.QCBox_band_SamplingMap_StraRS.clear()
+        self.QCBox_band_SamplingMap_StraRS.addItems([str(x) for x in range(1, sampling_map.bandCount() + 1)])
         self.QGBox_Sampling_Method.setEnabled(True)
         # set the same nodata value if select the thematic map
-        if layer == self.thematic_map:
+        if sampling_map == self.thematic_map:
             from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-            self.nodata_StratMap_StraRS.setText(set_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text()))
+            self.nodata_SamplingMap_StraRS.setText(set_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text()))
             return
-        self.nodata_StratMap_StraRS.setText(set_nodata_format(get_nodata_value(layer)))
+        self.nodata_SamplingMap_StraRS.setText(set_nodata_format(get_nodata_value(sampling_map)))
 
     def update_post_stratification_map_SystS(self, item_changed):
         self.QPBtn_PostStratMapClasses_SystS.setText("click to select")
@@ -331,7 +338,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
 
         post_stratification_map_layer = self.QCBox_PostStratMap_SystS.currentLayer()
 
-        if item_changed == "layer":
+        if item_changed == "layer" and self.QCBox_band_PostStratMap_SystS.currentText() == "":
             # fill band list
             if self.QCBox_band_PostStratMap_SystS.count() != post_stratification_map_layer.bandCount():
                 with block_signals_to(self.QCBox_band_PostStratMap_SystS):
