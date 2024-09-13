@@ -98,7 +98,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
         # select and check the thematic map
         self.QCBox_ThematicMap.layerChanged.connect(self.select_thematic_map)
-        self.QCBox_band_ThematicMap.currentIndexChanged.connect(self.update_thematic_map_band)
+        self.QCBox_band_ThematicMap.currentIndexChanged[int].connect(self.update_thematic_map_band)
         self.nodata_ThematicMap.textChanged.connect(self.update_thematic_map_nodata)
 
         # ######### Sampling tab ######### #
@@ -210,19 +210,23 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.update_analysis_state()
 
     @pyqtSlot(int)
-    def update_thematic_map_band(self, band_idx):
+    def update_thematic_map_band(self, band_index):
+        if band_index == -1:
+            return
+
         thematic_map_layer = self.QCBox_ThematicMap.currentLayer()
+        band = int(self.QCBox_band_ThematicMap.currentText())
 
         # set nodata value of thematic map in nodata field
-        self.nodata_ThematicMap.setText(set_nodata_format(get_nodata_value(thematic_map_layer, band_idx+1)))
+        self.nodata_ThematicMap.setText(set_nodata_format(get_nodata_value(thematic_map_layer, band)))
 
         # update the band selected in the sampling design window
         if thematic_map_layer == self.sampling_design_window.QCBox_PostStratMap_SimpRS.currentLayer():
-            self.sampling_design_window.QCBox_band_PostStratMap_SimpRS.setCurrentIndex(band_idx)
+            self.sampling_design_window.QCBox_band_PostStratMap_SimpRS.setCurrentIndex(band_index)
         if thematic_map_layer == self.sampling_design_window.QCBox_SamplingMap_StraRS.currentLayer():
-            self.sampling_design_window.QCBox_band_SamplingMap_StraRS.setCurrentIndex(band_idx)
+            self.sampling_design_window.QCBox_band_SamplingMap_StraRS.setCurrentIndex(band_index)
         if thematic_map_layer == self.sampling_design_window.QCBox_PostStratMap_SystS.currentLayer():
-            self.sampling_design_window.QCBox_band_PostStratMap_SystS.setCurrentIndex(band_idx)
+            self.sampling_design_window.QCBox_band_PostStratMap_SystS.setCurrentIndex(band_index)
 
     @pyqtSlot(str)
     def update_thematic_map_nodata(self, nodata):
