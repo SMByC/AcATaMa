@@ -34,6 +34,7 @@ from qgis.PyQt.QtGui import QColor
 from qgis.utils import iface
 
 from AcATaMa.core.response_design import ResponseDesign
+from AcATaMa.gui.response_design_window import ResponseDesignWindow
 from AcATaMa.utils.system_utils import wait_process, block_signals_to
 from AcATaMa.utils.sampling_utils import fill_stratified_sampling_table
 from AcATaMa.utils.qgis_utils import get_current_file_path_in, get_file_path_of_layer, load_and_select_filepath_in, \
@@ -47,6 +48,33 @@ CONFIG_FILE_VERSION = None
 def save(file_out):
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
     from AcATaMa.gui.acatama_dockwidget import VERSION
+
+    # first check if the response_design_window is opened, if so save some of the response_design_window configuration
+    # code need to be sync with the closing function in response_design_window.py
+    if ResponseDesignWindow.is_opened and ResponseDesignWindow.inst is not None:
+        sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile.currentLayer()
+        if sampling_layer in ResponseDesign.instances:
+            response_design = ResponseDesign.instances[sampling_layer]
+            # save some config of response design window for this sampling file
+            response_design.fit_to_sample = ResponseDesignWindow.inst.radiusFitToSample.value()
+            # save view widgets status
+            view_widgets_config = {}
+            for view_widget in ResponseDesignWindow.view_widgets:
+                # {N: {"view_name", "layer_name", "render_file_path", "scale_factor"}, ...}
+                view_widgets_config[view_widget.id] = \
+                    {"view_name": view_widget.QLabel_ViewName.text(),
+                     "layer_name": view_widget.QCBox_RenderFile.currentLayer().name() if view_widget.QCBox_RenderFile.currentLayer() else None,
+                     "render_file_path": get_current_file_path_in(view_widget.QCBox_RenderFile, show_message=False),
+                     # "view_size": (view_widget.size().width(), view_widget.size().height()),
+                     "scale_factor": view_widget.current_scale_factor}
+            response_design.view_widgets_config = view_widgets_config
+            response_design.dialog_size = (ResponseDesignWindow.inst.size().width(), ResponseDesignWindow.inst.size().height())
+            response_design.auto_next_sample = ResponseDesignWindow.inst.autoNextSample.isChecked()
+
+            if ResponseDesignWindow.inst.ccd_plugin_available:
+                from CCD_Plugin.utils.config import get_plugin_config
+                response_design.ccd_plugin_config = get_plugin_config(ResponseDesignWindow.inst.ccd_plugin.id)
+                response_design.ccd_plugin_opened = ResponseDesignWindow.inst.QPBtn_CCDPlugin.isChecked()
 
     def setup_yaml():
         """
