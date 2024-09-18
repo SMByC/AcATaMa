@@ -107,8 +107,8 @@ def load_layer(file_path, name=None, add_to_legend=True):
     if qgslayer.isValid():
         add_layer(qgslayer, add_to_legend)
     else:
-        iface.messageBar().pushMessage("AcATaMa", "Could not to load the layer '{}' no such file {}"
-                                       .format(name, file_path), level=Qgis.Warning, duration=10)
+        iface.messageBar().pushMessage("AcATaMa", "Could not to load the layer \"{}\" no such file: \"{}\""
+                                       .format(name, file_path), level=Qgis.Warning, duration=20)
 
     return qgslayer
 

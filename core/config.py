@@ -273,8 +273,11 @@ def restore(yml_file_path):
         if _path is None:
             return None
         if not os.path.isfile(_path):
-            _path = os.path.join(os.path.dirname(yml_file_path), _path)
-        return os.path.abspath(_path)
+            _rel_path = os.path.join(os.path.dirname(yml_file_path), _path)
+            if os.path.isfile(_rel_path):
+                # the path is relative to the yml file
+                return os.path.abspath(_rel_path)
+        return _path
 
     # ######### general configuration ######### #
     global CONFIG_FILE_VERSION
