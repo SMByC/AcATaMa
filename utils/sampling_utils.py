@@ -155,9 +155,10 @@ def update_srs_table_content(srs_table):
                 for m in range(srs_table["row_count"]):
                     item_table = QTableWidgetItem(srs_table["ui"][m])
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                    item_table.setToolTip("User's accuracy confidence for this map class.\n\n"
-                                          "0.6 - 0.8 for unstable classes\n"
-                                          "0.8 - 0.95 for stable classes")
+                    item_table.setToolTip("User's accuracy confidence for this map class. This is the\n"
+                                          "probability that a pixel classified as class i is actually class i.\n\n"
+                                          "Between 0.6 - 0.8 for unstable classes\n"
+                                          "Between 0.8 - 0.95 for stable classes")
                     if not srs_table["On"][m]:
                         item_table.setForeground(QColor("lightGrey"))
                         item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
