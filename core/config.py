@@ -49,33 +49,6 @@ def save(file_out):
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
     from AcATaMa.gui.acatama_dockwidget import VERSION
 
-    # first check if the response_design_window is opened, if so save some of the response_design_window configuration
-    # code need to be sync with the closing function in response_design_window.py
-    if ResponseDesignWindow.is_opened and ResponseDesignWindow.inst is not None:
-        sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile.currentLayer()
-        if sampling_layer in ResponseDesign.instances:
-            response_design = ResponseDesign.instances[sampling_layer]
-            # save some config of response design window for this sampling file
-            response_design.fit_to_sample = ResponseDesignWindow.inst.radiusFitToSample.value()
-            # save view widgets status
-            view_widgets_config = {}
-            for view_widget in ResponseDesignWindow.view_widgets:
-                # {N: {"view_name", "layer_name", "render_file_path", "scale_factor"}, ...}
-                view_widgets_config[view_widget.id] = \
-                    {"view_name": view_widget.QLabel_ViewName.text(),
-                     "layer_name": view_widget.QCBox_RenderFile.currentLayer().name() if view_widget.QCBox_RenderFile.currentLayer() else None,
-                     "render_file_path": get_current_file_path_in(view_widget.QCBox_RenderFile, show_message=False),
-                     # "view_size": (view_widget.size().width(), view_widget.size().height()),
-                     "scale_factor": view_widget.current_scale_factor}
-            response_design.view_widgets_config = view_widgets_config
-            response_design.dialog_size = (ResponseDesignWindow.inst.size().width(), ResponseDesignWindow.inst.size().height())
-            response_design.auto_next_sample = ResponseDesignWindow.inst.autoNextSample.isChecked()
-
-            if ResponseDesignWindow.inst.ccd_plugin_available:
-                from CCD_Plugin.utils.config import get_plugin_config
-                response_design.ccd_plugin_config = get_plugin_config(ResponseDesignWindow.inst.ccd_plugin.id)
-                response_design.ccd_plugin_opened = ResponseDesignWindow.inst.QPBtn_CCDPlugin.isChecked()
-
     def setup_yaml():
         """
         Keep dump ordered with orderedDict
@@ -83,6 +56,23 @@ def save(file_out):
         represent_dict_order = lambda self, data: self.represent_mapping('tag:yaml.org,2002:map',
                                                                          list(data.items()))
         yaml.add_representer(OrderedDict, represent_dict_order)
+
+    def setup_path(_path):
+        """
+        Sets up the path by calculating the relative path of input path to the directory of where yaml file is being saving.
+        """
+        # Get the directory of the reference file
+        reference_dir = os.path.dirname(os.path.abspath(file_out))
+        try:
+            relative_path = os.path.relpath(_path, start=reference_dir)
+            # If the relative path stays within the reference directory
+            if not relative_path.startswith("..") and not os.path.isabs(relative_path):
+                return relative_path
+            else:
+                return _path
+        except ValueError:
+            # If the paths cannot be related, return the original input path
+            return _path
 
     setup_yaml()
 
@@ -94,7 +84,7 @@ def save(file_out):
 
     # ######### thematic ######### #
     data["thematic_map"] = \
-        {"path": get_current_file_path_in(AcATaMa.dockwidget.QCBox_ThematicMap, show_message=False),
+        {"path": setup_path(get_current_file_path_in(AcATaMa.dockwidget.QCBox_ThematicMap, show_message=False)),
          "band": int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
             if AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText() != '' else -1,
          "nodata": AcATaMa.dockwidget.nodata_ThematicMap.text()}
@@ -109,7 +99,7 @@ def save(file_out):
         "min_distance": sampling_design.minDistance_SimpRS.value(),
 
         "post_stratification": sampling_design.QGBox_SimpRSwithPS.isChecked(),
-        "post_stratification_map_path": get_current_file_path_in(sampling_design.QCBox_PostStratMap_SimpRS, show_message=False),
+        "post_stratification_map_path": setup_path(get_current_file_path_in(sampling_design.QCBox_PostStratMap_SimpRS, show_message=False)),
         "post_stratification_map_band": int(sampling_design.QCBox_band_PostStratMap_SimpRS.currentText())
             if sampling_design.QCBox_band_PostStratMap_SimpRS.currentText() != '' else -1,
         "post_stratification_map_nodata": sampling_design.nodata_PostStratMap_SimpRS.text(),
@@ -130,7 +120,7 @@ def save(file_out):
     with_srs_table = sampling_design.QCBox_SamplingMap_StraRS.currentText() in sampling_design.srs_tables and \
         srs_method in sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()]
     data["sampling_design"]["stratified_random_sampling"] = {
-        "stratification_map_path": get_current_file_path_in(sampling_design.QCBox_SamplingMap_StraRS, show_message=False),
+        "stratification_map_path": setup_path(get_current_file_path_in(sampling_design.QCBox_SamplingMap_StraRS, show_message=False)),
         "stratification_map_band": int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText())
             if sampling_design.QCBox_band_SamplingMap_StraRS.currentText() != '' else -1,
         "stratification_map_nodata": sampling_design.nodata_SamplingMap_StraRS.text(),
@@ -161,7 +151,7 @@ def save(file_out):
         "max_xy_offset": sampling_design.MaxXYoffset_SystS.value(),
 
         "post_stratification": sampling_design.QGBox_SystSwithPS.isChecked(),
-        "post_stratification_map_path": get_current_file_path_in(sampling_design.QCBox_PostStratMap_SystS, show_message=False),
+        "post_stratification_map_path": setup_path(get_current_file_path_in(sampling_design.QCBox_PostStratMap_SystS, show_message=False)),
         "post_stratification_map_band": int(sampling_design.QCBox_band_PostStratMap_SystS.currentText())
             if sampling_design.QCBox_band_PostStratMap_SystS.currentText() != '' else -1,
         "post_stratification_map_nodata": sampling_design.nodata_PostStratMap_SystS.text(),
@@ -186,7 +176,35 @@ def save(file_out):
     # ######### response design configuration ######### #
     if sampling_layer in ResponseDesign.instances:
         response_design = ResponseDesign.instances[sampling_layer]
-        data["sampling_layer"] = get_file_path_of_layer(response_design.sampling_layer)
+
+        # ### first saving some of the response_design_window configuration
+        # code need to be sync with the closing function in response_design_window.py
+
+        # save view widgets status
+        view_widgets_config = {}
+        for view_widget in ResponseDesignWindow.view_widgets:
+            # {N: {"view_name", "layer_name", "render_file_path", "scale_factor"}, ...}
+            view_widgets_config[view_widget.id] = \
+                {"view_name": view_widget.QLabel_ViewName.text(),
+                 "layer_name": view_widget.QCBox_RenderFile.currentLayer().name() if view_widget.QCBox_RenderFile.currentLayer() else None,
+                 "render_file_path": setup_path(get_current_file_path_in(view_widget.QCBox_RenderFile, show_message=False)),
+                 # "view_size": (view_widget.size().width(), view_widget.size().height()),
+                 "scale_factor": view_widget.current_scale_factor}
+        response_design.view_widgets_config = view_widgets_config
+
+        if ResponseDesignWindow.inst is not None:
+            response_design.fit_to_sample = ResponseDesignWindow.inst.radiusFitToSample.value()
+            response_design.dialog_size = (ResponseDesignWindow.inst.size().width(), ResponseDesignWindow.inst.size().height())
+            response_design.auto_next_sample = ResponseDesignWindow.inst.autoNextSample.isChecked()
+
+            if ResponseDesignWindow.inst.ccd_plugin_available:
+                from CCD_Plugin.utils.config import get_plugin_config
+                response_design.ccd_plugin_config = get_plugin_config(ResponseDesignWindow.inst.ccd_plugin.id)
+                response_design.ccd_plugin_opened = ResponseDesignWindow.inst.QPBtn_CCDPlugin.isChecked()
+
+        # ###
+
+        data["sampling_layer"] = setup_path(get_file_path_of_layer(response_design.sampling_layer))
         # TODO:
         # save sampling_layer style
 
