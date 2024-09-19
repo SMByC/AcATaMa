@@ -628,6 +628,10 @@ def restore(yml_file_path):
         if "ccd_plugin_config" in yaml_config:
             response_design.ccd_plugin_config = yaml_config["ccd_plugin_config"]
             response_design.ccd_plugin_opened = yaml_config["ccd_plugin_opened"]
+
+        # restore response design window
+        ResponseDesignWindow(sampling_layer, response_design.grid_columns, response_design.grid_rows)
+
     else:
         response_design = None
 

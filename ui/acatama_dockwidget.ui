@@ -730,7 +730,7 @@ It set automatically from image if the layer has the nodata value set.</string>
        <item>
         <widget class="QPushButton" name="QPBtn_SaveAcatamaState">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Save all configurations and states of AcATaMa, including sampling design, response design state, label states, buttons, configuration dialogs, response design view settings, navigation, analysis settings, and more.&lt;/p&gt;&lt;p&gt;AcATaMa will save relative paths to the YAML file if the layers are in the same directory or subdirectory tree as the YAML file, making it a portable and shareable project.&lt;/p&gt;&lt;p&gt;(Optional) Save the Qgis project along with this configuration file when using remote/network layers.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Save all configurations and states of AcATaMa, including sampling design, response design state, label states, buttons, configuration dialogs, response design view settings, navigation, analysis settings, and more.&lt;/p&gt;&lt;p&gt;AcATaMa will save relative paths to the YAML file only if the layers are in the same directory or subdirectory tree as the YAML file, making it a portable and shareable project.&lt;/p&gt;&lt;p&gt;(Optional) Save the Qgis project along with this configuration file when using remote/network layers.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
           <string>Save state</string>
