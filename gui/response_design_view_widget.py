@@ -170,7 +170,7 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
         self.id = None
         self.is_active = False
         self.current_scale_factor = 1.0
-        self.qgs_main_canvas = iface.mapCanvas()
+        self.qgs_main_canvas = iface.mapCanvas() if iface is not None else None
         self.setupUi(self)
         # init as unactivated render widget for new instances
         self.disable()
