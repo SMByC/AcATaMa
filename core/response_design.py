@@ -116,6 +116,8 @@ class ResponseDesign(object):
         points = []
         for enum_id, qgs_feature in enumerate(self.sampling_layer.getFeatures(), start=1):
             geom = qgs_feature.geometry()
+            if not geom.isGeosValid():
+                continue
             # get the id from shape file using column name "id" else use auto-enumeration
             attr_id = self.sampling_layer.fields().lookupField('id')
             if attr_id != -1:
