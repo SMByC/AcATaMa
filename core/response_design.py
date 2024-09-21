@@ -154,7 +154,7 @@ class ResponseDesign(object):
         if modified == 0 and added == 0 and removed == 0:
             iface.messageBar().pushMessage("AcATaMa", "The sampling file has not detected changes",
                                            level=Qgis.Success, duration=10)
-            return
+            return False
         # reassign points
         self.points = points_from_shapefile
         # update the status and labels for the current sampling file
@@ -164,6 +164,7 @@ class ResponseDesign(object):
         iface.messageBar().pushMessage("AcATaMa", "Sampling file reloaded successfully: {} modified,"
                                                   "{} added and {} removed".format(modified, added, removed),
                                        level=Qgis.Success, duration=10)
+        return True
 
     @wait_process
     def save_sampling_labeled(self, file_out):

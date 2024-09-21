@@ -301,13 +301,18 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
     def reload_sampling_file(self):
         sampling_layer = self.QCBox_SamplingFile.currentLayer()
         if sampling_layer:
-            # sampling file valid
             if sampling_layer in ResponseDesign.instances:
                 response_design = ResponseDesign.instances[sampling_layer]
-                response_design.reload_sampling_file()
             else:
                 response_design = ResponseDesign(sampling_layer)
-                response_design.reload_sampling_file()
+
+            sampling_file_changed = response_design.reload_sampling_file()
+            if sampling_file_changed:
+                # if sampling report exists, delete it for this sampling layer TODO: update the report
+                if sampling_layer in SamplingReport.instances:
+                    del SamplingReport.instances[sampling_layer]
+                    self.QPBtn_openSamplingReport.setDisabled(True)
+
             # updated state of sampling file selected for accuracy assessment tab
             self.update_analysis_state()
         else:
