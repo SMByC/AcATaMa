@@ -148,7 +148,7 @@ class RenderWidget(QWidget):
     def set_extents_and_scalefactor(self, extent):
         with block_signals_to(self.canvas):
             self.canvas.setExtent(extent)
-            self.canvas.zoomByFactor(self.parent_view.scaleFactor.value())
+            self.canvas.zoomByFactor(round(self.parent_view.scaleFactor.value(), 1))
             if self.marker.marker:
                 self.marker.marker.updatePosition()
 
@@ -250,7 +250,11 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
         if self.is_active:
             from AcATaMa.gui.response_design_window import ResponseDesignWindow
             view_extent = self.render_widget.canvas.extent()
-            view_extent.scale(1/self.current_scale_factor)
+            try:
+                view_extent.scale(1/self.current_scale_factor)
+            except ZeroDivisionError:
+                self.current_scale_factor = self.scaleFactor.minimum()
+                view_extent.scale(1 / self.current_scale_factor)
 
             # set extent and scale factor for all view activated except this view
             for view_widget in ResponseDesignWindow.view_widgets:
@@ -262,7 +266,11 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
         # adjust view with the original extent (scale factor=1)
         # and with the new scale factor
         view_extent = self.render_widget.canvas.extent()
-        view_extent.scale(1 / self.current_scale_factor)
+        try:
+            view_extent.scale(1 / self.current_scale_factor)
+        except ZeroDivisionError:
+            self.current_scale_factor = self.scaleFactor.minimum()
+            view_extent.scale(1 / self.current_scale_factor)
         self.render_widget.set_extents_and_scalefactor(view_extent)
         # save the new scale factor
-        self.current_scale_factor = self.scaleFactor.value()
+        self.current_scale_factor = round(self.scaleFactor.value(), 1)
