@@ -52,7 +52,7 @@
           <item>
            <widget class="QLabel" name="label">
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;img height=&quot;110&quot;  src=&quot;:/plugins/AcATaMa/icons/simple_sampling.svg&quot;/&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;img height=&quot;90&quot;  src=&quot;:/plugins/AcATaMa/icons/simple_sampling.svg&quot;/&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
@@ -599,7 +599,7 @@ It set automatically from image if the layer has the nodata value set.</string>
           <item>
            <widget class="QLabel" name="label_3">
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;img height=&quot;110&quot;  src=&quot;:/plugins/AcATaMa/icons/stratified_sampling.svg&quot;/&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;img height=&quot;90&quot;  src=&quot;:/plugins/AcATaMa/icons/stratified_sampling.svg&quot;/&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
@@ -1238,7 +1238,7 @@ It set automatically from image if the layer has the nodata value set.</string>
           <item>
            <widget class="QLabel" name="label_2">
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;img height=&quot;110&quot;  src=&quot;:/plugins/AcATaMa/icons/systematic_sampling.svg&quot;/&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;img height=&quot;90&quot;  src=&quot;:/plugins/AcATaMa/icons/systematic_sampling.svg&quot;/&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
