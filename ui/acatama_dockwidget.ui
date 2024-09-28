@@ -681,22 +681,13 @@ It set automatically from image if the layer has the nodata value set.</string>
         <number>0</number>
        </property>
        <item>
-        <widget class="QPushButton" name="QPBtn_PluginClearReload">
-         <property name="cursor">
-          <cursorShape>PointingHandCursor</cursorShape>
-         </property>
+        <widget class="QToolButton" name="QPBtn_PluginClearReload">
          <property name="toolTip">
           <string>Clear all and reload the AcATaMa plugin.</string>
          </property>
-         <property name="text">
-          <string>Clear/Reload</string>
-         </property>
          <property name="icon">
           <iconset>
-           <normaloff>:/plugins/AcATaMa/icons/reload.svg</normaloff>:/plugins/AcATaMa/icons/reload.svg</iconset>
-         </property>
-         <property name="flat">
-          <bool>true</bool>
+           <normaloff>:/plugins/AcATaMa/icons/clear.svg</normaloff>:/plugins/AcATaMa/icons/clear.svg</iconset>
          </property>
         </widget>
        </item>

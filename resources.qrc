@@ -23,5 +23,6 @@
         <file>icons/simple_sampling.svg</file>
         <file>icons/stratified_sampling.svg</file>
         <file>icons/systematic_sampling.svg</file>
+        <file>icons/clear.svg</file>
     </qresource>
 </RCC>

@@ -165,6 +165,7 @@ class AcATaMa(object):
         # when closing the docked window:
         # self.dockwidget = None
         self.dockwidget.deleteLater()
+        self.iface.removeDockWidget(self.dockwidget)
         self.dockwidget = None
 
         self.pluginIsActive = False
