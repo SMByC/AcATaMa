@@ -38,6 +38,7 @@ from AcATaMa.utils.others_utils import set_nodata_format
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_filepath_in, get_file_path_of_layer
 from AcATaMa.utils.system_utils import error_handler, block_signals_to, output_file_is_OK
 from AcATaMa.gui.sampling_report import SamplingReport
+from AcATaMa.gui.about_dialog import AboutDialog
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -87,6 +88,11 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         event.accept()
 
     def setup_gui(self):
+        # ######### plugin info ######### #
+        self.about_dialog = AboutDialog()
+        self.QPBtn_PluginInfo.setToolTip("AcATaMa v{}".format(VERSION))
+        self.QPBtn_PluginInfo.clicked.connect(self.about_dialog.show)
+
         # ######### load thematic map image ######### #
         # set properties to QgsMapLayerComboBox
         self.QCBox_ThematicMap.setCurrentIndex(-1)

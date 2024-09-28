@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>306</width>
+    <width>342</width>
     <height>719</height>
    </rect>
   </property>
@@ -24,9 +24,6 @@
        <item>
         <widget class="QWidget" name="widget_0" native="true">
          <layout class="QHBoxLayout" name="horizontalLayout_11">
-          <property name="spacing">
-           <number>3</number>
-          </property>
           <property name="leftMargin">
            <number>0</number>
           </property>
@@ -665,9 +662,6 @@ It set automatically from image if the layer has the nodata value set.</string>
     <item>
      <widget class="QWidget" name="widget_plugin_info" native="true">
       <layout class="QHBoxLayout" name="horizontalLayout_25">
-       <property name="spacing">
-        <number>3</number>
-       </property>
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -681,13 +675,16 @@ It set automatically from image if the layer has the nodata value set.</string>
         <number>0</number>
        </property>
        <item>
-        <widget class="QToolButton" name="QPBtn_PluginClearReload">
+        <widget class="QToolButton" name="QPBtn_PluginInfo">
          <property name="toolTip">
-          <string>Clear all and reload the AcATaMa plugin.</string>
+          <string>AcATaMa version</string>
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>:/plugins/AcATaMa/icons/clear.svg</normaloff>:/plugins/AcATaMa/icons/clear.svg</iconset>
+           <normaloff>:/plugins/AcATaMa/icons/acatama.svg</normaloff>:/plugins/AcATaMa/icons/acatama.svg</iconset>
+         </property>
+         <property name="autoRaise">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -703,6 +700,26 @@ It set automatically from image if the layer has the nodata value set.</string>
           </size>
          </property>
         </spacer>
+       </item>
+       <item>
+        <widget class="QToolButton" name="QPBtn_PluginClearReload">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Clear all and reload the AcATaMa plugin.</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>:/plugins/AcATaMa/icons/clear.svg</normaloff>:/plugins/AcATaMa/icons/clear.svg</iconset>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonIconOnly</enum>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QPushButton" name="QPBtn_RestoreAcatamaState">
