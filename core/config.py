@@ -321,37 +321,38 @@ def restore(yml_file_path):
     if "sampling_design" in yaml_config and "pixel_values_categ_map" in yaml_config["sampling_design"]["simple_random_sampling"]:
         yaml_config["sampling_design"]["simple_random_sampling"]['classes_selected_for_sampling'] = \
             yaml_config["sampling_design"]["simple_random_sampling"].pop("pixel_values_categ_map")
-    # old post stratification section
-    if "post_stratify" in yaml_config["sampling_design"]["simple_random_sampling"]:
-        yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification'] = \
-            yaml_config["sampling_design"]["simple_random_sampling"].pop("post_stratify")
-    if "post_stratify" in yaml_config["sampling_design"]["systematic_sampling"]:
-        yaml_config["sampling_design"]["systematic_sampling"]['post_stratification'] = \
-            yaml_config["sampling_design"]["systematic_sampling"].pop("post_stratify")
-    # old post stratification map path
-    if "categ_map_path" in yaml_config["sampling_design"]["simple_random_sampling"]:
-        yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification_map_path'] = \
-            yaml_config["sampling_design"]["simple_random_sampling"].pop("categ_map_path")
-    if "categ_map_path" in yaml_config["sampling_design"]["systematic_sampling"]:
-        yaml_config["sampling_design"]["systematic_sampling"]['post_stratification_map_path'] = \
-            yaml_config["sampling_design"]["systematic_sampling"].pop("categ_map_path")
-    if "categ_map_path" in yaml_config["sampling_design"]["stratified_random_sampling"]:
-        yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_path'] = \
-            yaml_config["sampling_design"]["stratified_random_sampling"].pop("categ_map_path")
-    # old post stratification map band
-    if "categ_map_band" in yaml_config["sampling_design"]["simple_random_sampling"]:
-        yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification_map_band'] = \
-            yaml_config["sampling_design"]["simple_random_sampling"].pop("categ_map_band")
-    if "categ_map_band" in yaml_config["sampling_design"]["systematic_sampling"]:
-        yaml_config["sampling_design"]["systematic_sampling"]['post_stratification_map_band'] = \
-            yaml_config["sampling_design"]["systematic_sampling"].pop("categ_map_band")
-    if "categ_map_band" in yaml_config["sampling_design"]["stratified_random_sampling"]:
-        yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_band'] = \
-            yaml_config["sampling_design"]["stratified_random_sampling"].pop("categ_map_band")
-    # old post stratification map nodata
-    if "categ_map_nodata" in yaml_config["sampling_design"]["stratified_random_sampling"]:
-        yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_nodata'] = \
-            yaml_config["sampling_design"]["stratified_random_sampling"].pop("categ_map_nodata")
+    if "sampling_design" in yaml_config:
+        # old post stratification section
+        if "post_stratify" in yaml_config["sampling_design"]["simple_random_sampling"]:
+            yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification'] = \
+                yaml_config["sampling_design"]["simple_random_sampling"].pop("post_stratify")
+        if "systematic_sampling" in yaml_config["sampling_design"] and "post_stratify" in yaml_config["sampling_design"]["systematic_sampling"]:
+            yaml_config["sampling_design"]["systematic_sampling"]['post_stratification'] = \
+                yaml_config["sampling_design"]["systematic_sampling"].pop("post_stratify")
+        # old post stratification map path
+        if "categ_map_path" in yaml_config["sampling_design"]["simple_random_sampling"]:
+            yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification_map_path'] = \
+                yaml_config["sampling_design"]["simple_random_sampling"].pop("categ_map_path")
+        if "systematic_sampling" in yaml_config["sampling_design"] and "categ_map_path" in yaml_config["sampling_design"]["systematic_sampling"]:
+            yaml_config["sampling_design"]["systematic_sampling"]['post_stratification_map_path'] = \
+                yaml_config["sampling_design"]["systematic_sampling"].pop("categ_map_path")
+        if "categ_map_path" in yaml_config["sampling_design"]["stratified_random_sampling"]:
+            yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_path'] = \
+                yaml_config["sampling_design"]["stratified_random_sampling"].pop("categ_map_path")
+        # old post stratification map band
+        if "categ_map_band" in yaml_config["sampling_design"]["simple_random_sampling"]:
+            yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification_map_band'] = \
+                yaml_config["sampling_design"]["simple_random_sampling"].pop("categ_map_band")
+        if "systematic_sampling" in yaml_config["sampling_design"] and "categ_map_band" in yaml_config["sampling_design"]["systematic_sampling"]:
+            yaml_config["sampling_design"]["systematic_sampling"]['post_stratification_map_band'] = \
+                yaml_config["sampling_design"]["systematic_sampling"].pop("categ_map_band")
+        if "categ_map_band" in yaml_config["sampling_design"]["stratified_random_sampling"]:
+            yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_band'] = \
+                yaml_config["sampling_design"]["stratified_random_sampling"].pop("categ_map_band")
+        # old post stratification map nodata
+        if "categ_map_nodata" in yaml_config["sampling_design"]["stratified_random_sampling"]:
+            yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_nodata'] = \
+                yaml_config["sampling_design"]["stratified_random_sampling"].pop("categ_map_nodata")
 
     # restore the thematic map
     if yaml_config["thematic_map"]["path"]:
