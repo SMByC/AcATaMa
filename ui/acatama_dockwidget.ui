@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>342</width>
+    <width>330</width>
     <height>719</height>
    </rect>
   </property>
@@ -76,17 +76,14 @@
           </item>
           <item>
            <widget class="QComboBox" name="QCBox_band_ThematicMap">
-            <property name="maximumSize">
-             <size>
-              <width>65</width>
-              <height>16777215</height>
-             </size>
-            </property>
             <property name="toolTip">
              <string>Band</string>
             </property>
             <property name="sizeAdjustPolicy">
-             <enum>QComboBox::AdjustToContents</enum>
+             <enum>QComboBox::AdjustToMinimumContentsLength</enum>
+            </property>
+            <property name="minimumContentsLength">
+             <number>1</number>
             </property>
            </widget>
           </item>
@@ -94,7 +91,7 @@
            <widget class="QLineEdit" name="nodata_ThematicMap">
             <property name="maximumSize">
              <size>
-              <width>80</width>
+              <width>60</width>
               <height>16777215</height>
              </size>
             </property>

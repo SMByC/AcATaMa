@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
+    <width>700</width>
     <height>470</height>
    </rect>
   </property>
@@ -54,7 +54,7 @@
        <widget class="QWidget" name="widget_3" native="true">
         <property name="maximumSize">
          <size>
-          <width>260</width>
+          <width>240</width>
           <height>16777215</height>
          </size>
         </property>
@@ -178,8 +178,8 @@ classification</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>254</width>
-              <height>188</height>
+              <width>234</width>
+              <height>189</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -414,6 +414,12 @@ classification</string>
                 <widget class="QComboBox" name="SamplingUnit_Size">
                  <property name="toolTip">
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Define the sampling unit size using pixel buffer for the current sample. Pixel based on the thematic raster file. Set zero to disable it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="sizeAdjustPolicy">
+                  <enum>QComboBox::AdjustToMinimumContentsLength</enum>
+                 </property>
+                 <property name="minimumContentsLength">
+                  <number>1</number>
                  </property>
                  <property name="frame">
                   <bool>false</bool>
