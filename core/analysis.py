@@ -116,6 +116,9 @@ class Analysis(object):
         for thematic_map_in_sample in values:
             if thematic_map_in_sample not in self.thematic_pixels_count:
                 self.thematic_pixels_count[thematic_map_in_sample] = self.thematic_map.get_total_pixels_by_value(thematic_map_in_sample)
+                if self.thematic_pixels_count[thematic_map_in_sample] is None:
+                    # this happens when pixel value to count is nodata in thematic map
+                    self.thematic_pixels_count[thematic_map_in_sample] = 0
 
         # values necessary for results
         self.values = values
