@@ -139,7 +139,7 @@ def get_html(accu_asse):
                                     (1-(accu_asse.error_matrix[idx_row][idx_row]/sum(accu_asse.error_matrix[idx_row]))) /
                                     (sum(accu_asse.error_matrix[idx_row])-1) for idx_row, value in enumerate(accu_asse.values)])
         except ZeroDivisionError:
-            overall_variance = np.NaN
+            overall_variance = np.nan
         standard_deviation = overall_variance ** 0.5
 
     html += "<p style='font-size:2px'><br/></p>"
@@ -278,7 +278,7 @@ def get_html(accu_asse):
             if accu_asse.estimator in ['Stratified estimator', 'Simple/systematic post-stratified estimator']:
                 accuracy = error_matrix_area_prop[idx_row][idx_row] / sum(error_matrix_area_prop[idx_row])
         except ZeroDivisionError:
-            accuracy = np.NaN
+            accuracy = np.nan
         html += '''<td class="highlight">{}</th>'''.format(rf(accuracy))
         # standard error
         try:
@@ -312,7 +312,7 @@ def get_html(accu_asse):
             if accu_asse.estimator in ['Stratified estimator', 'Simple/systematic post-stratified estimator']:
                 accuracy = error_matrix_area_prop[idx_row][idx_row] / sum(list(zip(*error_matrix_area_prop))[idx_row])
         except ZeroDivisionError:
-            accuracy = np.NaN
+            accuracy = np.nan
         html += '''<td class="highlight">{}</th>'''.format(rf(accuracy))
         # standard error
         try:
@@ -330,7 +330,7 @@ def get_html(accu_asse):
                                                             [sum(r) for r in accu_asse.error_matrix], accu_asse.error_matrix,
                                                             [accu_asse.thematic_pixels_count[v] for v in accu_asse.values])]))**0.5
         except ZeroDivisionError:
-            producer_standard_error = np.NaN
+            producer_standard_error = np.nan
         html += '''<td>{}</th>'''.format(rf(producer_standard_error))
         html += "</tr>"
     html += '''
@@ -555,7 +555,7 @@ def get_html(accu_asse):
 
     # the error for post-stratified
     if accu_asse.estimator == 'Simple/systematic post-stratified estimator':
-        ui_table = [[(1-i/total_row)**2*i/(total_row-1) if total_row not in [0, 1] else np.NaN
+        ui_table = [[(1-i/total_row)**2*i/(total_row-1) if total_row not in [0, 1] else np.nan
                           for i in row] for total_row, row in
                          zip([sum(r) for r in accu_asse.error_matrix], accu_asse.error_matrix)]
         wi = [accu_asse.thematic_pixels_count[value]/total_pixels_classes
@@ -592,10 +592,10 @@ def get_html(accu_asse):
         # upper limit
         html += '''<td>{upper_limit}</th>'''.format(upper_limit=rf(area + accu_asse.z_score * error))
         # coefficient of variation
-        cv = (error / area) * 100 if area > 0 else np.NaN
+        cv = (error / area) * 100 if area > 0 else np.nan
         html += '''<td>{cv} %</th>'''.format(cv=rf(cv, 2))
         # uncertainty
-        u = (accu_asse.z_score * error / area) if area > 0 else np.NaN
+        u = (accu_asse.z_score * error / area) if area > 0 else np.nan
         html += '''<td>{u}</th>'''.format(u=rf(u))
         html += "</tr>"
 
@@ -680,7 +680,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
                                     (1-(accu_asse.error_matrix[idx_row][idx_row]/sum(accu_asse.error_matrix[idx_row]))) /
                                     (sum(accu_asse.error_matrix[idx_row])-1) for idx_row, value in enumerate(accu_asse.values)])
         except ZeroDivisionError:
-            overall_variance = np.NaN
+            overall_variance = np.nan
         standard_deviation = overall_variance ** 0.5
 
     ###########################################################################
@@ -739,7 +739,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
             if accu_asse.estimator in ['Stratified estimator', 'Simple/systematic post-stratified estimator']:
                 accuracy = error_matrix_area_prop[idx_row][idx_row] / sum(error_matrix_area_prop[idx_row])
         except ZeroDivisionError:
-            accuracy = np.NaN
+            accuracy = np.nan
         r.append(rf(accuracy))
         # standard error
         try:
@@ -761,7 +761,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
             if accu_asse.estimator in ['Stratified estimator', 'Simple/systematic post-stratified estimator']:
                 accuracy = error_matrix_area_prop[idx_row][idx_row] / sum(list(zip(*error_matrix_area_prop))[idx_row])
         except ZeroDivisionError:
-            accuracy = np.NaN
+            accuracy = np.nan
         r.append(rf(accuracy))
         # standard error
         try:
@@ -785,7 +785,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
                                                             [accu_asse.thematic_pixels_count[v] for v in
                                                              accu_asse.values])])) ** 0.5
         except ZeroDivisionError:
-            producer_standard_error = np.NaN
+            producer_standard_error = np.nan
         r.append(rf(producer_standard_error))
         csv_rows.append(r)
 
@@ -899,7 +899,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
 
     # the error for post-stratified
     if accu_asse.estimator == 'Simple/systematic post-stratified estimator':
-        ui_table = [[(1-i/total_row)**2*i/(total_row-1) if total_row not in [0, 1] else np.NaN
+        ui_table = [[(1-i/total_row)**2*i/(total_row-1) if total_row not in [0, 1] else np.nan
                           for i in row] for total_row, row in
                          zip([sum(r) for r in accu_asse.error_matrix], accu_asse.error_matrix)]
         wi = [accu_asse.thematic_pixels_count[value]/total_pixels_classes
@@ -937,10 +937,10 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         # upper limit
         r.append(rf(area + accu_asse.z_score * error))
         # coefficient of variation
-        cv = (error / area) * 100 if area > 0 else np.NaN
+        cv = (error / area) * 100 if area > 0 else np.nan
         r.append("{cv} %".format(cv=rf(cv, 2)))
         # uncertainty
-        u = (accu_asse.z_score * error / area) if area > 0 else np.NaN
+        u = (accu_asse.z_score * error / area) if area > 0 else np.nan
         r.append("{u}".format(u=rf(u)))
         csv_rows.append(r)
 
