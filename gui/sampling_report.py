@@ -541,8 +541,11 @@ class SamplingReport(QDialog, FORM_CLASS):
                     table = self.report["samples"]["sampling_map"]
                 else:
                     table = self.report["samples"]["thematic_map"]
-            else:
-                table = self.report["samples"]["post_stratification"]
+            else:  # simple or systematic with post-stratification
+                if self.report["samples"]["post_stratification"]:
+                    table = self.report["samples"]["post_stratification"]
+                else:
+                    table = self.report["samples"]["thematic_map"]
 
             if min([num_samples for num_samples in table["num_samples"] if num_samples > 0]) < 30:
                 html += """
