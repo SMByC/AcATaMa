@@ -302,26 +302,6 @@ p, li { white-space: pre-wrap; }
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="zoomIn">
-           <property name="toolTip">
-            <string>Zoom In</string>
-           </property>
-           <property name="text">
-            <string>Zoom In</string>
-           </property>
-           <property name="icon">
-            <iconset>
-             <normaloff>:/plugins/AcATaMa/icons/zoom-in.svg</normaloff>:/plugins/AcATaMa/icons/zoom-in.svg</iconset>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonIconOnly</enum>
-           </property>
-           <property name="autoRaise">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QToolButton" name="zoomOut">
            <property name="toolTip">
             <string>Zoom Out</string>
@@ -332,6 +312,26 @@ p, li { white-space: pre-wrap; }
            <property name="icon">
             <iconset>
              <normaloff>:/plugins/AcATaMa/icons/zoom-out.svg</normaloff>:/plugins/AcATaMa/icons/zoom-out.svg</iconset>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonIconOnly</enum>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="zoomIn">
+           <property name="toolTip">
+            <string>Zoom In</string>
+           </property>
+           <property name="text">
+            <string>Zoom In</string>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>:/plugins/AcATaMa/icons/zoom-in.svg</normaloff>:/plugins/AcATaMa/icons/zoom-in.svg</iconset>
            </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonIconOnly</enum>
