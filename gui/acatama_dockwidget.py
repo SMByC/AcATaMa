@@ -110,6 +110,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # ######### Sampling tab ######### #
         # disable sampling window
         self.QPBtn_OpenSamplingDesignWindow.setDisabled(True)
+        self.QCBox_SamplingFile.currentIndexChanged[int].connect(lambda index: self.QPBtn_reloadSamplingFile.setEnabled(index > 0))
         # set and update the sampling file status in analysis tab
         self.QCBox_SamplingFile.layerChanged.connect(self.update_analysis_state)
         # show the sampling design window when press the QPBtn_OpenSamplingDesignWindow

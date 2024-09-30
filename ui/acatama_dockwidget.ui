@@ -173,6 +173,9 @@ It set automatically from image if the layer has the nodata value set.</string>
              </item>
              <item>
               <widget class="QToolButton" name="QPBtn_reloadSamplingFile">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                  <horstretch>0</horstretch>
