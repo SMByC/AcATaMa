@@ -24,6 +24,7 @@ from qgis.PyQt import uic
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QWidget, QGridLayout, QFileDialog
 from qgis.PyQt.QtCore import QSettings, pyqtSlot, QTimer, Qt
+from qgis.PyQt.sip import isdeleted
 from qgis.core import QgsGeometry, QgsMapLayerProxyModel, QgsWkbTypes, QgsPoint
 from qgis.gui import QgsMapCanvas, QgsMapToolPan, QgsRubberBand, QgsVertexMarker
 from qgis.utils import iface
@@ -60,7 +61,11 @@ class Marker(object):
 
     def show(self, in_point):
         """Show marker for the respective view widget"""
-        if self.marker is None:
+        if isdeleted(self.canvas):
+            self.marker = None
+            return
+
+        if self.marker is None or isdeleted(self.marker):
             self.marker = QgsVertexMarker(self.canvas)
             self.marker.setIconSize(18)
             self.marker.setPenWidth(2)
@@ -74,6 +79,10 @@ class Marker(object):
         self.marker = None
 
     def highlight(self):
+        if isdeleted(self.canvas):
+            self.marker = None
+            return
+
         curr_ext = self.canvas.extent()
 
         left_point = QgsPoint(curr_ext.xMinimum(), curr_ext.center().y())
