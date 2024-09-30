@@ -27,6 +27,7 @@ from qgis.PyQt.QtCore import Qt, pyqtSlot, QEventLoop, QTimer
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QSplitter, QColorDialog, QDialog, QDialogButtonBox, QPushButton, \
     QMessageBox, QWidget, QLabel
 from qgis.PyQt.QtGui import QColor, QIcon
+from qgis.PyQt.sip import isdeleted
 from qgis.gui import QgsRubberBand
 from qgis.utils import iface
 from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, Qgis, QgsProject, QgsUnitTypes, \
@@ -933,6 +934,9 @@ class Tile(object):
 
     def create(self, canvas, line_width=1):
         """Create the tile as a rubber band inside the canvas given"""
+        if isdeleted(canvas):
+            del self
+            return
         rubber_band = QgsRubberBand(canvas)
         points = [QgsPointXY(self.xmin, self.ymax), QgsPointXY(self.xmax, self.ymax),
                   QgsPointXY(self.xmax, self.ymin), QgsPointXY(self.xmin, self.ymin)]
@@ -951,4 +955,4 @@ class Tile(object):
                 self.create(view_widget.render_widget.canvas)
 
     def hide(self):
-        [rubber_band.reset(QgsWkbTypes.PolygonGeometry) for rubber_band in self.rbs_in_response_design_window]
+        [rubber_band.reset(QgsWkbTypes.PolygonGeometry) for rubber_band in self.rbs_in_response_design_window if not isdeleted(rubber_band)]
