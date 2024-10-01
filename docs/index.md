@@ -1,4 +1,4 @@
----
+--
 layout: default
 ---
 
@@ -11,8 +11,8 @@ framework. The primary goal of AcATaMa is to equip users with the necessary tool
 guidance and best practices for sampling design, estimation of land category areas and changes, and map accuracy 
 assessment.
 
-> *Important:* AcATaMa with the version [22.10.23](https://github.com/SMByC/AcATaMa/releases/tag/22.10.23) has received
-> a major update. Check if you are using the latest version of the plugin, this documentation is based on that major
+> *Important:* AcATaMa with the version [24.10](https://github.com/SMByC/AcATaMa/releases/tag/24.10) has received
+> a major update. Check if you are using the latest version of the plugin, this documentation is based on that
 > update.
 
 ![](img/overview.webp)
