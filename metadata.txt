@@ -3,7 +3,7 @@ name=AcATaMa
 description=AcATaMa is a powerful and complete Qgis plugin for accuracy assessment that provides comprehensive support for sampling, response design and estimation.
 about=AcATaMa is a powerful and complete Qgis plugin for accuracy assessment designed for land use/land cover classification, including supervised/unsupervised classification or any thematic map. It provides comprehensive support for sampling, response design and estimation within a design-based inference framework. The primary goal of AcATaMa is to equip users with the necessary tools to comply with international guidance and best practices for sampling design, estimation of land category areas and changes, and map accuracy assessment.
 
-version=24.7
+version=24.10
 qgisMinimumVersion=3.0
 qgisMaximumVersion=3.99
 
@@ -15,32 +15,55 @@ tracker=https://github.com/SMByC/AcATaMa/issues
 repository=https://github.com/SMByC/AcATaMa
 
 changelog=
-    24.7:
-    - Refactored the process to generate the sampling using QgsTask as a background process allows the QGIS instance to remain unblocked. This enables the user to terminate the sampling process at any time, which is important for some sampling scenarios that never reach the total number of samples due to some (hard) restrictions in the sampling conditions.
-    - Other minor improvements and bug fixes
-    - All commits in: https://github.com/SMByC/AcATaMa/commits
-    24.6:
-    - Integrating the Continuous Change Detection (CCD) plugin inside the response design window in Acatama. CCD helps to analyze the trends and breakpoints of change of the samples over multi-year, using Landsat and Sentinel through Google Earth Engine.
-    - Save and restore the CCD configuration inside the configuration Yaml file of Acatama
-    - Added overall accuracy in the error matrix, adjusted some labels in results
-    - Added coefficient of variation and uncertainty in the Class area adjusted table in the analysis results
-    - Adjusting the scale/zoom factor of the views in the response design window
-    - Ensure if exist the instance avoiding popup error when closing the plugin
-    - Save and restore the auto next sample button status
-    - Fix saving the path for not local files
-    - Improving some tooltips in the response design window
-    - Improving some text in sampling design tab
-    - Show a warning dialog about the problem of editing the labeling buttons when some samples are labeled
-    - Fix checking the duplicate thematic class when the thematic map is not selected
-    - Check if the thematic map is loaded to show the auto fill button
-    - Check if exists a duplicate thematic class when creating the buttons for labeling
-    - Modify button creation ID in order to avoid empty rows or delete ones in the labeling buttons table
-    - Added a function to auto-fill the labeling buttons based on the current thematic map symbology
-    - Update the labeling status of the sampling layer for the thematic map selected
-    - Redistribute the samples number by area based proportion keeping the total of samples and check if new value is over the maximum value to avoid negatives in the samples
-    - No allow negative numbers or string in the table for fixed values by categories in stratified sampling
-    - Correction of column name from Standard deviation by class to User accuracy expected in the stratified random sampling table
-    - Improving some part of the documentation
+    24.10:
+    - Major UI refactoring, simplifying and improving usability in the main dockwidget and converting the sampling design section as a window. Many other changes.
+    - Many changes to adjust and fix the sampling map in stratified sampling. Print the sampling report when the sampling map and thematic map are different. Other fixes.
+    - Added the nodata value option for the post-stratification map in the simple and systematic sampling design
+    - A sampling report has been added, containing all the information about the generated samples, their distribution on thematic maps, and other relevant details. This report helps the user determine whether the generated samples meet their expectations before proceeding to the response design process.
+    - Enable reload sampling file button only when there is a valid sampling file selected
+    - Some bug fixes to support older versions of the Atacama yaml configuration
+    - Update and increase the svg internal size to improve the drawing resolution, other UI adjustments
+    - If sampling change has changed, and user reload it, report is not longer valid
+    - Ensure that geometry is ok when the sampling file has changed
+    - Improving the tooltip for the user's accuracy confidence
+    - Restore response design window when loading a yaml file
+    - AcATaMa now will save relative paths to the YAML file if the layers are in the same directory or subdirectory tree as the YAML file, making it a portable and shareable project.
+    - Update the band and nodata from the thematic to sampling design window
+    - Added more warning notes in the sampling report and adjustments in other sampling report items
+    - Adding a warning box about the minimum samples in strata for stratified and post-stratified sampling
+    - Added a new option in stratified sampling to adjust the number of samples based on minimum samples per stratum
+    - Check and disable the classes with zero pixels on the map in the stratified sampling table
+    - Adjustments for the standard error of the estimated overall accuracy and User's accuracy confidence default values based on Olofsson et al. (2014)
+    - Check first if the QtWebKit is available in QT5 client to avoid showing an error every time the user opening the response design window
+    - Clean the sampling design window before restore the plugin
+    - While a state of Acatama is restoring, close all the window instances of the plugin opened before restore configuration
+    - Added some missing connections in the sampling design window
+    - Convert np.NaN to np.nan for numpy > 2.0
+    - Replace the variable of the sampling design instance
+    - Move the references to another page and improving the sampling unit documentation
+    - Added icons and improving the information text for each sampling type
+    - All the warning and information messages bar in the sampling design is showing in the window and not in the generic Qgis message bar
+    - Added stratified method for stratified sampling report
+    - Use QgsUnitTypes for manage the area unit
+    - Some improvements for the clear and reload function
+    - Improve the reload and zoom buttons in the accuracy assessment window
+    - Fix in counting num samples
+    - Fixed and issue computing the analysis when pixel value to count is nodata in thematic map
+    - Fixbug when processing the sampling report for simple or systematic with post-stratification with the thematic map
+    - Fix random seed value when it is automatic
+    - Fixbug restoring the response design window: while saving, first check if the response_design_window is opened, if so save some of the response_design_window configuration. Bug reported by Jhonatan Arias
+    - Fixes several variable names in the stratified and post-stratification items
+    - Fix the way to compare the thematic and post-stratication map
+    - Fixed active/inactive boxes depending on which Acatama dialogs are open and when they are closed
+    - Fixes typos in post-stratification vars, functs and texts.
+    - Fixes long and nan nodata values, and show full value of the integer and not in scientific format
+    - Fixes and getting the format of the nodata values for processing
+    - Fix number of samples based on minimum samples per stratum when the table is filling
+    - Fixes typos in post stratification items for the yml Acatama status file
+    - Fixed a bug when a pixel is being validated outside the post-stratification map
+    - Fixed a division by zero bug and guaranteed a minimum zoom value of 0.1
+    - Fix some weird RuntimeError when rubber band has been deleted from old instances of the plugin
+    - Updated the documentation
     - All commits in: https://github.com/SMByC/AcATaMa/commits
 
 tags=accuracy,accuracy assessment,thematic,classification,sample,sampling design,points,remote sensing

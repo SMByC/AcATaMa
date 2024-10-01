@@ -260,7 +260,7 @@ It set automatically from image if the layer has the nodata value set.</string>
           <item>
            <widget class="QPushButton" name="QPBtn_openSamplingReport">
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open the sampling report for the current sample. This report is only for samples that have been generated with AcATaMa. You can save and restore it using the AcATaMa yaml file (version &gt;= 24.8).&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open the sampling report for the current sample. This report is only for samples that have been generated with AcATaMa. You can save and restore it using the AcATaMa yaml file (version &gt;= 24.10).&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
              <string>Sampling report</string>
