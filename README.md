@@ -15,9 +15,11 @@ land category areas and changes, and map accuracy assessment.
 
 To ensure a good accuracy assessment AcATaMa provides three components: **sampling design**, used to select the
 reference sample; the **response design**, which allows the evaluation protocol, and finally, the **analysis** 
-procedures with different estimators. 
+procedures with different estimators:
 
-<img src="docs/img/process_overview.png" height="400px" style="margin: auto;display: block;">
+<div align="center">
+<img src="docs/img/process_overview.png" height="450px" style="margin: auto;display: block;">
+</div>
 
 > Read more in the documentation here: [https://smbyc.github.io/AcATaMa](https://smbyc.github.io/AcATaMa)
 
