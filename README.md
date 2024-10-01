@@ -15,8 +15,9 @@ land category areas and changes, and map accuracy assessment.
 
 To ensure a good accuracy assessment AcATaMa provides three components: **sampling design**, used to select the
 reference sample; the **response design**, which allows the evaluation protocol, and finally, the **analysis** 
-procedures with different estimators. AcATaMa has been manually tested with multiple real examples for all user 
-cases in order to guarantee the quality of the results.
+procedures with different estimators. 
+
+<img src="docs/img/process_overview.png" height="400px" style="margin: auto;display: block;">
 
 > Read more in the documentation here: [https://smbyc.github.io/AcATaMa](https://smbyc.github.io/AcATaMa)
 
@@ -25,6 +26,11 @@ cases in order to guarantee the quality of the results.
 Source code, issue tracker, QA and ideas:[https://github.com/SMByC/AcATaMa](https://github.com/SMByC/AcATaMa)  
 The home plugin in
 plugins.qgis.org: [https://plugins.qgis.org/plugins/AcATaMa/](https://plugins.qgis.org/plugins/AcATaMa/)
+
+
+## Quality Assurance
+
+AcATaMa has been manually tested with multiple real examples for all user cases in order to guarantee the quality of the results.
 
 ## About us
 

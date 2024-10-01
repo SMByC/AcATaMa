@@ -14,7 +14,7 @@ sites (Olofsson, et al., 2014). Conceptually it is useful to separate the respon
 **A)** The evaluation protocol with the procedures used to gather information that contributes to the determination of
 the reference classification.
 
-<img src="img/response_design_part_A.webp" width="75%" style="margin: auto;display: block;">
+<img src="img/response_design_part_A.webp" width="85%" style="margin: auto;display: block;">
 
 ### Sampling unit
 
@@ -56,7 +56,7 @@ evaluator must select the reference classes as a labeling buttons using the “L
 The labeling protocol assigns a label from the reference classification (through labeling buttons) to the sampling unit,
 supported by the reference data and the evaluation protocol.
 
-<img src="img/response_design_evaluation.webp" width="75%" style="margin: auto;display: block;">
+<img src="img/response_design_evaluation.webp" width="85%" style="margin: auto;display: block;">
 
 ### Evaluation protocol
 
