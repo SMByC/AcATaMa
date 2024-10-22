@@ -72,7 +72,7 @@ def save(file_out):
                 return relative_path
             else:
                 return _path
-        except ValueError:
+        except:
             # If the paths cannot be related, return the original input path
             return _path
 
