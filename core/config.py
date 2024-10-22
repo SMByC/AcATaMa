@@ -61,6 +61,8 @@ def save(file_out):
         """
         Sets up the path by calculating the relative path of input path to the directory of where yaml file is being saving.
         """
+        if _path is None:
+            return None
         # Get the directory of the reference file
         reference_dir = os.path.dirname(os.path.abspath(file_out))
         try:
