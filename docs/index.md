@@ -4,12 +4,15 @@ layout: default
 
 # AcATaMa
 
-AcATaMa (sort for Accuracy Assessment of Thematic Maps) is a powerful and complete Qgis plugin for accuracy assessment
-designed for land use/land cover classification, including supervised/unsupervised classification or any thematic map.
+AcATaMa (sort for Accuracy Assessment of Thematic Maps) is a powerful and complete Qgis plugin for accuracy assessment.
 It provides comprehensive support for sampling, response design and estimation within a design-based inference
-framework. The primary goal of AcATaMa is to equip users with the necessary tools to comply with international 
-guidance and best practices for sampling design, estimation of land category areas and changes, and map accuracy 
-assessment.
+framework. The primary goal of AcATaMa is to equip users with the necessary tools to comply with international guidance
+and best practices for sampling design, estimation of land category areas and changes, and map accuracy assessment.
+
+The plugin supports accuracy assessment for any thematic map across diverse use cases. A common application is in
+remote sensing, particularly for land use and land cover classification, environmental monitoring, urban planning,
+forestry, agriculture, and more. However, AcATaMa is not limited to these applications; some modules, such as sampling
+and labeling, can be used independently for other user cases.
 
 > *Important:* AcATaMa with the version [24.10](https://github.com/SMByC/AcATaMa/releases/tag/24.10) has received
 > a major update. Check if you are using the latest version of the plugin, this documentation is based on that
@@ -18,9 +21,9 @@ assessment.
 ![](img/overview.webp)
 
 To ensure a good accuracy assessment AcATaMa provides three components: **sampling design**, used to select the
-reference sample; the **response design**, which allows the evaluation protocol, and finally, the **analysis** 
-procedures with different estimators. AcATaMa provides several sampling designs and estimators, but also 
-comprehensive support for the response design process. AcATaMa has been manually tested with multiple real examples 
+reference sample; the **response design**, which allows the evaluation protocol, and finally, the **analysis**
+procedures with different estimators. AcATaMa provides several sampling designs and estimators, but also
+comprehensive support for the response design process. AcATaMa has been manually tested with multiple real examples
 for all user cases in order to guarantee the quality of the results, some of them have been implemented as
 [unit tests](https://github.com/SMByC/AcATaMa/actions/workflows/tests.yml).
 

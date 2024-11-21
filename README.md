@@ -5,16 +5,20 @@
 
 ![](icons/acatama.svg)
 
-AcATaMa is a powerful and complete Qgis plugin for accuracy assessment designed for land use/land cover classification,
-including supervised/unsupervised classification or any thematic map. It provides comprehensive support for sampling,
+AcATaMa is a powerful and complete Qgis plugin for accuracy assessment. It provides comprehensive support for sampling,
 response design and estimation within a design-based inference framework. The primary goal of AcATaMa is to equip users
 with the necessary tools to comply with international guidance and best practices for sampling design, estimation of
 land category areas and changes, and map accuracy assessment.
 
+The plugin supports accuracy assessment for any thematic map across diverse use cases. A common application is in
+remote sensing, particularly for land use and land cover classification, environmental monitoring, urban planning,
+forestry, agriculture, and more. However, AcATaMa is not limited to these applications; some modules, such as sampling
+and labeling, can be used independently for other user cases.
+
 ![](docs/img/overview.webp)
 
 To ensure a good accuracy assessment AcATaMa provides three components: **sampling design**, used to select the
-reference sample; the **response design**, which allows the evaluation protocol, and finally, the **analysis** 
+reference sample; the **response design**, which allows the evaluation protocol, and finally, the **analysis**
 procedures with different estimators:
 
 <div align="center">
@@ -29,10 +33,10 @@ Source code, issue tracker, QA and ideas:[https://github.com/SMByC/AcATaMa](http
 The home plugin in
 plugins.qgis.org: [https://plugins.qgis.org/plugins/AcATaMa/](https://plugins.qgis.org/plugins/AcATaMa/)
 
-
 ## Quality Assurance
 
-AcATaMa has been manually tested with multiple real examples for all user cases in order to guarantee the quality of the results.
+AcATaMa has been manually tested with multiple real examples for all user cases in order to guarantee the quality of
+the results.
 
 ## About us
 
@@ -44,8 +48,8 @@ Documentation, testers and product verification: *Gustavo Galindo, Jhonatan Andr
 
 ## How to cite
 
-Llano, X. (version_year), SMByC-IDEAM. AcATaMa - QGIS plugin for Accuracy Assessment of Thematic Maps, version XX.XX. Available
-in https://github.com/SMByC/AcATaMa
+Llano, X. (version_year), SMByC-IDEAM. AcATaMa - QGIS plugin for Accuracy Assessment of Thematic Maps, version XX.XX.
+Available in https://github.com/SMByC/AcATaMa
 
 ## License
 

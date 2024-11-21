@@ -1,7 +1,7 @@
 [general]
 name=AcATaMa
 description=AcATaMa is a powerful and complete Qgis plugin for accuracy assessment that provides comprehensive support for sampling, response design and estimation.
-about=AcATaMa is a powerful and complete Qgis plugin for accuracy assessment designed for land use/land cover classification, including supervised/unsupervised classification or any thematic map. It provides comprehensive support for sampling, response design and estimation within a design-based inference framework. The primary goal of AcATaMa is to equip users with the necessary tools to comply with international guidance and best practices for sampling design, estimation of land category areas and changes, and map accuracy assessment.
+about=AcATaMa is a powerful and complete Qgis plugin for accuracy assessment. It provides comprehensive support for sampling, response design and estimation within a design-based inference framework. The primary goal of AcATaMa is to equip users with the necessary tools to comply with international guidance and best practices for sampling design, estimation of land category areas and changes, and map accuracy assessment. The plugin supports accuracy assessment for any thematic map across diverse use cases. A common application is in remote sensing, particularly for land use and land cover classification, environmental monitoring, urban planning, forestry, agriculture, and more. However, AcATaMa is not limited to these applications; some modules, such as sampling and labeling, can be used independently for other user cases.
 
 version=24.10
 qgisMinimumVersion=3.30
