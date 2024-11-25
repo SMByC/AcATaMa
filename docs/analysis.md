@@ -43,6 +43,7 @@ assessment focuses on three types of analysis and parameters. The first at a glo
 The second that focuses on the specific accuracy of the class and is classified as the accuracy of the user or the
 producer. And, the third, which corresponds to the estimation of the proportion of area by a class.
 
+> [!TIP]
 > *About **Kappa**:* AcATaMa does not have the Kappa coefficient in the results, because in general we don't recommend
 > to use it. The kappa coefficient is widely used as a measure of thematic accuracy in remote sensing. However,
 > Foody (2020), Pontius and Millones (2011) have shown that the Kappa coefficient is not a good measure of accuracy.
