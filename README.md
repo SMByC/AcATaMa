@@ -5,6 +5,11 @@
 
 ![](icons/acatama.svg)
 
+> [!WARNING]  
+> The latest versions of AcATaMa (>=24.10) is not compatible with QGIS 3.28 or older versions due to changes in a QGIS 
+> function introduced in QGIS 3.30 (see issue #22). Please update QGIS to at least the LTR version (recommended) or the 
+> latest version.
+
 AcATaMa is a powerful and complete Qgis plugin for accuracy assessment. It provides comprehensive support for sampling,
 response design and estimation within a design-based inference framework. The primary goal of AcATaMa is to equip users
 with the necessary tools to comply with international guidance and best practices for sampling design, estimation of
