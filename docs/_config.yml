@@ -1,9 +1,11 @@
 # https://github.com/vaibhavvikas/jekyll-theme-minimalistic
 
 remote_theme: vaibhavvikas/jekyll-theme-minimalistic
+gfm_admonitions: Helveg/jekyll-gfm-admonitions
 
 plugins:
   - jekyll-remote-theme
+  - jekyll-gfm-admonitions
 
 title: AcATaMa
 description: The AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps.
