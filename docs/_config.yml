@@ -1,7 +1,6 @@
 # https://github.com/vaibhavvikas/jekyll-theme-minimalistic
 
 remote_theme: vaibhavvikas/jekyll-theme-minimalistic
-gfm_admonitions: Helveg/jekyll-gfm-admonitions
 
 plugins:
   - jekyll-remote-theme
