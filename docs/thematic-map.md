@@ -15,14 +15,14 @@ There are two types of pixel-value/color associated accepted in AcATaMa (based o
 * *"Singleband pseudocolor"*
 * *"Paletted/Unique values"* (recommended). 
 
-> [!TIP]
+> <span style="color:cyan">TIP!</span>  
 > If the layer don't have the color table as a metadata inside the file, we recommend set and save the 
 > pixel-value/color associated for the Thematic Map before work with it, you can save that style using the Qgis xml 
 > style file (see below) or saving the Qgis project. 
 
 <img src="img/save_style.png" width="70%" style="margin: auto;display: block;">
 
-> [!IMPORTANT]
+> <span style="color:purple">IMPORTANT!</span>  
 > Clip the thematic map in your area of interest could be very important for the sampling design and the 
 > accuracy assessment process, because the area by classes changes and some parts of AcATaMa depends on it.
 

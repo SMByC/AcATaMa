@@ -14,12 +14,12 @@ remote sensing, particularly for land use and land cover classification, environ
 forestry, agriculture, and more. However, AcATaMa is not limited to these applications; some modules, such as sampling
 and labeling, can be used independently for other user cases.
 
-> [!WARNING]
+> <span style="color:orange">WARNING!</span>  
 > The latest versions of AcATaMa (>=24.10) is not compatible with QGIS 3.28 or older versions due to 
 > changes in a QGIS function introduced in QGIS 3.30 (see issue #22). Please update QGIS to at least the LTR version 
 > (recommended) or the latest version.
 
-> [!WARNING]
+> <span style="color:orange">WARNING!</span>  
 > AcATaMa with the version [24.10](https://github.com/SMByC/AcATaMa/releases/tag/24.10) has received
 > a major update. Check if you are using the latest version of the plugin, this documentation is based on that
 > update.
