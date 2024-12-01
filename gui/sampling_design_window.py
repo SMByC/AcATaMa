@@ -34,6 +34,7 @@ from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_fil
 from AcATaMa.utils.system_utils import block_signals_to
 from AcATaMa.utils.others_utils import set_nodata_format, get_nodata_format
 from AcATaMa.core.map import get_nodata_value
+from AcATaMa.gui.determine_num_samples_dialog import DetermineNumberSamplesDialog
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -58,6 +59,9 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         self.widget_SimpRSwithPS.setHidden(True)
         self.widget_neighbour_aggregation_SimpRS.setHidden(True)
         self.widget_random_sampling_options_SimpRS.setHidden(True)
+        # number of samples
+        self.determine_number_samples_dialog = DetermineNumberSamplesDialog()
+        self.QPBtn_DeterNumSamples.clicked.connect(self.determine_number_samples_SimpRS)
         # set properties to QgsMapLayerComboBox
         self.QCBox_PostStratMap_SimpRS.setCurrentIndex(-1)
         self.QCBox_PostStratMap_SimpRS.setFilters(QgsMapLayerProxyModel.RasterLayer)
@@ -238,6 +242,12 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         if file_path != '' and os.path.isfile(file_path):
             # load to qgis and update combobox list
             load_and_select_filepath_in(combo_box, file_path)
+
+    @pyqtSlot()
+    def determine_number_samples_SimpRS(self):
+        if self.determine_number_samples_dialog.exec_():
+            number_of_samples = int(self.determine_number_samples_dialog.NumberOfSamples.text())
+            self.numberOfSamples_SimpRS.setValue(number_of_samples)
 
     def fill_same_class_of_neighbors(self, QCBox_NumberOfNeighbors, QCBox_SameClassOfNeighbors):
         QCBox_SameClassOfNeighbors.clear()

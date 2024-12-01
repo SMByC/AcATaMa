@@ -21,5 +21,8 @@ layout: default
   accuracy of thematic maps obtained by image classification. Remote Sensing of Environment, 239, 111630.
 * Van Genderen, J. L., Lock, B. F., & Vass, P. A. (1978). Remote sensing: statistical testing of thematic map accuracy. 
   Remote Sensing of Environment, 7(1), 3-14.
+* Cochran, W. G. (1977). Sampling techniques. Johan Wiley & Sons Inc.
+* Stehman, S. V., & Foody, G. M. (2019). Key issues in rigorous accuracy assessment of land cover products. Remote Sensing of Environment, 231, 111199.
 * Hay, A. M. (1979). Sampling designs to test land-use map accuracy. Photogrammetric Engineering and Remote Sensing, 
   45(4), 529-533.
+* Initiative, G. F. O. (2016). Integration of remote-sensing and ground-based observations for estimation of emissions and removals of greenhouse gases in forests. Methods and Guidance from the Global Forest Observations Initiative.

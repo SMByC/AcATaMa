@@ -24,5 +24,7 @@
         <file>icons/stratified_sampling.svg</file>
         <file>icons/systematic_sampling.svg</file>
         <file>icons/clear.svg</file>
+        <file>icons/determine_num_samples.svg</file>
+        <file>icons/eq_num_samples.png</file>
     </qresource>
 </RCC>
