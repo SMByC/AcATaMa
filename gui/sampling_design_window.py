@@ -49,7 +49,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
     def __init__(self, parent=None):
         QDialog.__init__(self, parent)
         self.setupUi(self)
-        self.thematic_map = None
+        self.thematic_map_layer = None
         SamplingDesignWindow.inst = self
 
         # flags
@@ -156,9 +156,9 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         self.closeButton.button(QDialogButtonBox.Close).setAutoDefault(False)
 
     def setup(self, thematic_map_layer):
-        self.thematic_map = thematic_map_layer
+        self.thematic_map_layer = thematic_map_layer
         # set/update the units in minimum distance items in sampling tab
-        layer_dist_unit = self.thematic_map.crs().mapUnits()
+        layer_dist_unit = self.thematic_map_layer.crs().mapUnits()
         str_unit = QgsUnitTypes.toString(layer_dist_unit)
         # Set the properties of the QdoubleSpinBox based on the QgsUnitTypes of the thematic map
         # https://qgis.org/api/classQgsUnitTypes.html
@@ -222,9 +222,9 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         self.MaxXYoffset_SystS.setValue(0)
 
         # select the new thematic map in the sampling design window
-        self.QCBox_SamplingMap_StraRS.setLayer(self.thematic_map)
-        self.QCBox_PostStratMap_SimpRS.setLayer(self.thematic_map)
-        self.QCBox_PostStratMap_SystS.setLayer(self.thematic_map)
+        self.QCBox_SamplingMap_StraRS.setLayer(self.thematic_map_layer)
+        self.QCBox_PostStratMap_SimpRS.setLayer(self.thematic_map_layer)
+        self.QCBox_PostStratMap_SystS.setLayer(self.thematic_map_layer)
 
 
     def show(self):
@@ -331,7 +331,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         self.QCBox_band_SamplingMap_StraRS.addItems([str(x) for x in range(1, sampling_map.bandCount() + 1)])
         self.QGBox_Sampling_Method.setEnabled(True)
         # set the same nodata value if select the thematic map
-        if sampling_map == self.thematic_map:
+        if sampling_map == self.thematic_map_layer:
             from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
             self.nodata_SamplingMap_StraRS.setText(set_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text()))
             return
@@ -433,9 +433,9 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
 
     @pyqtSlot()
     def update_systematic_sampling_progressbar(self):
-        if not self.thematic_map or not self.thematic_map.isValid():
+        if not self.thematic_map_layer or not self.thematic_map_layer.isValid():
             return
-        extent = self.thematic_map.extent()
+        extent = self.thematic_map_layer.extent()
         points_spacing = float(self.PointsSpacing_SystS.value())
         initial_inset = float(self.InitialInsetFixed_SystS.value())
         try:
@@ -489,7 +489,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         if not ResponseDesignWindow.is_opened and not AccuracyAssessmentWindow.is_opened:
             AcATaMa.dockwidget.QGBox_ThematicMap.setEnabled(True)
         SamplingDesignWindow.is_opened = False
-        self.thematic_map = None
+        self.thematic_map_layer = None
         self.reject(is_ok_to_close=True)
 
     def reject(self, is_ok_to_close=False):
