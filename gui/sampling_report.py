@@ -138,7 +138,7 @@ class SamplingReport(QDialog, FORM_CLASS):
                 "initial_inset": self.sampling_conf["initial_inset"] if self.sampling_conf["sampling_type"] == "systematic" else None,
                 "max_xy_offset": self.sampling_conf["max_xy_offset"] if self.sampling_conf["sampling_type"] == "systematic" else None,
                 "post_stratification_map": self.sampling.post_stratification_map.qgs_layer.name() if self.sampling.post_stratification_map else None,
-                "post_stratification_classes": self.sampling_conf["classes_selected"] if self.sampling.post_stratification_map else None,
+                "post_stratification_classes": self.sampling_conf["classes_selected"] if self.sampling.post_stratification_map else [],
                 "min_distance": "{} {}".format(self.sampling_conf["min_distance"], QgsUnitTypes.toString(self.sampling.thematic_map.qgs_layer.crs().mapUnits()))
                     if self.sampling_conf["sampling_type"] in ["simple", "stratified"] else None,
                 "neighbor_aggregation": self.sampling_conf["neighbor_aggregation"],
@@ -288,7 +288,8 @@ class SamplingReport(QDialog, FORM_CLASS):
                         <td>{post_stratification_classes}</td>
                     </tr>
                 """.format(post_stratification_map=self.report["general"]["post_stratification_map"],
-                           post_stratification_classes=", ".join([str(x) for x in self.report["general"]["post_stratification_classes"]]))
+                           post_stratification_classes=", ".join([str(x) for x in self.report["general"]["post_stratification_classes"]])
+                           if self.report["general"]["post_stratification_classes"] else None)
 
         if self.report["general"]["sampling_type"] in ["simple", "stratified"]:
             html += """
