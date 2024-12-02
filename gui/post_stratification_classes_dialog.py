@@ -106,7 +106,7 @@ class PostStratificationClassesDialog(QDialog, FORM_CLASS):
         self.tableOfClasses.resizeColumnsToContents()
         self.tableOfClasses.resizeRowsToContents()
         # adjust the dialog based on table content
-        dialog_width = self.tableOfClasses.horizontalHeader().length() + 80
+        dialog_width = self.tableOfClasses.horizontalHeader().length() + 50
         self.resize(dialog_width, self.height())
         return True
 
