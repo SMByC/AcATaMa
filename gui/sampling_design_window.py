@@ -32,7 +32,7 @@ from AcATaMa.utils.sampling_utils import update_stratified_sampling_table, fill_
 from AcATaMa.gui.post_stratification_classes_dialog import PostStratificationClassesDialog
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_filepath_in
 from AcATaMa.utils.system_utils import block_signals_to
-from AcATaMa.utils.others_utils import set_nodata_format, get_nodata_format
+from AcATaMa.utils.others_utils import set_nodata_format, get_nodata_format, get_pixel_count_by_pixel_values
 from AcATaMa.core.map import get_nodata_value
 from AcATaMa.gui.determine_num_samples_dialog import DetermineNumberSamplesDialog
 
@@ -60,8 +60,9 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         self.widget_neighbour_aggregation_SimpRS.setHidden(True)
         self.widget_random_sampling_options_SimpRS.setHidden(True)
         # number of samples
-        self.determine_number_samples_dialog = DetermineNumberSamplesDialog()
-        self.QPBtn_DeterNumSamples.clicked.connect(self.determine_number_samples_SimpRS)
+        self.determine_number_samples_dialog_SimpRS = DetermineNumberSamplesDialog()
+        self.determine_number_samples_dialog_SimpRS.adjustSize()
+        self.QPBtn_DeterNumSamples_SimpRS.clicked.connect(self.determine_number_samples_SimpRS)
         # set properties to QgsMapLayerComboBox
         self.QCBox_PostStratMap_SimpRS.setCurrentIndex(-1)
         self.QCBox_PostStratMap_SimpRS.setFilters(QgsMapLayerProxyModel.RasterLayer)
@@ -123,13 +124,23 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         # ######### Systematic Sampling ######### #
         self.widget_neighbour_aggregation_SystS.setHidden(True)
         self.widget_random_sampling_options_SystS.setHidden(True)
+        # number of samples
+        self.determine_number_samples_dialog_SystS = DetermineNumberSamplesDialog()
+        self.determine_number_samples_dialog_SystS.description.setText(
+            "Determining the point spacing value by estimating the sample size, considering the valid map data and map "
+            "dimensions. Sample size is estimated using the following equation (Stehman and Foody (2019), and "
+            "Cochran (1977)):")
+        # add a tooltip to the number of samples label
+        self.determine_number_samples_dialog_SystS.NumberOfSamples.setToolTip(
+            "Due to certain systematic sampling conditions, \nthe number of samples is not guaranteed in the results")
+        self.determine_number_samples_dialog_SystS.adjustSize()
+        self.QPBtn_DeterNumSamples_SystS.clicked.connect(self.determine_number_samples_SystS)
         # generation options
         self.QPBtn_GenerateSamples_SystS.clicked.connect(do_systematic_sampling)
-        self.PointsSpacing_SystS.valueChanged.connect(self.update_systematic_sampling_progressbar)
+        self.PointSpacing_SystS.valueChanged[float].connect(self.update_systematic_sampling_progressbar)
         self.QCBox_InitialInsetMode_SystS.currentIndexChanged[int].connect(
             lambda index: self.InitialInsetFixed_SystS.setVisible(True if index == 1 else False))
         self.InitialInsetFixed_SystS.setHidden(True)
-        self.InitialInsetFixed_SystS.valueChanged.connect(self.update_systematic_sampling_progressbar)
         # select and check the post-stratification map
         self.widget_SystSwithPS.setHidden(True)
         # set properties to QgsMapLayerComboBox
@@ -185,17 +196,17 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
                                           QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
         self.minDistance_StraRS.setValue(0)
         # SystS
-        self.PointsSpacing_SystS.setSuffix(" {}".format(str_unit))
-        self.PointsSpacing_SystS.setToolTip(
+        self.PointSpacing_SystS.setSuffix(" {}".format(str_unit))
+        self.PointSpacing_SystS.setToolTip(
             "Space between grid points\n(units based on thematic map selected)")
-        self.PointsSpacing_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
-        self.PointsSpacing_SystS.setDecimals(
+        self.PointSpacing_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
+        self.PointSpacing_SystS.setDecimals(
             4 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
                                      QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
-        self.PointsSpacing_SystS.setSingleStep(
+        self.PointSpacing_SystS.setSingleStep(
             0.0001 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
                                           QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
-        self.PointsSpacing_SystS.setValue(0)
+        self.PointSpacing_SystS.setValue(0)
         #
         self.InitialInsetFixed_SystS.setSuffix(" {}".format(str_unit))
         self.InitialInsetFixed_SystS.setToolTip(
@@ -245,9 +256,30 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
 
     @pyqtSlot()
     def determine_number_samples_SimpRS(self):
-        if self.determine_number_samples_dialog.exec_():
-            number_of_samples = int(self.determine_number_samples_dialog.NumberOfSamples.text())
+        if self.determine_number_samples_dialog_SimpRS.exec_():
+            number_of_samples = int(self.determine_number_samples_dialog_SimpRS.NumberOfSamples.text())
             self.numberOfSamples_SimpRS.setValue(number_of_samples)
+
+    @pyqtSlot()
+    def determine_number_samples_SystS(self):
+        if self.determine_number_samples_dialog_SystS.exec_():
+            from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
+            # total number of pixels
+            map_width = self.thematic_map_layer.width()
+            map_height = self.thematic_map_layer.height()
+            total_pixels = map_width * map_height
+            # total valid pixels
+            map_nodata = get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text())
+            band = int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
+            total_nodata_pixels = get_pixel_count_by_pixel_values(self.thematic_map_layer, band, None, None)[map_nodata]
+            total_valid_pixels = total_pixels - total_nodata_pixels
+            # compute the point spacing of the grid based on the number of samples and the total valid pixels
+            number_of_samples = int(self.determine_number_samples_dialog_SystS.NumberOfSamples.text())
+            point_spacing_by_pixel = (total_valid_pixels ** 0.5) / (number_of_samples ** 0.5 - 1)
+            point_spacing = point_spacing_by_pixel * self.thematic_map_layer.rasterUnitsPerPixelX()
+
+            self.PointSpacing_SystS.setValue(point_spacing)
 
     def fill_same_class_of_neighbors(self, QCBox_NumberOfNeighbors, QCBox_SameClassOfNeighbors):
         QCBox_SameClassOfNeighbors.clear()
@@ -431,20 +463,29 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         # clear select
         self.QCBox_StraRS_Method.setCurrentIndex(-1)
 
-    @pyqtSlot()
-    def update_systematic_sampling_progressbar(self):
+    @pyqtSlot(float)
+    def update_systematic_sampling_progressbar(self, point_spacing):
         if not self.thematic_map_layer or not self.thematic_map_layer.isValid():
             return
-        extent = self.thematic_map_layer.extent()
-        points_spacing = float(self.PointsSpacing_SystS.value())
-        initial_inset = float(self.InitialInsetFixed_SystS.value())
+
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        point_spacing_by_pixel = point_spacing / self.thematic_map_layer.rasterUnitsPerPixelX()
+        # total number of pixels
+        map_width = self.thematic_map_layer.width()
+        map_height = self.thematic_map_layer.height()
+        total_pixels = map_width * map_height
+        # total valid pixels
+        map_nodata = get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text())
+        band = int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
+        total_nodata_pixels = get_pixel_count_by_pixel_values(self.thematic_map_layer, band, None, None)[map_nodata]
+        total_valid_pixels = total_pixels - total_nodata_pixels
+
         try:
-            max_samples = (int((extent.width()-initial_inset)/points_spacing) + 1) * \
-                          (int((extent.height()-initial_inset)/points_spacing) + 1)
+            max_samples = ((total_valid_pixels ** 0.5) / point_spacing_by_pixel + 1) ** 2
         except ZeroDivisionError:
             return
         if max_samples < 2147483647:
-            self.QPBar_GenerateSamples_SystS.setMaximum(max_samples)
+            self.QPBar_GenerateSamples_SystS.setMaximum(int(round(max_samples)))
 
     @pyqtSlot()
     def clear(self):
@@ -461,9 +502,9 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         self.QPBar_GenerateSamples_StraRS.setMaximum(1)
         self.QPBar_GenerateSamples_StraRS.setValue(0)
         # SystS
-        self.PointsSpacing_SystS.setSuffix("")
-        self.PointsSpacing_SystS.setToolTip("")
-        self.PointsSpacing_SystS.setValue(0)
+        self.PointSpacing_SystS.setSuffix("")
+        self.PointSpacing_SystS.setToolTip("")
+        self.PointSpacing_SystS.setValue(0)
         self.InitialInsetFixed_SystS.setSuffix("")
         self.InitialInsetFixed_SystS.setToolTip("")
         self.InitialInsetFixed_SystS.setValue(0)

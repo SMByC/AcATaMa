@@ -377,7 +377,7 @@ def do_systematic_sampling():
     thematic_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicMap,
                        band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
                        nodata=get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text()))
-    points_spacing = float(sampling_design.PointsSpacing_SystS.value())
+    points_spacing = float(sampling_design.PointSpacing_SystS.value())
     max_xy_offset = float(sampling_design.MaxXYoffset_SystS.value())
     total_of_samples = sampling_design.QPBar_GenerateSamples_SystS.maximum()
 

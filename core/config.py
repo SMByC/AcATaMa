@@ -147,7 +147,7 @@ def save(file_out):
     }
     # systematic sampling
     data["sampling_design"]["systematic_sampling"] = {
-        "points_spacing": sampling_design.PointsSpacing_SystS.value(),
+        "points_spacing": sampling_design.PointSpacing_SystS.value(),
         "initial_inset_mode": sampling_design.QCBox_InitialInsetMode_SystS.currentText(),
         "initial_inset": sampling_design.InitialInsetFixed_SystS.value(),
         "max_xy_offset": sampling_design.MaxXYoffset_SystS.value(),
@@ -497,7 +497,7 @@ def restore(yml_file_path):
 
         # systematic sampling
         if "systematic_sampling" in yaml_config["sampling_design"]:
-            sampling_design.PointsSpacing_SystS.setValue(
+            sampling_design.PointSpacing_SystS.setValue(
                 yaml_config["sampling_design"]["systematic_sampling"]['points_spacing'])
             if "initial_inset_mode" in yaml_config["sampling_design"]["systematic_sampling"]:
                 select_item_in(sampling_design.QCBox_InitialInsetMode_SystS,

@@ -149,7 +149,7 @@
                  </widget>
                 </item>
                 <item row="0" column="2">
-                 <widget class="QToolButton" name="QPBtn_DeterNumSamples">
+                 <widget class="QToolButton" name="QPBtn_DeterNumSamples_SimpRS">
                   <property name="toolTip">
                    <string>Determine the sample size</string>
                   </property>
@@ -571,10 +571,10 @@ It set automatically from image if the layer has the nodata value set.</string>
              <bool>true</bool>
             </property>
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The total number of samples (*) is an estimate, and the samples generated could be fewer due to sampling type and some (hard) restrictions in the sampling conditions. You can finish the process if it gets stuck after some time.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The total number of samples (*) is an estimate, and the actual number of samples generated may vary based on the sampling method and restrictions imposed in the sampling conditions. You can finish the process if it gets stuck after some time.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="maximum">
-             <number>1</number>
+             <number>306</number>
             </property>
             <property name="value">
              <number>0</number>
@@ -1207,7 +1207,7 @@ It set automatically from image if the layer has the nodata value set.</string>
              <bool>true</bool>
             </property>
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The total number of samples (*) is an estimate, and the samples generated could be fewer due to sampling type and some (hard) restrictions in the sampling conditions. You can finish the process if it gets stuck after some time.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The total number of samples (*) is an estimate, and the actual number of samples generated may vary based on the sampling method and restrictions imposed in the sampling conditions. You can finish the process if it gets stuck after some time.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="maximum">
              <number>1</number>
@@ -1353,15 +1353,15 @@ It set automatically from image if the layer has the nodata value set.</string>
                 <property name="rightMargin">
                  <number>0</number>
                 </property>
-                <item row="0" column="1">
-                 <widget class="QDoubleSpinBox" name="PointsSpacing_SystS"/>
-                </item>
                 <item row="1" column="0">
                  <widget class="QLabel" name="label_27">
                   <property name="text">
                    <string>Initial inset from TL corner:</string>
                   </property>
                  </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QDoubleSpinBox" name="PointSpacing_SystS"/>
                 </item>
                 <item row="0" column="0">
                  <widget class="QLabel" name="label_26">
@@ -1370,7 +1370,21 @@ It set automatically from image if the layer has the nodata value set.</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="1">
+                <item row="0" column="2">
+                 <widget class="QToolButton" name="QPBtn_DeterNumSamples_SystS">
+                  <property name="toolTip">
+                   <string>Determining point spacing by estimating sample size</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset>
+                    <normaloff>:/plugins/AcATaMa/icons/determine_num_samples.svg</normaloff>:/plugins/AcATaMa/icons/determine_num_samples.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1" colspan="2">
                  <widget class="QComboBox" name="QCBox_InitialInsetMode_SystS">
                   <property name="toolTip">
                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the initial inset from top-left corner using a random value (from 0 to point spacing) or using a fixed value by user&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -1387,7 +1401,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                   </item>
                  </widget>
                 </item>
-                <item row="2" column="1">
+                <item row="2" column="1" colspan="2">
                  <widget class="QDoubleSpinBox" name="InitialInsetFixed_SystS"/>
                 </item>
                </layout>
@@ -1796,7 +1810,7 @@ It set automatically from image if the layer has the nodata value set.</string>
              <bool>true</bool>
             </property>
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The total number of samples (*) is an estimate, and the samples generated could be fewer due to sampling type and some (hard) restrictions in the sampling conditions. You can finish the process if it gets stuck after some time.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The total number of samples (*) is an estimate, and the actual number of samples generated may vary based on the sampling method and restrictions imposed in the sampling conditions. You can finish the process if it gets stuck after some time.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="maximum">
              <number>1</number>

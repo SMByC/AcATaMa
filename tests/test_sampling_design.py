@@ -123,7 +123,7 @@ def test_systematic_post_stratified_random_sampling(plugin, unwrap, tmpdir):
     post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SystS,
                                   band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()),
                                   nodata=get_nodata_format(sampling_design.nodata_PostStratMap_SystS.text()))
-    points_spacing = float(sampling_design.PointsSpacing_SystS.value())
+    points_spacing = float(sampling_design.PointSpacing_SystS.value())
     initial_inset = float(sampling_design.InitialInsetFixed_SystS.value())
     max_xy_offset = float(sampling_design.MaxXYoffset_SystS.value())
 
@@ -172,7 +172,7 @@ def test_systematic_post_stratified_with_initial_inset_random(plugin, unwrap, tm
     post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SystS,
                                   band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()),
                                   nodata=get_nodata_format(sampling_design.nodata_PostStratMap_SystS.text()))
-    points_spacing = float(sampling_design.PointsSpacing_SystS.value())
+    points_spacing = float(sampling_design.PointSpacing_SystS.value())
     max_xy_offset = float(sampling_design.MaxXYoffset_SystS.value())
 
     classes_selected = [int(p) for p in sampling_design.QPBtn_PostStratMapClasses_SystS.text().split(",")]
