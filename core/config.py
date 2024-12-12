@@ -98,6 +98,9 @@ def save(file_out):
     # simple random sampling
     data["sampling_design"]["simple_random_sampling"] = {
         "num_samples": sampling_design.numberOfSamples_SimpRS.value(),
+        "num_samples_overall_accuracy": sampling_design.determine_number_samples_dialog_SimpRS.OverallAccuracy.text(),
+        "num_samples_half_width_ci": sampling_design.determine_number_samples_dialog_SimpRS.HalfWidthCI.text(),
+        "num_samples_confidence_interval": sampling_design.determine_number_samples_dialog_SimpRS.ConfidenceInterval.currentText(),
         "min_distance": sampling_design.minDistance_SimpRS.value(),
 
         "post_stratification": sampling_design.QGBox_SimpRSwithPS.isChecked(),
@@ -148,6 +151,9 @@ def save(file_out):
     # systematic sampling
     data["sampling_design"]["systematic_sampling"] = {
         "points_spacing": sampling_design.PointSpacing_SystS.value(),
+        "num_samples_overall_accuracy": sampling_design.determine_number_samples_dialog_SystS.OverallAccuracy.text(),
+        "num_samples_half_width_ci": sampling_design.determine_number_samples_dialog_SystS.HalfWidthCI.text(),
+        "num_samples_confidence_interval": sampling_design.determine_number_samples_dialog_SystS.ConfidenceInterval.currentText(),
         "initial_inset_mode": sampling_design.QCBox_InitialInsetMode_SystS.currentText(),
         "initial_inset": sampling_design.InitialInsetFixed_SystS.value(),
         "max_xy_offset": sampling_design.MaxXYoffset_SystS.value(),
@@ -382,6 +388,15 @@ def restore(yml_file_path):
         # simple random sampling
         sampling_design.numberOfSamples_SimpRS.setValue(
             yaml_config["sampling_design"]["simple_random_sampling"]['num_samples'])
+        if "num_samples_overall_accuracy" in yaml_config["sampling_design"]["simple_random_sampling"]:
+            sampling_design.determine_number_samples_dialog_SimpRS.OverallAccuracy.setValue(
+                int(yaml_config["sampling_design"]["simple_random_sampling"]['num_samples_overall_accuracy'].replace('%', '')))
+        if "num_samples_half_width_ci" in yaml_config["sampling_design"]["simple_random_sampling"]:
+            sampling_design.determine_number_samples_dialog_SimpRS.HalfWidthCI.setValue(
+                float(yaml_config["sampling_design"]["simple_random_sampling"]['num_samples_half_width_ci'].replace('%', '')))
+        if "num_samples_confidence_interval" in yaml_config["sampling_design"]["simple_random_sampling"]:
+            select_item_in(sampling_design.determine_number_samples_dialog_SimpRS.ConfidenceInterval,
+                           yaml_config["sampling_design"]["simple_random_sampling"]['num_samples_confidence_interval'])
         sampling_design.minDistance_SimpRS.setValue(
             yaml_config["sampling_design"]["simple_random_sampling"]['min_distance'])
         sampling_design.QGBox_SimpRSwithPS.setChecked(
@@ -499,6 +514,15 @@ def restore(yml_file_path):
         if "systematic_sampling" in yaml_config["sampling_design"]:
             sampling_design.PointSpacing_SystS.setValue(
                 yaml_config["sampling_design"]["systematic_sampling"]['points_spacing'])
+            if "num_samples_overall_accuracy" in yaml_config["sampling_design"]["systematic_sampling"]:
+                sampling_design.determine_number_samples_dialog_SystS.OverallAccuracy.setValue(
+                    int(yaml_config["sampling_design"]["systematic_sampling"]['num_samples_overall_accuracy'].replace('%', '')))
+            if "num_samples_half_width_ci" in yaml_config["sampling_design"]["systematic_sampling"]:
+                sampling_design.determine_number_samples_dialog_SystS.HalfWidthCI.setValue(
+                    float(yaml_config["sampling_design"]["systematic_sampling"]['num_samples_half_width_ci'].replace('%', '')))
+            if "num_samples_confidence_interval" in yaml_config["sampling_design"]["systematic_sampling"]:
+                select_item_in(sampling_design.determine_number_samples_dialog_SystS.ConfidenceInterval,
+                               yaml_config["sampling_design"]["systematic_sampling"]['num_samples_confidence_interval'])
             if "initial_inset_mode" in yaml_config["sampling_design"]["systematic_sampling"]:
                 select_item_in(sampling_design.QCBox_InitialInsetMode_SystS,
                                yaml_config["sampling_design"]["systematic_sampling"]['initial_inset_mode'])
