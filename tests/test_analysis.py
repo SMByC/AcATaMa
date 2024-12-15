@@ -1,6 +1,5 @@
 import pytest
 
-from AcATaMa.core import config
 from AcATaMa.core.analysis import AccuracyAssessmentWindow
 from AcATaMa.gui import accuracy_assessment_results
 
@@ -9,11 +8,10 @@ def clean_raw_html(html):
     return html.replace('\n', '').replace('\t', '').replace(' ', '')
 
 
-def test_accuracy_assessment_simple_html(plugin, unwrap):
+def test_accuracy_assessment_simple_html(plugin, restore_config_file):
     # restore
     input_yml_path = pytest.tests_data_dir.parent.parent / "examples" / "Simple exercise - 2019-2020 change - Tinigua.yml"
-    config_restore = unwrap(config.restore)
-    config_restore(input_yml_path)
+    restore_config_file(input_yml_path)
 
     # get accuracy assessment results in html
     accuracy_assessment = AccuracyAssessmentWindow()
@@ -31,11 +29,10 @@ def test_accuracy_assessment_simple_html(plugin, unwrap):
     assert clean_raw_html(result_html_computed) == clean_raw_html(result_html_in_file.read())
 
 
-def test_accuracy_assessment_simple_post_stratify_html(plugin, unwrap):
+def test_accuracy_assessment_simple_post_stratify_html(plugin, restore_config_file):
     # restore
     input_yml_path = pytest.tests_data_dir.parent.parent / "examples" / "Simple post-stratify exercise - 2019-2020 change - Tinigua.yml"
-    config_restore = unwrap(config.restore)
-    config_restore(input_yml_path)
+    restore_config_file(input_yml_path)
 
     # get accuracy assessment results in html
     accuracy_assessment = AccuracyAssessmentWindow()
@@ -53,11 +50,10 @@ def test_accuracy_assessment_simple_post_stratify_html(plugin, unwrap):
     assert clean_raw_html(result_html_computed) == clean_raw_html(result_html_in_file.read())
 
 
-def test_accuracy_assessment_systematic_html(plugin, unwrap):
+def test_accuracy_assessment_systematic_html(plugin, restore_config_file):
     # restore
     input_yml_path = pytest.tests_data_dir.parent.parent / "examples" / "Systematic exercise - 2019-2020 change - Tinigua.yml"
-    config_restore = unwrap(config.restore)
-    config_restore(input_yml_path)
+    restore_config_file(input_yml_path)
 
     # get accuracy assessment results in html
     accuracy_assessment = AccuracyAssessmentWindow()
@@ -75,11 +71,10 @@ def test_accuracy_assessment_systematic_html(plugin, unwrap):
     assert clean_raw_html(result_html_computed) == clean_raw_html(result_html_in_file.read())
 
 
-def test_accuracy_assessment_systematic_post_stratify_html(plugin, unwrap):
+def test_accuracy_assessment_systematic_post_stratify_html(plugin, restore_config_file):
     # restore
     input_yml_path = pytest.tests_data_dir.parent.parent / "examples" / "Systematic post-stratify exercise - 2019-2020 change - Tinigua.yml"
-    config_restore = unwrap(config.restore)
-    config_restore(input_yml_path)
+    restore_config_file(input_yml_path)
 
     # get accuracy assessment results in html
     accuracy_assessment = AccuracyAssessmentWindow()
@@ -97,11 +92,10 @@ def test_accuracy_assessment_systematic_post_stratify_html(plugin, unwrap):
     assert clean_raw_html(result_html_computed) == clean_raw_html(result_html_in_file.read())
 
 
-def test_accuracy_assessment_stratified_html(plugin, unwrap):
+def test_accuracy_assessment_stratified_html(plugin, restore_config_file):
     # restore
     input_yml_path = pytest.tests_data_dir.parent.parent / "examples" / "Stratified exercise - 2019-2020 change - Tinigua.yml"
-    config_restore = unwrap(config.restore)
-    config_restore(input_yml_path)
+    restore_config_file(input_yml_path)
 
     # get accuracy assessment results in html
     accuracy_assessment = AccuracyAssessmentWindow()

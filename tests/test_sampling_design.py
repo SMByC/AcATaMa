@@ -2,17 +2,15 @@ import fiona
 import pytest
 from shapely.geometry import shape
 
-from AcATaMa.core import config
 from AcATaMa.core.map import Map
 from AcATaMa.core.sampling_design import Sampling
 from AcATaMa.utils.others_utils import get_nodata_format
 
 
-def test_simple_post_stratified_random_sampling(plugin, unwrap, tmpdir):
+def test_simple_post_stratified_random_sampling(plugin, restore_config_file, tmpdir):
     # restore
     input_yml_path = pytest.tests_data_dir / "test_sampling.yml"
-    config_restore = unwrap(config.restore)
-    config_restore(input_yml_path)
+    restore_config_file(input_yml_path)
     sampling_design = plugin.dockwidget.sampling_design_window
 
     # load simple post stratify random sampling config
@@ -52,11 +50,10 @@ def test_simple_post_stratified_random_sampling(plugin, unwrap, tmpdir):
             assert shape(s['geometry']).equals(shape(t['geometry']))
 
 
-def test_stratified_random_sampling(plugin, unwrap, tmpdir):
+def test_stratified_random_sampling(plugin, restore_config_file, tmpdir):
     # restore
     input_yml_path = pytest.tests_data_dir / "test_sampling.yml"
-    config_restore = unwrap(config.restore)
-    config_restore(input_yml_path)
+    restore_config_file(input_yml_path)
     sampling_design = plugin.dockwidget.sampling_design_window
 
     # load stratify random sampling area based proportion config
@@ -109,11 +106,10 @@ def test_stratified_random_sampling(plugin, unwrap, tmpdir):
             assert shape(s['geometry']).equals(shape(t['geometry']))
 
 
-def test_systematic_post_stratified_random_sampling(plugin, unwrap, tmpdir):
+def test_systematic_post_stratified_random_sampling(plugin, restore_config_file, tmpdir):
     # restore
     input_yml_path = pytest.tests_data_dir / "test_sampling.yml"
-    config_restore = unwrap(config.restore)
-    config_restore(input_yml_path)
+    restore_config_file(input_yml_path)
     sampling_design = plugin.dockwidget.sampling_design_window
 
     # load simple post stratify random sampling config
@@ -157,12 +153,11 @@ def test_systematic_post_stratified_random_sampling(plugin, unwrap, tmpdir):
             assert shape(s['geometry']).equals(shape(t['geometry']))
 
 
-def test_systematic_post_stratified_with_initial_inset_random(plugin, unwrap, tmpdir):
+def test_systematic_post_stratified_with_initial_inset_random(plugin, restore_config_file, tmpdir):
     import random
     # restore
     input_yml_path = pytest.tests_data_dir / "test_sampling.yml"
-    config_restore = unwrap(config.restore)
-    config_restore(input_yml_path)
+    restore_config_file(input_yml_path)
     sampling_design = plugin.dockwidget.sampling_design_window
 
     # load simple post stratify random sampling config

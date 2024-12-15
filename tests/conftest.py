@@ -1,9 +1,11 @@
 import os
 import pytest
 from pathlib import Path
+
 from qgis.testing import start_app
 
 from AcATaMa import classFactory
+from AcATaMa.core import config
 from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget
 
 pytest_plugins = ('pytest_qgis',)
@@ -15,6 +17,7 @@ if os.environ.get("IS_DOCKER_CONTAINER") and os.environ["IS_DOCKER_CONTAINER"].l
     # when running in a docker container, we use the start_app provided by qgis rather
     # than that of pytest-qgis. pytest-qgis does not clean up the application properly
     # and results in a seg-fault
+    print("RUNNING IN DOCKER CONTAINER")
     start_app()
 
 
@@ -27,6 +30,13 @@ def unwrap():
         return unwrapper(func.__wrapped__)
 
     yield unwrapper
+
+
+@pytest.fixture
+def restore_config_file(monkeypatch):
+    def _load_config_file(input_yml_path):
+        config.restore(input_yml_path)
+    return _load_config_file
 
 
 @pytest.fixture

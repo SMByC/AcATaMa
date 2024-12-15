@@ -1,13 +1,11 @@
 import pytest
 
-from AcATaMa.core import config
 
-
-def test_get_n_calculates_correct_samples_simple(plugin, unwrap):
+def test_get_n_calculates_correct_samples_simple(plugin, restore_config_file):
     # restore
     input_yml_path = pytest.tests_data_dir / "test_sample_size.yml"
-    config_restore = unwrap(config.restore)
-    config_restore(input_yml_path)
+    restore_config_file(input_yml_path)
+
     sampling_design = plugin.dockwidget.sampling_design_window
 
     # set values
@@ -15,11 +13,10 @@ def test_get_n_calculates_correct_samples_simple(plugin, unwrap):
 
     assert sampling_design.determine_number_samples_dialog_SimpRS.NumberOfSamples.text() == "306"
 
-def test_point_spacing_calculates_correct_samples_systematic(plugin, unwrap, monkeypatch):
+def test_point_spacing_calculates_correct_samples_systematic(plugin, restore_config_file, monkeypatch):
     # restore
     input_yml_path = pytest.tests_data_dir / "test_sample_size.yml"
-    config_restore = unwrap(config.restore)
-    config_restore(input_yml_path)
+    restore_config_file(input_yml_path)
     sampling_design = plugin.dockwidget.sampling_design_window
 
     determine_number_samples_dialog = sampling_design.determine_number_samples_dialog_SystS
