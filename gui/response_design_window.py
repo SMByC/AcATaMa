@@ -264,7 +264,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         # adjust some objects in the dockwidget while response design window is opened
         AcATaMa.dockwidget.QGBox_ThematicMap.setDisabled(True)
         AcATaMa.dockwidget.QGBox_SamplingDesign.setDisabled(True)
-        AcATaMa.dockwidget.QGBox_GridSettings.setDisabled(True)
+        AcATaMa.dockwidget.QPBtn_GridSettings.setDisabled(True)
         AcATaMa.dockwidget.QPBtn_saveSamplingLabeled.setDisabled(True)
         AcATaMa.dockwidget.QPBtn_OpenResponseDesignWindow.setText("Response design is opened, click to show")
 
@@ -647,7 +647,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             AcATaMa.dockwidget.QGBox_ThematicMap.setEnabled(True)
         if not AccuracyAssessmentWindow.is_opened:
             AcATaMa.dockwidget.QGBox_SamplingDesign.setEnabled(True)
-        AcATaMa.dockwidget.QGBox_GridSettings.setEnabled(True)
+        AcATaMa.dockwidget.QPBtn_GridSettings.setEnabled(True)
         AcATaMa.dockwidget.QPBtn_saveSamplingLabeled.setEnabled(True)
         AcATaMa.dockwidget.QPBtn_OpenResponseDesignWindow.setText("Response design window")
         self.reject(is_ok_to_close=True)

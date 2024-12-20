@@ -35,6 +35,7 @@ from qgis.utils import iface
 
 from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.gui.response_design_window import ResponseDesignWindow
+from AcATaMa.gui.response_design_grid_settings import ResponseDesignGridSettings
 from AcATaMa.utils.system_utils import wait_process, block_signals_to
 from AcATaMa.utils.sampling_utils import fill_stratified_sampling_table
 from AcATaMa.utils.qgis_utils import get_current_file_path_in, get_file_path_of_layer, load_and_select_filepath_in, \
@@ -217,6 +218,7 @@ def save(file_out):
         # save sampling_layer style
 
         data["dialog_size"] = response_design.dialog_size
+        data["response_design_grid_settings_first_open"] = ResponseDesignGridSettings.is_first_open
         data["grid_view_widgets"] = {"columns": response_design.grid_columns, "rows": response_design.grid_rows}
         data["current_sample_idx"] = response_design.current_sample_idx
         data["sampling_unit_pixel_buffer"] = response_design.sampling_unit_pixel_buffer
@@ -582,8 +584,12 @@ def restore(yml_file_path):
         # TODO:
         # restore sampling_layer style
 
-        AcATaMa.dockwidget.grid_columns.setValue(yaml_config["grid_view_widgets"]["columns"])
-        AcATaMa.dockwidget.grid_rows.setValue(yaml_config["grid_view_widgets"]["rows"])
+        if "response_design_grid_settings_first_open" in yaml_config:
+            ResponseDesignGridSettings.is_first_open = yaml_config["response_design_grid_settings_first_open"]
+        else:
+            ResponseDesignGridSettings.is_first_open = False
+        AcATaMa.dockwidget.response_design_grid_settings.columns.setValue(yaml_config["grid_view_widgets"]["columns"])
+        AcATaMa.dockwidget.response_design_grid_settings.rows.setValue(yaml_config["grid_view_widgets"]["rows"])
         response_design.dialog_size = yaml_config["dialog_size"]
         response_design.grid_columns = yaml_config["grid_view_widgets"]["columns"]
         response_design.grid_rows = yaml_config["grid_view_widgets"]["rows"]

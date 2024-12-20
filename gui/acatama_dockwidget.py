@@ -33,11 +33,12 @@ from AcATaMa.core.analysis import AccuracyAssessmentWindow
 from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.core.map import get_nodata_value
 from AcATaMa.gui.response_design_window import ResponseDesignWindow
+from AcATaMa.gui.response_design_grid_settings import ResponseDesignGridSettings
 from AcATaMa.gui.sampling_design_window import SamplingDesignWindow
+from AcATaMa.gui.sampling_report import SamplingReport
 from AcATaMa.utils.others_utils import set_nodata_format
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_filepath_in, get_file_path_of_layer
 from AcATaMa.utils.system_utils import error_handler, block_signals_to, output_file_is_OK
-from AcATaMa.gui.sampling_report import SamplingReport
 from AcATaMa.gui.about_dialog import AboutDialog
 
 # plugin path
@@ -137,13 +138,12 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QPBtn_SaveAcatamaState.clicked.connect(self.file_dialog_save_acatama_state)
         # save sampling + labeling
         self.QPBtn_saveSamplingLabeled.clicked.connect(self.file_dialog_save_sampling_labeled)
-        # change grid config
-        self.grid_columns.valueChanged.connect(lambda: self.set_grid_setting("column"))
-        self.grid_rows.valueChanged.connect(lambda: self.set_grid_setting("row"))
+        # grid settings
+        self.response_design_grid_settings = ResponseDesignGridSettings()
+        self.QPBtn_GridSettings.clicked.connect(self.response_design_grid_settings.show)
         # disable group box that depends on sampling file
         self.QGBox_ResponseDesign.setDisabled(True)
-
-        # connect the action to the run method
+        # open response design window
         self.QPBtn_OpenResponseDesignWindow.clicked.connect(self.open_response_design_window)
 
         # ######### Analysis tab ######### #
@@ -282,13 +282,11 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             # grid settings
             if sampling_layer in ResponseDesign.instances:
                 response_design = ResponseDesign.instances[sampling_layer]
-                with block_signals_to(self.QGBox_GridSettings):
-                    self.grid_columns.setValue(response_design.grid_columns)
-                    self.grid_rows.setValue(response_design.grid_rows)
+                self.response_design_grid_settings.columns.setValue(response_design.grid_columns)
+                self.response_design_grid_settings.rows.setValue(response_design.grid_rows)
             else:
-                with block_signals_to(self.QGBox_GridSettings):
-                    self.grid_columns.setValue(2)
-                    self.grid_rows.setValue(1)
+                self.response_design_grid_settings.columns.setValue(2)
+                self.response_design_grid_settings.rows.setValue(1)
             if not ResponseDesignWindow.is_opened:
                 # enable group box that depends on sampling file
                 self.QGBox_ResponseDesign.setEnabled(True)
@@ -296,8 +294,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             # return to default values
             self.QPBar_LabelingStatus.setTextVisible(False)
             self.QPBar_LabelingStatus.setValue(0)
-            self.grid_columns.setValue(2)
-            self.grid_rows.setValue(1)
+            self.response_design_grid_settings.columns.setValue(2)
+            self.response_design_grid_settings.rows.setValue(1)
             # disable group box that depends on sampling file
             self.QGBox_ResponseDesign.setDisabled(True)
 
@@ -326,15 +324,6 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             iface.messageBar().pushMessage("AcATaMa", "No sampling file selected",
                                            level=Qgis.Warning, duration=10)
 
-    @pyqtSlot()
-    def set_grid_setting(self, item):
-        sampling_layer = self.QCBox_SamplingFile.currentLayer()
-        if sampling_layer in ResponseDesign.instances:
-            response_design = ResponseDesign.instances[sampling_layer]
-            if item == "column":
-                response_design.grid_columns = self.grid_columns.value()
-            if item == "row":
-                response_design.grid_rows = self.grid_rows.value()
 
     @pyqtSlot()
     @error_handler
@@ -465,8 +454,14 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                                            level=Qgis.Warning, duration=10)
             return
 
-        self.response_design_window = \
-            ResponseDesignWindow(sampling_layer, self.grid_columns.value(), self.grid_rows.value())
+        # only open the response_design_grid_settings dialog the first time
+        if ResponseDesignGridSettings.is_first_open:
+            if not self.response_design_grid_settings.exec_():
+                return
+
+        self.response_design_window = ResponseDesignWindow(sampling_layer,
+                                                           self.response_design_grid_settings.columns.value(),
+                                                           self.response_design_grid_settings.rows.value())
         # open dialog
         self.response_design_window.show()
 
