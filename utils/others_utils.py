@@ -74,6 +74,14 @@ def get_pixel_values(layer, band):
     pixel_values = []
     for item in items:
         pixel_values.append(int(item.get("value")))
+
+    # fallback to get the unique values if no xml color style is defined in the layer
+    if not pixel_values:
+        dataset = gdal_array.LoadFile(get_file_path_of_layer(layer))
+        if len(dataset.shape) == 3:
+            dataset = dataset[band - 1]
+        pixel_values = np.unique(dataset).tolist()
+
     return pixel_values
 
 

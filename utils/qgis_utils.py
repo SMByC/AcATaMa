@@ -120,9 +120,14 @@ def unload_layer(layer_path):
             QgsProject.instance().removeMapLayer(layer_loaded.id())
 
 
-def get_symbology_table(raster_layer):
+def get_symbology_table(raster_layer, band):
     """Get the symbology table with pixel value, label and Qcolor of raster layer
     """
+    from AcATaMa.core.map import get_xml_style
+
+    # check if the thematic map has a valid symbology else ask to apply an automatic classification
+    get_xml_style(raster_layer, band)
+
     renderer = raster_layer.renderer()
 
     if renderer.type() == 'singlebandpseudocolor':

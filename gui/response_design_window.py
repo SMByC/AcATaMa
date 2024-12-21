@@ -667,7 +667,7 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
         self.setupUi(self)
         self.buttons_config = buttons_config if buttons_config is not None else {}
         # init with empty table
-        self.table_buttons = dict(zip(range(1, 301), [""] * 300))
+        self.table_buttons = dict(zip(range(1, 1001), [""] * 1000))
         self.create_table()
         #
         self.tableBtnsConfig.itemClicked.connect(self.table_item_clicked)
@@ -837,14 +837,20 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         # clean the table
         self.create_table()
+
         # get the symbology table; pixel values, labels and colors from thematic map
-        symbology_table = get_symbology_table(AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer())
+        symbology_table = get_symbology_table(AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer(),
+                                              band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()))
+        nodata_value = get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text())
+
         # create the buttons
-        for symbology_item in symbology_table:
+        for item_idx, symbology_item in enumerate(symbology_table):
             value, label, color = symbology_item
-            self.tableBtnsConfig.item(value, 0).setText(label)
-            self.tableBtnsConfig.item(value, 1).setBackground(color)
-            self.tableBtnsConfig.item(value, 2).setText(str(value))
+            if value == nodata_value:
+                continue
+            self.tableBtnsConfig.item(item_idx, 0).setText(label)
+            self.tableBtnsConfig.item(item_idx, 1).setBackground(color)
+            self.tableBtnsConfig.item(item_idx, 2).setText(str(value))
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
