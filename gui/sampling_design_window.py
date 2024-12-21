@@ -541,7 +541,6 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         if not ResponseDesignWindow.is_opened and not AccuracyAssessmentWindow.is_opened:
             AcATaMa.dockwidget.QGBox_ThematicMap.setEnabled(True)
         SamplingDesignWindow.is_opened = False
-        self.thematic_map_layer = None
         self.reject(is_ok_to_close=True)
 
     def reject(self, is_ok_to_close=False):
