@@ -272,9 +272,12 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
             total_pixels = map_width * map_height
             # total valid pixels
             map_nodata = get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text())
-            band = int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
-            total_nodata_pixels = get_pixel_count_by_pixel_values(self.thematic_map_layer, band, None, None)[map_nodata]
-            total_valid_pixels = total_pixels - total_nodata_pixels
+            if map_nodata is not None:
+                band = int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
+                total_nodata_pixels = get_pixel_count_by_pixel_values(self.thematic_map_layer, band, None, None)[map_nodata]
+                total_valid_pixels = total_pixels - total_nodata_pixels
+            else:
+                total_valid_pixels = total_pixels
             # compute the point spacing of the grid based on the number of samples and the total valid pixels
             number_of_samples = int(self.determine_number_samples_dialog_SystS.NumberOfSamples.text())
             point_spacing_by_pixel = (total_valid_pixels ** 0.5) / (number_of_samples ** 0.5 - 1)
@@ -481,9 +484,12 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         total_pixels = map_width * map_height
         # total valid pixels
         map_nodata = get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text())
-        band = int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
-        total_nodata_pixels = get_pixel_count_by_pixel_values(self.thematic_map_layer, band, None, None)[map_nodata]
-        total_valid_pixels = total_pixels - total_nodata_pixels
+        if map_nodata is not None:
+            band = int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
+            total_nodata_pixels = get_pixel_count_by_pixel_values(self.thematic_map_layer, band, None, None)[map_nodata]
+            total_valid_pixels = total_pixels - total_nodata_pixels
+        else:
+            total_valid_pixels = total_pixels
 
         try:
             max_samples = ((total_valid_pixels ** 0.5) / point_spacing_by_pixel + 1) ** 2
