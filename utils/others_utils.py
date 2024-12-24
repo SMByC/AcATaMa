@@ -60,6 +60,8 @@ def mask(input_list, boolean_mask):
 
 
 def get_pixel_values(layer, band):
+    from AcATaMa.core.map import get_nodata_value
+
     current_style = layer.styleManager().currentStyle()
     layer_style = layer.styleManager().style(current_style)
     xml_style_str = layer_style.xmlData()
@@ -81,6 +83,11 @@ def get_pixel_values(layer, band):
         if len(dataset.shape) == 3:
             dataset = dataset[band - 1]
         pixel_values = np.unique(dataset).tolist()
+
+    # insert nodata value
+    nodata = get_nodata_format(get_nodata_value(layer, band))
+    if nodata is not None and nodata not in pixel_values:
+        pixel_values.insert(0, nodata)
 
     return pixel_values
 
@@ -144,16 +151,16 @@ def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None, nod
     if pixel_values is None:
         pixel_values = get_pixel_values(layer, band)
 
-    # put nodata at the beginning, with the idea to include it for stopping
-    # the counting when reaching the total pixels, delete it at the end
-    if nodata is not None:
-        if nodata in pixel_values: pixel_values.remove(nodata)
-        pixel_values.insert(0, nodata)
+    # if nodata is defined by the user, remove it to not count it
+    if nodata is not None and nodata in pixel_values:
+        pixel_values.remove(nodata)
 
     # split the image in chunks, the 0,0 is left-upper corner
     layer_filepath = get_file_path_of_layer(layer)
     gdal_file = gdal.Open(layer_filepath, gdal.GA_ReadOnly)
-    chunk_size_x, chunk_size_y = gdal_file.RasterXSize//10+1, gdal_file.RasterYSize//10+1
+    chunk_size_x = gdal_file.RasterXSize//10+1 if gdal_file.RasterXSize > 1000 else gdal_file.RasterXSize
+    chunk_size_y = gdal_file.RasterYSize//10+1 if gdal_file.RasterYSize > 1000 else gdal_file.RasterYSize
+
     data_in_chunks = []
     for y in chunks(range(gdal_file.RasterYSize), chunk_size_y):
         yoff = y[0]
@@ -168,10 +175,6 @@ def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None, nod
     with DaskQTProgressDialog(progress_dialog=progress):
         results = dask.compute(*[dask.delayed(pixel_count_in_chunk)(*chunk) for chunk in data_in_chunks])
     pixel_counts = np.sum(results, axis=0).tolist()
-
-    if nodata is not None:
-        pixel_values.pop(0)
-        pixel_counts.pop(0)
 
     progress.close()
     pairing_values_and_counts = dict(zip(pixel_values, pixel_counts))
