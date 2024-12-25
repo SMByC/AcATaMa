@@ -244,11 +244,13 @@ def fill_stratified_sampling_table():
         srs_method = "area based proportion"
         sampling_design.widget_TotalExpectedSE.setVisible(True)
 
+    srs_table = None
     if sampling_design.QCBox_SamplingMap_StraRS.currentText() in sampling_design.srs_tables.keys() and \
         srs_method in sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()].keys():
         # restore values saved for number of samples configured for selected post-stratification file
         srs_table = sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()][srs_method]
-    else:
+
+    if srs_table is None:
         from AcATaMa.core.map import get_values_and_colors_table
         # init a new stratified random sampling table
         srs_table = {"values_and_colors_table": get_values_and_colors_table(
