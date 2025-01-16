@@ -176,8 +176,8 @@ class ResponseDesign(object):
         if self.with_thematic_classes:
             pr.addAttributes([QgsField("ID", QVariant.Int),
                               QgsField("Label", QVariant.String),
-                              QgsField("Is labeled", QVariant.Int),
-                              QgsField("Thematic Class", QVariant.Int),
+                              QgsField("Is labeled as", QVariant.Int),
+                              QgsField("In thematic map as", QVariant.Int),
                               QgsField("Match", QVariant.String)])
         else:
             pr.addAttributes([QgsField("ID", QVariant.Int),
@@ -198,12 +198,12 @@ class ResponseDesign(object):
             feature.setGeometry(point.QgsGeom)
             name = self.buttons_config[point.label_id]["name"] if point.is_labeled else NULL
             if self.with_thematic_classes:
-                validation_in_sample = int(
+                sample_labeled_as = int(
                     self.buttons_config[point.label_id]["thematic_class"]) if point.is_labeled else NULL
-                thematic_map_in_sample = int(thematic_map.get_pixel_value_from_pnt(point.QgsPnt)) \
+                sample_in_thematic_map = int(thematic_map.get_pixel_value_from_pnt(point.QgsPnt)) \
                     if point.is_labeled and thematic_map.get_pixel_value_from_pnt(point.QgsPnt) else NULL
-                match = ('Yes' if thematic_map_in_sample == validation_in_sample else 'No') if point.is_labeled else NULL
-                feature.setAttributes([point.sample_id, name, validation_in_sample, thematic_map_in_sample, match])
+                match = ('Yes' if sample_in_thematic_map == sample_labeled_as else 'No') if point.is_labeled else NULL
+                feature.setAttributes([point.sample_id, name, sample_labeled_as, sample_in_thematic_map, match])
             else:
                 feature.setAttributes([point.sample_id, name, point.label_id])
             pr.addFeatures([feature])
