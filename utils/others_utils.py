@@ -104,7 +104,7 @@ def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=None)
     try:
         import dask
         return get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values, nodata)
-    except ImportError:
+    except:
         return get_pixel_count_by_pixel_values_sequential(layer, band, pixel_values, nodata)
 
 
