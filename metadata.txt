@@ -3,7 +3,7 @@ name=AcATaMa
 description=AcATaMa is a powerful and complete Qgis plugin for accuracy assessment that provides comprehensive support for sampling, response design and estimation.
 about=AcATaMa is a powerful and complete Qgis plugin for accuracy assessment. It provides comprehensive support for sampling, response design and estimation within a design-based inference framework. The primary goal of AcATaMa is to equip users with the necessary tools to comply with international guidance and best practices for sampling design, estimation of land category areas and changes, and map accuracy assessment. The plugin supports accuracy assessment for any thematic map across diverse use cases. A common application is in remote sensing, particularly for land use and land cover classification, environmental monitoring, urban planning, forestry, agriculture, and more. However, AcATaMa is not limited to these applications; some modules, such as sampling and labeling, can be used independently for other user cases.
 
-version=24.12a
+version=24.12b
 qgisMinimumVersion=3.30
 qgisMaximumVersion=3.99
 
@@ -15,7 +15,7 @@ tracker=https://github.com/SMByC/AcATaMa/issues
 repository=https://github.com/SMByC/AcATaMa
 
 changelog=
-    24.12 and 24.12a:
+    24.12[a,b]:
     - New dialog tool for estimating the appropriate sample size for simple random sampling using the equation by Stehman and Foody (2019), and Cochran (1977)
     - New dialog tool for estimating the appropriate sample size for systematic random sampling, considering the valid map data and map using the equation by Stehman and Foody (2019), and Cochran (1977)
     - Move the grid settings into a dialog to set the number of views for the response design window
@@ -38,6 +38,8 @@ changelog=
     - Catch any issue while converting the path
     - Check the path before compute the relative path
     - Update the minimum Qgis version required by the plugin, issue #22
+    - Catch any error when trying to import dask library
+    - Using a more compatible extlibs version
     - All commits in: https://github.com/SMByC/AcATaMa/commits
 
 tags=accuracy,accuracy assessment,thematic,classification,sample,sampling design,points,remote sensing
