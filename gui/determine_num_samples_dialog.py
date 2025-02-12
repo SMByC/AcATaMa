@@ -58,8 +58,8 @@ class DetermineNumberSamplesDialog(QDialog, FORM_CLASS):
         """
         Determine the number of samples
         """
-        overall_accuracy = float(self.OverallAccuracy.text().replace('%', ''))/100
-        half_width_ci = float(self.HalfWidthCI.text().replace('%', ''))/100
+        overall_accuracy = self.OverallAccuracy.value()/100
+        half_width_ci = self.HalfWidthCI.value()/100
         confidence_interval = float(self.ConfidenceInterval.currentText().replace('%', ''))/100
 
         z = self.get_z_value(confidence_interval)
