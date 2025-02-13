@@ -634,9 +634,9 @@ class Sampling(object):
         random.seed(self.random_seed)
 
         points_generated = []
-        while y >= self.thematic_map.extent().yMinimum():
+        while not task.isCanceled() and y >= self.thematic_map.extent().yMinimum():
             x = self.thematic_map.extent().xMinimum() + initial_inset
-            while x <= self.thematic_map.extent().xMaximum():
+            while not task.isCanceled() and x <= self.thematic_map.extent().xMaximum():
                 attempts = 0
                 while not task.isCanceled():
                     if attempts == 1000:
