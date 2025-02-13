@@ -638,8 +638,9 @@ class Sampling(object):
             x = self.thematic_map.extent().xMinimum() + initial_inset
             while not task.isCanceled() and x <= self.thematic_map.extent().xMaximum():
                 attempts = 0
+                max_attempts = 1000
                 while not task.isCanceled():
-                    if attempts == 1000:
+                    if attempts >= max_attempts:
                         x += self.points_spacing
                         break
                     if self.max_xy_offset > 0:
@@ -650,6 +651,7 @@ class Sampling(object):
                     else:
                         # systematic sampling aligned with the grid, offset = 0
                         random_sampling_point = RandomPoint(x, y)
+                        attempts = max_attempts  # if offset = 0, it is not necessary to generate random points from center
 
                     if not extent_engine.intersects(random_sampling_point.QgsGeom.constGet()):
                         attempts += 1
