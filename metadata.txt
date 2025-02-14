@@ -3,7 +3,7 @@ name=AcATaMa
 description=AcATaMa is a powerful and complete Qgis plugin for accuracy assessment that provides comprehensive support for sampling, response design and estimation.
 about=AcATaMa is a powerful and complete Qgis plugin for accuracy assessment. It provides comprehensive support for sampling, response design and estimation within a design-based inference framework. The primary goal of AcATaMa is to equip users with the necessary tools to comply with international guidance and best practices for sampling design, estimation of land category areas and changes, and map accuracy assessment. The plugin supports accuracy assessment for any thematic map across diverse use cases. A common application is in remote sensing, particularly for land use and land cover classification, environmental monitoring, urban planning, forestry, agriculture, and more. However, AcATaMa is not limited to these applications; some modules, such as sampling and labeling, can be used independently for other user cases.
 
-version=24.12b
+version=24.12c
 qgisMinimumVersion=3.30
 qgisMaximumVersion=3.99
 
@@ -15,7 +15,7 @@ tracker=https://github.com/SMByC/AcATaMa/issues
 repository=https://github.com/SMByC/AcATaMa
 
 changelog=
-    24.12[a,b]:
+    24.12 with bugfix updates (a,b,c):
     - New dialog tool for estimating the appropriate sample size for simple random sampling using the equation by Stehman and Foody (2019), and Cochran (1977)
     - New dialog tool for estimating the appropriate sample size for systematic random sampling, considering the valid map data and map using the equation by Stehman and Foody (2019), and Cochran (1977)
     - Move the grid settings into a dialog to set the number of views for the response design window
@@ -30,6 +30,9 @@ changelog=
     - Fix a bug in the sampling report for simple and systematic sampling without post-stratification
     - Fix a bug counting the nodata value when needed in a edge case if the thematic has a very low nodata value defined, and minor improve in the counting parallel function
     - Fix init and restoring the stratified sampling table when the user restore the yaml with an empty table
+    - Fix getting the values from determining the number of samples dialog
+    - Fixed an stuck issue when the user finish in advance the systematic sampling process and thematic map is considerable big
+    - In systematic sampling process, if offset = 0 it is not necessary to generate random points from center
     - Rename a variable to avoid confusing it with another variable with a similar name
     - Adjusts some dialog sizes
     - Fix several warning and info boxes
