@@ -22,6 +22,7 @@ import os
 import random
 import math
 
+import numpy as np
 from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.QtWidgets import QFileDialog
 from qgis.core import QgsGeometry, QgsField, QgsFields, QgsSpatialIndex, QgsFeature, Qgis, \
@@ -33,7 +34,7 @@ from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.utils.qgis_utils import load_layer, valid_file_selected_in
 from AcATaMa.utils.system_utils import error_handler, output_file_is_OK
 from AcATaMa.gui.sampling_report import SamplingReport
-from AcATaMa.utils.others_utils import get_nodata_format
+from AcATaMa.utils.others_utils import get_nodata_format, get_epsilon
 
 
 def do_simple_random_sampling():
@@ -614,8 +615,8 @@ class Sampling(object):
 
         self.ThematicR_boundaries = QgsGeometry().fromRect(self.thematic_map.extent())
 
-        # add an epsilon to accept sampling points on the edge of the map
-        epsilon = 0.00001
+        # add an epsilon to accept sampling points on the edge of the offset area or map
+        epsilon = get_epsilon(for_crs=self.thematic_map.qgs_layer.crs())
         initial_inset = self.initial_inset + epsilon
 
         fields = QgsFields()
@@ -625,44 +626,102 @@ class Sampling(object):
             "GPKG" if self.output_file.endswith(".gpkg") else "ESRI Shapefile" if self.output_file.endswith(".shp") else None
         writer = QgsVectorFileWriter(self.output_file, "System", fields, QgsWkbTypes.Point, thematic_CRS, file_format)
 
-        y = self.thematic_map.extent().yMaximum() - initial_inset
-        extent_geom = QgsGeometry.fromRect(self.thematic_map.extent())
-        extent_engine = QgsGeometry.createGeometryEngine(extent_geom.constGet())
-        extent_engine.prepareGeometry()
+        pixel_size_x = self.thematic_map.qgs_layer.rasterUnitsPerPixelX()
+        pixel_size_y = self.thematic_map.qgs_layer.rasterUnitsPerPixelY()
 
         # init the random sampling seed
         random.seed(self.random_seed)
 
         points_generated = []
+        pixels_sampled = []  # to check and avoid duplicate sampled pixels
+        y = self.thematic_map.extent().yMaximum() - initial_inset
+
         while not task.isCanceled() and y >= self.thematic_map.extent().yMinimum():
             x = self.thematic_map.extent().xMinimum() + initial_inset
             while not task.isCanceled() and x <= self.thematic_map.extent().xMaximum():
-                attempts = 0
-                max_attempts = 1000
-                while not task.isCanceled():
-                    if attempts >= max_attempts:
-                        x += self.points_spacing
-                        break
-                    if self.max_xy_offset > 0:
-                        # step 2: random offset
-                        rx = random.uniform(x - self.max_xy_offset, x + self.max_xy_offset)
-                        ry = random.uniform(y - self.max_xy_offset, y + self.max_xy_offset)
-                        random_sampling_point = RandomPoint(rx, ry)
-                    else:
-                        # systematic sampling aligned with the grid, offset = 0
-                        random_sampling_point = RandomPoint(x, y)
-                        attempts = max_attempts  # if offset = 0, it is not necessary to generate random points from center
 
-                    if not extent_engine.intersects(random_sampling_point.QgsGeom.constGet()):
-                        attempts += 1
+                ### aligned sampling without offset
+                if self.max_xy_offset == 0:
+                    random_sampling_point = RandomPoint(x, y)
+                    _x_centroid, _y_centroid = self.thematic_map.get_pixel_centroid(x, y)
+
+                    # check if the pixel is not already sampled
+                    if (_x_centroid, _y_centroid) in pixels_sampled:
+                        x += self.points_spacing
                         continue
 
-                    # checks to the sampling point, else discard and continue
+                    # do multi-checks to the sampling point, else discard and continue
                     if not self.check_sampling_point(random_sampling_point):
-                        attempts += 1
+                        x += self.points_spacing
                         continue
 
                     points_generated.append(random_sampling_point)
+                    pixels_sampled.append((_x_centroid, _y_centroid))
+
+                    x += self.points_spacing
+                    # update task progress
+                    task.setProgress(len(points_generated) / sampling_conf["total_of_samples"] * 100)
+                    continue
+
+                ### with random offset
+                # define the offset grid area by each aligning grid point
+                x_offset_grid = np.arange(x - self.max_xy_offset, x + self.max_xy_offset, pixel_size_x)
+                y_offset_grid = np.arange(y - self.max_xy_offset + 2 * epsilon, y + self.max_xy_offset, pixel_size_y)
+                # add border points
+                x_offset_grid = np.append(x_offset_grid, x + self.max_xy_offset - 2 * epsilon)
+                y_offset_grid = np.append(y_offset_grid, y + self.max_xy_offset)
+
+                # gather all the valid thematic pixels centroids in the offset area
+                pixels_in_offset_grid = []
+                for x_offset in x_offset_grid:
+                    for y_offset in y_offset_grid:
+
+                        x_centroid, y_centroid = self.thematic_map.get_pixel_centroid(x_offset, y_offset)
+                        if x_centroid is None or y_centroid is None:
+                            continue
+
+                        pixel_value = self.thematic_map.get_pixel_value_from_xy(x_centroid, y_centroid)
+                        if pixel_value is None or pixel_value == self.thematic_map.nodata:
+                            continue
+
+                        if (x_centroid, y_centroid) in pixels_in_offset_grid:
+                            continue
+
+                        pixels_in_offset_grid.append((x_centroid, y_centroid))
+
+                # if all pixels in the offset grid are None
+                if not pixels_in_offset_grid:
+                    x += self.points_spacing
+                    continue
+
+                while not task.isCanceled():
+                    if not pixels_in_offset_grid:
+                        x += self.points_spacing
+                        break
+
+                    # random point inside the offset area
+                    _x = random.uniform(x - self.max_xy_offset, x + self.max_xy_offset)
+                    _y = random.uniform(y - self.max_xy_offset, y + self.max_xy_offset)
+
+                    random_sampling_point = RandomPoint(_x, _y)
+                    _x_centroid, _y_centroid = self.thematic_map.get_pixel_centroid(_x, _y)
+
+                    # check if the random point centroid is in the pixel_in_offset_grid
+                    if (_x_centroid, _y_centroid) not in pixels_in_offset_grid:
+                        continue
+
+                    # check if the pixel is not already sampled
+                    if (_x_centroid, _y_centroid) in pixels_sampled:
+                        pixels_in_offset_grid.remove((_x_centroid, _y_centroid))
+                        continue
+
+                    # do multi-checks to the sampling point, else discard and continue
+                    if not self.check_sampling_point(random_sampling_point):
+                        pixels_in_offset_grid.remove((_x_centroid, _y_centroid))
+                        continue
+
+                    points_generated.append(random_sampling_point)
+                    pixels_sampled.append((_x_centroid, _y_centroid))
 
                     x += self.points_spacing
                     # update task progress

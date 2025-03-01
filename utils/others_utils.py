@@ -26,6 +26,7 @@ from osgeo import gdal, gdal_array
 
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QProgressDialog, QApplication
+from qgis.core import QgsUnitTypes
 
 from AcATaMa.utils.qgis_utils import get_file_path_of_layer
 from AcATaMa.utils.system_utils import wait_process
@@ -263,3 +264,27 @@ def get_nodata_format(value):
     if value is None or value == "" or value == "nan" or (isinstance(value, float) and np.isnan(value)):
         return None
     return int(float(value))
+
+# --------------------------------------------------------------------------
+# define an epsilon value based on the CRS
+
+def get_epsilon(for_crs):
+    """
+    Determines a small epsilon value based on the distance unit of the given CRS.
+    """
+    # Get the unit type of the CRS
+    unit = QgsUnitTypes.toAbbreviatedString(for_crs.mapUnits())
+
+    # Define epsilon values for different units
+    epsilon_values = {
+        "m": 1e-6,  # Meters (UTM, projected systems)
+        "km": 1e-9,  # Kilometers
+        "ft": 1e-5,  # Feet (imperial units)
+        "mi": 1e-8,  # Miles
+        "deg": 1e-10,  # Degrees (Geographic CRS like EPSG:4326)
+    }
+
+    # Default to meters if unit not found
+    return epsilon_values.get(unit, 1e-6)
+
+

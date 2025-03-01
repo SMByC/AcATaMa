@@ -133,3 +133,18 @@ class Map(object):
         pixel_counts_by_value = get_pixel_count_by_pixel_values(self.qgs_layer, self.band, None, self.nodata)
         if pixel_value in pixel_counts_by_value:
             return pixel_counts_by_value[pixel_value]
+
+    def get_pixel_centroid(self, x, y):
+        if x < self.extent().xMinimum() or x > self.extent().xMaximum() or y < self.extent().yMinimum() or y > self.extent().yMaximum():
+            return None, None
+
+        pixel_width = self.qgs_layer.rasterUnitsPerPixelX()
+        pixel_height = self.qgs_layer.rasterUnitsPerPixelY()
+        x_min = self.extent().xMinimum()
+        y_max = self.extent().yMaximum()
+        col = int((x - x_min) / pixel_width)
+        row = int((y_max - y) / pixel_height)
+
+        x_centroid = x_min + (col + 0.5) * pixel_width
+        y_centroid = y_max - (row + 0.5) * pixel_height
+        return x_centroid, y_centroid
