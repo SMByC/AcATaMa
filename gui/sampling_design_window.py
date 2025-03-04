@@ -33,7 +33,8 @@ from AcATaMa.utils.sampling_utils import update_stratified_sampling_table, fill_
 from AcATaMa.gui.post_stratification_classes_dialog import PostStratificationClassesDialog
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_filepath_in
 from AcATaMa.utils.system_utils import block_signals_to
-from AcATaMa.utils.others_utils import set_nodata_format, get_nodata_format, get_pixel_count_by_pixel_values
+from AcATaMa.utils.others_utils import set_nodata_format, get_nodata_format, get_pixel_count_by_pixel_values, \
+    get_decimal_places
 from AcATaMa.core.map import get_nodata_value
 from AcATaMa.gui.determine_num_samples_dialog import DetermineNumberSamplesDialog
 
@@ -125,6 +126,9 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         # ######### Systematic Sampling ######### #
         self.widget_neighbour_aggregation_SystS.setHidden(True)
         self.widget_random_sampling_options_SystS.setHidden(True)
+        # systematic sampling unit
+        self.QCBox_Systematic_Sampling_Unit.currentTextChanged.connect(self.set_systematic_sampling_unit)
+
         # number of samples
         self.determine_number_samples_dialog_SystS = DetermineNumberSamplesDialog()
         self.determine_number_samples_dialog_SystS.description.setText(
@@ -169,69 +173,29 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
 
     def setup(self, thematic_map_layer):
         self.thematic_map_layer = thematic_map_layer
-        # set/update the units in minimum distance items in sampling tab
+        # define the distance units based on the thematic map
         layer_dist_unit = self.thematic_map_layer.crs().mapUnits()
         str_unit = QgsUnitTypes.toString(layer_dist_unit)
+        # define decimal places
+        decimal_places = get_decimal_places(for_crs=self.thematic_map_layer.crs())
         # Set the properties of the QdoubleSpinBox based on the QgsUnitTypes of the thematic map
         # https://qgis.org/api/classQgsUnitTypes.html
         # SimpRS
         self.minDistance_SimpRS.setSuffix(" {}".format(str_unit))
         self.minDistance_SimpRS.setToolTip("Minimum distance\n(units based on thematic map selected)")
         self.minDistance_SimpRS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
-        self.minDistance_SimpRS.setDecimals(
-            4 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
-                                     QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
-        self.minDistance_SimpRS.setSingleStep(
-            0.0001 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
-                                          QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
+        self.minDistance_SimpRS.setDecimals(decimal_places)
+        self.minDistance_SimpRS.setSingleStep(10**-decimal_places)
         self.minDistance_SimpRS.setValue(0)
         # StraRS
         self.minDistance_StraRS.setSuffix(" {}".format(str_unit))
         self.minDistance_StraRS.setToolTip("Minimum distance\n(units based on thematic map selected)")
         self.minDistance_StraRS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
-        self.minDistance_StraRS.setDecimals(
-            4 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
-                                     QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
-        self.minDistance_StraRS.setSingleStep(
-            0.0001 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
-                                          QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
+        self.minDistance_StraRS.setDecimals(decimal_places)
+        self.minDistance_StraRS.setSingleStep(10**-decimal_places)
         self.minDistance_StraRS.setValue(0)
         # SystS
-        self.PointSpacing_SystS.setSuffix(" {}".format(str_unit))
-        self.PointSpacing_SystS.setToolTip(
-            "Space between grid points\n(units based on thematic map selected)")
-        self.PointSpacing_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
-        self.PointSpacing_SystS.setDecimals(
-            4 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
-                                     QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
-        self.PointSpacing_SystS.setSingleStep(
-            0.0001 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
-                                          QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
-        self.PointSpacing_SystS.setValue(0)
-        #
-        self.InitialInsetFixed_SystS.setSuffix(" {}".format(str_unit))
-        self.InitialInsetFixed_SystS.setToolTip(
-            "Initial inset distance\n(units based on thematic map selected)")
-        self.InitialInsetFixed_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
-        self.InitialInsetFixed_SystS.setDecimals(
-            4 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
-                                     QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
-        self.InitialInsetFixed_SystS.setSingleStep(
-            0.0001 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
-                                          QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
-        self.InitialInsetFixed_SystS.setValue(0)
-        #
-        self.MaxXYoffset_SystS.setSuffix(" {}".format(str_unit))
-        self.MaxXYoffset_SystS.setToolTip(
-            "Maximum XY distance from the center to generate the random offset\n(units based on thematic map selected)")
-        self.MaxXYoffset_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
-        self.MaxXYoffset_SystS.setDecimals(
-            4 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
-                                     QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
-        self.MaxXYoffset_SystS.setSingleStep(
-            0.0001 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
-                                          QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
-        self.MaxXYoffset_SystS.setValue(0)
+        self.set_systematic_sampling_unit(self.QCBox_Systematic_Sampling_Unit.currentText())
 
         # select the new thematic map in the sampling design window
         self.QCBox_SamplingMap_StraRS.setLayer(self.thematic_map_layer)
@@ -255,6 +219,84 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
             # load to qgis and update combobox list
             load_and_select_filepath_in(combo_box, file_path)
 
+    @pyqtSlot(str)
+    def set_systematic_sampling_unit(self, systematic_sampling_unit):
+        if systematic_sampling_unit == "Distance":
+            # define the distance units based on the thematic map
+            layer_dist_unit = self.thematic_map_layer.crs().mapUnits()
+            str_unit = QgsUnitTypes.toString(layer_dist_unit)
+            decimal_places = get_decimal_places(for_crs=self.thematic_map_layer.crs())
+            # converting some systematic sampling values from pixel to distance units
+            if self.PointSpacing_SystS.suffix() == " pixels":  # previous unit
+                point_spacing = self.PointSpacing_SystS.value()
+                self.PointSpacing_SystS.setValue(point_spacing * self.thematic_map_layer.rasterUnitsPerPixelX())
+            if self.InitialInsetFixed_SystS.suffix() == " pixels":
+                initial_inset = self.InitialInsetFixed_SystS.value()
+                self.InitialInsetFixed_SystS.setValue(initial_inset * self.thematic_map_layer.rasterUnitsPerPixelX())
+            if self.MaxXYoffset_SystS.suffix() == " pixels":
+                max_offset = self.MaxXYoffset_SystS.value()
+                self.MaxXYoffset_SystS.setValue(max_offset * self.thematic_map_layer.rasterUnitsPerPixelX())
+
+            # set decimals, single step and range
+            self.PointSpacing_SystS.setDecimals(decimal_places)
+            self.PointSpacing_SystS.setSingleStep(10**-decimal_places)
+            self.PointSpacing_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
+            self.InitialInsetFixed_SystS.setDecimals(decimal_places)
+            self.InitialInsetFixed_SystS.setSingleStep(10**-decimal_places)
+            self.InitialInsetFixed_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
+            self.MaxXYoffset_SystS.setDecimals(decimal_places)
+            self.MaxXYoffset_SystS.setSingleStep(10**-decimal_places)
+            self.MaxXYoffset_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
+
+            # define the distance units based on the thematic map
+            self.PointSpacing_SystS.setSuffix(" {}".format(str_unit))
+            self.InitialInsetFixed_SystS.setSuffix(" {}".format(str_unit))
+            self.MaxXYoffset_SystS.setSuffix(" {}".format(str_unit))
+
+            # set tooltips
+            self.PointSpacing_SystS.setToolTip(
+                "Space between grid points\n(units based on thematic map selected)")
+            self.InitialInsetFixed_SystS.setToolTip(
+                "Initial inset distance\n(units based on thematic map selected)")
+            self.MaxXYoffset_SystS.setToolTip(
+                "Maximum XY distance from the point of the aligned grid\n"
+                "to generate the random offset as a square area\n"
+                "(units based on thematic map selected)")
+
+        if systematic_sampling_unit == "Pixels":
+            # converting some systematic sampling values from distance to pixel units
+            if self.PointSpacing_SystS.suffix() != " pixels":  # previous unit
+                point_spacing = self.PointSpacing_SystS.value()
+                self.PointSpacing_SystS.setValue(point_spacing / self.thematic_map_layer.rasterUnitsPerPixelX())
+            if self.InitialInsetFixed_SystS.suffix() != " pixels":
+                initial_inset = self.InitialInsetFixed_SystS.value()
+                self.InitialInsetFixed_SystS.setValue(initial_inset / self.thematic_map_layer.rasterUnitsPerPixelX())
+            if self.MaxXYoffset_SystS.suffix() != " pixels":
+                max_offset = self.MaxXYoffset_SystS.value()
+                self.MaxXYoffset_SystS.setValue(max_offset / self.thematic_map_layer.rasterUnitsPerPixelX())
+
+            # set decimals, single step and range
+            self.PointSpacing_SystS.setDecimals(0)
+            self.PointSpacing_SystS.setSingleStep(1)
+            self.PointSpacing_SystS.setRange(0, 10e6)
+            self.InitialInsetFixed_SystS.setDecimals(0)
+            self.InitialInsetFixed_SystS.setSingleStep(1)
+            self.InitialInsetFixed_SystS.setRange(0, 10e6)
+            self.MaxXYoffset_SystS.setDecimals(0)
+            self.MaxXYoffset_SystS.setSingleStep(1)
+            self.MaxXYoffset_SystS.setRange(0, 10e6)
+
+            self.PointSpacing_SystS.setSuffix(" pixels")
+            self.InitialInsetFixed_SystS.setSuffix(" pixels")
+            self.MaxXYoffset_SystS.setSuffix(" pixels")
+
+            # set tooltips
+            self.PointSpacing_SystS.setToolTip("Space between grid points in pixel units")
+            self.InitialInsetFixed_SystS.setToolTip("Initial inset distance in pixel units")
+            self.MaxXYoffset_SystS.setToolTip(
+                "Maximum XY distance from the point of the aligned grid\n"
+                "to generate the random offset as a square area in pixel units")
+
     @pyqtSlot()
     def determine_number_samples_SimpRS(self):
         if self.determine_number_samples_dialog_SimpRS.exec_():
@@ -265,6 +307,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
     def determine_number_samples_SystS(self):
         if self.determine_number_samples_dialog_SystS.exec_():
             from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+            systematic_sampling_unit = self.QCBox_Systematic_Sampling_Unit.currentText()
 
             # total number of pixels
             map_width = self.thematic_map_layer.width()
@@ -281,7 +324,8 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
             # compute the point spacing of the grid based on the number of samples and the total valid pixels
             number_of_samples = int(self.determine_number_samples_dialog_SystS.NumberOfSamples.text())
             point_spacing_by_pixel = (total_valid_pixels ** 0.5) / (number_of_samples ** 0.5 - 1)
-            point_spacing = point_spacing_by_pixel * self.thematic_map_layer.rasterUnitsPerPixelX()
+            point_spacing = point_spacing_by_pixel * (self.thematic_map_layer.rasterUnitsPerPixelX()
+                                                      if systematic_sampling_unit == "Distance" else 1)
 
             self.PointSpacing_SystS.setValue(point_spacing)
 
@@ -477,7 +521,9 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
             return
 
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        point_spacing_by_pixel = point_spacing / self.thematic_map_layer.rasterUnitsPerPixelX()
+        systematic_sampling_unit = self.QCBox_Systematic_Sampling_Unit.currentText()
+        point_spacing_by_pixel = point_spacing / (self.thematic_map_layer.rasterUnitsPerPixelX()
+                                                  if systematic_sampling_unit == "Distance" else 1)
         # total number of pixels
         map_width = self.thematic_map_layer.width()
         map_height = self.thematic_map_layer.height()

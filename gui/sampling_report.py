@@ -103,11 +103,23 @@ class SamplingReport(QDialog, FORM_CLASS):
         SamplingReport.instances[sampling_layer] = self
 
     def generate_sampling_report(self):
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
 
         thematic_map_table = \
             get_samples_distribution_table(self.sampling.thematic_map,
                                            self.sampling.points.values(),
                                            QgsUnitTypes.AreaUnit(self.area_unit.currentIndex()))
+
+        systematic_unit = AcATaMa.dockwidget.sampling_design_window.PointSpacing_SystS.suffix().strip()
+        if self.sampling_conf["sampling_type"] == "systematic":
+            points_spacing = "{} {}".format(int(self.sampling_conf["points_spacing"]) if systematic_unit == "pixels"
+                                            else self.sampling_conf["points_spacing"], systematic_unit)
+            initial_inset = "{} {}".format(int(self.sampling_conf["initial_inset"]) if systematic_unit == "pixels"
+                                           else self.sampling_conf["initial_inset"], systematic_unit)
+            max_xy_offset = "{} {}".format(int(self.sampling_conf["max_xy_offset"]) if systematic_unit == "pixels"
+                                           else self.sampling_conf["max_xy_offset"], systematic_unit)
+        else:
+            points_spacing = initial_inset = max_xy_offset = None
 
         if self.sampling.post_stratification_map and self.sampling.thematic_map.qgs_layer != self.sampling.post_stratification_map.qgs_layer:
             post_stratification_table = \
@@ -134,9 +146,9 @@ class SamplingReport(QDialog, FORM_CLASS):
                 "sampling_type": self.sampling_conf["sampling_type"],
                 "stratified_method": self.sampling.sampling_method if self.sampling_conf["sampling_type"] == "stratified" else None,
                 "total_of_samples": self.sampling.samples_generated,
-                "points_spacing": self.sampling_conf["points_spacing"] if self.sampling_conf["sampling_type"] == "systematic" else None,
-                "initial_inset": self.sampling_conf["initial_inset"] if self.sampling_conf["sampling_type"] == "systematic" else None,
-                "max_xy_offset": self.sampling_conf["max_xy_offset"] if self.sampling_conf["sampling_type"] == "systematic" else None,
+                "points_spacing": points_spacing,
+                "initial_inset": initial_inset,
+                "max_xy_offset": max_xy_offset,
                 "post_stratification_map": self.sampling.post_stratification_map.qgs_layer.name() if self.sampling.post_stratification_map else None,
                 "post_stratification_classes": self.sampling_conf["classes_selected"] if self.sampling.post_stratification_map else [],
                 "min_distance": "{} {}".format(self.sampling_conf["min_distance"], QgsUnitTypes.toString(self.sampling.thematic_map.qgs_layer.crs().mapUnits()))
@@ -273,9 +285,9 @@ class SamplingReport(QDialog, FORM_CLASS):
                     <th>Max XY Offset</th>
                     <td>{max_xy_offset}</td>
                 </tr>
-            """.format(points_spacing=rf(self.report["general"]["points_spacing"]),
-                       initial_inset=rf(self.report["general"]["initial_inset"]),
-                       max_xy_offset=rf(self.report["general"]["max_xy_offset"]))
+            """.format(points_spacing=self.report["general"]["points_spacing"],
+                       initial_inset=self.report["general"]["initial_inset"],
+                       max_xy_offset=self.report["general"]["max_xy_offset"])
 
         if self.report["general"]["sampling_type"] in ["simple", "systematic"]:
             html += """

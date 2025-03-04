@@ -151,6 +151,7 @@ def save(file_out):
     }
     # systematic sampling
     data["sampling_design"]["systematic_sampling"] = {
+        "systematic_sampling_unit": sampling_design.QCBox_Systematic_Sampling_Unit.currentText(),
         "points_spacing": sampling_design.PointSpacing_SystS.value(),
         "num_samples_overall_accuracy": sampling_design.determine_number_samples_dialog_SystS.OverallAccuracy.text(),
         "num_samples_half_width_ci": sampling_design.determine_number_samples_dialog_SystS.HalfWidthCI.text(),
@@ -514,6 +515,9 @@ def restore(yml_file_path):
 
         # systematic sampling
         if "systematic_sampling" in yaml_config["sampling_design"]:
+            if "systematic_sampling_unit" in yaml_config["sampling_design"]["systematic_sampling"]:
+                select_item_in(sampling_design.QCBox_Systematic_Sampling_Unit,
+                               yaml_config["sampling_design"]["systematic_sampling"]['systematic_sampling_unit'])
             sampling_design.PointSpacing_SystS.setValue(
                 yaml_config["sampling_design"]["systematic_sampling"]['points_spacing'])
             if "num_samples_overall_accuracy" in yaml_config["sampling_design"]["systematic_sampling"]:

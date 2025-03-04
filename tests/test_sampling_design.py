@@ -145,7 +145,7 @@ def test_systematic_post_stratified_random_sampling(plugin, restore_config_file,
         "random_seed": random_seed
     }
     # run the sampling
-    sampling.generate_systematic_sampling_points(task, sampling_conf)
+    sampling.generate_systematic_sampling_points_by_distance(task, sampling_conf)
 
     with fiona.open(pytest.tests_data_dir / "systematic_sampling.gpkg") as source, \
             fiona.open(str(output_file)) as target:
@@ -196,7 +196,7 @@ def test_systematic_post_stratified_with_initial_inset_random(plugin, restore_co
         "random_seed": random_seed
     }
     # run the sampling
-    sampling.generate_systematic_sampling_points(task, sampling_conf)
+    sampling.generate_systematic_sampling_points_by_distance(task, sampling_conf)
 
     with fiona.open(pytest.tests_data_dir / "systematic sampling random inset.gpkg") as source, \
             fiona.open(str(output_file)) as target:

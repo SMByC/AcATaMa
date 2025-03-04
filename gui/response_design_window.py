@@ -39,7 +39,7 @@ from AcATaMa.utils.qgis_utils import valid_file_selected_in, get_current_file_pa
 from AcATaMa.core.map import get_values_and_colors_table
 from AcATaMa.utils.system_utils import open_file, block_signals_to, error_handler
 from AcATaMa.gui.response_design_view_widget import LabelingViewWidget
-from AcATaMa.utils.others_utils import get_nodata_format
+from AcATaMa.utils.others_utils import get_nodata_format, get_decimal_places
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -101,12 +101,9 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             "Set the default zoom radius for samples\n"
             "(units in {} based on sampling file selected)".format(str_unit))
         self.radiusFitToSample.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
-        self.radiusFitToSample.setDecimals(
-            4 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
-                                     QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
-        self.radiusFitToSample.setSingleStep(
-            0.0001 if layer_dist_unit in [QgsUnitTypes.DistanceKilometers, QgsUnitTypes.DistanceNauticalMiles,
-                                          QgsUnitTypes.DistanceMiles, QgsUnitTypes.DistanceDegrees] else 1)
+        decimal_places = get_decimal_places(for_crs=self.sampling_layer.crs())
+        self.radiusFitToSample.setDecimals(decimal_places)
+        self.radiusFitToSample.setSingleStep(10**-decimal_places)
         self.radiusFitToSample.setValue(self.response_design.fit_to_sample)
 
         # set total samples

@@ -287,4 +287,25 @@ def get_epsilon(for_crs):
     # Default to meters if unit not found
     return epsilon_values.get(unit, 1e-6)
 
+# --------------------------------------------------------------------------
+# set decimal precision based on the CRS
 
+def get_decimal_places(for_crs):
+    """
+    Determines an appropriate number of decimal places for distances based on CRS units.
+    """
+    # Get the unit type of the CRS
+    unit = QgsUnitTypes.toAbbreviatedString(for_crs.mapUnits())
+
+    # Define decimal precision based on distance units
+    decimal_places = {
+        "m": 1,    # Meters (e.g., 10.1 m)
+        "km": 4,   # Kilometers (e.g., 0.0001 km = 0.1 m)
+        "ft": 1,   # Feet (e.g., 10.1 ft)
+        "mi": 4,   # Miles (e.g., 0.0001 mi ≈ 0.16 m)
+        "yd": 2,   # Yards (e.g., 10.01 yd)
+        "deg": 6,  # Degrees (Geographic CRS, e.g., 0.000001° ≈ 0.11 m at equator)
+    }
+
+    # Default to 1 decimal place if unit is unknown
+    return decimal_places.get(unit, 1)

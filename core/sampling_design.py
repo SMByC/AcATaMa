@@ -381,6 +381,7 @@ def do_systematic_sampling():
     points_spacing = float(sampling_design.PointSpacing_SystS.value())
     max_xy_offset = float(sampling_design.MaxXYoffset_SystS.value())
     total_of_samples = sampling_design.QPBar_GenerateSamples_SystS.maximum()
+    systematic_sampling_unit = sampling_design.QCBox_Systematic_Sampling_Unit.currentText()
 
     # post-stratification of the systematic sampling
     if sampling_design.QGBox_SystSwithPS.isChecked():
@@ -437,6 +438,7 @@ def do_systematic_sampling():
     # before process
     sampling_design.QPBtn_GenerateSamples_SystS.setText("FINISH")
     sampling_design.QPBtn_GenerateSamples_SystS.setStyleSheet("background-color: red")
+    sampling_design.widget_SystS_step0.setEnabled(False)
     sampling_design.widget_SystS_step1.setEnabled(False)
     sampling_design.widget_SystS_step2.setEnabled(False)
     sampling_design.QGBox_SystSwithPS.setEnabled(False)
@@ -450,8 +452,14 @@ def do_systematic_sampling():
                      "initial_inset": initial_inset, "max_xy_offset": max_xy_offset,
                      "classes_selected": classes_selected, "neighbor_aggregation": neighbor_aggregation,
                      "random_seed": random_seed}
+
+    if systematic_sampling_unit == "Distance":
+        systematic_sampling_function = sampling.generate_systematic_sampling_points_by_distance
+    if systematic_sampling_unit == "Pixels":
+        systematic_sampling_function = sampling.generate_systematic_sampling_points_by_pixels
+
     globals()['sampling_task'] = QgsTask.fromFunction(
-        "Systematic sampling", sampling.generate_systematic_sampling_points,
+        "Systematic sampling", systematic_sampling_function,
         on_finished=systematic_sampling_finished, sampling_conf=sampling_conf)
 
     globals()['sampling_task'].progressChanged.connect(
@@ -468,6 +476,7 @@ def systematic_sampling_finished(exception, result=None):
     # restoring
     sampling_design.QPBtn_GenerateSamples_SystS.setText("Generate samples")
     sampling_design.QPBtn_GenerateSamples_SystS.setStyleSheet("")
+    sampling_design.widget_SystS_step0.setEnabled(True)
     sampling_design.widget_SystS_step1.setEnabled(True)
     sampling_design.widget_SystS_step2.setEnabled(True)
     sampling_design.QGBox_SystSwithPS.setEnabled(True)
@@ -601,7 +610,7 @@ class Sampling(object):
 
         return self, sampling_conf
 
-    def generate_systematic_sampling_points(self, task, sampling_conf):
+    def generate_systematic_sampling_points_by_distance(self, task, sampling_conf):
         """Some code base from (by Alexander Bruy):
         https://github.com/qgis/QGIS/blob/master/python/plugins/processing/algs/qgis/RegularPoints.py
         """
@@ -729,6 +738,149 @@ class Sampling(object):
                     break
 
             y = y - self.points_spacing
+
+        # guarantee the random order for response design process
+        random.shuffle(points_generated)
+        self.points = dict()  # restart
+
+        for num_point, point_generated in enumerate(points_generated):
+            # random sampling point passed the checks, save it
+            f = QgsFeature()
+            f.initAttributes(1)
+            f.setFields(fields)
+            f.setAttribute('id', num_point+1)
+            f.setGeometry(point_generated.QgsGeom)
+            writer.addFeature(f)
+            self.points[num_point] = point_generated.QgsPnt
+
+        # save the total point generated
+        self.samples_generated = len(points_generated)
+        del writer
+
+        return self, sampling_conf
+
+    def generate_systematic_sampling_points_by_pixels(self, task, sampling_conf):
+        """Some code base from (by Alexander Bruy):
+        https://github.com/qgis/QGIS/blob/master/python/plugins/processing/algs/qgis/RegularPoints.py
+        """
+        self.points_spacing = int(sampling_conf["points_spacing"])
+        self.initial_inset = int(sampling_conf["initial_inset"])
+        self.max_xy_offset = int(sampling_conf["max_xy_offset"])
+        self.classes_for_sampling = sampling_conf["classes_selected"]
+        self.neighbor_aggregation = sampling_conf["neighbor_aggregation"]
+        self.samples_generated = None  # total generated
+        self.random_seed = sampling_conf["random_seed"]
+
+        self.ThematicR_boundaries = QgsGeometry().fromRect(self.thematic_map.extent())
+
+        initial_inset = self.initial_inset
+
+        fields = QgsFields()
+        fields.append(QgsField('id', QVariant.Int, '', 10, 0))
+        thematic_CRS = self.thematic_map.qgs_layer.crs()
+        file_format = \
+            "GPKG" if self.output_file.endswith(".gpkg") else "ESRI Shapefile" if self.output_file.endswith(".shp") else None
+        writer = QgsVectorFileWriter(self.output_file, "System", fields, QgsWkbTypes.Point, thematic_CRS, file_format)
+
+        pixel_size_x = self.thematic_map.qgs_layer.rasterUnitsPerPixelX()
+        pixel_size_y = self.thematic_map.qgs_layer.rasterUnitsPerPixelY()
+
+        # init the random sampling seed
+        random.seed(self.random_seed)
+
+        points_generated = []
+        pixels_sampled = []  # to check and avoid duplicate sampled pixels
+        y = self.thematic_map.extent().yMaximum() - pixel_size_y * initial_inset
+
+        while not task.isCanceled() and y >= self.thematic_map.extent().yMinimum():
+
+            x = self.thematic_map.extent().xMinimum() + pixel_size_x * initial_inset
+
+            while not task.isCanceled() and x <= self.thematic_map.extent().xMaximum():
+
+                ### aligned sampling without offset
+                if self.max_xy_offset == 0:
+                    # select the pixel where the aligned grid is in the top-left corner
+                    _x, _y = self.thematic_map.get_pixel_centroid(x + pixel_size_x/2, y - pixel_size_y/2)
+
+                    random_sampling_point = RandomPoint(_x, _y)
+
+                    # check if the pixel is not already sampled
+                    if (_x, _y) in pixels_sampled:
+                        x += pixel_size_x * self.points_spacing
+                        continue
+
+                    # do multi-checks to the sampling point, else discard and continue
+                    if not self.check_sampling_point(random_sampling_point):
+                        x += pixel_size_x * self.points_spacing
+                        continue
+
+                    points_generated.append(random_sampling_point)
+                    pixels_sampled.append((_x, _y))
+
+                    x += pixel_size_x * self.points_spacing
+                    # update task progress
+                    task.setProgress(len(points_generated) / sampling_conf["total_of_samples"] * 100)
+                    continue
+
+                ### with random offset
+                # define the offset grid area by each aligning grid point
+                x_offset_grid = np.arange(x - pixel_size_x * self.max_xy_offset, x + pixel_size_x * self.max_xy_offset - pixel_size_x, pixel_size_x)
+                y_offset_grid = np.arange(y - pixel_size_y * self.max_xy_offset + pixel_size_y, y + pixel_size_y * self.max_xy_offset, pixel_size_y)
+
+                # gather all the valid thematic pixels centroids in the offset area
+                pixels_in_offset_grid = []
+                for x_offset in x_offset_grid:
+                    for y_offset in y_offset_grid:
+
+                        # select the pixel where the offset grid is in the top-left corner
+                        _x, _y = self.thematic_map.get_pixel_centroid(x_offset + pixel_size_x / 2, y_offset - pixel_size_y / 2)
+
+                        if _x is None or _y is None:
+                            continue
+
+                        pixel_value = self.thematic_map.get_pixel_value_from_xy(_x, _y)
+                        if pixel_value is None or pixel_value == self.thematic_map.nodata:
+                            continue
+
+                        if (_x, _y) in pixels_in_offset_grid:
+                            continue
+
+                        pixels_in_offset_grid.append((_x, _y))
+
+                # if all pixels in the offset grid are None
+                if not pixels_in_offset_grid:
+                    x += pixel_size_x * self.points_spacing
+                    continue
+
+                while not task.isCanceled():
+                    if not pixels_in_offset_grid:
+                        x += pixel_size_x * self.points_spacing
+                        break
+
+                    _x, _y = random.choice(pixels_in_offset_grid)
+
+                    random_sampling_point = RandomPoint(_x, _y)
+
+                    # check if the pixel is not already sampled
+                    if (_x, _y) in pixels_sampled:
+                        pixels_in_offset_grid.remove((_x, _y))
+                        continue
+
+                    # do multi-checks to the sampling point, else discard and continue
+                    if not self.check_sampling_point(random_sampling_point):
+                        pixels_in_offset_grid.remove((_x, _y))
+                        continue
+
+                    points_generated.append(random_sampling_point)
+                    pixels_sampled.append((_x, _y))
+
+                    x += pixel_size_x * self.points_spacing
+                    # update task progress
+                    task.setProgress(len(points_generated)/sampling_conf["total_of_samples"]*100)
+                    break
+
+            y -= pixel_size_y * self.points_spacing
 
         # guarantee the random order for response design process
         random.shuffle(points_generated)
