@@ -45,7 +45,7 @@ changelog=
     - Using a more compatible extlibs version
     - All commits in: https://github.com/SMByC/AcATaMa/commits
 
-tags=accuracy,accuracy assessment,thematic,classification,sample,sampling design,points,remote sensing
+tags=accuracy,accuracy assessment,thematic,thematic accuracy,classification,sample,sampling design,labeling,points,remote sensing,sampling plan,spatial data quality,quality,raster
 
 category=Plugins
 icon=icons/acatama.svg
