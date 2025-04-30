@@ -612,7 +612,7 @@ class Sampling(object):
 
     def generate_systematic_sampling_points_by_distance(self, task, sampling_conf):
         """Some code base from (by Alexander Bruy):
-        https://github.com/qgis/QGIS/blob/master/python/plugins/processing/algs/qgis/RegularPoints.py
+        https://github.com/qgis/QGIS/blob/main/python/plugins/processing/algs/qgis/RegularPoints.py
         """
         self.points_spacing = sampling_conf["points_spacing"]
         self.initial_inset = sampling_conf["initial_inset"]

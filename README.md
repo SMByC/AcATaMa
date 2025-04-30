@@ -1,6 +1,6 @@
 # AcATaMa #
 
-[![Tests](https://github.com/SMByC/AcATaMa/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/SMByC/AcATaMa/actions/workflows/tests.yml)
+[![Tests](https://github.com/SMByC/AcATaMa/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/SMByC/AcATaMa/actions/workflows/tests.yml)
 [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
 
 ![](icons/acatama.svg)
