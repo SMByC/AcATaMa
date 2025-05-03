@@ -291,11 +291,12 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
             self.MaxXYoffset_SystS.setSuffix(" pixels")
 
             # set tooltips
-            self.PointSpacing_SystS.setToolTip("Space between grid points in pixel units")
-            self.InitialInsetFixed_SystS.setToolTip("Initial inset distance in pixel units")
+            self.PointSpacing_SystS.setToolTip("Space between grid points in pixel units\n(pixels based on thematic map selected)")
+            self.InitialInsetFixed_SystS.setToolTip("Initial inset distance in pixel units\n(pixels based on thematic map selected)")
             self.MaxXYoffset_SystS.setToolTip(
                 "Maximum XY distance from the point of the aligned grid\n"
-                "to generate the random offset as a square area in pixel units")
+                "to generate the random offset as a square area in pixel units\n"
+                "(pixels based on thematic map selected)")
 
     @pyqtSlot()
     def determine_number_samples_SimpRS(self):

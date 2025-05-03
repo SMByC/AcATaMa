@@ -1344,7 +1344,7 @@ It set automatically from image if the layer has the nodata value set.</string>
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Systematic random sampling involves selecting samples at regular intervals along a grid, starting from a random or fixed point from the top-left corner, and then applying a random offset to the original grid location.</string>
+             <string>Systematic random sampling involves selecting samples at regular intervals along a grid by distances or pixel units, starting from a random or fixed point from the top-left corner, and then applying a random offset to the original grid location.</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -1402,6 +1402,9 @@ It set automatically from image if the layer has the nodata value set.</string>
                 </item>
                 <item row="0" column="1">
                  <widget class="QComboBox" name="QCBox_Systematic_Sampling_Unit">
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The systematic sampling unit defines its methodology, including the grid structure, the initial inset, and the area for random offset.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
                   <item>
                    <property name="text">
                     <string>Distance</string>
