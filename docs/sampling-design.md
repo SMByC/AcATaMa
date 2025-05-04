@@ -69,7 +69,38 @@ probabilities of inclusion, this makes it difficult to calculate the estimators
 
 <img src="img/systematic_sampling_info.svg" width="40%" style="margin: auto;display: block;">
 
+Systematic random sampling involves selecting samples at regular intervals across a grid, either by distance or pixel 
+units. Sampling begins from a fixed or random point, starting in the top-left corner, and applies a random offset to the 
+initial grid position. We implemented two systematic sampling methodologies: one based on physical distances and the 
+other on pixel units, both units are based on the thematic map. Each approach influences the entire configuration of the 
+systematic sampling process.
+
+<img src="img/systematic_sampling_by_distance.svg" width="40%" style="margin: auto;display: block;">
+<p align="center"><em>Systematic sampling by distance</em></p>
+<img src="img/systematic_sampling_by_pixel.svg" width="40%" style="margin: auto;display: block;">
+<p align="center"><em>Systematic sampling by pixel</em></p>
+
+* **Point spacing**: The spacing between points in the systematic grid is defined in distance units (e.g., meters) or 
+pixels. These points are arranged at regular intervals in a square pattern along the X and Y axes, starting from the 
+initial inset.
+* **Initial inset**: The initial inset is the distance from the top-left corner of the study area (the extent of the 
+thematic map) to the first point unit for the systematic grid. This distance could be fixel by the user (by distance or 
+pixel units) or randomly selected within the range of the point spacing.
+* **Max offset**: Maximum distance along the X and Y axes from the point of the aligned systematic grid as a center of 
+the random offset area (by distance or pixel units)
+* **Random offset area**: Random Offset Area: This is the area surrounding each point on the aligned systematic grid 
+where a random offset is applied. If systematic sampling is based on distance, the offset area may partially overlap 
+with some pixels, meaning the probability of a pixel being selected is proportional to the fraction of its area within 
+the offset zone. In contrast, if sampling is based on pixels, the offset area is defined in exact pixel units, giving 
+each pixel within the area an equal probability of being selected.
+
+> <span style="color:cyan">TIP!</span>  
+> To ensure the offset area covers the entire thematic map (giving every pixel an equal probability of being selected), 
+> set the maximum offset value to half of the point spacing.
+
 ### Aligned systematic sampling
+
+_(This happens when the max XY offset value is zero)_
 
 Distribute the sampling units equally for the entire study area. As long as the first sampling unit is randomly
 selected, we can say that systematic sampling is random. Simplicity is highly attractive to end users. The variance
@@ -84,6 +115,8 @@ variance. The non-existence of an impartial estimator for calculating the varian
 overestimation of the variance. In the presence of uniformly distributed errors, the application is not desirable.
 
 ### Unaligned systematic sampling
+
+_(This happens when the max XY offset value is NOT zero)_
 
 The area is divided into smaller, regularly spaced regions, with a randomly chosen sample unit within each of these
 regions. The sample units are evenly dispersed but not positioned. In order to minimize the effects of the periodicity
