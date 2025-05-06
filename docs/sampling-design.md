@@ -84,7 +84,7 @@ systematic sampling process.
 pixels. These points are arranged at regular intervals in a square pattern along the X and Y axes, starting from the 
 initial inset.
 * **Initial inset**: The initial inset is the distance from the top-left corner of the study area (the extent of the 
-thematic map) to the first point unit for the systematic grid. This distance could be fixel by the user (by distance or 
+thematic map) to the first point unit for the systematic grid. This distance could be fixed by the user (by distance or 
 pixel units) or randomly selected within the range of the point spacing.
 * **Max offset**: Maximum distance along the X and Y axes from the point of the aligned systematic grid as a center of 
 the random offset area (by distance or pixel units)
@@ -96,7 +96,8 @@ each pixel within the area an equal probability of being selected.
 
 > <span style="color:cyan">TIP!</span>  
 > To ensure the offset area covers the entire thematic map (giving every pixel an equal probability of being selected), 
-> set the maximum offset value to half of the point spacing.
+> set the maximum offset value to half of the point spacing. Keep in mind that if systematic sampling is based on 
+> pixels, the pixel units must be integers.
 
 ### Aligned systematic sampling
 
