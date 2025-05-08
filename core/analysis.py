@@ -21,7 +21,7 @@
 import os
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QApplication, QDialogButtonBox, QDialog, QFileDialog
+from qgis.PyQt.QtWidgets import QApplication, QDialogButtonBox, QDialog
 from qgis.core import Qgis, QgsUnitTypes
 from qgis.utils import iface
 
@@ -29,7 +29,7 @@ from AcATaMa.core.map import Map
 from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.gui import accuracy_assessment_results
 from AcATaMa.utils.qgis_utils import get_file_path_of_layer
-from AcATaMa.utils.system_utils import wait_process, output_file_is_OK
+from AcATaMa.utils.system_utils import wait_process, output_file_is_OK, get_save_file_name
 from AcATaMa.utils.others_utils import get_nodata_format
 
 
@@ -239,16 +239,16 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
             path = os.path.split(get_file_path_of_layer(AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer()))[0]
         suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + " - results.csv" if filename else "acatama results.csv"
 
-        file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Export accuracy assessment results to csv"),
-                                                  suggested_filename,
-                                                  self.tr("CSV files (*.csv);;All files (*.*)"))
-        if output_file_is_OK(file_out):
+        output_file = get_save_file_name(self, "Export accuracy assessment results to csv",
+                                         suggested_filename, "CSV files (*.csv);;All files (*.*)")
+
+        if output_file_is_OK(output_file):
             try:
-                accuracy_assessment_results.export_to_csv(self.analysis, file_out,
+                accuracy_assessment_results.export_to_csv(self.analysis, output_file,
                                                           self.analysis.csv_separator,
                                                           self.analysis.csv_decimal)
                 self.MsgBar.pushMessage(
-                    "File saved successfully \"{}\"".format(os.path.basename(file_out)), level=Qgis.Success, duration=10)
+                    "File saved successfully \"{}\"".format(os.path.basename(output_file)), level=Qgis.Success, duration=10)
             except Exception as err:
                 self.MsgBar.pushMessage(
                     "Failed saving the csv file: {}".format(err), level=Qgis.Critical, duration=10)

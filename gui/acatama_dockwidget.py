@@ -38,7 +38,7 @@ from AcATaMa.gui.sampling_design_window import SamplingDesignWindow
 from AcATaMa.gui.sampling_report import SamplingReport
 from AcATaMa.utils.others_utils import set_nodata_format
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_filepath_in, get_file_path_of_layer
-from AcATaMa.utils.system_utils import error_handler, block_signals_to, output_file_is_OK
+from AcATaMa.utils.system_utils import error_handler, block_signals_to, output_file_is_OK, get_save_file_name
 from AcATaMa.gui.about_dialog import AboutDialog
 
 # plugin path
@@ -329,7 +329,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
     @error_handler
     def file_dialog_restore_acatama_state(self):
         file_path, _ = QFileDialog.getOpenFileName(self, self.tr("Restore to a previous saved of AcATaMa configuration and state"),
-                                                   "", self.tr("Yaml (*.yaml *.yml);;All files (*.*)"))
+                                                   "", self.tr("YAML files (*.yaml *.yml);;All files (*.*)"))
 
         if file_path != '' and os.path.isfile(file_path):
             # restore configuration and response design state
@@ -354,11 +354,12 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         else:
             suggested_filename = "acatama.yml"
 
-        file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save AcATaMa configuration and state"),
-                                                  suggested_filename, self.tr("Yaml (*.yaml *.yml);;All files (*.*)"))
-        if output_file_is_OK(file_out):
-            config.save(file_out)
-            self.suggested_yml_file = file_out
+        output_file = get_save_file_name(self, "Save AcATaMa configuration and state",
+                                         suggested_filename, "YAML files (*.yaml *.yml);;All files (*.*)")
+
+        if output_file_is_OK(output_file):
+            config.save(output_file)
+            self.suggested_yml_file = output_file
             iface.messageBar().pushMessage("AcATaMa", "Configuration file saved successfully",
                                            level=Qgis.Success, duration=10)
 
@@ -392,12 +393,11 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         if self.tmp_dir in path:
             path = os.path.split(get_file_path_of_layer(self.QCBox_ThematicMap.currentLayer()))[0]
         suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + " - labeled.gpkg" if filename else "samples labeled.gpkg"
+        output_file = get_save_file_name(self, "Save sampling file with the response_design", suggested_filename,
+                                         "GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)")
 
-        file_out, _ = QFileDialog.getSaveFileName(self, self.tr("Save sampling file with the response_design"),
-                                                  suggested_filename,
-                                                  self.tr("GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"))
-        if output_file_is_OK(file_out):
-            response_design.save_sampling_labeled(file_out)
+        if output_file_is_OK(output_file):
+            response_design.save_sampling_labeled(output_file)
             iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=Qgis.Success, duration=10)
 
     @pyqtSlot()

@@ -19,11 +19,12 @@
  ***************************************************************************/
 """
 import functools
+import pathlib
 import traceback
 import os, sys, subprocess
 
 from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtWidgets import QApplication, QMessageBox, QPushButton
+from qgis.PyQt.QtWidgets import QApplication, QMessageBox, QPushButton, QFileDialog
 from qgis.PyQt.QtGui import QCursor
 from qgis.core import Qgis
 from qgis.utils import iface
@@ -108,7 +109,7 @@ def open_file(filename):
 
 
 def output_file_is_OK(output_file):
-    if output_file == '':
+    if output_file is None or output_file == '':
         return False
     if not os.path.exists(os.path.dirname(output_file)):
         QMessageBox.critical(None, "AcATaMa", "Error: The output file path does not exist:\n\n {}"
@@ -119,6 +120,46 @@ def output_file_is_OK(output_file):
                              .format(output_file), QMessageBox.Ok)
         return False
     return True
+
+
+def get_save_file_name(parent, title, default_path, filter_str):
+    # Open the save file dialog
+    output_file, selected_filter = QFileDialog.getSaveFileName(
+        parent,
+        title,
+        default_path,
+        filter_str
+    )
+
+    # If the user cancels the dialog, return None
+    if not output_file:
+        return None
+
+    # Extract the extension from the selected filter
+    extension = None
+    if "GeoPackage files (*.gpkg)" in selected_filter:
+        extension = ".gpkg"
+    elif "Shape files (*.shp)" in selected_filter:
+        extension = ".shp"
+    elif "CSV files (*.csv)" in selected_filter:
+        extension = ".csv"
+    elif "YAML files (*.yaml *.yml)" in selected_filter:
+        extension = ".yaml"
+
+    file_path = pathlib.Path(output_file)
+
+    # If the file has no extension and an extension was determined from the filter
+    if not file_path.suffix and extension:
+        output_file = str(file_path.with_suffix(extension))
+    else:
+        # check if the extension is valid
+        valid_extensions = [ext.split(" ")[-1].strip("()").replace("*", "") for ext in filter_str.split(";;") if ext not in "All files (*.*)"]
+        if file_path.suffix not in valid_extensions:
+            QMessageBox.critical(parent, "AcATaMa", "Error: The file extension is not valid:\n\n {}\n\nValid extensions are: {}"
+            .format(output_file, ", ".join(valid_extensions)), QMessageBox.Ok)
+            return None
+
+    return output_file
 
 
 class block_signals_to(object):

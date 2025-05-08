@@ -24,7 +24,6 @@ import math
 
 import numpy as np
 from qgis.PyQt.QtCore import QVariant
-from qgis.PyQt.QtWidgets import QFileDialog
 from qgis.core import QgsGeometry, QgsField, QgsFields, QgsSpatialIndex, QgsFeature, Qgis, \
     QgsVectorFileWriter, QgsWkbTypes, QgsUnitTypes, QgsTask, QgsApplication
 
@@ -32,7 +31,7 @@ from AcATaMa.core.point import RandomPoint
 from AcATaMa.core.map import Map
 from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.utils.qgis_utils import load_layer, valid_file_selected_in
-from AcATaMa.utils.system_utils import error_handler, output_file_is_OK
+from AcATaMa.utils.system_utils import error_handler, output_file_is_OK, get_save_file_name
 from AcATaMa.gui.sampling_report import SamplingReport
 from AcATaMa.utils.others_utils import get_nodata_format, get_epsilon
 
@@ -90,10 +89,13 @@ def do_simple_random_sampling():
     # first select the target file for save the sampling file
     suggested_filename = os.path.join(os.path.dirname(thematic_map.file_path),
                                       "simple {}sampling.gpkg".format("post-stratified " if post_stratification_map else ""))
-    output_file, _ = QFileDialog.getSaveFileName(sampling_design,
-                                                 AcATaMa.dockwidget.tr("Select the output file to save the sampling"),
-                                                 suggested_filename,
-                                                 AcATaMa.dockwidget.tr("GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"))
+    output_file = get_save_file_name(
+        sampling_design,
+        "Select the output file to save the sampling",
+        suggested_filename,
+        "GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"
+    )
+
     if not output_file_is_OK(output_file):
         return
 
@@ -256,10 +258,15 @@ def do_stratified_random_sampling():
 
     # first select the target file for save the sampling file
     suggested_filename = os.path.join(os.path.dirname(thematic_map.file_path), "stratified sampling.gpkg")
-    output_file, _ = QFileDialog.getSaveFileName(sampling_design,
-                                                 AcATaMa.dockwidget.tr("Select the output file to save the sampling"),
-                                                 suggested_filename,
-                                                 AcATaMa.dockwidget.tr("GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"))
+    output_file = get_save_file_name(
+        sampling_design,
+        "Select the output file to save the sampling",
+        suggested_filename,
+        "GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"
+    )
+
+
+
     if not output_file_is_OK(output_file):
         return
 
@@ -411,10 +418,14 @@ def do_systematic_sampling():
     # first select the target file for save the sampling file
     suggested_filename = os.path.join(os.path.dirname(thematic_map.file_path),
                                       "systematic {}sampling.gpkg".format("post-stratified " if post_stratification_map else ""))
-    output_file, _ = QFileDialog.getSaveFileName(sampling_design,
-                                                 AcATaMa.dockwidget.tr("Select the output file to save the sampling"),
-                                                 suggested_filename,
-                                                 AcATaMa.dockwidget.tr("GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"))
+
+    output_file = get_save_file_name(
+        sampling_design,
+        "Select the output file to save the sampling",
+        suggested_filename,
+        "GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)"
+    )
+
     if not output_file_is_OK(output_file):
         return
 
