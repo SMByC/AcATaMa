@@ -350,9 +350,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             else:
                 file_path = get_file_path_of_layer(self.QCBox_SamplingFile.currentLayer())
             path, filename = os.path.split(file_path)
-            suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + " - acatama.yml" if filename else "acatama.yml"
+            suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + " - acatama.yaml" if filename else "acatama.yaml"
         else:
-            suggested_filename = "acatama.yml"
+            suggested_filename = "acatama.yaml"
 
         output_file = get_save_file_name(self, "Save AcATaMa configuration and state",
                                          suggested_filename, "YAML files (*.yaml *.yml);;All files (*.*)")
