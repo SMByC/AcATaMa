@@ -836,8 +836,8 @@ class Sampling(object):
 
                 ### with random offset
                 # define the offset grid area by each aligning grid point
-                x_offset_grid = np.arange(x - pixel_size_x * self.max_xy_offset, x + pixel_size_x * self.max_xy_offset - pixel_size_x, pixel_size_x)
-                y_offset_grid = np.arange(y - pixel_size_y * self.max_xy_offset + pixel_size_y, y + pixel_size_y * self.max_xy_offset, pixel_size_y)
+                x_offset_grid = np.arange(x - pixel_size_x * self.max_xy_offset, x + pixel_size_x * self.max_xy_offset - pixel_size_x/2, pixel_size_x)
+                y_offset_grid = np.arange(y - pixel_size_y * self.max_xy_offset + pixel_size_y, y + pixel_size_y * self.max_xy_offset + pixel_size_y/2, pixel_size_y)
 
                 # gather all the valid thematic pixels centroids in the offset area
                 pixels_in_offset_grid = []
