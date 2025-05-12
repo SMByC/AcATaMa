@@ -20,6 +20,7 @@
 """
 import functools
 import pathlib
+import re
 import traceback
 import os, sys, subprocess
 
@@ -153,10 +154,10 @@ def get_save_file_name(parent, title, default_path, filter_str):
         output_file = str(file_path.with_suffix(extension))
     else:
         # check if the extension is valid
-        valid_extensions = [ext.split(" ")[-1].strip("()").replace("*", "") for ext in filter_str.split(";;") if ext not in "All files (*.*)"]
+        valid_extensions = [f".{ext}" for ext in re.findall(r'\*\.([a-zA-Z]+)', filter_str)]
         if file_path.suffix not in valid_extensions:
             QMessageBox.critical(parent, "AcATaMa", "Error: The file extension is not valid:\n\n {}\n\nValid extensions are: {}"
-            .format(output_file, ", ".join(valid_extensions)), QMessageBox.Ok)
+            .format(output_file, " ".join(valid_extensions)), QMessageBox.Ok)
             return None
 
     return output_file
