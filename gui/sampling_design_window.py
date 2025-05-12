@@ -346,7 +346,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
 
         post_stratification_map_layer = self.QCBox_PostStratMap_SimpRS.currentLayer()
 
-        if item_changed == "layer" and self.QCBox_band_PostStratMap_SimpRS.currentText() == "":
+        if item_changed == "layer":
             # fill band list
             if self.QCBox_band_PostStratMap_SimpRS.count() != post_stratification_map_layer.bandCount():
                 with block_signals_to(self.QCBox_band_PostStratMap_SimpRS):
@@ -429,7 +429,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
 
         post_stratification_map_layer = self.QCBox_PostStratMap_SystS.currentLayer()
 
-        if item_changed == "layer" and self.QCBox_band_PostStratMap_SystS.currentText() == "":
+        if item_changed == "layer":
             # fill band list
             if self.QCBox_band_PostStratMap_SystS.count() != post_stratification_map_layer.bandCount():
                 with block_signals_to(self.QCBox_band_PostStratMap_SystS):
