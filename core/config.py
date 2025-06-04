@@ -273,7 +273,7 @@ def restore(yml_file_path):
     with open(yml_file_path, 'r') as yaml_file:
         try:
             yaml_config = yaml.load(yaml_file, Loader=Loader)
-        except yaml.YAMLError as err:
+        except Exception as err:
             iface.messageBar().pushMessage("AcATaMa", "Error while read the AcATaMa configuration file: {}".format(err),
                                            level=Qgis.Critical, duration=20)
             return
