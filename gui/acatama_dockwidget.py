@@ -360,7 +360,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         if output_file_is_OK(output_file):
             config.save(output_file)
             self.suggested_yml_file = output_file
-            iface.messageBar().pushMessage("AcATaMa", "Configuration file saved successfully",
+            iface.messageBar().pushMessage("AcATaMa", "Configuration file saved successfully in '{}'".format(output_file),
                                            level=Qgis.Success, duration=10)
 
     @pyqtSlot()
