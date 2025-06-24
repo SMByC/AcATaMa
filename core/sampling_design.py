@@ -654,8 +654,8 @@ class Sampling(object):
 
         points_generated = []
         pixels_sampled = []  # to check and avoid duplicate sampled pixels
-        y = self.thematic_map.extent().yMaximum() - initial_inset
 
+        y = self.thematic_map.extent().yMaximum() - initial_inset
         while not task.isCanceled() and y >= self.thematic_map.extent().yMinimum():
             x = self.thematic_map.extent().xMinimum() + initial_inset
             while not task.isCanceled() and x <= self.thematic_map.extent().xMaximum():
@@ -719,11 +719,11 @@ class Sampling(object):
                         x += self.points_spacing
                         break
 
-                    # random point inside the offset area
+                    # generate a random point inside the offset area
                     _x = random.uniform(x - self.max_xy_offset, x + self.max_xy_offset)
                     _y = random.uniform(y - self.max_xy_offset, y + self.max_xy_offset)
-
                     random_sampling_point = RandomPoint(_x, _y)
+                    # get the pixel centroid of the random point
                     _x_centroid, _y_centroid = self.thematic_map.get_pixel_centroid(_x, _y)
 
                     # check if the random point centroid is in the pixel_in_offset_grid
