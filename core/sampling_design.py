@@ -100,7 +100,7 @@ def do_simple_random_sampling():
         return
 
     # define the random seed
-    if sampling_design.with_random_seed_by_user_SimpRS.isChecked():
+    if sampling_design.QGBox_random_sampling_options_SimpRS.isChecked() and sampling_design.with_random_seed_by_user_SimpRS.isChecked():
         random_seed = sampling_design.random_seed_by_user_SimpRS.text()
         try:
             random_seed = int(random_seed)
@@ -271,7 +271,7 @@ def do_stratified_random_sampling():
         return
 
     # define the random seed
-    if sampling_design.with_random_seed_by_user_StraRS.isChecked():
+    if sampling_design.QGBox_random_sampling_options_StraRS.isChecked() and sampling_design.with_random_seed_by_user_StraRS.isChecked():
         random_seed = sampling_design.random_seed_by_user_StraRS.text()
         try:
             random_seed = int(random_seed)
@@ -430,7 +430,7 @@ def do_systematic_sampling():
         return
 
     # define the random seed
-    if sampling_design.with_random_seed_by_user_SystS.isChecked():
+    if sampling_design.QGBox_random_sampling_options_SystS.isChecked() and sampling_design.with_random_seed_by_user_SystS.isChecked():
         random_seed = sampling_design.random_seed_by_user_SystS.text()
         try:
             random_seed = int(random_seed)
