@@ -656,9 +656,9 @@ class Sampling(object):
         pixels_sampled = []  # to check and avoid duplicate sampled pixels
 
         y = self.thematic_map.extent().yMaximum() - initial_inset
-        while not task.isCanceled() and y >= self.thematic_map.extent().yMinimum():
+        while not task.isCanceled() and y >= self.thematic_map.extent().yMinimum() - self.points_spacing:
             x = self.thematic_map.extent().xMinimum() + initial_inset
-            while not task.isCanceled() and x <= self.thematic_map.extent().xMaximum():
+            while not task.isCanceled() and x <= self.thematic_map.extent().xMaximum() + self.points_spacing:
 
                 ### aligned sampling without offset
                 if self.max_xy_offset == 0:
@@ -801,13 +801,11 @@ class Sampling(object):
 
         points_generated = []
         pixels_sampled = []  # to check and avoid duplicate sampled pixels
+
         y = self.thematic_map.extent().yMaximum() - pixel_size_y * initial_inset
-
-        while not task.isCanceled() and y >= self.thematic_map.extent().yMinimum():
-
+        while not task.isCanceled() and y >= self.thematic_map.extent().yMinimum() - pixel_size_y * self.points_spacing:
             x = self.thematic_map.extent().xMinimum() + pixel_size_x * initial_inset
-
-            while not task.isCanceled() and x <= self.thematic_map.extent().xMaximum():
+            while not task.isCanceled() and x <= self.thematic_map.extent().xMaximum() + pixel_size_x * self.points_spacing:
 
                 ### aligned sampling without offset
                 if self.max_xy_offset == 0:
