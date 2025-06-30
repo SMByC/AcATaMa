@@ -70,4 +70,21 @@ unit. In other cases, the assessment protocol may specify the recording of speci
 tree size distribution, or require other quantitative data necessary to distinguish the reference classification for 
 that sampling unit (Stehman & Czaplewski, 1998).
 
+### Keyboard Shortcuts
+
+The following keyboard shortcuts are available in the Response Design Window to facilitate quick navigation between 
+samples and control the view:
+
+#### Sample Navigation
+
+- **Left Arrow Key (←)**: Navigate to the previous sample
+- **Right Arrow Key (→)**: Navigate to the next sample
+- **Ctrl + Left Arrow Key (Ctrl+←)**: Navigate to the previous unlabeled sample
+- **Ctrl + Right Arrow Key (Ctrl+→)**: Navigate to the next unlabeled sample
+
+#### View Control
+
+- **Up Arrow Key (↑)**: Zoom out in all active view widget canvases
+- **Down Arrow Key (↓)**: Zoom in all active view widget canvases
+
 Next >> [Analysis](./analysis)

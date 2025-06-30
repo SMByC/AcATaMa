@@ -464,6 +464,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                                                            self.response_design_grid_settings.rows.value())
         # open dialog
         self.response_design_window.show()
+        # set focus, necessary to use keyboard shortcuts
+        self.response_design_window.setFocusPolicy(Qt.StrongFocus)
+        self.response_design_window.setFocus()
 
     @pyqtSlot("QgsMapLayer*")
     def update_analysis_state(self, sampling_layer=None):

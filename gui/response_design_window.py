@@ -23,10 +23,10 @@ import tempfile
 import uuid
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import Qt, pyqtSlot, QEventLoop, QTimer
+from qgis.PyQt.QtCore import Qt, pyqtSlot, QEventLoop, QTimer, QEvent
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QSplitter, QColorDialog, QDialog, QDialogButtonBox, QPushButton, \
     QMessageBox, QWidget, QLabel
-from qgis.PyQt.QtGui import QColor, QIcon
+from qgis.PyQt.QtGui import QColor, QIcon, QKeyEvent
 from qgis.PyQt.sip import isdeleted
 from qgis.gui import QgsRubberBand
 from qgis.utils import iface
@@ -254,6 +254,10 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             self.QPBtn_CCDPlugin.setChecked(self.response_design.ccd_plugin_opened)
             self.widget_ccd.setVisible(self.response_design.ccd_plugin_opened)
             restore_plugin_config(self.ccd_plugin.id, self.response_design.ccd_plugin_config)
+
+        # Install event filter for keyboard events
+        self.installEventFilter(self)
+        self.scrollArea.installEventFilter(self)
 
     def show(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
@@ -526,6 +530,49 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             self.current_sample_idx = tmp_sample_idx
             self.set_current_sample()
 
+    def eventFilter(self, obj, event):
+        """Event filter to handle keyboard events."""
+        if event.type() == QEvent.KeyPress:
+            # Check for Ctrl modifier key combinations
+            if event.modifiers() == Qt.ControlModifier:
+                if event.key() == Qt.Key_Left:  # Ctrl+Left arrow key
+                    self.previous_sample_not_labeled()
+                    return True
+                elif event.key() == Qt.Key_Right:  # Ctrl+Right arrow key
+                    self.next_sample_not_labeled()
+                    return True
+            # Handle regular key press without modifiers
+            elif event.modifiers() == Qt.NoModifier:
+                if event.key() == Qt.Key_Left:  # Left arrow key
+                    self.previous_sample()
+                    return True
+                elif event.key() == Qt.Key_Right:  # Right arrow key
+                    self.next_sample()
+                    return True
+                elif event.key() == Qt.Key_Up:  # Up arrow key - zoom out
+                    self.zoom_out_canvas()
+                    return True
+                elif event.key() == Qt.Key_Down:  # Down arrow key - zoom in
+                    self.zoom_in_canvas()
+                    return True
+
+        # For any other event, pass it to the parent's event filter
+        return super().eventFilter(obj, event)
+
+    def zoom_in_canvas(self):
+        """Zoom in all active view widget canvases."""
+        zoom_factor = 1.2  # 20% zoom in
+        for view_widget in ResponseDesignWindow.view_widgets:
+            if view_widget.is_active:
+                view_widget.render_widget.canvas.zoomByFactor(zoom_factor)
+
+    def zoom_out_canvas(self):
+        """Zoom out all active view widget canvases."""
+        zoom_factor = 0.8  # 20% zoom out
+        for view_widget in ResponseDesignWindow.view_widgets:
+            if view_widget.is_active:
+                view_widget.render_widget.canvas.zoomByFactor(zoom_factor)
+
     @pyqtSlot()
     def open_labeling_setup_dialog(self):
         # show a warning dialog about the problem of editing the labeling buttons when some samples are labeled
@@ -566,6 +613,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             QPButton.clicked.connect(lambda state, label_id=item_num: self.label_sample(label_id))
             QPButton.setAutoDefault(False)
             QPButton.setCheckable(True)
+            QPButton.setFocusPolicy(Qt.NoFocus)
             self.Grid_LabelingButtons.addWidget(QPButton, len(buttons) - 1, 0)
 
         # from tableBtnsConfig

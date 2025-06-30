@@ -620,7 +620,7 @@ QToolButton
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>Go to the previous sample not labeled</string>
+                  <string>Go to the previous sample not labeled (Ctrl + Arrow-Left)</string>
                  </property>
                  <property name="text">
                   <string/>
@@ -643,7 +643,7 @@ QToolButton
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>Go to the previous sample</string>
+                  <string>Go to the previous sample (Arrow-Left)</string>
                  </property>
                  <property name="text">
                   <string>Previous</string>
@@ -743,7 +743,7 @@ QToolButton
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>Go to the next sample</string>
+                  <string>Go to the next sample (Arrow-Right)</string>
                  </property>
                  <property name="layoutDirection">
                   <enum>Qt::RightToLeft</enum>
@@ -769,7 +769,7 @@ QToolButton
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
                  <property name="toolTip">
-                  <string>Go to the next sample not labeled</string>
+                  <string>Go to the next sample not labeled (Ctrl + Arrow-Right)</string>
                  </property>
                  <property name="layoutDirection">
                   <enum>Qt::RightToLeft</enum>
