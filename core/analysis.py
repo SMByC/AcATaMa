@@ -84,7 +84,7 @@ class Analysis(object):
         for point in points_ordered:
             # response design labeling from the pixel values in the thematic map
             thematic_map_in_sample = self.thematic_map.get_pixel_value_from_pnt(point.QgsPnt)
-            if not thematic_map_in_sample:
+            if thematic_map_in_sample is None:
                 samples_outside_the_thematic.append(point)
                 continue
             thematic_map.append(int(thematic_map_in_sample))
