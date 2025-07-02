@@ -893,6 +893,10 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
             value, label, color = symbology_item
             if value == nodata_value:
                 continue
+            try:
+                label = str(int(float(label)))
+            except ValueError:
+                pass
             self.tableBtnsConfig.item(item_idx, 0).setText(label)
             self.tableBtnsConfig.item(item_idx, 1).setBackground(color)
             self.tableBtnsConfig.item(item_idx, 2).setText(str(value))
