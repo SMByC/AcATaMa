@@ -302,7 +302,7 @@ It set automatically from image if the layer has the nodata value set.</string>
               <item>
                <widget class="QPushButton" name="QPBtn_openSamplingReport">
                 <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open the sampling report for the current sample. This report is only for samples that have been generated with AcATaMa. You can save and restore it using the AcATaMa yaml file (version &gt;= 24.10).&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open the sampling report for the current sample. This report is only for samples that have been generated with AcATaMa. You can save and restore it using the AcATaMa yaml file (version &amp;gt;= 24.10).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="text">
                  <string>Sampling report</string>
@@ -428,7 +428,7 @@ It set automatically from image if the layer has the nodata value set.</string>
               <item>
                <widget class="QPushButton" name="QPBtn_saveSamplingLabeled">
                 <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;(optional) Save the result of response design, the samples labeled with extra columns from the response design process.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;(optional) Save the result of response design, the samples labeled with extra columns from the response design process.&lt;/p&gt;&lt;p&gt;Note: This file is for your reference only, not for AcATaMa. If you load this file as a sampling file in AcATaMa, it will not load the classifications stored within it. Labeling information and many other settings are stored exclusively in the YAML configuration file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="text">
                  <string>Sampling labeled</string>

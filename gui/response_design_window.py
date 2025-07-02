@@ -579,10 +579,10 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
     def open_labeling_setup_dialog(self):
         # show a warning dialog about the problem of editing the labeling buttons when some samples are labeled
         if self.response_design.total_labeled > 0:
-            msg = ("Some samples are already labeled, editing the labeling buttons could affect the labeled samples "
-                   "(e.g., changing thematic classes, removing, or moving buttons). Safe edits include renaming, "
-                   "changing colors, and adding buttons.")
-            QMessageBox.warning(self, 'Edit the labeling buttons with caution', msg, QMessageBox.Ok)
+            msg = ("Some samples are already labeled, so editing the labeling buttons could affect the labeled samples.<br><br>"
+                   "<b>Risky edits:</b> Changing thematic classes, removing, or moving buttons<br><br>"
+                   "<b>Safe edits:</b> Renaming, changing colors or shortcuts, and adding new buttons.")
+            QMessageBox.warning(self, 'Edit the labeling buttons with caution!', msg, QMessageBox.Ok)
         # open the labeling setup dialog
         self.labeling_btns_config.create_table()
         if self.labeling_btns_config.exec_():
