@@ -25,7 +25,7 @@ import uuid
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt, pyqtSlot, QEventLoop, QTimer, QEvent
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QSplitter, QColorDialog, QDialog, QDialogButtonBox, QPushButton, \
-    QMessageBox, QWidget, QLabel
+    QMessageBox, QWidget, QLabel, QShortcut
 from qgis.PyQt.QtGui import QColor, QIcon, QKeyEvent
 from qgis.PyQt.sip import isdeleted
 from qgis.gui import QgsRubberBand
@@ -52,6 +52,8 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
     view_widgets = []
     current_sample = None
     inst = None
+    # Store all active shortcuts for cleanup
+    active_shortcuts = {}
 
     def __init__(self, sampling_layer, columns, rows):
         QDialog.__init__(self)
@@ -594,6 +596,10 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
     def create_labeling_buttons(self, tableBtnsConfig=None, buttons_config=None):
         if not tableBtnsConfig and not buttons_config:
             return
+            
+        # Clean up all existing shortcuts first
+        self.cleanup_shortcuts()
+        
         # clear layout
         for i in reversed(range(self.Grid_LabelingButtons.count())):
             if self.Grid_LabelingButtons.itemAt(i).widget():
@@ -603,10 +609,10 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
 
         buttons = {}
 
-        def create_button(item_num, item_name, item_color, item_thematic_class):
+        def create_button(item_num, item_name, item_color, item_thematic_class, item_shortcut=None):
             # save button config
             buttons[int(item_num)] = {"name": item_name, "color": item_color,
-                                      "thematic_class": item_thematic_class}
+                                      "thematic_class": item_thematic_class, "shortcut": item_shortcut}
             # create button
             QPButton = QPushButton(item_name)
             QPButton.setStyleSheet('QPushButton {color: ' + item_color + '}')
@@ -616,6 +622,13 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             QPButton.setFocusPolicy(Qt.NoFocus)
             self.Grid_LabelingButtons.addWidget(QPButton, len(buttons) - 1, 0)
 
+            # create keyboard shortcut for the labeling button
+            if item_shortcut:
+                shortcut = QShortcut(item_shortcut, self)
+                shortcut.activated.connect(lambda label_id=item_num: self.label_sample(label_id))
+                # Store the shortcut
+                self.active_shortcuts[item_num] = shortcut
+
         # from tableBtnsConfig
         if tableBtnsConfig:
             label_id = 1
@@ -624,8 +637,10 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
                 item_color = self.labeling_btns_config.tableBtnsConfig.item(row, 1).background().color().name()
                 item_thematic_class = self.labeling_btns_config.tableBtnsConfig.item(row, 2).text()
                 item_thematic_class = None if item_thematic_class == "none" else item_thematic_class
+                item_shortcut = self.labeling_btns_config.tableBtnsConfig.item(row, 3).text()
+                item_shortcut = None if item_shortcut == "" else item_shortcut
                 if item_name != "":
-                    create_button(label_id, item_name, item_color, item_thematic_class)
+                    create_button(label_id, item_name, item_color, item_thematic_class, item_shortcut)
                     label_id += 1
                     # define if this labeling was made with thematic classes
                     if item_thematic_class is not None and item_thematic_class != "":
@@ -638,7 +653,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         if buttons_config:
             for row in sorted(buttons_config.keys()):
                 create_button(row, buttons_config[row]["name"], buttons_config[row]["color"],
-                              buttons_config[row]["thematic_class"])
+                              buttons_config[row]["thematic_class"], buttons_config[row].get("shortcut", None))
                 # define if this labeling was made with thematic classes
                 if buttons_config[row]["thematic_class"] is not None and buttons_config[row]["thematic_class"] != "":
                     self.response_design.with_thematic_classes = True
@@ -648,6 +663,13 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         AcATaMa.dockwidget.update_analysis_state()
         # reload the current sample status
         self.update_sample_status()
+
+    def cleanup_shortcuts(self):
+        """Clean up all active labeling button shortcuts"""
+        for shortcut_id, shortcut in self.active_shortcuts.items():
+            if shortcut:
+                shortcut.deleteLater()
+        self.active_shortcuts.clear()
 
     def closeEvent(self, event):
         self.closing()
@@ -684,6 +706,9 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             self.ccd_plugin.widget.close()
             self.ccd_plugin.widget = None
 
+        # Clean up shortcuts before closing
+        self.cleanup_shortcuts()
+        
         ResponseDesignWindow.is_opened = False
         # restore the states for some objects in the dockwidget
         from AcATaMa.gui.sampling_design_window import SamplingDesignWindow
@@ -724,12 +749,12 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
     def create_table(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
 
-        header = ["Label Name", "Color", "Thematic Class", ""]
+        header = ["Label Name", "Color", "Thematic Class", "Shortcut", ""]
         # clear table
         self.tableBtnsConfig.clear()
         # init table
         self.tableBtnsConfig.setRowCount(len(self.table_buttons))
-        self.tableBtnsConfig.setColumnCount(4)
+        self.tableBtnsConfig.setColumnCount(5)
         # hidden row labels
         self.tableBtnsConfig.verticalHeader().setVisible(False)
         # add Header
@@ -774,6 +799,16 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
                     item_table.setFlags(Qt.ItemIsEnabled)
                     item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
                     self.tableBtnsConfig.setItem(m, n, item_table)
+            if h == "Shortcut":
+                for m, item in enumerate(self.table_buttons.values()):
+                    if m + 1 in self.buttons_config and "shortcut" in self.buttons_config[m + 1] and self.buttons_config[m + 1]["shortcut"]:
+                        item_table = QTableWidgetItem(self.buttons_config[m + 1]["shortcut"])
+                    else:
+                        item_table = QTableWidgetItem("")
+                    item_table.setFlags(Qt.ItemIsEnabled)
+                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    item_table.setToolTip("Click to set/change the keyboard shortcut for this button")
+                    self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "":
                 for m, item in enumerate(self.table_buttons.values()):
                     item_table = QTableWidgetItem()
@@ -817,12 +852,22 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
             if thematic_map_class.exec_():
                 tableItem.setText(thematic_map_class.pix_value)
                 self.tableBtnsConfig.item(tableItem.row(), 1).setBackground(thematic_map_class.color)
-        # clean the current row clicked in the trash icon
+        # set the shortcut
         if tableItem.column() == 3:
+            current_shortcut = tableItem.text()
+            # Get the button name from the first column of the same row
+            button_name = self.tableBtnsConfig.item(tableItem.row(), 0).text()
+            shortcut_dialog = ShortcutDialog(self, current_shortcut, button_name)
+            if shortcut_dialog.exec_():
+                tableItem.setText(shortcut_dialog.shortcut)
+                self.tableBtnsConfig.clearSelection()
+        # clean the current row clicked in the trash icon
+        if tableItem.column() == 4:
             self.tableBtnsConfig.item(tableItem.row(), 0).setText("")
             self.tableBtnsConfig.item(tableItem.row(), 1).setBackground(QColor(255, 255, 255, 0))
             if not self.tableBtnsConfig.item(tableItem.row(), 2).text() == "none":
                 self.tableBtnsConfig.item(tableItem.row(), 2).setText("")
+            self.tableBtnsConfig.item(tableItem.row(), 3).setText("")
 
     @pyqtSlot()
     def check_before_accept(self):
@@ -863,6 +908,15 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
             msg = "Invalid configuration:\n\nTo create the buttons for labeling, the thematic class values must be unique."
             QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.Ok)
             return
+        # check if exists a duplicate shortcut
+        shortcuts_with_valid_names = [self.tableBtnsConfig.item(row, 3).text() for row in
+                                     range(self.tableBtnsConfig.rowCount()) if
+                                     self.tableBtnsConfig.item(row, 3).text() != "" and
+                                     self.tableBtnsConfig.item(row, 0).text() != ""]
+        if len(shortcuts_with_valid_names) != len(set(shortcuts_with_valid_names)):
+            msg = "Invalid configuration:\n\nTo create the buttons for labeling, the keyboard shortcuts must be unique."
+            QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.Ok)
+            return
         # pass all checks
         self.accept()
 
@@ -901,6 +955,114 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
             self.tableBtnsConfig.item(item_idx, 1).setBackground(color)
             self.tableBtnsConfig.item(item_idx, 2).setText(str(value))
 
+
+FORM_CLASS, _ = uic.loadUiType(os.path.join(
+    plugin_folder, 'ui', 'labeling_shortcut_dialog.ui'))
+
+
+class ShortcutDialog(QDialog, FORM_CLASS):
+    """Dialog for setting keyboard shortcuts with live key capture."""
+    
+    def __init__(self, parent=None, current_shortcut="", button_name=""):
+        super().__init__(parent)
+        self.setupUi(self)
+        self.current_shortcut = current_shortcut
+        self.shortcut_text = current_shortcut
+        
+        # Setup the UI
+        self.shortcut_label.setText(f"Shortcut for <b>{button_name}</b>:" if button_name else "Shortcut:")
+        self.shortcut_edit.setText(self.current_shortcut)
+        self.shortcut_edit.installEventFilter(self)
+        self.shortcut_edit.setFocus()
+        
+        # Update clear button tooltip and icon
+        self.clear_shortcut.setToolTip("Clear shortcut")
+        self.clear_shortcut.setEnabled(bool(self.current_shortcut))
+        
+        # Setup connections
+        self.clear_shortcut.clicked.connect(self.clear_shortcut_action)
+        
+    def eventFilter(self, obj, event):
+        """Event filter to handle keyboard events."""
+        # Use integer value for KeyPress if attribute is missing
+        KEY_PRESS = getattr(QEvent, 'KeyPress', 6)
+        if obj == self.shortcut_edit and event.type() == KEY_PRESS:
+            return self.handle_key_press(event)
+        return super().eventFilter(obj, event)
+
+    def handle_key_press(self, event):
+        """Handle key press events to capture shortcuts."""
+        # Use integer values for modifier keys if linter complains
+        KEY_CONTROL = getattr(Qt, 'Key_Control', 0x01000021)
+        KEY_ALT = getattr(Qt, 'Key_Alt', 0x01000023)
+        KEY_SHIFT = getattr(Qt, 'Key_Shift', 0x01000020)
+        KEY_META = getattr(Qt, 'Key_Meta', 0x01000022)
+        MOD_CONTROL = getattr(Qt, 'ControlModifier', 0x04000000)
+        MOD_ALT = getattr(Qt, 'AltModifier', 0x08000000)
+        MOD_SHIFT = getattr(Qt, 'ShiftModifier', 0x02000000)
+        MOD_META = getattr(Qt, 'MetaModifier', 0x10000000)
+        
+        if event.key() in [KEY_CONTROL, KEY_ALT, KEY_SHIFT, KEY_META]:
+            return True
+            
+        # Build the shortcut string
+        modifiers = []
+        if event.modifiers() & MOD_CONTROL:
+            modifiers.append("Ctrl")
+        if event.modifiers() & MOD_ALT:
+            modifiers.append("Alt")
+        if event.modifiers() & MOD_SHIFT:
+            modifiers.append("Shift")
+        if event.modifiers() & MOD_META:
+            modifiers.append("Meta")
+            
+        # Get the key name
+        key_name = self.get_key_name(event.key())
+        if key_name:
+            if modifiers:
+                self.shortcut_text = "+".join(modifiers) + "+" + key_name
+            else:
+                self.shortcut_text = key_name
+                
+            self.shortcut_edit.setText(self.shortcut_text)
+            self.clear_shortcut.setEnabled(True)
+            return True
+        return False
+            
+    def get_key_name(self, key):
+        """Convert Qt key to readable name."""
+        # Use getattr for all Qt key enums with fallback values
+        qt_keys = {
+            'Key_F1': 0x01000030, 'Key_F2': 0x01000031, 'Key_F3': 0x01000032, 'Key_F4': 0x01000033,
+            'Key_F5': 0x01000034, 'Key_F6': 0x01000035, 'Key_F7': 0x01000036, 'Key_F8': 0x01000037,
+            'Key_F9': 0x01000038, 'Key_F10': 0x01000039, 'Key_F11': 0x0100003A, 'Key_F12': 0x0100003B,
+            'Key_Left': 0x01000012, 'Key_Right': 0x01000014, 'Key_Up': 0x01000013, 'Key_Down': 0x01000015,
+            'Key_Home': 0x01000010, 'Key_End': 0x01000011, 'Key_PageUp': 0x01000016, 'Key_PageDown': 0x01000017,
+            'Key_Insert': 0x01000006, 'Key_Delete': 0x01000007, 'Key_Backspace': 0x01000003,
+            'Key_Tab': 0x01000001, 'Key_Return': 0x01000004, 'Key_Enter': 0x01000005, 'Key_Escape': 0x01000000,
+            'Key_Space': 0x20
+        }
+        key_names = {getattr(Qt, k, v): k.split('_', 1)[1] for k, v in qt_keys.items()}
+        
+        if key in key_names:
+            return key_names[key]
+        elif getattr(Qt, 'Key_A', 0x41) <= key <= getattr(Qt, 'Key_Z', 0x5A):
+            return chr(key)
+        elif getattr(Qt, 'Key_0', 0x30) <= key <= getattr(Qt, 'Key_9', 0x39):
+            return chr(key)
+        else:
+            return None
+            
+    def clear_shortcut_action(self):
+        """Clear the current shortcut."""
+        self.shortcut_text = ""
+        self.shortcut_edit.setText("")
+        self.clear_shortcut.setEnabled(False)
+        
+    @property
+    def shortcut(self):
+        """Get the final shortcut text."""
+        return self.shortcut_text
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     plugin_folder, 'ui', 'labeling_thematic_map_classes.ui'))
