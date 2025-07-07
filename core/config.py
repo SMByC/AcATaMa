@@ -396,7 +396,7 @@ def restore(yml_file_path):
                 int(yaml_config["sampling_design"]["simple_random_sampling"]['num_samples_overall_accuracy'].replace('%', '')))
         if "num_samples_half_width_ci" in yaml_config["sampling_design"]["simple_random_sampling"]:
             sampling_design.determine_number_samples_dialog_SimpRS.HalfWidthCI.setValue(
-                float(yaml_config["sampling_design"]["simple_random_sampling"]['num_samples_half_width_ci'].replace('%', '')))
+                float(yaml_config["sampling_design"]["simple_random_sampling"]['num_samples_half_width_ci'].replace(',', '.').replace('%', '')))
         if "num_samples_confidence_interval" in yaml_config["sampling_design"]["simple_random_sampling"]:
             select_item_in(sampling_design.determine_number_samples_dialog_SimpRS.ConfidenceInterval,
                            yaml_config["sampling_design"]["simple_random_sampling"]['num_samples_confidence_interval'])
@@ -525,7 +525,7 @@ def restore(yml_file_path):
                     int(yaml_config["sampling_design"]["systematic_sampling"]['num_samples_overall_accuracy'].replace('%', '')))
             if "num_samples_half_width_ci" in yaml_config["sampling_design"]["systematic_sampling"]:
                 sampling_design.determine_number_samples_dialog_SystS.HalfWidthCI.setValue(
-                    float(yaml_config["sampling_design"]["systematic_sampling"]['num_samples_half_width_ci'].replace('%', '')))
+                    float(yaml_config["sampling_design"]["systematic_sampling"]['num_samples_half_width_ci'].replace(',', '.').replace('%', '')))
             if "num_samples_confidence_interval" in yaml_config["sampling_design"]["systematic_sampling"]:
                 select_item_in(sampling_design.determine_number_samples_dialog_SystS.ConfidenceInterval,
                                yaml_config["sampling_design"]["systematic_sampling"]['num_samples_confidence_interval'])
