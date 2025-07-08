@@ -3,7 +3,7 @@ name=AcATaMa
 description=AcATaMa is a powerful and complete Qgis plugin for accuracy assessment that provides comprehensive support for sampling, response design and estimation.
 about=AcATaMa is a powerful and complete Qgis plugin for accuracy assessment. It provides comprehensive support for sampling, response design and estimation within a design-based inference framework. The primary goal of AcATaMa is to equip users with the necessary tools to comply with international guidance and best practices for sampling design, estimation of land category areas and changes, and map accuracy assessment. The plugin supports accuracy assessment for any thematic map across diverse use cases. A common application is in remote sensing, particularly for land use and land cover classification, environmental monitoring, urban planning, forestry, agriculture, and more. However, AcATaMa is not limited to these applications; some modules, such as sampling and labeling, can be used independently for other user cases.
 
-version=24.12c
+version=25.7
 qgisMinimumVersion=3.30
 qgisMaximumVersion=3.99
 
@@ -15,34 +15,32 @@ tracker=https://github.com/SMByC/AcATaMa/issues
 repository=https://github.com/SMByC/AcATaMa
 
 changelog=
-    24.12 with bugfix updates (a,b,c):
-    - New dialog tool for estimating the appropriate sample size for simple random sampling using the equation by Stehman and Foody (2019), and Cochran (1977)
-    - New dialog tool for estimating the appropriate sample size for systematic random sampling, considering the valid map data and map using the equation by Stehman and Foody (2019), and Cochran (1977)
-    - Move the grid settings into a dialog to set the number of views for the response design window
-    - Make the main dock widget scrollable to improve usability on small screens
-    - Fixed auto fill the labeling buttoms from layer function, added another way to compute the unique values if no xml color style is defined in the layer
-    - Don't delete the thematic map instance layer when closing the sampling design window
-    - Fix an issue when the thematic map has not nodata value or is not set while computing the point spacing
-    - Improving the process when the tests are restoring the configuration file
-    - Added tests for number of samples and point spacing when determining the sample size
-    - Fix testing, do not update progress bar if pytest is running
-    - Save and restore the configuration for the new dialog tool for estimating the appropriate sample size for simple and systematic random sampling
-    - Fix a bug in the sampling report for simple and systematic sampling without post-stratification
-    - Fix a bug counting the nodata value when needed in a edge case if the thematic has a very low nodata value defined, and minor improve in the counting parallel function
-    - Fix init and restoring the stratified sampling table when the user restore the yaml with an empty table
-    - Fix getting the values from determining the number of samples dialog
-    - Fixed an stuck issue when the user finish in advance the systematic sampling process and thematic map is considerable big
-    - In systematic sampling process, if offset = 0 it is not necessary to generate random points from center
-    - Rename a variable to avoid confusing it with another variable with a similar name
-    - Adjusts some dialog sizes
-    - Fix several warning and info boxes
-    - Set a warning message of the Qgis version needed for the latest Acatama version
-    - Improving the Acatama description
-    - Catch any issue while converting the path
-    - Check the path before compute the relative path
-    - Update the minimum Qgis version required by the plugin, issue #22
-    - Catch any error when trying to import dask library
-    - Using a more compatible extlibs version
+    25.7:
+    - Add user-customized keyboard shortcuts for labeling buttons using a shortcut configuration dialog in the labeling buttons setup, #27
+    - Add keyboard shortcuts for navigating samples and zooming in/out in the response design window, part of #27
+    - New systematic sampling process that uses pixels as a unit of measurement in its systematic sampling methodology
+    - The systematic sampling process has been significantly improved, resulting in increased speed, more robust statistical methodology and procedures.
+    - Refactor file dialog to use a new utility function for saving files, fixing an issue where the user did not configure the extension or if that extension was incorrect or invalid
+    - Ensure inclusion of right-bottom borders in systematic sampling offset area by distance or pixels
+    - Convert label to integer for auto fill labeling buttons from thematic map
+    - Fix a bug that Acatama handle 0 as nodata even when thematic file uses zero for a valid class, bug reported thanks to @Josi-Nic, #26
+    - Improving the suggested filename for the sampling file
+    - Use manual random seed only if the random sampling options block is enabled
+    - Include the saved configuration file path in message
+    - Catch all exceptions when reading the AcATaMa configuration file
+    - Fix an error message due to a incorrect band when the thematic layer is changed, forcing band list population in post-stratification section
+    - Fix a bug in the offset grid calculation in systematic random sampling by pixels
+    - Fix file extension validation to correctly parse valid extensions from filter string
+    - Change the default YAML filename extension in the AcATaMa configuration file to .yaml
+    - Enhance systematic random sampling documentation by the new two systematic techniques by distance and by pixels
+    - Fix text and tooltips for pixel units methodology in systematic sampling
+    - Validate pixel centroid before sampling to ensure valid coordinates
+    - Add tests for accuracy assessment using zero as a class to sampling and outside thematic map coverage
+    - Enforce the conversion of decimal percentage stored in the yaml file in the case when a locale considers the comma as a decimal separator
+    - Add systematic sampling tests by pixels with different configurations
+    - Handle locale initialization to fix some issues for some user edge cases loading the plugin
+    - Updated the tests based on the new systematic sampling method
+    - Fix tooltip texts and warnings messages
     - All commits in: https://github.com/SMByC/AcATaMa/commits
 
 tags=accuracy,accuracy assessment,thematic,thematic accuracy,classification,sample,sampling design,labeling,points,remote sensing,sampling plan,spatial data quality,quality,raster
