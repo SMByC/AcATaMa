@@ -260,6 +260,8 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         # Install event filter for keyboard events
         self.installEventFilter(self)
         self.scrollArea.installEventFilter(self)
+        for view_widget in ResponseDesignWindow.view_widgets:
+            view_widget.render_widget.canvas.installEventFilter(self)
 
     def show(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
