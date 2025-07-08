@@ -111,3 +111,26 @@ def test_accuracy_assessment_stratified_html(plugin, restore_config_file):
     result_html_in_file = open(pytest.tests_data_dir / "analysis" / "accuracy_assessment_stratified_revised.html", 'r')
 
     assert clean_raw_html(result_html_computed) == clean_raw_html(result_html_in_file.read())
+
+
+def test_accuracy_assessment_samples_in_zero_and_outside_html(plugin, restore_config_file):
+    """Test accuracy assessment for samples with zero values and outside thematic map coverage."""
+    # restore
+    input_yml_path = pytest.tests_data_dir / "test_samples_in_zero_and_outside.yaml"
+    restore_config_file(input_yml_path)
+
+    # get accuracy assessment results in html
+    accuracy_assessment = AccuracyAssessmentWindow()
+    accuracy_assessment.analysis.estimator = plugin.dockwidget.QCBox_SamplingEstimator.currentText()
+    accuracy_assessment.analysis.compute()
+    # set content results in HTML
+    result_html_computed = accuracy_assessment_results.get_html(accuracy_assessment.analysis)
+
+    # Uncomment the following lines to generate the expected HTML file for review
+    # in_file = open(pytest.tests_data_dir / "analysis" / "accuracy_assessment_samples_in_zero_and_outside_revised.html", 'w')
+    # in_file.write(result_html_computed)
+
+    # load the html file
+    result_html_in_file = open(pytest.tests_data_dir / "analysis" / "accuracy_assessment_samples_in_zero_and_outside_revised.html", 'r')
+
+    assert clean_raw_html(result_html_computed) == clean_raw_html(result_html_in_file.read())
