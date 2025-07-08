@@ -77,15 +77,15 @@ samples, zoom in/out, and label buttons:
 
 #### Sample Navigation
 
-- **Left/Right Arrow Key**: Navigate to the previous/next sample
-- **Ctrl + Left/Right Arrow Key**: Navigate to the previous/next unlabeled sample
-- **Up/Down Arrow Key**: Zoom in/out in all active view widget canvases
+- Left/Right Arrow Key: Navigate to the previous/next sample
+- Ctrl + Left/Right Arrow Key: Navigate to the previous/next unlabeled sample
+- Up/Down Arrow Key: Zoom in/out in all active view widget canvases
 
 #### Labeling Button Keyboard Shortcuts
 
-<img src="img/labeling_button_shortcuts.webp" width="40%" style="margin: auto;display: block;">
-
 AcATaMa supports custom keyboard shortcuts for labeling buttons to improve efficiency during the labeling process.
+
+<img src="img/labeling_button_shortcuts.webp" width="40%" style="margin: auto;display: block;">
 
 - Supported: letters, numbers, function keys, and combinations with Ctrl, Alt, Shift, or Meta.
 
