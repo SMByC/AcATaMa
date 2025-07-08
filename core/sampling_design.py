@@ -815,6 +815,11 @@ class Sampling(object):
                     # select the pixel where the aligned grid is in the top-left corner
                     _x, _y = self.thematic_map.get_pixel_centroid(x + pixel_size_x/2, y - pixel_size_y/2)
 
+                    # check if the pixel centroid is valid
+                    if _x is None or _y is None:
+                        x += pixel_size_x * self.points_spacing
+                        continue
+
                     random_sampling_point = RandomPoint(_x, _y)
 
                     # check if the pixel is not already sampled
