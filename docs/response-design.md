@@ -38,7 +38,7 @@ pixels might be preferred. If precision and detail are more important, pixel-bas
 ### Reference data
 
 Collection of reference observations or other types of data sources characterized as having the most accurate available
-assessment of the “true” condition at the sample location, and with the help of the sampling unit space and the
+assessment of the "true" condition at the sample location, and with the help of the sampling unit space and the
 expertise of the evaluator, to contribute to the reference classification determination and the labeling protocol.
 
 **B)** The labeling protocol that implies the classification of the sampling unit based on the information obtained from
@@ -47,7 +47,7 @@ the evaluation protocol (Stehman & Czaplewski, 1998).
 ### Reference classification
 
 Available assessment of the condition of a population unit. The classes available come from the thematic map, the
-evaluator must select the reference classes as a labeling buttons using the “Labeling setup” option in AcATaMa.
+evaluator must select the reference classes as a labeling buttons using the "Labeling setup" option in AcATaMa.
 
 <img src="img/labeling_buttons_setup.webp" width="75%" style="margin: auto;display: block;">
 
@@ -73,18 +73,23 @@ that sampling unit (Stehman & Czaplewski, 1998).
 ### Keyboard Shortcuts
 
 The following keyboard shortcuts are available in the Response Design Window to facilitate quick navigation between 
-samples and control the view:
+samples, zoom in/out, and label buttons:
 
 #### Sample Navigation
 
-- **Left Arrow Key (←)**: Navigate to the previous sample
-- **Right Arrow Key (→)**: Navigate to the next sample
-- **Ctrl + Left Arrow Key (Ctrl+←)**: Navigate to the previous unlabeled sample
-- **Ctrl + Right Arrow Key (Ctrl+→)**: Navigate to the next unlabeled sample
+- **Left/Right Arrow Key**: Navigate to the previous/next sample
+- **Ctrl + Left/Right Arrow Key**: Navigate to the previous/next unlabeled sample
+- **Up/Down Arrow Key**: Zoom in/out in all active view widget canvases
 
-#### View Control
+#### Labeling Button Keyboard Shortcuts
 
-- **Up Arrow Key (↑)**: Zoom out in all active view widget canvases
-- **Down Arrow Key (↓)**: Zoom in all active view widget canvases
+<img src="img/labeling_button_shortcuts.webp" width="40%" style="margin: auto;display: block;">
+
+AcATaMa supports custom keyboard shortcuts for labeling buttons to improve efficiency during the labeling process.
+
+- Supported: letters, numbers, function keys, and combinations with Ctrl, Alt, Shift, or Meta.
+
+> <span style="color:orange">WARNING!</span>  
+> Avoid using keys or key combinations that are already assigned by your operating system or QGIS to prevent shortcut conflicts.
 
 Next >> [Analysis](./analysis)
