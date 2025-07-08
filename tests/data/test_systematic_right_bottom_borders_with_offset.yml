@@ -1,0 +1,66 @@
+!!python/object/apply:collections.OrderedDict
+- - - general
+    - config_file_version: 241200
+  - - thematic_map
+    - band: 2
+      nodata: ''
+      path: test_stack.tif
+  - - sampling_design
+    - simple_random_sampling:
+        automatic_random_seed: false
+        classes_selected_for_sampling: 35,46
+        min_distance: 1000.0
+        min_neighbors_with_the_same_class: '4'
+        num_neighbors: '8'
+        num_samples: 100
+        num_samples_confidence_interval: 95%
+        num_samples_half_width_ci: 4.0%
+        num_samples_overall_accuracy: 85%
+        post_stratification: true
+        post_stratification_map_band: 2
+        post_stratification_map_nodata: ''
+        post_stratification_map_path: test_stack.tif
+        random_sampling_options: true
+        random_seed_by_user: '12345'
+        with_neighbors_aggregation: true
+        with_random_seed_by_user: true
+      stratified_random_sampling:
+        automatic_random_seed: false
+        min_distance: 500.0
+        min_neighbors_with_the_same_class: '2'
+        minimum_samples_per_stratum: 30
+        num_neighbors: '8'
+        overall_std_error: 0.007
+        random_sampling_options: true
+        random_seed_by_user: '12345'
+        sampling_random_method: ''
+        stratification_map_band: 2
+        stratification_map_nodata: ''
+        stratification_map_path: test_stack.tif
+        stratified_random_sampling_table: null
+        with_neighbors_aggregation: true
+        with_random_seed_by_user: true
+      systematic_sampling:
+        automatic_random_seed: false
+        classes_selected_for_sampling: null
+        initial_inset: 0.0
+        initial_inset_mode: Fixed
+        max_xy_offset: 500.0
+        min_neighbors_with_the_same_class: '4'
+        num_neighbors: '8'
+        num_samples_confidence_interval: 95%
+        num_samples_half_width_ci: 4.0%
+        num_samples_overall_accuracy: 85%
+        points_spacing: 2150.0
+        post_stratification: false
+        post_stratification_map_band: 2
+        post_stratification_map_nodata: ''
+        post_stratification_map_path: test_stack.tif
+        random_sampling_options: false
+        random_seed_by_user: s33d
+        systematic_sampling_unit: Distance
+        with_neighbors_aggregation: false
+        with_random_seed_by_user: true
+      tab_activated: 2
+  - - analysis
+    - estimator: Simple/systematic estimator

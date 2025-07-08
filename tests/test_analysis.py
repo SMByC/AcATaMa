@@ -134,3 +134,54 @@ def test_accuracy_assessment_samples_in_zero_and_outside_html(plugin, restore_co
     result_html_in_file = open(pytest.tests_data_dir / "analysis" / "accuracy_assessment_samples_in_zero_and_outside_revised.html", 'r')
 
     assert clean_raw_html(result_html_computed) == clean_raw_html(result_html_in_file.read())
+
+
+def test_analysis_with_empty_samples(plugin, restore_config_file):
+    """Test accuracy assessment with no valid samples."""
+    # restore
+    input_yml_path = pytest.tests_data_dir / "test_samples_in_zero_and_outside.yaml"
+    restore_config_file(input_yml_path)
+    
+    # Modify the config to have no samples
+    from AcATaMa.core import config
+    config.samples = {}
+    config.samples_order = []
+    
+    # get accuracy assessment results in html
+    accuracy_assessment = AccuracyAssessmentWindow()
+    accuracy_assessment.analysis.estimator = plugin.dockwidget.QCBox_SamplingEstimator.currentText()
+    
+    # The analysis should handle empty samples gracefully
+    try:
+        accuracy_assessment.analysis.compute()
+        # If it doesn't crash, that's good
+        assert True
+    except Exception as e:
+        # If it does crash, it should be a meaningful error
+        assert "no samples" in str(e).lower() or "empty" in str(e).lower()
+
+
+def test_analysis_with_single_class(plugin, restore_config_file):
+    """Test analysis with only one thematic class."""
+    # restore
+    input_yml_path = pytest.tests_data_dir / "test_samples_in_zero_and_outside.yaml"
+    restore_config_file(input_yml_path)
+    
+    # Modify the config to have only one class
+    from AcATaMa.core import config
+    # Set all samples to have the same label_id
+    for sample_id in config.samples:
+        config.samples[sample_id]["label_id"] = 1
+    
+    # get accuracy assessment results in html
+    accuracy_assessment = AccuracyAssessmentWindow()
+    accuracy_assessment.analysis.estimator = plugin.dockwidget.QCBox_SamplingEstimator.currentText()
+    
+    # The analysis should handle single class gracefully
+    try:
+        accuracy_assessment.analysis.compute()
+        # If it doesn't crash, that's good
+        assert True
+    except Exception as e:
+        # If it does crash, it should be a meaningful error
+        assert "single class" in str(e).lower() or "multiple classes" in str(e).lower()
