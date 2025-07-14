@@ -170,8 +170,14 @@ class block_signals_to(object):
 
     def __enter__(self):
         # block
-        self.object_to_block.blockSignals(True)
+        try:
+            self.object_to_block.blockSignals(True)
+        except RuntimeError:
+            pass  # Object has been deleted
 
     def __exit__(self, type, value, traceback):
         # unblock
-        self.object_to_block.blockSignals(False)
+        try:
+            self.object_to_block.blockSignals(False)
+        except RuntimeError:
+            pass  # Object has been deleted
