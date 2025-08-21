@@ -22,7 +22,7 @@ import os
 import tempfile
 import uuid
 
-from qgis.PyQt import uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import Qt, pyqtSlot, QEventLoop, QTimer, QEvent
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QSplitter, QColorDialog, QDialog, QDialogButtonBox, QPushButton, \
     QMessageBox, QWidget, QLabel, QShortcut
@@ -242,6 +242,11 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             self.ccd_plugin.widget.setWindowFlag(Qt.WindowCloseButtonHint, False)
             self.ccd_plugin.widget.setFloating(False)
             self.ccd_plugin.widget.setTitleBarWidget(QWidget(None))
+            self.ccd_plugin.widget.setFeatures(QtWidgets.QDockWidget.NoDockWidgetFeatures)
+            self.ccd_plugin.widget.setContentsMargins(0, 0, 0, 0)
+            self.ccd_plugin.widget.setStyleSheet("QDockWidget { border: 0px; }")
+            self.ccd_plugin.widget.MainWidget.layout().setContentsMargins(0, 0, 0, 3)
+            self.ccd_plugin.widget.MainWidget.layout().setSpacing(3)
             # other adjustments
             self.ccd_plugin.widget.auto_generate_plot.setToolTip("Automatically generate plot when a new sample/marker is set")
             # init tmp dir for all process and intermediate files
