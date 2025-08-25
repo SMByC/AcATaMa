@@ -1,6 +1,7 @@
-**/__pycache__
-AcATaMa*.zip
+**/__pycache__/
+*.zip
+*.db
+extlibs
 resources.py
 venv
 .idea
-extlibs/
