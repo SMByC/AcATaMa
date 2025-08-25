@@ -23,7 +23,7 @@ import os
 from qgis.PyQt import uic
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QWidget, QGridLayout, QFileDialog
-from qgis.PyQt.QtCore import QSettings, pyqtSlot, QTimer, Qt
+from qgis.PyQt.QtCore import QSettings, pyqtSlot, QTimer, Qt, QEvent
 from qgis.PyQt.sip import isdeleted
 from qgis.core import QgsGeometry, QgsMapLayerProxyModel, QgsWkbTypes, QgsPoint
 from qgis.gui import QgsMapCanvas, QgsMapToolPan, QgsRubberBand, QgsVertexMarker
@@ -183,6 +183,9 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
         self.setupUi(self)
         # init as unactivated render widget for new instances
         self.disable()
+        # install event filter to block wheel events
+        for ui_item in [self.QCBox_RenderFile, self.scaleFactor]:
+            ui_item.installEventFilter(self)
 
     def setup_view_widget(self, sampling_layer):
         self.sampling_layer = sampling_layer
@@ -283,3 +286,8 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
         self.render_widget.set_extents_and_scalefactor(view_extent)
         # save the new scale factor
         self.current_scale_factor = round(self.scaleFactor.value(), 1)
+
+    def eventFilter(self, obj, event):
+        if event.type() == QEvent.Wheel:
+            return True  # Block the event
+        return super().eventFilter(obj, event)
