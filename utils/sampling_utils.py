@@ -101,6 +101,8 @@ def get_num_samples_by_keeping_total_samples(srs_table, new_num_samples):
 @wait_process
 def update_srs_table_content(srs_table):
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+    if AcATaMa.dockwidget is None:
+        return
     sampling_design = AcATaMa.dockwidget.sampling_design_window
 
     with block_signals_to(sampling_design.QTableW_StraRS):
@@ -195,6 +197,8 @@ def update_srs_table_content(srs_table):
 def reload_StraRS_table():
     """Reset the table, reloading the layer style, pixel count and restoring default values"""
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+    if AcATaMa.dockwidget is None:
+        return
     sampling_design = AcATaMa.dockwidget.sampling_design_window
     # clear table
     sampling_design.QTableW_StraRS.setRowCount(0)
@@ -224,6 +228,8 @@ def reload_StraRS_table():
 
 def fill_stratified_sampling_table():
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+    if AcATaMa.dockwidget is None:
+        return
     sampling_design = AcATaMa.dockwidget.sampling_design_window
     try:
         # check the current selected file
@@ -303,6 +309,8 @@ def fill_stratified_sampling_table():
 
 def update_stratified_sampling_table(changes_from):
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+    if AcATaMa.dockwidget is None:
+        return
     sampling_design = AcATaMa.dockwidget.sampling_design_window
     if sampling_design.QCBox_StraRS_Method.currentText().startswith("Fixed values"):
         srs_method = "fixed values"
@@ -360,4 +368,3 @@ def update_stratified_sampling_table(changes_from):
     update_srs_table_content(srs_table)
     # save srs table
     sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()][srs_method] = srs_table
-
