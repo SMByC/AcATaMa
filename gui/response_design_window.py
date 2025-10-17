@@ -320,6 +320,10 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             self.set_current_sample_in_ccd()
         else:
             self.widget_ccd.setVisible(False)
+            if self.ccd_plugin_available:
+                from CCD_Plugin.gui.CCD_Plugin_dockwidget import PickerCoordsOnMap
+                PickerCoordsOnMap.delete_markers()
+                self.ccd_plugin.widget.setup_map_tool(False)
 
     def set_current_sample_in_ccd(self):
         if not hasattr(self, "ccd_plugin") or not self.ccd_plugin.widget or not self.ccd_plugin_available:
@@ -603,10 +607,10 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
     def create_labeling_buttons(self, tableBtnsConfig=None, buttons_config=None):
         if not tableBtnsConfig and not buttons_config:
             return
-            
+
         # Clean up all existing shortcuts first
         self.cleanup_shortcuts()
-        
+
         # clear layout
         for i in reversed(range(self.Grid_LabelingButtons.count())):
             if self.Grid_LabelingButtons.itemAt(i).widget():
@@ -715,7 +719,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
 
         # Clean up shortcuts before closing
         self.cleanup_shortcuts()
-        
+
         ResponseDesignWindow.is_opened = False
         # restore the states for some objects in the dockwidget
         from AcATaMa.gui.sampling_design_window import SamplingDesignWindow
@@ -969,26 +973,26 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class ShortcutDialog(QDialog, FORM_CLASS):
     """Dialog for setting keyboard shortcuts with live key capture."""
-    
+
     def __init__(self, parent=None, current_shortcut="", button_name=""):
         super().__init__(parent)
         self.setupUi(self)
         self.current_shortcut = current_shortcut
         self.shortcut_text = current_shortcut
-        
+
         # Setup the UI
         self.shortcut_label.setText(f"Shortcut for <b>{button_name}</b>:" if button_name else "Shortcut:")
         self.shortcut_edit.setText(self.current_shortcut)
         self.shortcut_edit.installEventFilter(self)
         self.shortcut_edit.setFocus()
-        
+
         # Update clear button tooltip and icon
         self.clear_shortcut.setToolTip("Clear shortcut")
         self.clear_shortcut.setEnabled(bool(self.current_shortcut))
-        
+
         # Setup connections
         self.clear_shortcut.clicked.connect(self.clear_shortcut_action)
-        
+
     def eventFilter(self, obj, event):
         """Event filter to handle keyboard events."""
         # Use integer value for KeyPress if attribute is missing
@@ -1008,10 +1012,10 @@ class ShortcutDialog(QDialog, FORM_CLASS):
         MOD_ALT = getattr(Qt, 'AltModifier', 0x08000000)
         MOD_SHIFT = getattr(Qt, 'ShiftModifier', 0x02000000)
         MOD_META = getattr(Qt, 'MetaModifier', 0x10000000)
-        
+
         if event.key() in [KEY_CONTROL, KEY_ALT, KEY_SHIFT, KEY_META]:
             return True
-            
+
         # Build the shortcut string
         modifiers = []
         if event.modifiers() & MOD_CONTROL:
@@ -1022,7 +1026,7 @@ class ShortcutDialog(QDialog, FORM_CLASS):
             modifiers.append("Shift")
         if event.modifiers() & MOD_META:
             modifiers.append("Meta")
-            
+
         # Get the key name
         key_name = self.get_key_name(event.key())
         if key_name:
@@ -1030,12 +1034,12 @@ class ShortcutDialog(QDialog, FORM_CLASS):
                 self.shortcut_text = "+".join(modifiers) + "+" + key_name
             else:
                 self.shortcut_text = key_name
-                
+
             self.shortcut_edit.setText(self.shortcut_text)
             self.clear_shortcut.setEnabled(True)
             return True
         return False
-            
+
     def get_key_name(self, key):
         """Convert Qt key to readable name."""
         # Use getattr for all Qt key enums with fallback values
@@ -1050,7 +1054,7 @@ class ShortcutDialog(QDialog, FORM_CLASS):
             'Key_Space': 0x20
         }
         key_names = {getattr(Qt, k, v): k.split('_', 1)[1] for k, v in qt_keys.items()}
-        
+
         if key in key_names:
             return key_names[key]
         elif getattr(Qt, 'Key_A', 0x41) <= key <= getattr(Qt, 'Key_Z', 0x5A):
@@ -1059,13 +1063,13 @@ class ShortcutDialog(QDialog, FORM_CLASS):
             return chr(key)
         else:
             return None
-            
+
     def clear_shortcut_action(self):
         """Clear the current shortcut."""
         self.shortcut_text = ""
         self.shortcut_edit.setText("")
         self.clear_shortcut.setEnabled(False)
-        
+
     @property
     def shortcut(self):
         """Get the final shortcut text."""
