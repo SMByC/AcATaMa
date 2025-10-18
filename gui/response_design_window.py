@@ -438,7 +438,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         # update checked status of the labeling button
         self.update_labeling_button_activation()
         # update plugin with the current sampling status
-        AcATaMa.dockwidget.update_response_design_state()
+        AcATaMa.dockwidget.update_response_design_config()
 
     def highlight_thematic_pixel(self):
         # highlight thematic pixel respectively of the current sampling point
@@ -671,7 +671,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
 
         # reload analysis status in accuracy assessment
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        AcATaMa.dockwidget.update_analysis_state()
+        AcATaMa.dockwidget.update_analysis_config()
         # reload the current sample status
         self.update_sample_status()
 

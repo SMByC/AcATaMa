@@ -159,7 +159,7 @@ class ResponseDesign(object):
         self.points = points_from_shapefile
         # update the status and labels for the current sampling file
         self.reload_labeling_status()
-        AcATaMa.dockwidget.update_response_design_state()
+        AcATaMa.dockwidget.update_response_design_config()
         # notify
         iface.messageBar().pushMessage("AcATaMa", "Sampling file reloaded successfully: {} modified,"
                                                   "{} added and {} removed".format(modified, added, removed),

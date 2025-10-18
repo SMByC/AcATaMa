@@ -113,19 +113,19 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QPBtn_OpenSamplingDesignWindow.setDisabled(True)
         self.QCBox_SamplingFile.currentIndexChanged[int].connect(lambda index: self.QPBtn_reloadSamplingFile.setEnabled(index > 0))
         # set and update the sampling file status in analysis tab
-        self.QCBox_SamplingFile.layerChanged.connect(self.update_analysis_state)
+        self.QCBox_SamplingFile.layerChanged.connect(self.update_analysis_config)
         # show the sampling design window when press the QPBtn_OpenSamplingDesignWindow
         self.QPBtn_OpenSamplingDesignWindow.clicked.connect(self.open_sampling_design_window)
         self.QPBtn_openSamplingReport.setDisabled(True)
         self.QPBtn_openSamplingReport.clicked.connect(self.open_sampling_report)
-        self.QCBox_SamplingFile.layerChanged.connect(self.update_sampling_report_state)
+        self.QCBox_SamplingFile.layerChanged.connect(self.update_sampling_report_config)
 
         # ######### Response Design tab ######### #
         # set properties to QgsMapLayerComboBox
         self.QCBox_SamplingFile.setCurrentIndex(-1)
         self.QCBox_SamplingFile.setFilters(QgsMapLayerProxyModel.PointLayer)
         # show the response design state for the sampling file selected
-        self.QCBox_SamplingFile.layerChanged.connect(self.update_response_design_state)
+        self.QCBox_SamplingFile.layerChanged.connect(self.update_response_design_config)
         # call to browse the sampling file
         self.QPBtn_browseSamplingFile.clicked.connect(lambda: self.browser_dialog_to_load_file(
             self.QCBox_SamplingFile,
@@ -134,8 +134,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # call to reload sampling file
         self.QPBtn_reloadSamplingFile.clicked.connect(self.reload_sampling_file)
         # call to load and save Acatama state and config
-        self.QPBtn_RestoreAcatamaState.clicked.connect(self.file_dialog_restore_acatama_state)
-        self.QPBtn_SaveAcatamaState.clicked.connect(self.file_dialog_save_acatama_state)
+        self.QPBtn_RestoreAcatamaState.clicked.connect(self.file_dialog_restore_acatama_config)
+        self.QPBtn_SaveAcatamaState.clicked.connect(self.file_dialog_save_acatama_config)
         # save sampling + labeling
         self.QPBtn_saveSamplingLabeled.clicked.connect(self.file_dialog_save_sampling_labeled)
         # grid settings
@@ -154,7 +154,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # disable group box that depends on sampling file
         self.QGBox_Analysis.setDisabled(True)
 
-        self.update_response_design_state()
+        self.update_response_design_config()
 
     @pyqtSlot()
     def browser_dialog_to_load_file(self, combo_box, dialog_title, file_filters):
@@ -180,7 +180,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             # disable sampling window
             self.QPBtn_OpenSamplingDesignWindow.setDisabled(True)
             # updated state of sampling file selected for accuracy assessment tab
-            self.update_analysis_state()
+            self.update_analysis_config()
 
         # first check
         if not thematic_map_layer or not valid_file_selected_in(self.QCBox_ThematicMap, "thematic map"):
@@ -208,13 +208,13 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         if sampling_layer and sampling_layer in ResponseDesign.instances:
             response_design = ResponseDesign.instances[sampling_layer]
             response_design.reload_labeling_status()
-            self.update_response_design_state()
+            self.update_response_design_config()
             # define if this response_design was made with thematic classes
             if response_design.buttons_config and True in [bc["thematic_class"] is not None and bc["thematic_class"] != ""
                                                            for bc in response_design.buttons_config.values()]:
                 response_design.with_thematic_classes = True
             # reload analysis status in accuracy assessment
-            self.update_analysis_state()
+            self.update_analysis_config()
 
     @pyqtSlot(int)
     def update_thematic_map_band(self, band_index):
@@ -248,7 +248,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.sampling_design_window.nodata_PostStratMap_SystS.setText(nodata)
 
     @pyqtSlot("QgsMapLayer*")
-    def update_sampling_report_state(self, sampling_layer=None):
+    def update_sampling_report_config(self, sampling_layer=None):
         if sampling_layer is None:
             sampling_layer = self.QCBox_SamplingFile.currentLayer()
 
@@ -264,7 +264,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
 
     @pyqtSlot("QgsMapLayer*")
-    def update_response_design_state(self, sampling_layer=None):
+    def update_response_design_config(self, sampling_layer=None):
         if sampling_layer is None:
             sampling_layer = self.QCBox_SamplingFile.currentLayer()
 
@@ -300,7 +300,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.QGBox_ResponseDesign.setDisabled(True)
 
         # update state of sampling file selected for accuracy assessment tab
-        self.update_analysis_state()
+        self.update_analysis_config()
 
     @pyqtSlot()
     def reload_sampling_file(self):
@@ -319,7 +319,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                     self.QPBtn_openSamplingReport.setDisabled(True)
 
             # updated state of sampling file selected for accuracy assessment tab
-            self.update_analysis_state()
+            self.update_analysis_config()
         else:
             iface.messageBar().pushMessage("AcATaMa", "No sampling file selected",
                                            level=Qgis.Warning, duration=10)
@@ -327,20 +327,20 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
     @pyqtSlot()
     @error_handler
-    def file_dialog_restore_acatama_state(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, self.tr("Restore to a previous saved of AcATaMa configuration and state"),
+    def file_dialog_restore_acatama_config(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, self.tr("Restore a previously saved AcATaMa configuration"),
                                                    "", self.tr("YAML files (*.yaml *.yml);;All files (*.*)"))
 
         if file_path != '' and os.path.isfile(file_path):
             # restore configuration and response design state
             config.restore(file_path)
             self.suggested_yml_file = file_path
-            iface.messageBar().pushMessage("AcATaMa", "Configuration and state restored successfully",
+            iface.messageBar().pushMessage("AcATaMa", "Configuration restored successfully",
                                            level=Qgis.Success, duration=10)
 
     @pyqtSlot()
     @error_handler
-    def file_dialog_save_acatama_state(self):
+    def file_dialog_save_acatama_config(self):
         if self.suggested_yml_file:
             suggested_filename = self.suggested_yml_file
         elif valid_file_selected_in(self.QCBox_ThematicMap) or valid_file_selected_in(self.QCBox_SamplingFile):
@@ -354,7 +354,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         else:
             suggested_filename = "acatama.yaml"
 
-        output_file = get_save_file_name(self, "Save AcATaMa configuration and state",
+        output_file = get_save_file_name(self, "Save the current AcATaMa configuration",
                                          suggested_filename, "YAML files (*.yaml *.yml);;All files (*.*)")
 
         if output_file_is_OK(output_file):
@@ -469,7 +469,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.response_design_window.setFocus()
 
     @pyqtSlot("QgsMapLayer*")
-    def update_analysis_state(self, sampling_layer=None):
+    def update_analysis_config(self, sampling_layer=None):
         if sampling_layer is None:
             sampling_layer = self.QCBox_SamplingFile.currentLayer()
 

@@ -655,7 +655,7 @@ def restore(yml_file_path):
                     sample_to_restore.is_labeled = True
         # update the status and labels plugin with the current sampling response_design
         response_design.reload_labeling_status()
-        AcATaMa.dockwidget.update_response_design_state()
+        AcATaMa.dockwidget.update_response_design_config()
         # define if this response_design was made with thematic classes
         if response_design.buttons_config and yaml_config["thematic_map"]["path"] and \
                 True in [bc["thematic_class"] is not None and bc["thematic_class"] != "" for bc in response_design.buttons_config.values()]:
@@ -716,4 +716,4 @@ def restore(yml_file_path):
         response_design.analysis = analysis
 
     # reload analysis status in accuracy assessment
-    AcATaMa.dockwidget.update_analysis_state()
+    AcATaMa.dockwidget.update_analysis_config()
