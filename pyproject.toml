@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "acatama"
+version = "25.7"
+description = "Python env for testing"
+authors = [{ name = "Xavier C. Llano", email = "xavier.corredor.llano@gmail.com" }]
+requires-python = ">=3.13,<4.0"
+dependencies = [
+  "attrs",
+  "cloudpickle",
+  "dask",
+  "fiona",
+  "numpy",
+  "partd",
+  "pytest",
+  "pytest-qgis",
+  "setuptools",
+  "shapely",
+  "toolz",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+qgis = { path = "/usr/lib/python3.13/site-packages" }
+
+[tool.pyright]
+extraPaths = [".."]  # include project folder
+venv = ".venv"
+reportUnknownVariableType = "none"
+reportUnknownParameterType = "none"
+reportUnknownMemberType = "none"
+reportUnknownArgumentType = "none"
+reportMissingTypeStubs = false
+reportMissingParameterType = false
