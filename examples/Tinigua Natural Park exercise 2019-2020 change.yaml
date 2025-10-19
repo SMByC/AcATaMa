@@ -1,0 +1,2279 @@
+general:
+  config_file_version: 250700
+thematic_map:
+  path: data/Thematic - 2019-2020 change - Tinigua.tif
+  band: 1
+  nodata: '0'
+sampling_design:
+  tab_activated: 1
+  simple_random_sampling:
+    num_samples: 10
+    num_samples_overall_accuracy: 85%
+    num_samples_half_width_ci: 4.0%
+    num_samples_confidence_interval: 95%
+    min_distance: 0.0
+    post_stratification: false
+    post_stratification_map_path: null
+    post_stratification_map_band: -1
+    post_stratification_map_nodata: ''
+    classes_selected_for_sampling: null
+    with_neighbors_aggregation: false
+    num_neighbors: '8'
+    min_neighbors_with_the_same_class: '1'
+    random_sampling_options: false
+    automatic_random_seed: true
+    with_random_seed_by_user: false
+    random_seed_by_user: ''
+  stratified_random_sampling:
+    stratification_map_path: data/Thematic - 2019-2020 change - Tinigua.tif
+    stratification_map_band: 1
+    stratification_map_nodata: '0'
+    sampling_random_method: Area based proportion (using overall std error)
+    overall_std_error: 0.0135
+    minimum_samples_per_stratum: 30
+    stratified_random_sampling_table:
+      'On':
+      - true
+      - true
+      - false
+      - false
+      - true
+      - false
+      - false
+      - false
+      - false
+      - false
+      - false
+      - false
+      - false
+      - false
+      - false
+      column_count: 5
+      header:
+      - Pix Val
+      - Color
+      - Num Samples
+      - Ui
+      - 'On'
+      num_samples:
+      - '313'
+      - '50'
+      - '0'
+      - '0'
+      - '139'
+      - '0'
+      - '0'
+      - '0'
+      - '0'
+      - '0'
+      - '0'
+      - '0'
+      - '0'
+      - '0'
+      - '0'
+      pixel_count:
+      - 1611984
+      - 63375
+      - 0
+      - 0
+      - 711441
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      row_count: 15
+      ui:
+      - '0.9'
+      - '0.8'
+      - '0.01'
+      - '0.01'
+      - '0.9'
+      - '0.01'
+      - '0.01'
+      - '0.01'
+      - '0.01'
+      - '0.01'
+      - '0.01'
+      - '0.01'
+      - '0.01'
+      - '0.01'
+      - '0.01'
+      values_and_colors_table:
+        Alpha:
+        - 255
+        - 255
+        - 255
+        - 255
+        - 255
+        - 255
+        - 255
+        - 255
+        - 255
+        - 255
+        - 255
+        - 255
+        - 255
+        - 255
+        - 255
+        Blue:
+        - 0
+        - 0
+        - 0
+        - 255
+        - 220
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        Green:
+        - 100
+        - 0
+        - 165
+        - 0
+        - 245
+        - 0
+        - 0
+        - 0
+        - 165
+        - 255
+        - 255
+        - 0
+        - 0
+        - 0
+        - 0
+        Pixel Value:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+        - 11
+        - 12
+        - 13
+        - 14
+        - 15
+        Red:
+        - 0
+        - 255
+        - 255
+        - 0
+        - 245
+        - 0
+        - 0
+        - 0
+        - 255
+        - 255
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+    min_distance: 800.0
+    with_neighbors_aggregation: true
+    num_neighbors: '8'
+    min_neighbors_with_the_same_class: '4'
+    random_sampling_options: true
+    automatic_random_seed: false
+    with_random_seed_by_user: true
+    random_seed_by_user: '5'
+  systematic_sampling:
+    systematic_sampling_unit: Distance
+    points_spacing: 0.0
+    num_samples_overall_accuracy: 85%
+    num_samples_half_width_ci: 4.0%
+    num_samples_confidence_interval: 95%
+    initial_inset_mode: Fixed
+    initial_inset: 0.0
+    max_xy_offset: 0.0
+    post_stratification: false
+    post_stratification_map_path: null
+    post_stratification_map_band: -1
+    post_stratification_map_nodata: ''
+    classes_selected_for_sampling: null
+    with_neighbors_aggregation: false
+    num_neighbors: '8'
+    min_neighbors_with_the_same_class: '1'
+    random_sampling_options: false
+    automatic_random_seed: true
+    with_random_seed_by_user: false
+    random_seed_by_user: ''
+sampling_layer: data/stratified sampling.gpkg
+dialog_size:
+- 1366
+- 951
+response_design_grid_settings_first_open: false
+grid_view_widgets:
+  columns: 2
+  rows: 2
+current_sample_idx: 361
+sampling_unit_pixel_buffer: 1
+sampling_unit_color: '#ff0000'
+fit_to_sample: 200.0
+is_completed: true
+view_widgets_config:
+  0:
+    view_name: 2019 Mean
+    layer_name: 2019 mean Tinigua
+    render_file_path: data/2019 mean Tinigua.tif
+    scale_factor: 1.0
+  1:
+    view_name: 2020 Mean
+    layer_name: 2020 mean Tinigua
+    render_file_path: data/2020 mean Tinigua.tif
+    scale_factor: 1.0
+  2:
+    view_name: 2019 Last Pixel
+    layer_name: null
+    render_file_path: null
+    scale_factor: 1.0
+  3:
+    view_name: 2020 Last Pixel
+    layer_name: null
+    render_file_path: null
+    scale_factor: 1.0
+labeling_buttons:
+  1:
+    color: '#006400'
+    name: Stable Forest
+    shortcut: F
+    thematic_class: '1'
+  2:
+    color: '#ff0000'
+    name: Deforestation
+    shortcut: D
+    thematic_class: '2'
+  3:
+    color: '#00ffff'
+    name: Non-Stable Forest
+    shortcut: N
+    thematic_class: '5'
+auto_next_sample: true
+samples:
+  0:
+    label_id: 1
+    sample_id: 371
+  1:
+    label_id: 1
+    sample_id: 145
+  2:
+    label_id: 3
+    sample_id: 463
+  3:
+    label_id: 1
+    sample_id: 164
+  4:
+    label_id: 1
+    sample_id: 207
+  5:
+    label_id: 3
+    sample_id: 440
+  6:
+    label_id: 3
+    sample_id: 336
+  7:
+    label_id: 1
+    sample_id: 43
+  8:
+    label_id: 1
+    sample_id: 108
+  9:
+    label_id: 1
+    sample_id: 277
+  10:
+    label_id: 1
+    sample_id: 325
+  11:
+    label_id: 1
+    sample_id: 160
+  12:
+    label_id: 1
+    sample_id: 334
+  13:
+    label_id: 1
+    sample_id: 495
+  14:
+    label_id: 3
+    sample_id: 368
+  15:
+    label_id: 1
+    sample_id: 223
+  16:
+    label_id: 1
+    sample_id: 59
+  17:
+    label_id: 1
+    sample_id: 176
+  18:
+    label_id: 3
+    sample_id: 345
+  19:
+    label_id: 2
+    sample_id: 483
+  20:
+    label_id: 1
+    sample_id: 203
+  21:
+    label_id: 3
+    sample_id: 303
+  22:
+    label_id: 3
+    sample_id: 253
+  23:
+    label_id: 3
+    sample_id: 289
+  24:
+    label_id: 1
+    sample_id: 372
+  25:
+    label_id: 1
+    sample_id: 251
+  26:
+    label_id: 2
+    sample_id: 32
+  27:
+    label_id: 1
+    sample_id: 304
+  28:
+    label_id: 3
+    sample_id: 364
+  29:
+    label_id: 1
+    sample_id: 464
+  30:
+    label_id: 3
+    sample_id: 286
+  31:
+    label_id: 1
+    sample_id: 323
+  32:
+    label_id: 3
+    sample_id: 282
+  33:
+    label_id: 1
+    sample_id: 376
+  34:
+    label_id: 3
+    sample_id: 42
+  35:
+    label_id: 2
+    sample_id: 60
+  36:
+    label_id: 1
+    sample_id: 112
+  37:
+    label_id: 1
+    sample_id: 388
+  38:
+    label_id: 1
+    sample_id: 487
+  39:
+    label_id: 2
+    sample_id: 46
+  40:
+    label_id: 3
+    sample_id: 308
+  41:
+    label_id: 3
+    sample_id: 465
+  42:
+    label_id: 1
+    sample_id: 231
+  43:
+    label_id: 1
+    sample_id: 151
+  44:
+    label_id: 3
+    sample_id: 85
+  45:
+    label_id: 1
+    sample_id: 213
+  46:
+    label_id: 1
+    sample_id: 114
+  47:
+    label_id: 3
+    sample_id: 468
+  48:
+    label_id: 1
+    sample_id: 329
+  49:
+    label_id: 1
+    sample_id: 264
+  50:
+    label_id: 1
+    sample_id: 154
+  51:
+    label_id: 1
+    sample_id: 248
+  52:
+    label_id: 2
+    sample_id: 36
+  53:
+    label_id: 2
+    sample_id: 105
+  54:
+    label_id: 1
+    sample_id: 104
+  55:
+    label_id: 1
+    sample_id: 220
+  56:
+    label_id: 1
+    sample_id: 377
+  57:
+    label_id: 3
+    sample_id: 166
+  58:
+    label_id: 1
+    sample_id: 427
+  59:
+    label_id: 3
+    sample_id: 384
+  60:
+    label_id: 1
+    sample_id: 492
+  61:
+    label_id: 1
+    sample_id: 276
+  62:
+    label_id: 3
+    sample_id: 426
+  63:
+    label_id: 3
+    sample_id: 99
+  64:
+    label_id: 2
+    sample_id: 82
+  65:
+    label_id: 1
+    sample_id: 482
+  66:
+    label_id: 3
+    sample_id: 117
+  67:
+    label_id: 1
+    sample_id: 392
+  68:
+    label_id: 3
+    sample_id: 417
+  69:
+    label_id: 2
+    sample_id: 156
+  70:
+    label_id: 1
+    sample_id: 439
+  71:
+    label_id: 1
+    sample_id: 84
+  72:
+    label_id: 1
+    sample_id: 2
+  73:
+    label_id: 1
+    sample_id: 221
+  74:
+    label_id: 1
+    sample_id: 14
+  75:
+    label_id: 3
+    sample_id: 30
+  76:
+    label_id: 1
+    sample_id: 178
+  77:
+    label_id: 1
+    sample_id: 235
+  78:
+    label_id: 1
+    sample_id: 126
+  79:
+    label_id: 1
+    sample_id: 366
+  80:
+    label_id: 3
+    sample_id: 79
+  81:
+    label_id: 1
+    sample_id: 129
+  82:
+    label_id: 1
+    sample_id: 256
+  83:
+    label_id: 1
+    sample_id: 469
+  84:
+    label_id: 1
+    sample_id: 425
+  85:
+    label_id: 1
+    sample_id: 416
+  86:
+    label_id: 1
+    sample_id: 41
+  87:
+    label_id: 1
+    sample_id: 111
+  88:
+    label_id: 1
+    sample_id: 93
+  89:
+    label_id: 1
+    sample_id: 493
+  90:
+    label_id: 2
+    sample_id: 431
+  91:
+    label_id: 3
+    sample_id: 88
+  92:
+    label_id: 1
+    sample_id: 484
+  93:
+    label_id: 1
+    sample_id: 263
+  94:
+    label_id: 3
+    sample_id: 86
+  95:
+    label_id: 1
+    sample_id: 437
+  96:
+    label_id: 3
+    sample_id: 316
+  97:
+    label_id: 3
+    sample_id: 438
+  98:
+    label_id: 3
+    sample_id: 488
+  99:
+    label_id: 1
+    sample_id: 339
+  100:
+    label_id: 3
+    sample_id: 39
+  101:
+    label_id: 3
+    sample_id: 4
+  102:
+    label_id: 1
+    sample_id: 175
+  103:
+    label_id: 3
+    sample_id: 162
+  104:
+    label_id: 1
+    sample_id: 322
+  105:
+    label_id: 1
+    sample_id: 157
+  106:
+    label_id: 3
+    sample_id: 396
+  107:
+    label_id: 1
+    sample_id: 307
+  108:
+    label_id: 2
+    sample_id: 204
+  109:
+    label_id: 3
+    sample_id: 243
+  110:
+    label_id: 3
+    sample_id: 187
+  111:
+    label_id: 3
+    sample_id: 418
+  112:
+    label_id: 3
+    sample_id: 271
+  113:
+    label_id: 1
+    sample_id: 133
+  114:
+    label_id: 3
+    sample_id: 424
+  115:
+    label_id: 1
+    sample_id: 80
+  116:
+    label_id: 2
+    sample_id: 461
+  117:
+    label_id: 1
+    sample_id: 215
+  118:
+    label_id: 3
+    sample_id: 419
+  119:
+    label_id: 1
+    sample_id: 311
+  120:
+    label_id: 1
+    sample_id: 205
+  121:
+    label_id: 2
+    sample_id: 332
+  122:
+    label_id: 1
+    sample_id: 181
+  123:
+    label_id: 3
+    sample_id: 398
+  124:
+    label_id: 3
+    sample_id: 89
+  125:
+    label_id: 3
+    sample_id: 198
+  126:
+    label_id: 1
+    sample_id: 210
+  127:
+    label_id: 1
+    sample_id: 499
+  128:
+    label_id: 3
+    sample_id: 285
+  129:
+    label_id: 1
+    sample_id: 449
+  130:
+    label_id: 1
+    sample_id: 363
+  131:
+    label_id: 1
+    sample_id: 490
+  132:
+    label_id: 1
+    sample_id: 71
+  133:
+    label_id: 3
+    sample_id: 254
+  134:
+    label_id: 1
+    sample_id: 429
+  135:
+    label_id: 1
+    sample_id: 201
+  136:
+    label_id: 3
+    sample_id: 352
+  137:
+    label_id: 1
+    sample_id: 25
+  138:
+    label_id: 3
+    sample_id: 33
+  139:
+    label_id: 3
+    sample_id: 37
+  140:
+    label_id: 1
+    sample_id: 374
+  141:
+    label_id: 2
+    sample_id: 447
+  142:
+    label_id: 3
+    sample_id: 403
+  143:
+    label_id: 1
+    sample_id: 98
+  144:
+    label_id: 3
+    sample_id: 294
+  145:
+    label_id: 3
+    sample_id: 212
+  146:
+    label_id: 1
+    sample_id: 197
+  147:
+    label_id: 1
+    sample_id: 445
+  148:
+    label_id: 2
+    sample_id: 234
+  149:
+    label_id: 1
+    sample_id: 331
+  150:
+    label_id: 3
+    sample_id: 450
+  151:
+    label_id: 3
+    sample_id: 399
+  152:
+    label_id: 1
+    sample_id: 411
+  153:
+    label_id: 1
+    sample_id: 118
+  154:
+    label_id: 1
+    sample_id: 356
+  155:
+    label_id: 1
+    sample_id: 245
+  156:
+    label_id: 2
+    sample_id: 315
+  157:
+    label_id: 1
+    sample_id: 174
+  158:
+    label_id: 1
+    sample_id: 270
+  159:
+    label_id: 1
+    sample_id: 400
+  160:
+    label_id: 1
+    sample_id: 127
+  161:
+    label_id: 3
+    sample_id: 56
+  162:
+    label_id: 1
+    sample_id: 106
+  163:
+    label_id: 1
+    sample_id: 168
+  164:
+    label_id: 1
+    sample_id: 471
+  165:
+    label_id: 1
+    sample_id: 324
+  166:
+    label_id: 1
+    sample_id: 466
+  167:
+    label_id: 1
+    sample_id: 430
+  168:
+    label_id: 1
+    sample_id: 355
+  169:
+    label_id: 1
+    sample_id: 302
+  170:
+    label_id: 3
+    sample_id: 459
+  171:
+    label_id: 1
+    sample_id: 12
+  172:
+    label_id: 3
+    sample_id: 136
+  173:
+    label_id: 2
+    sample_id: 116
+  174:
+    label_id: 1
+    sample_id: 409
+  175:
+    label_id: 1
+    sample_id: 26
+  176:
+    label_id: 3
+    sample_id: 413
+  177:
+    label_id: 1
+    sample_id: 448
+  178:
+    label_id: 3
+    sample_id: 113
+  179:
+    label_id: 3
+    sample_id: 313
+  180:
+    label_id: 3
+    sample_id: 73
+  181:
+    label_id: 1
+    sample_id: 387
+  182:
+    label_id: 2
+    sample_id: 480
+  183:
+    label_id: 1
+    sample_id: 24
+  184:
+    label_id: 1
+    sample_id: 78
+  185:
+    label_id: 1
+    sample_id: 489
+  186:
+    label_id: 2
+    sample_id: 5
+  187:
+    label_id: 3
+    sample_id: 139
+  188:
+    label_id: 3
+    sample_id: 327
+  189:
+    label_id: 1
+    sample_id: 491
+  190:
+    label_id: 1
+    sample_id: 342
+  191:
+    label_id: 1
+    sample_id: 501
+  192:
+    label_id: 3
+    sample_id: 8
+  193:
+    label_id: 1
+    sample_id: 192
+  194:
+    label_id: 1
+    sample_id: 290
+  195:
+    label_id: 1
+    sample_id: 367
+  196:
+    label_id: 3
+    sample_id: 432
+  197:
+    label_id: 1
+    sample_id: 401
+  198:
+    label_id: 3
+    sample_id: 402
+  199:
+    label_id: 1
+    sample_id: 314
+  200:
+    label_id: 1
+    sample_id: 38
+  201:
+    label_id: 3
+    sample_id: 405
+  202:
+    label_id: 1
+    sample_id: 435
+  203:
+    label_id: 3
+    sample_id: 272
+  204:
+    label_id: 3
+    sample_id: 397
+  205:
+    label_id: 3
+    sample_id: 309
+  206:
+    label_id: 1
+    sample_id: 15
+  207:
+    label_id: 3
+    sample_id: 77
+  208:
+    label_id: 1
+    sample_id: 101
+  209:
+    label_id: 1
+    sample_id: 479
+  210:
+    label_id: 1
+    sample_id: 478
+  211:
+    label_id: 3
+    sample_id: 140
+  212:
+    label_id: 1
+    sample_id: 206
+  213:
+    label_id: 1
+    sample_id: 346
+  214:
+    label_id: 1
+    sample_id: 173
+  215:
+    label_id: 1
+    sample_id: 155
+  216:
+    label_id: 1
+    sample_id: 218
+  217:
+    label_id: 3
+    sample_id: 284
+  218:
+    label_id: 3
+    sample_id: 442
+  219:
+    label_id: 1
+    sample_id: 330
+  220:
+    label_id: 2
+    sample_id: 496
+  221:
+    label_id: 1
+    sample_id: 312
+  222:
+    label_id: 3
+    sample_id: 91
+  223:
+    label_id: 3
+    sample_id: 96
+  224:
+    label_id: 1
+    sample_id: 362
+  225:
+    label_id: 1
+    sample_id: 265
+  226:
+    label_id: 3
+    sample_id: 171
+  227:
+    label_id: 1
+    sample_id: 134
+  228:
+    label_id: 1
+    sample_id: 321
+  229:
+    label_id: 2
+    sample_id: 475
+  230:
+    label_id: 1
+    sample_id: 200
+  231:
+    label_id: 2
+    sample_id: 242
+  232:
+    label_id: 3
+    sample_id: 357
+  233:
+    label_id: 1
+    sample_id: 360
+  234:
+    label_id: 3
+    sample_id: 158
+  235:
+    label_id: 3
+    sample_id: 48
+  236:
+    label_id: 1
+    sample_id: 266
+  237:
+    label_id: 1
+    sample_id: 337
+  238:
+    label_id: 3
+    sample_id: 119
+  239:
+    label_id: 1
+    sample_id: 386
+  240:
+    label_id: 3
+    sample_id: 233
+  241:
+    label_id: 1
+    sample_id: 335
+  242:
+    label_id: 3
+    sample_id: 150
+  243:
+    label_id: 2
+    sample_id: 229
+  244:
+    label_id: 3
+    sample_id: 182
+  245:
+    label_id: 3
+    sample_id: 390
+  246:
+    label_id: 1
+    sample_id: 502
+  247:
+    label_id: 2
+    sample_id: 180
+  248:
+    label_id: 1
+    sample_id: 382
+  249:
+    label_id: 2
+    sample_id: 34
+  250:
+    label_id: 3
+    sample_id: 69
+  251:
+    label_id: 1
+    sample_id: 389
+  252:
+    label_id: 1
+    sample_id: 317
+  253:
+    label_id: 1
+    sample_id: 128
+  254:
+    label_id: 1
+    sample_id: 52
+  255:
+    label_id: 3
+    sample_id: 456
+  256:
+    label_id: 1
+    sample_id: 109
+  257:
+    label_id: 1
+    sample_id: 124
+  258:
+    label_id: 1
+    sample_id: 375
+  259:
+    label_id: 3
+    sample_id: 344
+  260:
+    label_id: 1
+    sample_id: 279
+  261:
+    label_id: 3
+    sample_id: 188
+  262:
+    label_id: 1
+    sample_id: 228
+  263:
+    label_id: 3
+    sample_id: 170
+  264:
+    label_id: 1
+    sample_id: 159
+  265:
+    label_id: 3
+    sample_id: 76
+  266:
+    label_id: 3
+    sample_id: 67
+  267:
+    label_id: 1
+    sample_id: 467
+  268:
+    label_id: 1
+    sample_id: 278
+  269:
+    label_id: 2
+    sample_id: 288
+  270:
+    label_id: 3
+    sample_id: 407
+  271:
+    label_id: 3
+    sample_id: 100
+  272:
+    label_id: 1
+    sample_id: 250
+  273:
+    label_id: 1
+    sample_id: 280
+  274:
+    label_id: 3
+    sample_id: 452
+  275:
+    label_id: 1
+    sample_id: 57
+  276:
+    label_id: 1
+    sample_id: 62
+  277:
+    label_id: 3
+    sample_id: 494
+  278:
+    label_id: 3
+    sample_id: 123
+  279:
+    label_id: 1
+    sample_id: 92
+  280:
+    label_id: 3
+    sample_id: 28
+  281:
+    label_id: 1
+    sample_id: 361
+  282:
+    label_id: 1
+    sample_id: 255
+  283:
+    label_id: 1
+    sample_id: 500
+  284:
+    label_id: 1
+    sample_id: 238
+  285:
+    label_id: 3
+    sample_id: 167
+  286:
+    label_id: 1
+    sample_id: 53
+  287:
+    label_id: 1
+    sample_id: 410
+  288:
+    label_id: 1
+    sample_id: 247
+  289:
+    label_id: 1
+    sample_id: 144
+  290:
+    label_id: 1
+    sample_id: 378
+  291:
+    label_id: 3
+    sample_id: 49
+  292:
+    label_id: 1
+    sample_id: 131
+  293:
+    label_id: 1
+    sample_id: 338
+  294:
+    label_id: 1
+    sample_id: 190
+  295:
+    label_id: 1
+    sample_id: 211
+  296:
+    label_id: 1
+    sample_id: 142
+  297:
+    label_id: 1
+    sample_id: 436
+  298:
+    label_id: 1
+    sample_id: 222
+  299:
+    label_id: 1
+    sample_id: 422
+  300:
+    label_id: 1
+    sample_id: 195
+  301:
+    label_id: 1
+    sample_id: 40
+  302:
+    label_id: 1
+    sample_id: 273
+  303:
+    label_id: 1
+    sample_id: 225
+  304:
+    label_id: 1
+    sample_id: 74
+  305:
+    label_id: 3
+    sample_id: 68
+  306:
+    label_id: 1
+    sample_id: 443
+  307:
+    label_id: 1
+    sample_id: 122
+  308:
+    label_id: 3
+    sample_id: 184
+  309:
+    label_id: 3
+    sample_id: 486
+  310:
+    label_id: 1
+    sample_id: 454
+  311:
+    label_id: 1
+    sample_id: 310
+  312:
+    label_id: 3
+    sample_id: 45
+  313:
+    label_id: 1
+    sample_id: 47
+  314:
+    label_id: 1
+    sample_id: 455
+  315:
+    label_id: 1
+    sample_id: 462
+  316:
+    label_id: 3
+    sample_id: 275
+  317:
+    label_id: 3
+    sample_id: 498
+  318:
+    label_id: 3
+    sample_id: 152
+  319:
+    label_id: 3
+    sample_id: 353
+  320:
+    label_id: 3
+    sample_id: 138
+  321:
+    label_id: 3
+    sample_id: 191
+  322:
+    label_id: 1
+    sample_id: 217
+  323:
+    label_id: 3
+    sample_id: 20
+  324:
+    label_id: 1
+    sample_id: 65
+  325:
+    label_id: 1
+    sample_id: 186
+  326:
+    label_id: 3
+    sample_id: 95
+  327:
+    label_id: 3
+    sample_id: 257
+  328:
+    label_id: 1
+    sample_id: 320
+  329:
+    label_id: 3
+    sample_id: 163
+  330:
+    label_id: 1
+    sample_id: 185
+  331:
+    label_id: 1
+    sample_id: 412
+  332:
+    label_id: 1
+    sample_id: 404
+  333:
+    label_id: 1
+    sample_id: 110
+  334:
+    label_id: 1
+    sample_id: 283
+  335:
+    label_id: 1
+    sample_id: 451
+  336:
+    label_id: 1
+    sample_id: 6
+  337:
+    label_id: 3
+    sample_id: 406
+  338:
+    label_id: 1
+    sample_id: 369
+  339:
+    label_id: 1
+    sample_id: 441
+  340:
+    label_id: 1
+    sample_id: 326
+  341:
+    label_id: 3
+    sample_id: 300
+  342:
+    label_id: 1
+    sample_id: 29
+  343:
+    label_id: 1
+    sample_id: 90
+  344:
+    label_id: 1
+    sample_id: 169
+  345:
+    label_id: 3
+    sample_id: 433
+  346:
+    label_id: 3
+    sample_id: 274
+  347:
+    label_id: 1
+    sample_id: 153
+  348:
+    label_id: 1
+    sample_id: 189
+  349:
+    label_id: 1
+    sample_id: 453
+  350:
+    label_id: 1
+    sample_id: 58
+  351:
+    label_id: 1
+    sample_id: 146
+  352:
+    label_id: 1
+    sample_id: 306
+  353:
+    label_id: 1
+    sample_id: 370
+  354:
+    label_id: 1
+    sample_id: 379
+  355:
+    label_id: 1
+    sample_id: 18
+  356:
+    label_id: 1
+    sample_id: 261
+  357:
+    label_id: 1
+    sample_id: 297
+  358:
+    label_id: 1
+    sample_id: 301
+  359:
+    label_id: 1
+    sample_id: 281
+  360:
+    label_id: 1
+    sample_id: 470
+  361:
+    label_id: 2
+    sample_id: 333
+  362:
+    label_id: 1
+    sample_id: 13
+  363:
+    label_id: 1
+    sample_id: 348
+  364:
+    label_id: 1
+    sample_id: 241
+  365:
+    label_id: 1
+    sample_id: 291
+  366:
+    label_id: 1
+    sample_id: 130
+  367:
+    label_id: 1
+    sample_id: 9
+  368:
+    label_id: 1
+    sample_id: 23
+  369:
+    label_id: 1
+    sample_id: 143
+  370:
+    label_id: 1
+    sample_id: 219
+  371:
+    label_id: 1
+    sample_id: 1
+  372:
+    label_id: 1
+    sample_id: 381
+  373:
+    label_id: 1
+    sample_id: 102
+  374:
+    label_id: 3
+    sample_id: 268
+  375:
+    label_id: 1
+    sample_id: 349
+  376:
+    label_id: 1
+    sample_id: 132
+  377:
+    label_id: 1
+    sample_id: 481
+  378:
+    label_id: 1
+    sample_id: 209
+  379:
+    label_id: 1
+    sample_id: 296
+  380:
+    label_id: 1
+    sample_id: 341
+  381:
+    label_id: 1
+    sample_id: 239
+  382:
+    label_id: 1
+    sample_id: 63
+  383:
+    label_id: 1
+    sample_id: 44
+  384:
+    label_id: 2
+    sample_id: 262
+  385:
+    label_id: 3
+    sample_id: 428
+  386:
+    label_id: 1
+    sample_id: 385
+  387:
+    label_id: 3
+    sample_id: 421
+  388:
+    label_id: 1
+    sample_id: 446
+  389:
+    label_id: 1
+    sample_id: 358
+  390:
+    label_id: 3
+    sample_id: 16
+  391:
+    label_id: 1
+    sample_id: 226
+  392:
+    label_id: 1
+    sample_id: 444
+  393:
+    label_id: 1
+    sample_id: 149
+  394:
+    label_id: 1
+    sample_id: 319
+  395:
+    label_id: 1
+    sample_id: 125
+  396:
+    label_id: 3
+    sample_id: 458
+  397:
+    label_id: 1
+    sample_id: 292
+  398:
+    label_id: 1
+    sample_id: 477
+  399:
+    label_id: 1
+    sample_id: 473
+  400:
+    label_id: 1
+    sample_id: 260
+  401:
+    label_id: 1
+    sample_id: 11
+  402:
+    label_id: 2
+    sample_id: 244
+  403:
+    label_id: 1
+    sample_id: 177
+  404:
+    label_id: 2
+    sample_id: 240
+  405:
+    label_id: 3
+    sample_id: 460
+  406:
+    label_id: 3
+    sample_id: 70
+  407:
+    label_id: 3
+    sample_id: 415
+  408:
+    label_id: 1
+    sample_id: 267
+  409:
+    label_id: 1
+    sample_id: 365
+  410:
+    label_id: 1
+    sample_id: 258
+  411:
+    label_id: 1
+    sample_id: 103
+  412:
+    label_id: 1
+    sample_id: 414
+  413:
+    label_id: 3
+    sample_id: 135
+  414:
+    label_id: 3
+    sample_id: 179
+  415:
+    label_id: 1
+    sample_id: 232
+  416:
+    label_id: 1
+    sample_id: 120
+  417:
+    label_id: 2
+    sample_id: 293
+  418:
+    label_id: 1
+    sample_id: 7
+  419:
+    label_id: 1
+    sample_id: 27
+  420:
+    label_id: 3
+    sample_id: 148
+  421:
+    label_id: 1
+    sample_id: 31
+  422:
+    label_id: 1
+    sample_id: 161
+  423:
+    label_id: 2
+    sample_id: 21
+  424:
+    label_id: 2
+    sample_id: 299
+  425:
+    label_id: 1
+    sample_id: 137
+  426:
+    label_id: 1
+    sample_id: 165
+  427:
+    label_id: 1
+    sample_id: 83
+  428:
+    label_id: 1
+    sample_id: 17
+  429:
+    label_id: 3
+    sample_id: 214
+  430:
+    label_id: 1
+    sample_id: 51
+  431:
+    label_id: 1
+    sample_id: 497
+  432:
+    label_id: 3
+    sample_id: 394
+  433:
+    label_id: 2
+    sample_id: 298
+  434:
+    label_id: 2
+    sample_id: 259
+  435:
+    label_id: 1
+    sample_id: 54
+  436:
+    label_id: 3
+    sample_id: 269
+  437:
+    label_id: 2
+    sample_id: 287
+  438:
+    label_id: 1
+    sample_id: 408
+  439:
+    label_id: 3
+    sample_id: 35
+  440:
+    label_id: 2
+    sample_id: 423
+  441:
+    label_id: 1
+    sample_id: 351
+  442:
+    label_id: 2
+    sample_id: 252
+  443:
+    label_id: 1
+    sample_id: 50
+  444:
+    label_id: 1
+    sample_id: 224
+  445:
+    label_id: 3
+    sample_id: 141
+  446:
+    label_id: 1
+    sample_id: 75
+  447:
+    label_id: 1
+    sample_id: 305
+  448:
+    label_id: 1
+    sample_id: 420
+  449:
+    label_id: 1
+    sample_id: 485
+  450:
+    label_id: 1
+    sample_id: 354
+  451:
+    label_id: 3
+    sample_id: 246
+  452:
+    label_id: 3
+    sample_id: 183
+  453:
+    label_id: 2
+    sample_id: 373
+  454:
+    label_id: 1
+    sample_id: 193
+  455:
+    label_id: 1
+    sample_id: 199
+  456:
+    label_id: 1
+    sample_id: 395
+  457:
+    label_id: 3
+    sample_id: 347
+  458:
+    label_id: 3
+    sample_id: 474
+  459:
+    label_id: 3
+    sample_id: 19
+  460:
+    label_id: 1
+    sample_id: 237
+  461:
+    label_id: 3
+    sample_id: 202
+  462:
+    label_id: 2
+    sample_id: 172
+  463:
+    label_id: 3
+    sample_id: 318
+  464:
+    label_id: 1
+    sample_id: 236
+  465:
+    label_id: 1
+    sample_id: 216
+  466:
+    label_id: 2
+    sample_id: 328
+  467:
+    label_id: 1
+    sample_id: 457
+  468:
+    label_id: 2
+    sample_id: 380
+  469:
+    label_id: 1
+    sample_id: 208
+  470:
+    label_id: 3
+    sample_id: 22
+  471:
+    label_id: 3
+    sample_id: 107
+  472:
+    label_id: 2
+    sample_id: 196
+  473:
+    label_id: 3
+    sample_id: 81
+  474:
+    label_id: 3
+    sample_id: 194
+  475:
+    label_id: 1
+    sample_id: 476
+  476:
+    label_id: 1
+    sample_id: 383
+  477:
+    label_id: 1
+    sample_id: 87
+  478:
+    label_id: 3
+    sample_id: 472
+  479:
+    label_id: 3
+    sample_id: 359
+  480:
+    label_id: 3
+    sample_id: 391
+  481:
+    label_id: 3
+    sample_id: 10
+  482:
+    label_id: 1
+    sample_id: 64
+  483:
+    label_id: 3
+    sample_id: 295
+  484:
+    label_id: 1
+    sample_id: 61
+  485:
+    label_id: 3
+    sample_id: 115
+  486:
+    label_id: 1
+    sample_id: 55
+  487:
+    label_id: 1
+    sample_id: 94
+  488:
+    label_id: 3
+    sample_id: 249
+  489:
+    label_id: 1
+    sample_id: 230
+  490:
+    label_id: 1
+    sample_id: 121
+  491:
+    label_id: 2
+    sample_id: 97
+  492:
+    label_id: 3
+    sample_id: 227
+  493:
+    label_id: 3
+    sample_id: 343
+  494:
+    label_id: 2
+    sample_id: 350
+  495:
+    label_id: 3
+    sample_id: 340
+  496:
+    label_id: 1
+    sample_id: 3
+  497:
+    label_id: 3
+    sample_id: 66
+  498:
+    label_id: 2
+    sample_id: 147
+  499:
+    label_id: 1
+    sample_id: 72
+  500:
+    label_id: 3
+    sample_id: 434
+  501:
+    label_id: 3
+    sample_id: 393
+samples_order:
+- 371
+- 145
+- 463
+- 164
+- 207
+- 440
+- 336
+- 43
+- 108
+- 277
+- 325
+- 160
+- 334
+- 495
+- 368
+- 223
+- 59
+- 176
+- 345
+- 483
+- 203
+- 303
+- 253
+- 289
+- 372
+- 251
+- 32
+- 304
+- 364
+- 464
+- 286
+- 323
+- 282
+- 376
+- 42
+- 60
+- 112
+- 388
+- 487
+- 46
+- 308
+- 465
+- 231
+- 151
+- 85
+- 213
+- 114
+- 468
+- 329
+- 264
+- 154
+- 248
+- 36
+- 105
+- 104
+- 220
+- 377
+- 166
+- 427
+- 384
+- 492
+- 276
+- 426
+- 99
+- 82
+- 482
+- 117
+- 392
+- 417
+- 156
+- 439
+- 84
+- 2
+- 221
+- 14
+- 30
+- 178
+- 235
+- 126
+- 366
+- 79
+- 129
+- 256
+- 469
+- 425
+- 416
+- 41
+- 111
+- 93
+- 493
+- 431
+- 88
+- 484
+- 263
+- 86
+- 437
+- 316
+- 438
+- 488
+- 339
+- 39
+- 4
+- 175
+- 162
+- 322
+- 157
+- 396
+- 307
+- 204
+- 243
+- 187
+- 418
+- 271
+- 133
+- 424
+- 80
+- 461
+- 215
+- 419
+- 311
+- 205
+- 332
+- 181
+- 398
+- 89
+- 198
+- 210
+- 499
+- 285
+- 449
+- 363
+- 490
+- 71
+- 254
+- 429
+- 201
+- 352
+- 25
+- 33
+- 37
+- 374
+- 447
+- 403
+- 98
+- 294
+- 212
+- 197
+- 445
+- 234
+- 331
+- 450
+- 399
+- 411
+- 118
+- 356
+- 245
+- 315
+- 174
+- 270
+- 400
+- 127
+- 56
+- 106
+- 168
+- 471
+- 324
+- 466
+- 430
+- 355
+- 302
+- 459
+- 12
+- 136
+- 116
+- 409
+- 26
+- 413
+- 448
+- 113
+- 313
+- 73
+- 387
+- 480
+- 24
+- 78
+- 489
+- 5
+- 139
+- 327
+- 491
+- 342
+- 501
+- 8
+- 192
+- 290
+- 367
+- 432
+- 401
+- 402
+- 314
+- 38
+- 405
+- 435
+- 272
+- 397
+- 309
+- 15
+- 77
+- 101
+- 479
+- 478
+- 140
+- 206
+- 346
+- 173
+- 155
+- 218
+- 284
+- 442
+- 330
+- 496
+- 312
+- 91
+- 96
+- 362
+- 265
+- 171
+- 134
+- 321
+- 475
+- 200
+- 242
+- 357
+- 360
+- 158
+- 48
+- 266
+- 337
+- 119
+- 386
+- 233
+- 335
+- 150
+- 229
+- 182
+- 390
+- 502
+- 180
+- 382
+- 34
+- 69
+- 389
+- 317
+- 128
+- 52
+- 456
+- 109
+- 124
+- 375
+- 344
+- 279
+- 188
+- 228
+- 170
+- 159
+- 76
+- 67
+- 467
+- 278
+- 288
+- 407
+- 100
+- 250
+- 280
+- 452
+- 57
+- 62
+- 494
+- 123
+- 92
+- 28
+- 361
+- 255
+- 500
+- 238
+- 167
+- 53
+- 410
+- 247
+- 144
+- 378
+- 49
+- 131
+- 338
+- 190
+- 211
+- 142
+- 436
+- 222
+- 422
+- 195
+- 40
+- 273
+- 225
+- 74
+- 68
+- 443
+- 122
+- 184
+- 486
+- 454
+- 310
+- 45
+- 47
+- 455
+- 462
+- 275
+- 498
+- 152
+- 353
+- 138
+- 191
+- 217
+- 20
+- 65
+- 186
+- 95
+- 257
+- 320
+- 163
+- 185
+- 412
+- 404
+- 110
+- 283
+- 451
+- 6
+- 406
+- 369
+- 441
+- 326
+- 300
+- 29
+- 90
+- 169
+- 433
+- 274
+- 153
+- 189
+- 453
+- 58
+- 146
+- 306
+- 370
+- 379
+- 18
+- 261
+- 297
+- 301
+- 281
+- 470
+- 333
+- 13
+- 348
+- 241
+- 291
+- 130
+- 9
+- 23
+- 143
+- 219
+- 1
+- 381
+- 102
+- 268
+- 349
+- 132
+- 481
+- 209
+- 296
+- 341
+- 239
+- 63
+- 44
+- 262
+- 428
+- 385
+- 421
+- 446
+- 358
+- 16
+- 226
+- 444
+- 149
+- 319
+- 125
+- 458
+- 292
+- 477
+- 473
+- 260
+- 11
+- 244
+- 177
+- 240
+- 460
+- 70
+- 415
+- 267
+- 365
+- 258
+- 103
+- 414
+- 135
+- 179
+- 232
+- 120
+- 293
+- 7
+- 27
+- 148
+- 31
+- 161
+- 21
+- 299
+- 137
+- 165
+- 83
+- 17
+- 214
+- 51
+- 497
+- 394
+- 298
+- 259
+- 54
+- 269
+- 287
+- 408
+- 35
+- 423
+- 351
+- 252
+- 50
+- 224
+- 141
+- 75
+- 305
+- 420
+- 485
+- 354
+- 246
+- 183
+- 373
+- 193
+- 199
+- 395
+- 347
+- 474
+- 19
+- 237
+- 202
+- 172
+- 318
+- 236
+- 216
+- 328
+- 457
+- 380
+- 208
+- 22
+- 107
+- 196
+- 81
+- 194
+- 476
+- 383
+- 87
+- 472
+- 359
+- 391
+- 10
+- 64
+- 295
+- 61
+- 115
+- 55
+- 94
+- 249
+- 230
+- 121
+- 97
+- 227
+- 343
+- 350
+- 340
+- 3
+- 66
+- 147
+- 72
+- 434
+- 393
+analysis:
+  estimator: Stratified estimator

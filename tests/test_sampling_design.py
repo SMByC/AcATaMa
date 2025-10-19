@@ -10,7 +10,7 @@ from AcATaMa.utils.others_utils import get_nodata_format
 
 def test_simple_post_stratified_random_sampling(plugin, restore_config_file, tmpdir):
     # restore
-    input_yml_path = pytest.tests_data_dir / "test_sampling.yml"
+    input_yml_path = pytest.tests_data_dir / "test_sampling.yaml"
     restore_config_file(input_yml_path)
     sampling_design = plugin.dockwidget.sampling_design_window
 
@@ -53,7 +53,7 @@ def test_simple_post_stratified_random_sampling(plugin, restore_config_file, tmp
 
 def test_stratified_random_sampling(plugin, restore_config_file, tmpdir):
     # restore
-    input_yml_path = pytest.tests_data_dir / "test_sampling.yml"
+    input_yml_path = pytest.tests_data_dir / "test_sampling.yaml"
     restore_config_file(input_yml_path)
     sampling_design = plugin.dockwidget.sampling_design_window
 
@@ -109,7 +109,7 @@ def test_stratified_random_sampling(plugin, restore_config_file, tmpdir):
 
 def test_systematic_by_distance_post_stratified_random_sampling(plugin, restore_config_file, tmpdir):
     # restore
-    input_yml_path = pytest.tests_data_dir / "test_sampling.yml"
+    input_yml_path = pytest.tests_data_dir / "test_sampling.yaml"
     restore_config_file(input_yml_path)
     sampling_design = plugin.dockwidget.sampling_design_window
 
@@ -156,7 +156,7 @@ def test_systematic_by_distance_post_stratified_random_sampling(plugin, restore_
 
 def test_systematic_by_distance_post_stratified_with_initial_inset_random(plugin, restore_config_file, tmpdir):
     # restore
-    input_yml_path = pytest.tests_data_dir / "test_sampling.yml"
+    input_yml_path = pytest.tests_data_dir / "test_sampling.yaml"
     restore_config_file(input_yml_path)
     sampling_design = plugin.dockwidget.sampling_design_window
 
@@ -206,7 +206,7 @@ def test_systematic_by_distance_post_stratified_with_initial_inset_random(plugin
 
 def test_systematic_by_pixels_no_offset(plugin, restore_config_file, tmpdir):
     # restore
-    input_yml_path = pytest.tests_data_dir / "test_systematic_by_pixels_no_offset.yml"
+    input_yml_path = pytest.tests_data_dir / "test_systematic_by_pixels_no_offset.yaml"
     restore_config_file(input_yml_path)
     sampling_design = plugin.dockwidget.sampling_design_window
 
@@ -258,7 +258,7 @@ def test_systematic_by_pixels_no_offset(plugin, restore_config_file, tmpdir):
 
 def test_systematic_by_pixels_with_offset(plugin, restore_config_file, tmpdir):
     # restore
-    input_yml_path = pytest.tests_data_dir / "test_systematic_by_pixels_with_offset.yml"
+    input_yml_path = pytest.tests_data_dir / "test_systematic_by_pixels_with_offset.yaml"
     restore_config_file(input_yml_path)
     sampling_design = plugin.dockwidget.sampling_design_window
 
@@ -310,7 +310,7 @@ def test_systematic_by_pixels_with_offset(plugin, restore_config_file, tmpdir):
 
 def test_systematic_right_bottom_borders_with_offset(plugin, restore_config_file, tmpdir):
     # restore
-    input_yml_path = pytest.tests_data_dir / "test_systematic_right_bottom_borders_with_offset.yml"
+    input_yml_path = pytest.tests_data_dir / "test_systematic_right_bottom_borders_with_offset.yaml"
     restore_config_file(input_yml_path)
     sampling_design = plugin.dockwidget.sampling_design_window
 

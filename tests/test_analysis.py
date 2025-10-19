@@ -10,7 +10,7 @@ def clean_raw_html(html):
 
 def test_accuracy_assessment_simple_html(plugin, restore_config_file):
     # restore
-    input_yml_path = pytest.tests_data_dir.parent.parent / "examples" / "Simple exercise - 2019-2020 change - Tinigua.yml"
+    input_yml_path = pytest.tests_data_dir.parent.parent / "examples" / "Simple exercise - 2019-2020 change - Tinigua.yaml"
     restore_config_file(input_yml_path)
 
     # get accuracy assessment results in html
@@ -31,7 +31,7 @@ def test_accuracy_assessment_simple_html(plugin, restore_config_file):
 
 def test_accuracy_assessment_simple_post_stratify_html(plugin, restore_config_file):
     # restore
-    input_yml_path = pytest.tests_data_dir.parent.parent / "examples" / "Simple post-stratify exercise - 2019-2020 change - Tinigua.yml"
+    input_yml_path = pytest.tests_data_dir.parent.parent / "examples" / "Simple post-stratify exercise - 2019-2020 change - Tinigua.yaml"
     restore_config_file(input_yml_path)
 
     # get accuracy assessment results in html
@@ -52,7 +52,7 @@ def test_accuracy_assessment_simple_post_stratify_html(plugin, restore_config_fi
 
 def test_accuracy_assessment_systematic_html(plugin, restore_config_file):
     # restore
-    input_yml_path = pytest.tests_data_dir.parent.parent / "examples" / "Systematic exercise - 2019-2020 change - Tinigua.yml"
+    input_yml_path = pytest.tests_data_dir.parent.parent / "examples" / "Systematic exercise - 2019-2020 change - Tinigua.yaml"
     restore_config_file(input_yml_path)
 
     # get accuracy assessment results in html
@@ -73,7 +73,7 @@ def test_accuracy_assessment_systematic_html(plugin, restore_config_file):
 
 def test_accuracy_assessment_systematic_post_stratify_html(plugin, restore_config_file):
     # restore
-    input_yml_path = pytest.tests_data_dir.parent.parent / "examples" / "Systematic post-stratify exercise - 2019-2020 change - Tinigua.yml"
+    input_yml_path = pytest.tests_data_dir.parent.parent / "examples" / "Systematic post-stratify exercise - 2019-2020 change - Tinigua.yaml"
     restore_config_file(input_yml_path)
 
     # get accuracy assessment results in html
@@ -94,7 +94,7 @@ def test_accuracy_assessment_systematic_post_stratify_html(plugin, restore_confi
 
 def test_accuracy_assessment_stratified_html(plugin, restore_config_file):
     # restore
-    input_yml_path = pytest.tests_data_dir.parent.parent / "examples" / "Stratified exercise - 2019-2020 change - Tinigua.yml"
+    input_yml_path = pytest.tests_data_dir.parent.parent / "examples" / "Stratified exercise - 2019-2020 change - Tinigua.yaml"
     restore_config_file(input_yml_path)
 
     # get accuracy assessment results in html
@@ -141,16 +141,16 @@ def test_analysis_with_empty_samples(plugin, restore_config_file):
     # restore
     input_yml_path = pytest.tests_data_dir / "test_samples_in_zero_and_outside.yaml"
     restore_config_file(input_yml_path)
-    
+
     # Modify the config to have no samples
     from AcATaMa.core import config
     config.samples = {}
     config.samples_order = []
-    
+
     # get accuracy assessment results in html
     accuracy_assessment = AccuracyAssessmentWindow()
     accuracy_assessment.analysis.estimator = plugin.dockwidget.QCBox_SamplingEstimator.currentText()
-    
+
     # The analysis should handle empty samples gracefully
     try:
         accuracy_assessment.analysis.compute()
@@ -166,17 +166,17 @@ def test_analysis_with_single_class(plugin, restore_config_file):
     # restore
     input_yml_path = pytest.tests_data_dir / "test_samples_in_zero_and_outside.yaml"
     restore_config_file(input_yml_path)
-    
+
     # Modify the config to have only one class
     from AcATaMa.core import config
     # Set all samples to have the same label_id
     for sample_id in config.samples:
         config.samples[sample_id]["label_id"] = 1
-    
+
     # get accuracy assessment results in html
     accuracy_assessment = AccuracyAssessmentWindow()
     accuracy_assessment.analysis.estimator = plugin.dockwidget.QCBox_SamplingEstimator.currentText()
-    
+
     # The analysis should handle single class gracefully
     try:
         accuracy_assessment.analysis.compute()

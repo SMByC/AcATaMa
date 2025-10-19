@@ -3,7 +3,7 @@ import pytest
 
 def test_get_n_calculates_correct_samples_simple(plugin, restore_config_file):
     # restore
-    input_yml_path = pytest.tests_data_dir / "test_sample_size.yml"
+    input_yml_path = pytest.tests_data_dir / "test_sample_size.yaml"
     restore_config_file(input_yml_path)
 
     sampling_design = plugin.dockwidget.sampling_design_window
@@ -15,7 +15,7 @@ def test_get_n_calculates_correct_samples_simple(plugin, restore_config_file):
 
 def test_point_spacing_calculates_correct_samples_systematic(plugin, restore_config_file, monkeypatch):
     # restore
-    input_yml_path = pytest.tests_data_dir / "test_sample_size.yml"
+    input_yml_path = pytest.tests_data_dir / "test_sample_size.yaml"
     restore_config_file(input_yml_path)
     sampling_design = plugin.dockwidget.sampling_design_window
 

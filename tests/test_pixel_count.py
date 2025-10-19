@@ -10,7 +10,7 @@ from AcATaMa.utils.qgis_utils import load_layer
 
 def test_pixel_count_without_nodata_sequential(plugin, restore_config_file):
     # restore
-    input_yml_path = pytest.tests_data_dir / "test_pixel_count_acatama.yml"
+    input_yml_path = pytest.tests_data_dir / "test_pixel_count_acatama.yaml"
     restore_config_file(input_yml_path)
 
     pixel_count = get_pixel_count_by_pixel_values_sequential(plugin.dockwidget.QCBox_ThematicMap.currentLayer(),
@@ -22,7 +22,7 @@ def test_pixel_count_without_nodata_sequential(plugin, restore_config_file):
 
 def test_pixel_count_without_nodata_parallel(plugin, restore_config_file):
     # restore
-    input_yml_path = pytest.tests_data_dir / "test_pixel_count_acatama.yml"
+    input_yml_path = pytest.tests_data_dir / "test_pixel_count_acatama.yaml"
     restore_config_file(input_yml_path)
 
     pixel_count = get_pixel_count_by_pixel_values_parallel(plugin.dockwidget.QCBox_ThematicMap.currentLayer(),
@@ -34,7 +34,7 @@ def test_pixel_count_without_nodata_parallel(plugin, restore_config_file):
 
 def test_pixel_count_with_nodata_sequential(plugin, restore_config_file):
     # restore
-    input_yml_path = pytest.tests_data_dir / "test_pixel_count_acatama_nodata.yml"
+    input_yml_path = pytest.tests_data_dir / "test_pixel_count_acatama_nodata.yaml"
     restore_config_file(input_yml_path)
     sampling_design = plugin.dockwidget.sampling_design_window
 
@@ -49,7 +49,7 @@ def test_pixel_count_with_nodata_sequential(plugin, restore_config_file):
 
 def test_pixel_count_with_nodata_parallel(plugin, restore_config_file):
     # restore
-    input_yml_path = pytest.tests_data_dir / "test_pixel_count_acatama_nodata.yml"
+    input_yml_path = pytest.tests_data_dir / "test_pixel_count_acatama_nodata.yaml"
     restore_config_file(input_yml_path)
     sampling_design = plugin.dockwidget.sampling_design_window
 
