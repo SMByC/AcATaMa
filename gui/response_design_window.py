@@ -266,7 +266,8 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         self.installEventFilter(self)
         self.scrollArea.installEventFilter(self)
         for view_widget in ResponseDesignWindow.view_widgets:
-            view_widget.render_widget.canvas.installEventFilter(self)
+            if not isdeleted(view_widget.render_widget.canvas):
+                view_widget.render_widget.canvas.installEventFilter(self)
 
     def show(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
@@ -499,7 +500,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
                 self.current_sample.fit_to(view_widget, self.radiusFitToSample.value())
                 # create the marker
                 view_widget.render_widget.marker.show(self.current_sample)
-                if highlight and view_widget.render_widget.canvas.renderFlag():
+                if highlight and not isdeleted(view_widget.render_widget.canvas) and view_widget.render_widget.canvas.renderFlag():
                     # highlight to marker
                     view_widget.render_widget.marker.highlight()
 
@@ -576,14 +577,14 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         """Zoom in all active view widget canvases."""
         zoom_factor = 1.2  # 20% zoom in
         for view_widget in ResponseDesignWindow.view_widgets:
-            if view_widget.is_active:
+            if view_widget.is_active and not isdeleted(view_widget.render_widget.canvas):
                 view_widget.render_widget.canvas.zoomByFactor(zoom_factor)
 
     def zoom_out_canvas(self):
         """Zoom out all active view widget canvases."""
         zoom_factor = 0.8  # 20% zoom out
         for view_widget in ResponseDesignWindow.view_widgets:
-            if view_widget.is_active:
+            if view_widget.is_active and not isdeleted(view_widget.render_widget.canvas):
                 view_widget.render_widget.canvas.zoomByFactor(zoom_factor)
 
     @pyqtSlot()

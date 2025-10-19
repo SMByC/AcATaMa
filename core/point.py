@@ -22,6 +22,7 @@ import random
 from math import floor
 
 from qgis.core import QgsGeometry, QgsPointXY, QgsRectangle
+from qgis.PyQt.sip import isdeleted
 
 from AcATaMa.utils.qgis_utils import valid_file_selected_in
 from AcATaMa.utils.sampling_utils import check_min_distance
@@ -153,6 +154,8 @@ class LabelingPoint(Point):
         self.is_labeled = False
 
     def fit_to(self, view_widget, radius):
+        if isdeleted(view_widget.render_widget.canvas):
+            return
         # fit to current sample with min radius of extent
         fit_extent = QgsRectangle(self.QgsPnt.x()-radius, self.QgsPnt.y()-radius,
                                   self.QgsPnt.x()+radius, self.QgsPnt.y()+radius)

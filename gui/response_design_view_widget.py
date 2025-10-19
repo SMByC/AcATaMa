@@ -127,6 +127,8 @@ class RenderWidget(QWidget):
         gridLayout.addWidget(self.canvas)
 
     def render_layer(self, layer):
+        if isdeleted(self.canvas):
+            return
         with block_signals_to(self):
             # set the CRS of the canvas view based on sampling layer
             sampling_crs = self.parent_view.sampling_layer.crs()
@@ -136,7 +138,7 @@ class RenderWidget(QWidget):
             # set init extent from other view if any is activated else set layer extent
             from AcATaMa.gui.response_design_window import ResponseDesignWindow
             others_view = [(view_widget.render_widget.canvas.extent(), view_widget.current_scale_factor) for view_widget
-                           in ResponseDesignWindow.view_widgets if not view_widget.render_widget.canvas.extent().isEmpty()]
+                           in ResponseDesignWindow.view_widgets if not isdeleted(view_widget.render_widget.canvas) and not view_widget.render_widget.canvas.extent().isEmpty()]
             if others_view:
                 extent, scale = others_view[0]
                 extent.scale(1 / scale)
@@ -155,6 +157,8 @@ class RenderWidget(QWidget):
             ResponseDesignWindow.inst.show_the_sampling_unit()
 
     def set_extents_and_scalefactor(self, extent):
+        if isdeleted(self.canvas):
+            return
         with block_signals_to(self.canvas):
             self.canvas.setExtent(extent)
             self.canvas.zoomByFactor(round(self.parent_view.scaleFactor.value(), 1))
@@ -219,20 +223,21 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
             self.is_active = True
 
     def disable(self):
-        with block_signals_to(self.render_widget):
-            self.render_widget.canvas.setLayers([])
-            self.render_widget.marker.remove()
-            self.render_widget.canvas.clearCache()
-            self.render_widget.canvas.refresh()
-            self.render_widget.layer = None
-            # deactivate some parts of this view
-            self.QLabel_ViewName.setDisabled(True)
-            self.render_widget.setDisabled(True)
-            self.scaleFactor.setDisabled(True)
-            self.layerStyleEditor.setDisabled(True)
-            self.render_widget.canvas.setCanvasColor(QColor(245, 245, 245))
-            # set status for view widget
-            self.is_active = False
+        if not isdeleted(self.render_widget.canvas):
+            with block_signals_to(self.render_widget):
+                self.render_widget.canvas.setLayers([])
+                self.render_widget.marker.remove()
+                self.render_widget.canvas.clearCache()
+                self.render_widget.canvas.refresh()
+                self.render_widget.layer = None
+                # deactivate some parts of this view
+                self.QLabel_ViewName.setDisabled(True)
+                self.render_widget.setDisabled(True)
+                self.scaleFactor.setDisabled(True)
+                self.layerStyleEditor.setDisabled(True)
+                self.render_widget.canvas.setCanvasColor(QColor(245, 245, 245))
+                # set status for view widget
+                self.is_active = False
 
         # update square rubber band for current and sampling unit markers
         from AcATaMa.gui.response_design_window import ResponseDesignWindow
