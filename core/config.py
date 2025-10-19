@@ -22,12 +22,10 @@ import os
 from collections import OrderedDict
 import yaml
 
-from AcATaMa.gui.post_stratification_classes_dialog import PostStratificationClassesDialog
-
 try:
-    from yaml import CLoader as Loader, CDumper as Dumper
+    from yaml import CSafeLoader as SafeLoader, CSafeDumper as SafeDumper
 except ImportError:
-    from yaml import Loader, Dumper
+    from yaml import SafeLoader, SafeDumper
 
 from qgis.core import Qgis, QgsUnitTypes
 from qgis.PyQt.QtGui import QColor
@@ -36,7 +34,8 @@ from qgis.utils import iface
 from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.gui.response_design_window import ResponseDesignWindow
 from AcATaMa.gui.response_design_grid_settings import ResponseDesignGridSettings
-from AcATaMa.utils.system_utils import wait_process, block_signals_to
+from AcATaMa.gui.post_stratification_classes_dialog import PostStratificationClassesDialog
+from AcATaMa.utils.system_utils import LegacyLoader, wait_process, block_signals_to
 from AcATaMa.utils.sampling_utils import fill_stratified_sampling_table
 from AcATaMa.utils.qgis_utils import get_current_file_path_in, get_file_path_of_layer, load_and_select_filepath_in, \
     select_item_in
@@ -52,11 +51,21 @@ def save(file_out):
 
     def setup_yaml():
         """
-        Keep dump ordered with orderedDict
+        Return a dumper that preserves key order for mappings.
         """
-        represent_dict_order = lambda self, data: self.represent_mapping('tag:yaml.org,2002:map',
-                                                                         list(data.items()))
-        yaml.add_representer(OrderedDict, represent_dict_order)
+
+        class OrderedDumper(SafeDumper):
+            """Custom dumper that keeps insertion order for dict-like objects."""
+            pass
+
+        def represent_ordered_mapping(dumper, data):
+            return dumper.represent_mapping(
+                yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+                list(data.items()))
+
+        OrderedDumper.add_representer(dict, represent_ordered_mapping)
+        OrderedDumper.add_representer(OrderedDict, represent_ordered_mapping)
+        return OrderedDumper
 
     def setup_path(_path):
         """
@@ -77,7 +86,7 @@ def save(file_out):
             # If the paths cannot be related, return the original input path
             return _path
 
-    setup_yaml()
+    dumper = setup_yaml()
 
     data = OrderedDict()
 
@@ -257,8 +266,8 @@ def save(file_out):
             "csv_decimal": response_design.analysis.csv_decimal,
         }
 
-    with open(file_out, 'w') as yaml_file:
-        yaml.dump(data, yaml_file, Dumper=Dumper)
+    with open(file_out, 'w', encoding='utf-8') as yaml_file:
+        yaml.dump(data, yaml_file, Dumper=dumper, default_flow_style=False, sort_keys=False)
 
 
 @wait_process
@@ -270,13 +279,17 @@ def restore(yml_file_path):
     from AcATaMa.gui.sampling_report import SamplingReport
 
     # load the yaml file
-    with open(yml_file_path, 'r') as yaml_file:
-        try:
-            yaml_config = yaml.load(yaml_file, Loader=Loader)
-        except Exception as err:
-            iface.messageBar().pushMessage("AcATaMa", "Error while read the AcATaMa configuration file: {}".format(err),
-                                           level=Qgis.Critical, duration=20)
-            return
+    try:
+        with open(yml_file_path, 'r', encoding='utf-8') as yaml_file:
+            yaml_config = yaml.load(yaml_file, Loader=SafeLoader)
+    except yaml.constructor.ConstructorError:
+        # Support legacy YAML files that store ordered mappings and tuples
+        with open(yml_file_path, 'r', encoding='utf-8') as yaml_file:
+            yaml_config = yaml.load(yaml_file, Loader=LegacyLoader)
+    except Exception as err:
+        iface.messageBar().pushMessage("AcATaMa", "Error while read the AcATaMa configuration file: {}".format(err),
+                                        level=Qgis.Critical, duration=20)
+        return
 
     # close the windows opened
     if SamplingDesignWindow.is_opened:

@@ -23,6 +23,11 @@ import pathlib
 import re
 import traceback
 import os, sys, subprocess
+from collections import OrderedDict
+try:
+    from yaml import CSafeLoader as SafeLoader
+except ImportError:
+    from yaml import SafeLoader
 
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QApplication, QMessageBox, QPushButton, QFileDialog
@@ -181,3 +186,62 @@ class block_signals_to(object):
             self.object_to_block.blockSignals(False)
         except RuntimeError:
             pass  # Object has been deleted
+
+
+# --------------------------------------------------------------------------
+# Legacy YAML loader support
+
+class LegacyLoader(SafeLoader):
+    """Custom YAML loader for handling legacy configuration files."""
+    pass
+
+def _normalize_pairs(items):
+    """Normalize a sequence or dict into a list of (key, value) tuples."""
+    normalized = []
+    if isinstance(items, dict):
+        items = items.items()
+    for item in items:
+        if isinstance(item, dict) and item:
+            key, value = next(iter(item.items()))
+            normalized.append((key, value))
+        elif isinstance(item, (list, tuple)) and item:
+            key = item[0]
+            value = item[1] if len(item) > 1 else None
+            normalized.append((key, value))
+        elif item is not None:
+            normalized.append((item, None))
+    return normalized
+
+def construct_python_tuple(loader, node):
+    """Construct a Python tuple from a YAML sequence node."""
+    return tuple(loader.construct_sequence(node, deep=True))
+
+def construct_ordered_dict(loader, node):
+    """Construct an OrderedDict from a YAML sequence node, supporting legacy formats."""
+    params = loader.construct_sequence(node, deep=True)
+    kwargs = {}
+    if params and isinstance(params[-1], dict):
+        kwargs = params.pop() if params[-1] else {}
+    items = params[0] if len(params) == 1 and isinstance(params[0], (list, tuple)) else params
+    if isinstance(items, dict):
+        items = items.items()
+    return OrderedDict(_normalize_pairs(items), **kwargs)
+
+def construct_yaml_map(loader, node):
+    """Construct an OrderedDict from a YAML map node."""
+    loader.flatten_mapping(node)
+    pairs = loader.construct_pairs(node, deep=True)
+    return OrderedDict(pairs)
+
+def construct_yaml_omap(loader, node):
+    """Construct an OrderedDict from a YAML omap node."""
+    items = loader.construct_sequence(node, deep=True)
+    return OrderedDict(_normalize_pairs(items))
+
+# Register constructors
+LegacyLoader.add_constructor('tag:yaml.org,2002:python/tuple', construct_python_tuple)
+LegacyLoader.add_constructor('tag:yaml.org,2002:python/object/apply:collections.OrderedDict', construct_ordered_dict)
+LegacyLoader.add_constructor('tag:yaml.org,2002:map', construct_yaml_map)
+LegacyLoader.add_constructor('tag:yaml.org,2002:omap', construct_yaml_omap)
+
+# --------------------------------------------------------------------------
