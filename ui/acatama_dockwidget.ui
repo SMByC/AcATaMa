@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>351</width>
-    <height>731</height>
+    <width>356</width>
+    <height>669</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -52,8 +52,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>351</width>
-         <height>629</height>
+         <width>356</width>
+         <height>593</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -563,41 +563,6 @@ It set automatically from image if the layer has the nodata value set.</string>
      </widget>
     </item>
     <item>
-     <widget class="QWidget" name="widget_9" native="true">
-      <layout class="QHBoxLayout" name="horizontalLayout_9">
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <spacer name="horizontalSpacer_4">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>AcATaMa configuration:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-         </property>
-         <property name="wordWrap">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
      <widget class="QWidget" name="widget_plugin_info" native="true">
       <layout class="QHBoxLayout" name="horizontalLayout_25">
        <item>
@@ -613,19 +578,6 @@ It set automatically from image if the layer has the nodata value set.</string>
           <bool>true</bool>
          </property>
         </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_10">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
        </item>
        <item>
         <widget class="QToolButton" name="QPBtn_PluginClearReload">
@@ -651,30 +603,75 @@ It set automatically from image if the layer has the nodata value set.</string>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="QPBtn_RestoreAcatamaState">
+        <spacer name="horizontalSpacer_10">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="QPBtn_RestoreAcatamaConfig">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Restore to a previous saved of AcATaMa configuration and state.&lt;/p&gt;&lt;p&gt;It is recommended to &lt;span style=&quot; font-style:italic;&quot;&gt;Clear/Reload&lt;/span&gt; the plugin and restore the Qgis project before restore the AcATaMa configuration and state.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Restore configuration&lt;/span&gt;&lt;br/&gt;Restore a previous AcATaMa configuration from a YAML file.&lt;/p&gt;&lt;p&gt;It is recommended to &lt;span style=&quot; font-style:italic;&quot;&gt;Clear/Reload&lt;/span&gt; the plugin and (optional) restore the Qgis project before restore an AcATaMa configuration.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>Restore state</string>
+          <string>Restore</string>
          </property>
          <property name="icon">
           <iconset>
            <normaloff>:/plugins/AcATaMa/icons/open.svg</normaloff>:/plugins/AcATaMa/icons/open.svg</iconset>
          </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="QPBtn_SaveAcatamaState">
+        <widget class="QPushButton" name="QPBtn_SaveAcatamaConfig">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Save all configurations and states of AcATaMa, including sampling design, response design state, label states, buttons, configuration dialogs, response design view settings, navigation, analysis settings, and more.&lt;/p&gt;&lt;p&gt;AcATaMa will save relative paths to the YAML file only if the layers are in the same directory or subdirectory tree as the YAML file, making it a portable and shareable project.&lt;/p&gt;&lt;p&gt;(Optional) Save the Qgis project along with this configuration file when using remote/network layers.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Overwrite current file&lt;/span&gt;&lt;br/&gt;Save the current AcATaMa configuration to a YAML file for later restoration.&lt;/p&gt;&lt;p&gt;(Optional) Save the Qgis project along with this configuration file when using remote/network layers.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>Save state</string>
+          <string>Save</string>
          </property>
          <property name="icon">
           <iconset>
            <normaloff>:/plugins/AcATaMa/icons/save.svg</normaloff>:/plugins/AcATaMa/icons/save.svg</iconset>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="QPBtn_SaveAsAcatamaConfig">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Save As&lt;/span&gt;&lt;br/&gt;Save the current AcATaMa configuration to a different YAML file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Save as</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>:/plugins/AcATaMa/icons/save_as.svg</normaloff>:/plugins/AcATaMa/icons/save_as.svg</iconset>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonIconOnly</enum>
+         </property>
+         <property name="autoRaise">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

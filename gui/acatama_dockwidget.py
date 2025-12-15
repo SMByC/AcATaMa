@@ -21,10 +21,11 @@
 import os
 import tempfile
 import configparser
-
+from html import escape
+from datetime import datetime
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, Qt
-from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QDockWidget
+from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QDockWidget, QDialogButtonBox
 from qgis.core import QgsMapLayerProxyModel, Qgis
 from qgis.utils import iface
 
@@ -38,7 +39,7 @@ from AcATaMa.gui.sampling_design_window import SamplingDesignWindow
 from AcATaMa.gui.sampling_report import SamplingReport
 from AcATaMa.utils.others_utils import set_nodata_format
 from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_filepath_in, get_file_path_of_layer
-from AcATaMa.utils.system_utils import error_handler, block_signals_to, output_file_is_OK, get_save_file_name
+from AcATaMa.utils.system_utils import error_handler, wait_process, block_signals_to, output_file_is_OK, get_save_file_name
 from AcATaMa.gui.about_dialog import AboutDialog
 
 # plugin path
@@ -67,23 +68,55 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.setupUi(self)
         self.tmp_dir = tempfile.mkdtemp()
         self.sampling_design_window = SamplingDesignWindow()
+        # remember the latest save/restore configuration file
+        self.suggested_yml_file = None
         self.setup_gui()
 
         # save instance
         AcATaMaDockWidget.dockwidget = self
-        # remember the latest save/restore configuration file
-        self.suggested_yml_file = None
 
     def closeEvent(self, event):
         # first warn before exit if at least exist one response design instance created
-        if ResponseDesign.instances:
-            quit_msg = "Are you sure you want close the AcATaMa plugin?"
-            reply = QMessageBox.question(None, 'Closing the AcATaMa plugin',
-                                         quit_msg, QMessageBox.Yes, QMessageBox.No)
-            if reply == QMessageBox.No:
-                # don't close
+        if ResponseDesign.instances and self.isVisible():
+            msg_box = QMessageBox()
+            msg_box.setIcon(QMessageBox.Question)
+            msg_box.setWindowTitle(self.tr("Close AcATaMa"))
+            msg_box.setTextFormat(Qt.RichText)
+            msg_box.setText("<p>{}</p>".format(
+                self.tr("Do you want to save the current configuration before exiting AcATaMa?")
+            ))
+
+            if self.suggested_yml_file and os.path.isfile(self.suggested_yml_file):
+                config_path = self.suggested_yml_file
+                try:
+                    if os.path.exists(config_path):
+                        saved_at = datetime.fromtimestamp(os.path.getmtime(config_path))
+                        config_path += " ({})".format(saved_at.strftime("%d %b %Y, %H:%M:%S"))
+                except OSError:
+                    pass
+                msg_box.setInformativeText(self.tr("<b>Current config file:</b> {0}").format(escape(config_path)))
+
+            msg_box.setStandardButtons(QMessageBox.Save | QMessageBox.Close | QMessageBox.Cancel)
+            msg_box.setDefaultButton(QMessageBox.Save)
+            msg_box.setEscapeButton(QMessageBox.Cancel)
+            button_box = msg_box.findChild(QDialogButtonBox)
+            if button_box:
+                button_box.button(QDialogButtonBox.Save).setText(self.tr("Save and close"))
+                button_box.button(QDialogButtonBox.Close).setText(self.tr("Close"))
+                button_box.button(QDialogButtonBox.Cancel).setText(self.tr("Cancel"))
+
+            reply = msg_box.exec_()
+            if reply == QMessageBox.Save:
+                if not self.save_acatama_config():
+                    event.ignore()
+                    return
+            elif reply == QMessageBox.Close:
+                event.accept()
+                return
+            elif reply == QMessageBox.Cancel:
                 event.ignore()
                 return
+
         # close
         self.closingPlugin.emit()
         event.accept()
@@ -134,8 +167,10 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # call to reload sampling file
         self.QPBtn_reloadSamplingFile.clicked.connect(self.reload_sampling_file)
         # call to load and save Acatama state and config
-        self.QPBtn_RestoreAcatamaState.clicked.connect(self.file_dialog_restore_acatama_config)
-        self.QPBtn_SaveAcatamaState.clicked.connect(self.file_dialog_save_acatama_config)
+        self.QPBtn_RestoreAcatamaConfig.clicked.connect(self.file_dialog_restore_acatama_config)
+        self.QPBtn_SaveAcatamaConfig.clicked.connect(self.save_acatama_config)
+        self.QPBtn_SaveAsAcatamaConfig.clicked.connect(self.file_dialog_save_acatama_config)
+        self.update_save_buttons_state()
         # save sampling + labeling
         self.QPBtn_saveSamplingLabeled.clicked.connect(self.file_dialog_save_sampling_labeled)
         # grid settings
@@ -325,6 +360,55 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                                            level=Qgis.Warning, duration=10)
 
 
+    def update_save_buttons_state(self):
+        """Update the state of the save buttons based on whether a config file is set."""
+        has_config_file = self.suggested_yml_file is not None and os.path.isfile(self.suggested_yml_file)
+        # Save button is always enabled (will prompt for file location on first save)
+        self.QPBtn_SaveAcatamaConfig.setEnabled(True)
+        # Save As button is only enabled when a config file is already set
+        self.QPBtn_SaveAsAcatamaConfig.setEnabled(has_config_file)
+        # Update tooltip for Save button
+        if has_config_file:
+            saved_suffix = ""
+            try:
+                if os.path.exists(self.suggested_yml_file):
+                    saved_at = datetime.fromtimestamp(os.path.getmtime(self.suggested_yml_file))
+                    saved_suffix = " ({})".format(saved_at.strftime("%d %b %Y, %H:%M:%S"))
+            except OSError:
+                pass
+            tooltip = (
+                "<html><head/><body><p><span style='font-weight:600;'>Overwrite config file</span><br/>"
+                "Save the current AcATaMa configuration to a YAML file for later restoration."
+                "</p><p><b>Current file:</b> {}{}"
+                "</p><p>(Optional) Also save the QGIS project when using remote/network layers.</p>"
+                "</body></html>"
+            ).format(escape(self.suggested_yml_file), escape(saved_suffix))
+        else:
+            tooltip = (
+                "<html><head/><body><p><span style='font-weight:600;'>Set up the config file</span><br/>"
+                "Save the current AcATaMa configuration to a YAML file for later restoration."
+                "</p><p>(Optional) Also save the QGIS project when using remote/network layers.</p>"
+                "</body></html>"
+            )
+        self.QPBtn_SaveAcatamaConfig.setToolTip(tooltip)
+
+    @pyqtSlot()
+    @wait_process
+    def save_acatama_config(self):
+        """Save the current AcATaMa configuration directly to the current config file.
+
+        Returns True if save was successful, False otherwise.
+        """
+        if self.suggested_yml_file and os.path.isfile(self.suggested_yml_file):
+            config.save(self.suggested_yml_file)
+            self.update_save_buttons_state()
+            iface.messageBar().pushMessage("AcATaMa", "Configuration saved to '{}'".format(self.suggested_yml_file),
+                                           level=Qgis.Success, duration=10)
+            return True
+        else:
+            # If no config file set, fall back to Save As dialog
+            return self.file_dialog_save_acatama_config()
+
     @pyqtSlot()
     @error_handler
     def file_dialog_restore_acatama_config(self):
@@ -335,12 +419,17 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             # restore configuration and response design state
             config.restore(file_path)
             self.suggested_yml_file = file_path
+            self.update_save_buttons_state()
             iface.messageBar().pushMessage("AcATaMa", "Configuration restored successfully",
                                            level=Qgis.Success, duration=10)
 
     @pyqtSlot()
     @error_handler
     def file_dialog_save_acatama_config(self):
+        """Open file dialog to save AcATaMa configuration to a new file.
+
+        Returns True if save was successful, False if cancelled.
+        """
         if self.suggested_yml_file:
             suggested_filename = self.suggested_yml_file
         elif valid_file_selected_in(self.QCBox_ThematicMap) or valid_file_selected_in(self.QCBox_SamplingFile):
@@ -360,8 +449,11 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         if output_file_is_OK(output_file):
             config.save(output_file)
             self.suggested_yml_file = output_file
+            self.update_save_buttons_state()
             iface.messageBar().pushMessage("AcATaMa", "Configuration file saved successfully in '{}'".format(output_file),
                                            level=Qgis.Success, duration=10)
+            return True
+        return False
 
     @pyqtSlot()
     @error_handler

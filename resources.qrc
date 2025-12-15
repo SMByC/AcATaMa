@@ -17,6 +17,7 @@
         <file>icons/render_view_config.svg</file>
         <file>icons/open.svg</file>
         <file>icons/save.svg</file>
+        <file>icons/save_as.svg</file>
         <file>icons/setup.svg</file>
         <file>icons/autofill.svg</file>
         <file>icons/ccd_plugin.svg</file>
