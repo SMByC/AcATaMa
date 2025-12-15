@@ -3,5 +3,5 @@
 *.db
 extlibs
 resources.py
-venv
-.idea
+.venv
+*.aux.xml

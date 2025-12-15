@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "acatama"
 version = "25.7"
-description = "Python env for testing"
+description = "AcATaMa is a powerful and complete Qgis plugin for accuracy assessment"
 authors = [{ name = "Xavier C. Llano", email = "xavier.corredor.llano@gmail.com" }]
 requires-python = ">=3.13,<4.0"
 dependencies = [
