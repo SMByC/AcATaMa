@@ -33,7 +33,7 @@ from AcATaMa.utils.qgis_utils import load_and_select_filepath_in, StyleEditorDia
 from AcATaMa.utils.system_utils import block_signals_to
 
 
-class PanAndZoomPointTool(QgsMapToolPan):
+class PanAndZoomMapTool(QgsMapToolPan):
     def __init__(self, render_widget):
         QgsMapToolPan.__init__(self, render_widget.canvas)
         self.render_widget = render_widget
@@ -121,7 +121,7 @@ class RenderWidget(QWidget):
         self.canvas.enableAntiAliasing(settings.value("/qgis/enable_anti_aliasing", False, type=bool))
         self.setMinimumSize(15, 15)
         # mouse action pan and zoom
-        self.pan_zoom_tool = PanAndZoomPointTool(self)
+        self.pan_zoom_tool = PanAndZoomMapTool(self)
         self.canvas.setMapTool(self.pan_zoom_tool)
 
         gridLayout.addWidget(self.canvas)

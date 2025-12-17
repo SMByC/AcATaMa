@@ -345,6 +345,10 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             PickerCoordsOnMap.delete_markers()
             self.ccd_plugin.widget.new_plot()
 
+        # unset the pick_on_map button
+        if self.ccd_plugin.widget.pick_on_map.isChecked():
+            self.ccd_plugin.widget.pick_on_map.click()
+
     @pyqtSlot()
     @error_handler
     def open_current_point_in_google_engine(self):
