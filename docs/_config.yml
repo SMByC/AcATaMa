@@ -1,32 +1,49 @@
-# https://github.com/vaibhavvikas/jekyll-theme-minimalistic
+# Book settings
+title: "AcATaMa - Accuracy Assessment of Thematic Maps"
+author: SMByC, IDEAM Colombia
+copyright: "2025"
+logo: img/acatama.svg
 
-remote_theme: vaibhavvikas/jekyll-theme-minimalistic
+# Enable MyST extensions
+parse:
+  myst_enable_extensions:
+    - deflist
+    - html_image
 
-plugins:
-  - jekyll-remote-theme
+# Force re-execution of notebooks on each build.
+execute:
+  execute_notebooks: off
 
-title: AcATaMa
-description: The AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps.
-logo: ./img/acatama.svg
-email:
-favicon: true
-color-scheme: auto
+# Information about where the book exists on the web.
+repository:
+  url: https://github.com/SMByC/AcATaMa
+  path_to_book: docs
+  branch: main
 
-# Navigation
-navigation:
-  - name: Home Page
-    link: ./
-  - name: Overview
-    link: ./overview
-  - name: Thematic map
-    link: ./thematic-map
-  - name: Sampling design
-    link: ./sampling-design
-  - name: Response design
-    link: ./response-design
-  - name: Analysis
-    link: ./analysis
-  - name: Examples
-    link: ./examples
-  - name: References
-    link: ./references
+html:
+  favicon: img/acatama.svg
+
+# Bibliography configuration
+bibtex_bibfiles:
+  - bibliography.bib
+
+# Sphinx configuration
+sphinx:
+  extra_extensions:
+  - "sphinx.ext.napoleon"
+  - "sphinx.ext.viewcode"
+  - "sphinxcontrib.bibtex"
+  recursive_update: true
+  config:
+    bibtex_default_style: plain
+    bibtex_reference_style: author_year
+    html_theme_options:
+      repository_url: https://github.com/SMByC/AcATaMa
+      repository_branch: main
+      path_to_docs: docs
+      # secondary_sidebar_items: []  # disable page-toc in sidebar
+      # buttons
+      use_edit_page_button: true
+      use_repository_button: true
+      use_download_button: false
+      use_fullscreen_button: false

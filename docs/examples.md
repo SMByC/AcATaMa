@@ -1,21 +1,23 @@
----
-layout: default
----
-
 # Examples
 
-> **Download** the examples in order to load them in Acatama and explore the configuration and results, you can find the
-> zip [**here**](https://drive.google.com/uc?export=download&id=1dZwaxA67FbhXY9MZ62LNVMqd8ZPpGJeE)
+```{note}
+**Download** the examples in order to load them in Acatama and explore the configuration and results, you can find the
+zip [**here**](https://drive.google.com/uc?export=download&id=1dZwaxA67FbhXY9MZ62LNVMqd8ZPpGJeE)
+```
 
-> **Load** the examples using the Restore state function in
-> Acatama: <img src="img/restore_state.webp" height="280px" style="margin: auto;display: block;">
+```{note}
+**Load** the examples using the Restore configuration function in Acatama
+```
 
 The examples were made with the forest land change map in Colombia for the year 2019-2020, the study area is the Tinigua
 National Natural Park an area with a high deforestation rate that is located on the border of the Colombian Amazon and
 the Andes mountains. The classes that are assessed in this thematic accuracy assessment are Stable Forest, Non-Stable
 Forest, and Deforestation.
 
-<img src="img/tinigua_aoi_map.webp" width="50%" style="margin: auto;display: block;">
+```{image} img/tinigua_aoi_map.webp
+:width: 50%
+:align: center
+```
 
 The three types of sampling were carried out: simple random, systematic and stratified. For each sampling, 500
 evaluation points were chosen and Landsat images from 2019 and 2020 were used as reference data to identify the change
@@ -24,7 +26,10 @@ supplemented by a query of satellite image data from the Google Earth platform (
 recommend having supplemental data by Google Earth Engine [plugin](https://plugins.qgis.org/plugins/ee_plugin/) 
 based on your use case and needs)
 
-<img src="img/tinigua_aoi.webp" width="50%" style="margin: auto;display: block;">
+```{image} img/tinigua_aoi.webp
+:width: 50%
+:align: center
+```
 
 The main goal of these exercises is to define the agreement between the forest change detection map and the manual
 classification by visually interpreting the reference data, which will result in an error matrix expressed in terms
@@ -41,4 +46,6 @@ Finally, the results that are obtained when the sampling points are completed. T
 the different estimators, associated with the types of sampling such as simple random, systematic, stratified and 
 post-stratified.
 
-Next >> [References](./references)
+```{important}
+All files in this example are for demonstration purposes only and do not represent official/real data.
+```

@@ -1,195 +1,200 @@
----
-layout: default
----
-
 # Sampling Design
 
-The sampling design is the protocol for selecting the subset of evaluation units for which the reference classification
-is obtained. Choosing a sampling design also requires defining a sampling frame and sampling unit to serve as the basis
-for accuracy assessment.
+Assessing the accuracy of thematic maps requires sampling, as verifying every location on the ground is neither practical nor cost-effective. An effective sampling design depends on characterizing the distribution of map classes, determining the appropriate sample size and allocation, and selecting a suitable sampling scheme.
 
-Another important quality in the sampling design is that it meets the criteria of reproducibility. For this, the key
-characteristics that must be documented are the following:
+Since sampling design directly affects both cost and statistical reliability, it is one of the most critical components of thematic map accuracy assessment, ensuring that reference data are selected using statistically valid and representative procedures {cite}`Stehman1998`. A well-structured sampling design is essential for producing unbiased accuracy estimates and reliable area estimates.
 
-1. Describe the randomization implemented in the selection of the sample;
-2. Identify the information needed to estimate the inclusion probability or specify them;
-3. Describe how the strata were constructed, the proportion of area in each stratum, specify the sampling design
-   implemented within each stratum, and indicate the size of the sample assigned to each stratum;
-4. Define the primary sampling unit (PSU) and the secondary sampling unit (SSU), indicate whether one-stage or two-stage
-   sampling was implemented, and specify the sampling design implemented at each stage.
+According to {cite:t}`Olofsson2014`, **probability sampling is recommended** because every unit in the population has a known, non-zero chance of selection, thereby allowing for design-based, statistically rigorous inferences.
 
-The Sampling Unit can be defined as the unit of comparison between the reference data and the map data. It is also
-referred to as the fundamental unit upon which the accuracy assessment is based, as it connects the spatial location on
-the map to the corresponding location on the ground. (Stehman & Czaplewski, 1998).
+```{image} img/sampling_design.webp
+:width: 85%
+:align: center
+```
 
-Sampling protocol is one of the most complex and important steps in assessing the accuracy of maps. The sampling
-protocol is responsible for selecting the sampling units and, together with the analysis of its components, the
-statistical inference is obtained.
+### Simple Random Sampling (SRS)
 
-<img src="img/sampling_designs.webp" height="500px" style="margin: auto;display: block;">
+```{image} img/simple_sampling.svg
+:width: 25%
+:align: center
+```
 
-Selecting the sampling design is crucial and could be based on the population/data type, what you are evaluating, or
-your needs. At the moment we have implemented three main sampling designs: simple random, stratified random, and
-systematic sampling and all are probability sampling designs. For example, use simple random for a population without
-strata. Stratified random is commonly employed for sampling within each stratum of the classes of the stratified map.
-And the systematic protocol to have some strata sampled systematically. But also we implemented post-stratification
-methods for simple random and systematic sampling to ensure that samples randomly generated are only on specific strata.
+Simple random sampling provides **equal probability to all units**. It is appropriate if the sample size is large enough to ensure that all classes are adequately represented and could be useful to serve the needs of a wide group of users.
 
-## Simple random sampling
+**Advantages:**
+- Extremely simple to use
+- Adapts to the need to increase or decrease the sampling units
+- Less complex statistical estimators compared to other sampling designs
 
-<img src="img/simple_sampling.svg" width="25%" style="margin: auto;display: block;">
+**Disadvantages:**
+- Underestimates the less representative classes
+- Not well distributed spatially
 
-It is appropriate if the sample size is large enough to ensure that all classes are adequately represented. It could be
-useful to serve the needs of a wide group of users.
+### Stratified Random Sampling (STR)
 
-_**Advantages**_: It is extremely simple to use and adapts to the need to increase or decrease the sampling units.
-Less complex statistical estimators compared to other sampling designs.
+```{image} img/stratified_sampling.svg
+:width: 25%
+:align: center
+```
 
-_**Disadvantages**_: Underestimates the less representative classes. Not well distributed spatially
+Stratified random sampling **increases precision via allocation across different map classes or strata**. It is useful for reporting results when strata are of interest and the precision of accuracy and area estimates need to be improved. As a result, it is one of the most commonly used designs.
 
-## Stratified random sampling
+This design is recommended by {cite:t}`Olofsson2014` as a good practice option for ensuring that rare classes are well represented.
 
-<img src="img/stratified_sampling.svg" width="25%" style="margin: auto;display: block;">
+For STR, the sample size for each stratum is calculated based on:
+1. Class area proportions
+2. A target standard error for overall accuracy
+3. Anticipated user's accuracies by stratum
 
-It is useful for reporting results when strata are of interest and the precision of accuracy and area estimates need to
-be improved. As a result, it is one of the most commonly used. It is used in conjunction with prior knowledge to
-stratify the study area. This design is recommended by Olofsson et al. (2014) as a good practice option for ensuring
-that rare classes are well represented.
+If necessary, the user can manually adjust the number of samples for one or more classes, e.g., to implement the allocation proposed by {cite:t}`Olofsson2014` or other allocation strategies.
 
-_**Advantages**_: It allows to increase the sample size of the less common classes. It lowers the standard errors of the
-accuracy estimates for rare classes or if the proportions are very different between strata. Geographic stratification
-could be used to ensure a good spatial distribution of the sample. It allows the option of using different sampling
-designs in different strata.
+**Advantages:**
+- Allows to increase the sample size of the less common classes
+- Lowers the standard errors of the accuracy estimates for rare classes
+- Geographic stratification could be used to ensure a good spatial distribution
+- Allows the option of using different sampling designs in different strata
 
-_**Disadvantages**_: Stratification by geographic region does not result in a gain in precision. Only the evaluation of
-the accuracy of the map that gives rise to the strata is allowed. Sampling with an optimal allocation leads to different
-probabilities of inclusion, this makes it difficult to calculate the estimators
+**Disadvantages:**
+- Stratification by geographic region does not result in a gain in precision
+- Only the evaluation of the accuracy of the map that gives rise to the strata is allowed
+- Sampling with an optimal allocation leads to different probabilities of inclusion, making estimator calculation more difficult
 
-## Systematic random sampling
+### Systematic Sampling (SYS)
 
-<img src="img/systematic_sampling_info.svg" width="40%" style="margin: auto;display: block;">
+```{image} img/systematic_sampling_info.svg
+:width: 25%
+:align: center
+```
 
-Systematic random sampling involves selecting samples at regular intervals across a grid, either by distance or pixel 
-units. Sampling begins from a fixed or random point, starting in the top-left corner, and applies a random offset to the 
-initial grid position. We implemented two systematic sampling methodologies: one based on physical distances and the 
-other on pixel units, both units are based on the thematic map. Each approach influences the entire configuration of the 
-systematic sampling process.
+Systematic sampling **promotes even spatial distribution** by selecting samples at regular intervals across a grid, either by distance or pixel units. Sampling begins from a fixed or random point, starting in the top-left corner, and applies a random offset to the initial grid position.
 
-<img src="img/systematic_sampling_by_distance.svg" width="40%" style="margin: auto;display: block;">
+We implemented two systematic sampling methodologies: one based on **physical distances** and the other on **pixel units**, both based on the thematic map.
+
+```{image} img/systematic_sampling_by_distance.svg
+:width: 35%
+:align: center
+```
 <p align="center"><em>Systematic sampling by distance</em></p>
-<img src="img/systematic_sampling_by_pixel.svg" width="40%" style="margin: auto;display: block;">
+
+```{image} img/systematic_sampling_by_pixel.svg
+:width: 35%
+:align: center
+```
 <p align="center"><em>Systematic sampling by pixel</em></p>
 
-* **Point spacing**: The spacing between points in the systematic grid is defined in distance units (e.g., meters) or 
-pixels. These points are arranged at regular intervals in a square pattern along the X and Y axes, starting from the 
-initial inset.
-* **Initial inset**: The initial inset is the distance from the top-left corner of the study area (the extent of the 
-thematic map) to the first point unit for the systematic grid. This distance could be fixed by the user (by distance or 
-pixel units) or randomly selected within the range of the point spacing.
-* **Max offset**: Maximum distance along the X and Y axes from the point of the aligned systematic grid as a center of 
-the random offset area (by distance or pixel units)
-* **Random offset area**: Random Offset Area: This is the area surrounding each point on the aligned systematic grid 
-where a random offset is applied. If systematic sampling is based on distance, the offset area may partially overlap 
-with some pixels, meaning the probability of a pixel being selected is proportional to the fraction of its area within 
-the offset zone. In contrast, if sampling is based on pixels, the offset area is defined in exact pixel units, giving 
-each pixel within the area an equal probability of being selected.
+**Parameters:**
 
-> <span style="color:cyan">TIP!</span>  
-> To ensure the offset area covers the entire thematic map (giving every pixel an equal probability of being selected), 
-> set the maximum offset value to half of the point spacing. Keep in mind that if systematic sampling is based on 
-> pixels, the pixel units must be integers.
+- **Point spacing**: The spacing between points in the systematic grid (in distance units or pixels)
+- **Initial inset**: The distance from the top-left corner of the study area to the first point unit
+- **Max offset**: Maximum distance along the X and Y axes from the point of the aligned systematic grid
+- **Random offset area**: The area surrounding each point where a random offset is applied
 
-### Aligned systematic sampling
+```{tip}
+To ensure the offset area covers the entire thematic map (giving every pixel an equal probability of being selected), set the maximum offset value to half of the point spacing.
+```
 
-_(This happens when the max XY offset value is zero)_
+#### Aligned Systematic Sampling
 
-Distribute the sampling units equally for the entire study area. As long as the first sampling unit is randomly
-selected, we can say that systematic sampling is random. Simplicity is highly attractive to end users. The variance
-depends on how the error is spatially distributed.
+*(When the max XY offset value is zero)*
 
-_**Advantages**_: It distributes the sampling units equitably throughout the study area. As long as the first sampling
-unit is randomly selected, we can say that systematic sampling is random. Simplicity is highly attractive to end
-users. The variance depends on how the error is spatially distributed.
+Distributes the sampling units equally for the entire study area. As long as the first sampling unit is randomly selected, systematic sampling is considered random.
 
-_**Disadvantages**_: If the errors are located in certain areas of the population, systematic sampling will have a lower
-variance. The non-existence of an impartial estimator for calculating the variance. This aspect leads to an
-overestimation of the variance. In the presence of uniformly distributed errors, the application is not desirable.
+**Advantages:**
+- Distributes sampling units equitably throughout the study area
+- Simplicity is highly attractive to end users
+- The variance depends on how the error is spatially distributed
 
-### Unaligned systematic sampling
+**Disadvantages:**
+- If errors are located in certain areas, systematic sampling will have a lower variance
+- Non-existence of an impartial estimator for calculating the variance
+- Not desirable in the presence of uniformly distributed errors
 
-_(This happens when the max XY offset value is NOT zero)_
+#### Unaligned Systematic Sampling
 
-The area is divided into smaller, regularly spaced regions, with a randomly chosen sample unit within each of these
-regions. The sample units are evenly dispersed but not positioned. In order to minimize the effects of the periodicity
-of errors.
+*(When the max XY offset value is NOT zero)*
 
-_**Advantages**_: If the linearity of the error is present, it is less susceptible to error. The calculation of the
-variance is acceptable and unbiased.
+The area is divided into smaller, regularly spaced regions, with a randomly chosen sample unit within each region. This minimizes the effects of the periodicity of errors.
 
-_**Disadvantages**_: Reduces the advantage of the spatial distribution of error and favors systematic sampling over
-simple random sampling. The lack of an unbiased estimator.
+**Advantages:**
+- Less susceptible to error if linearity of error is present
+- The calculation of the variance is acceptable and unbiased
 
----
+**Disadvantages:**
+- Reduces the advantage of spatial distribution of error
+- The lack of an unbiased estimator
 
-## Sample size
+## Additional Features
 
-For a statistically correct assessment of accuracy it is necessary to collect an adequate number of sampling units for
-each class. In fact, the size of the sample will influence the precision with which the accuracy is estimated. Congalton
-& Green (2009) point out that at least 50 sampling units should be collected for each land cover class. According to
-Stehman (2001), a sample with 100 sampling units per class ensures that the accuracy can be estimated with a standard
-deviation of no more than 0.05. Despite this aspect, the minimum value of the sampling units per land cover class could
-vary depending on the importance (Congalton & Green, 2019) (Stehman & Foody, 2019)
+### Reproducibility
 
-### Sample size in simple and systematic sampling
+The plugin ensures randomness by automatically generating a random seed for all sampling methods. However, if users require reproducible sampling results, they can set a **fixed seed**. Setting a known seed value ensures replicability given identical inputs and configurations.
 
-Simple and systematic random sampling are easy and practical designs, they represent homogeneous and proportional
-populations very well, and the sample size for each coverage or map class must be large enough to produce sufficiently
-precise estimates of area. However, when there are small or rare areas compared to the total area such as deforestation,
-stratified sampling is recommended. (Methods and Guidance from the Global Forest Observations Initiative, GFOI, 2020)
+```{important}
+Setting a known seed ensures that the assessment can be reproduced and validated by other parties, which is critical for scientific studies and decision-making.
+```
 
-### Sample size in stratified sampling
+### Minimum Distance Constraint
 
-#### Overall expected standard error - S(Ô)
+A minimum distance constraint between sampling units helps prevent spatial clustering, reduces spatial autocorrelation effects, and ensures a more evenly distributed sample.
 
-<img src="img/overall_std_error.webp" width="35%" style="margin: auto;display: block;">
+### Neighbor Aggregation
 
-The standard error of the estimated overall accuracy that you would like to achieve. For stratified sampling, Cochran 
-(1977) provides the following sample size formula (Cochran, 1977 and Olofsson, et al., 2014)
+The neighbor-aggregation feature (counting the number of neighbors with the same class) allows users to define sampling based on adjacent pixel values, improving spatial consistency and reducing edge effects.
 
-<img src="img/ecuation_sample_size.webp" width="70%" style="margin: auto;display: block;">
+### Post-Stratification
 
-Where N=number of units in the study region, S(Ô) is the standard error of the expected global accuracy, Wi is the
-mapped proportion of the area of class i, and Si is the standard deviation of stratum i and Ui is the accuracy
-expected by class i. Since N is usually very large, the second term in the denominator of the above equation can be
-discarded.
+AcATaMa offers post-stratification for SRS and SYS, enabling users to adjust estimation weights after sampling to correct class imbalances, ultimately improving the reliability of accuracy estimates.
 
-#### User's accuracy confidence
+## Sample Size
 
-<img src="img/user_accuracy.webp" width="35%" style="margin: auto;display: block;">
+### Sample Size for Stratified Sampling
 
-The user's accuracy (Ui) is the probability that a pixel classified as class i is actually class i. The user's accuracy
-is a measure of the reliability of the classification, in other words, the user's accuracy is the confidence for map
-classes. In general, the user's accuracy values are:
+#### Overall Expected Standard Error - S(Ô)
 
-- 0.6 - 0.8: for unstable classes
-- 0.8 - 0.95: for stable classes
+```{image} img/overall_std_error.webp
+:width: 35%
+:align: center
+```
 
-For example, based on a study from Olofsson et al. (2014) assessing the accuracy of forest change, the user's accuracy
-values for the following classes could be:
+The standard error of the estimated overall accuracy that you would like to achieve. For stratified sampling, {cite:t}`Cochran1977` provides the sample size formula:
+
+```{image} img/ecuation_sample_size.webp
+:width: 70%
+:align: center
+```
+
+Where:
+- N = number of units in the study region
+- S(Ô) = standard error of the expected global accuracy
+- Wi = mapped proportion of the area of class i
+- Si = standard deviation of stratum i
+- Ui = accuracy expected by class i
+
+Since N is usually very large, the second term in the denominator can be discarded.
+
+#### User's Accuracy Confidence
+
+```{image} img/user_accuracy.webp
+:width: 35%
+:align: center
+```
+
+The user's accuracy (Ui) is the probability that a pixel classified as class i is actually class i. In general:
+
+- **0.6 - 0.8**: for unstable classes
+- **0.8 - 0.95**: for stable classes
+
+Example values based on {cite:t}`Olofsson2014` for forest change assessment:
 
 - 0.6 - 0.7: forest gain (very unstable class)
 - 0.7 - 0.8: deforestation (unstable class)
 - 0.8 - 0.9: stable forest (stable class)
 - 0.95: stable non-forest (very stable class)
 
-#### Minimum sample size per stratum
+### Minimum Sample Size per Stratum
 
-<img src="img/minimum_sampling_per_stratum.webp" width="35%" style="margin: auto;display: block;">
+```{image} img/minimum_sampling_per_stratum.webp
+:width: 35%
+:align: center
+```
 
-Using stratified or post-stratified sampling for map data analysis, land use/land cover classification and similar 
-topics, a minimum sample size of 30 (Van Genderen et al., 1978) or 50 (Stehman & Foody, 2019; Hay, 1979) per 
-evaluated stratum is generally recommended to ensure statistical significance. However, determining the optimal 
-minimum sample size requires consideration of several factors such as data type, the specific research objectives, 
-and the desired level of precision.
-
-Next >> [Response design](response-design.html)
+Using stratified or post-stratified sampling, a minimum sample size of **30** {cite}`VanGenderen1978` or **50** {cite}`Stehman2019,Hay1979` per evaluated stratum is generally recommended to ensure statistical significance.

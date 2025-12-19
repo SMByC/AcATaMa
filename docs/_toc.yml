@@ -1,0 +1,22 @@
+format: jb-book
+root: overview
+parts:
+  - caption: ''
+    chapters:
+      - file: introduction
+      - file: thematic-map
+  - caption: 'Components'
+    chapters:
+      - file: sampling-design
+      - file: response-design
+      - file: analysis
+  - caption: 'Other Features'
+    chapters:
+      - file: session-persistence
+  - caption: 'About'
+    chapters:
+      - file: examples
+        title: Examples
+      - file: about
+        title: About Us
+      - file: references
