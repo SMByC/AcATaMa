@@ -1,0 +1,638 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Analysis &#8212; AcATaMa - Accuracy Assessment of Thematic Maps</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'analysis';</script>
+    <link rel="icon" href="_static/acatama.svg"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Session Persistence" href="session-persistence.html" />
+    <link rel="prev" title="Response Design" href="response-design.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="overview.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/acatama.svg" class="logo__image only-light" alt="AcATaMa - Accuracy Assessment of Thematic Maps - Home"/>
+    <script>document.write(`<img src="_static/acatama.svg" class="logo__image only-dark" alt="AcATaMa - Accuracy Assessment of Thematic Maps - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="overview.html">
+                    AcATaMa
+                </a>
+            </li>
+        </ul>
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thematic-map.html">Thematic Map</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Components</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="sampling-design.html">Sampling Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="response-design.html">Response Design</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other Features</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="session-persistence.html">Session Persistence</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About Us</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/SMByC/AcATaMa" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/SMByC/AcATaMa/edit/main/docs/analysis.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Analysis</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-matrix">Error Matrix</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#accuracy-measures">Accuracy Measures</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#overall-accuracy">Overall Accuracy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#user-s-accuracy">User’s Accuracy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#producer-s-accuracy">Producer’s Accuracy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#about-kappa">About Kappa</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#area-estimation">Area Estimation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#class-area-adjusted">Class Area Adjusted</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#confidence-intervals">Confidence Intervals</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#coefficient-of-variation-and-uncertainty">Coefficient of Variation and Uncertainty</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#equations-and-estimators">Equations and Estimators</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="analysis">
+<h1>Analysis<a class="headerlink" href="#analysis" title="Link to this heading">#</a></h1>
+<p>The analysis component of thematic map accuracy assessment focuses on quantifying classification accuracy and estimating mapped class areas while accounting for uncertainty <span id="id1">[<a class="reference internal" href="references.html#id45" title="S. V. Stehman and R. L. Czaplewski. Design and analysis for thematic map accuracy assessment: fundamental principles. Remote Sensing of Environment, 64:331–344, 1998. doi:10.1016/S0034-4257(98)00010-8.">Stehman and Czaplewski, 1998</a>]</span>.</p>
+<a class="reference internal image-reference" href="_images/accuracy_assessment.webp"><img alt="_images/accuracy_assessment.webp" class="align-center" src="_images/accuracy_assessment.webp" style="width: 85%;" />
+</a>
+<section id="error-matrix">
+<h2>Error Matrix<a class="headerlink" href="#error-matrix" title="Link to this heading">#</a></h2>
+<p>A central element of this process is the <strong>error (confusion) matrix</strong>, which provides a detailed comparison between map classifications and reference data. The matrix enables the calculation of key accuracy metrics:</p>
+<ul class="simple">
+<li><p><strong>Overall accuracy</strong></p></li>
+<li><p><strong>User’s accuracy</strong> (commission error)</p></li>
+<li><p><strong>Producer’s accuracy</strong> (omission error)</p></li>
+</ul>
+<p>The confusion matrix is the most widely used method for assessing accuracy. The matrix should remain a cornerstone of the analysis protocol due to its ease of interpretation and valuable descriptive information.</p>
+<p>Typically, the map data is arranged in <strong>rows</strong> and the reference data is arranged in <strong>columns</strong> in the matrix. The values arranged on the diagonal indicate the degree of agreement between the two data sets.</p>
+<p>This matrix is essential for the analysis of the area and variance estimators. The row and column totals of the population error matrix are important because they quantify the distribution, by area, of different land cover classes:</p>
+<ul class="simple">
+<li><p><strong>Row totals</strong>: Proportion of area of each class according to the map classification</p></li>
+<li><p><strong>Column totals</strong>: Proportion of area according to the reference classification</p></li>
+</ul>
+</section>
+<section id="accuracy-measures">
+<h2>Accuracy Measures<a class="headerlink" href="#accuracy-measures" title="Link to this heading">#</a></h2>
+<section id="overall-accuracy">
+<h3>Overall Accuracy<a class="headerlink" href="#overall-accuracy" title="Link to this heading">#</a></h3>
+<p>The global accuracy has a direct interpretation in terms of area, since it represents the proportion of area correctly classified.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Overall accuracy hides important information specific to each class. The limitation to overall accuracy is not how it weights or represents class-specific information, but rather that it does not provide class-specific information.</p>
+</div>
+</section>
+<section id="user-s-accuracy">
+<h3>User’s Accuracy<a class="headerlink" href="#user-s-accuracy" title="Link to this heading">#</a></h3>
+<p>The number of correctly classified sampling units (nii) in a class divided by the total number of sampling units of that same class in the map (nk+).</p>
+<p>User’s accuracy is associated with the measurement of <strong>commission errors</strong>, which are defined as the inclusion of a map area in a land cover class in which that area should not be included.</p>
+</section>
+<section id="producer-s-accuracy">
+<h3>Producer’s Accuracy<a class="headerlink" href="#producer-s-accuracy" title="Link to this heading">#</a></h3>
+<p>The number of correctly classified sampling units (njj) in a class divided by the total number of sampling units in the reference data n+j for that class.</p>
+<p>Producer’s accuracy is associated with <strong>omission errors</strong>, which occur when an area is excluded on the map from the land cover class to which it should belong.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Errors of omission and errors of commission can be problematic to different degrees depending on the goals of a given application. Therefore, it is advisable to have separate estimates of user and producer accuracies. If general measures are reported, they must be accompanied by specific measures of each class.</p>
+</div>
+</section>
+<section id="about-kappa">
+<h3>About Kappa<a class="headerlink" href="#about-kappa" title="Link to this heading">#</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>AcATaMa does not include the Kappa coefficient in the results, because in general we don’t recommend using it. The kappa coefficient is widely used as a measure of thematic accuracy in remote sensing. However, <span id="id2">Foody [<a class="reference internal" href="references.html#id2" title="G. M. Foody. Explaining the unsuitability of the kappa coefficient in the assessment and comparison of the accuracy of thematic maps obtained by image classification. Remote Sensing of Environment, 239:111630, 2020.">2020</a>]</span> and <span id="id3">Pontius Jr and Millones [<a class="reference internal" href="references.html#id3" title="R. G. Pontius Jr and M. Millones. Death to kappa: birth of quantity disagreement and allocation disagreement for accuracy assessment. International Journal of Remote Sensing, 32(15):4407–4429, 2011.">2011</a>]</span> have shown that the Kappa coefficient is not a good measure of accuracy. <span id="id4">Pontius Jr and Millones [<a class="reference internal" href="references.html#id3" title="R. G. Pontius Jr and M. Millones. Death to kappa: birth of quantity disagreement and allocation disagreement for accuracy assessment. International Journal of Remote Sensing, 32(15):4407–4429, 2011.">2011</a>]</span> argued that Kappa indices are redundant, useless, and/or flawed and should be abandoned because they do not provide any information helping in the purpose of accuracy assessment and map comparison. <span id="id5">Foody [<a class="reference internal" href="references.html#id2" title="G. M. Foody. Explaining the unsuitability of the kappa coefficient in the assessment and comparison of the accuracy of thematic maps obtained by image classification. Remote Sensing of Environment, 239:111630, 2020.">2020</a>]</span> said that while Kappa is a useful measure of agreement, it is not a good measure of accuracy.</p>
+</div>
+</section>
+</section>
+<section id="area-estimation">
+<h2>Area Estimation<a class="headerlink" href="#area-estimation" title="Link to this heading">#</a></h2>
+<p>The area estimation component of accuracy assessment adjusts the mapped class areas based on accuracy assessment results, ensuring <strong>unbiased and statistically more precise estimates</strong>.</p>
+<p>According to <span id="id6">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span>, relying solely on sample counts can introduce significant bias, particularly in land change analyses where errors in classification disproportionately affect small or rare classes. By incorporating adjustments using strata areas in the estimations derived from the error matrix, area estimates are corrected to better reflect true land cover proportions.</p>
+<section id="class-area-adjusted">
+<h3>Class Area Adjusted<a class="headerlink" href="#class-area-adjusted" title="Link to this heading">#</a></h3>
+<p>The accuracy assessment serves to derive the uncertainty of the map area estimates. Whereas the map provides a single area estimate for each class without confidence interval, the accuracy estimates:</p>
+<ul class="simple">
+<li><p>Adjust this estimate</p></li>
+<li><p>Provide confidence intervals as estimates of uncertainty</p></li>
+</ul>
+<p>The adjusted area estimates can be considerably higher or lower than the map estimates <span id="id7">[<a class="reference internal" href="references.html#id6" title="FAO. Collect earth: land use and land cover assessment through augmented visual interpretation. 2016.">FAO, 2016</a>]</span>.</p>
+</section>
+<section id="confidence-intervals">
+<h3>Confidence Intervals<a class="headerlink" href="#confidence-intervals" title="Link to this heading">#</a></h3>
+<p>The estimated area for each class or stratum and the standard error of the estimated area allow obtaining the confidence interval with the percent defined by the z-score value.</p>
+<p>It is typically represented by confidence intervals, which indicate the range within which the true area proportions are expected to lie with a specified level of confidence, such as <strong>95% (Z=1.96)</strong>.</p>
+</section>
+<section id="coefficient-of-variation-and-uncertainty">
+<h3>Coefficient of Variation and Uncertainty<a class="headerlink" href="#coefficient-of-variation-and-uncertainty" title="Link to this heading">#</a></h3>
+<p>The coefficient of variation is a standardized measure of the dispersion of the estimated area proportions, calculated as the ratio of the standard error to the mean estimate. It provides a relative measure of variability, allowing for comparisons across different classes or studies.</p>
+<ul class="simple">
+<li><p><strong>Lower CV</strong> indicates higher precision of the estimates</p></li>
+</ul>
+<p>Uncertainty encompasses the potential errors and variability inherent in the sampling design, classification accuracy, and reference data used for accuracy assessment. Quantifying this uncertainty is crucial as it measures the reliability and precision of the area estimates.</p>
+</section>
+</section>
+<section id="equations-and-estimators">
+<h2>Equations and Estimators<a class="headerlink" href="#equations-and-estimators" title="Link to this heading">#</a></h2>
+<p>Based on the importance of accuracy and area estimation adjustments and recommendations, AcATaMa provides a comprehensive set of analysis results calculated according to the selected sampling design:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Sampling Design</p></th>
+<th class="head"><p>Component</p></th>
+<th class="head"><p>Source</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Simple Random (SRS)</strong></p></td>
+<td><p>Accuracy</p></td>
+<td><p><span id="id8">Stehman and Foody [<a class="reference internal" href="references.html#id46" title="S. V. Stehman and G. M. Foody. Accuracy assessment. In T. A. Warner, D. M. Nellis, and G. M. Foody, editors, The SAGE Handbook of Remote Sensing, pages 297–309. SAGE Publications, 2009. doi:10.4135/9780857021052.n21.">2009</a>]</span>: Table 21.3</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p>Estimating area and confidence intervals</p></td>
+<td><p><span id="id9">Stehman [<a class="reference internal" href="references.html#id43" title="S. V. Stehman. Estimating area from an accuracy assessment error matrix. Remote Sensing of Environment, 132:202–211, 2013.">2013</a>]</span>: Eq. 13 and 44</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Sample size</p></td>
+<td><p><span id="id10">Cochran [<a class="reference internal" href="references.html#id9" title="W. G. Cochran. Sampling Techniques. John Wiley &amp; Sons, 3rd edition, 1977.">1977</a>]</span>: Eq. 4.2</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Stratified Random (STR)</strong></p></td>
+<td><p>Accuracy</p></td>
+<td><p><span id="id11">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id36" title="P. Olofsson, G. M. Foody, S. V. Stehman, and C. E. Woodcock. Making better use of accuracy data in land change studies: estimating accuracy and area and quantifying uncertainty using stratified estimation. Remote Sensing of Environment, 129:122–131, 2013. doi:10.1016/j.rse.2012.10.031.">2013</a>]</span>: Eq. 1, 2 and 3</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Estimating area and confidence intervals</p></td>
+<td><p><span id="id12">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id36" title="P. Olofsson, G. M. Foody, S. V. Stehman, and C. E. Woodcock. Making better use of accuracy data in land change studies: estimating accuracy and area and quantifying uncertainty using stratified estimation. Remote Sensing of Environment, 129:122–131, 2013. doi:10.1016/j.rse.2012.10.031.">2013</a>]</span>: Eq. 10 and 11</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p>Sample size per strata</p></td>
+<td><p><span id="id13">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span>: Eq. 13</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Systematic (SYS)</strong></p></td>
+<td><p>Accuracy</p></td>
+<td><p><span id="id14">Stehman and Foody [<a class="reference internal" href="references.html#id46" title="S. V. Stehman and G. M. Foody. Accuracy assessment. In T. A. Warner, D. M. Nellis, and G. M. Foody, editors, The SAGE Handbook of Remote Sensing, pages 297–309. SAGE Publications, 2009. doi:10.4135/9780857021052.n21.">2009</a>]</span>: Table 21.3</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p>Estimating area and confidence intervals</p></td>
+<td><p><span id="id15">Stehman [<a class="reference internal" href="references.html#id42" title="S. V. Stehman. Impact of sample size allocation when using stratified random sampling to estimate accuracy and area of land-cover change. Remote Sensing Letters, 3:111–120, 2012.">2012</a>]</span>: Eq. 3</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Sample size</p></td>
+<td><p><span id="id16">Cochran [<a class="reference internal" href="references.html#id9" title="W. G. Cochran. Sampling Techniques. John Wiley &amp; Sons, 3rd edition, 1977.">1977</a>]</span>: Eq. 4.2</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Post-Stratified</strong></p></td>
+<td><p>Estimating area and confidence intervals</p></td>
+<td><p><span id="id17">Stehman [<a class="reference internal" href="references.html#id43" title="S. V. Stehman. Estimating area from an accuracy assessment error matrix. Remote Sensing of Environment, 132:202–211, 2013.">2013</a>]</span>: Eq. 48</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Uncertainty</strong></p></td>
+<td><p>All designs</p></td>
+<td><p><span id="id18">McMurray <em>et al.</em> [<a class="reference internal" href="references.html#id31" title="A. McMurray, T. Pearson, and F. Casarim. Guidance on Applying the Monte Carlo Approach to Uncertainty Analyses in Forestry and Greenhouse Gas Accounting. Winrock International, 2017.">2017</a>]</span>: Page 17</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>AcATaMa has been rigorously tested using multiple real-world examples across various use cases to ensure the reliability of its results. This involved manually calculating several test cases from scratch and systematically comparing them with AcATaMa’s outputs to validate its computational accuracy.</p>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="response-design.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Response Design</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="session-persistence.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Session Persistence</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-matrix">Error Matrix</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#accuracy-measures">Accuracy Measures</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#overall-accuracy">Overall Accuracy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#user-s-accuracy">User’s Accuracy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#producer-s-accuracy">Producer’s Accuracy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#about-kappa">About Kappa</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#area-estimation">Area Estimation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#class-area-adjusted">Class Area Adjusted</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#confidence-intervals">Confidence Intervals</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#coefficient-of-variation-and-uncertainty">Coefficient of Variation and Uncertainty</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#equations-and-estimators">Equations and Estimators</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By SMByC, IDEAM Colombia
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

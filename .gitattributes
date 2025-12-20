@@ -1,3 +1,0 @@
-*.gpkg filter=lfs diff=lfs merge=lfs -text
-*.tif filter=lfs diff=lfs merge=lfs -text
-*.qml filter=lfs diff=lfs merge=lfs -text

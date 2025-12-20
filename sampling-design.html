@@ -1,0 +1,687 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Sampling Design &#8212; AcATaMa - Accuracy Assessment of Thematic Maps</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'sampling-design';</script>
+    <link rel="icon" href="_static/acatama.svg"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Response Design" href="response-design.html" />
+    <link rel="prev" title="Thematic Map" href="thematic-map.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="overview.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/acatama.svg" class="logo__image only-light" alt="AcATaMa - Accuracy Assessment of Thematic Maps - Home"/>
+    <script>document.write(`<img src="_static/acatama.svg" class="logo__image only-dark" alt="AcATaMa - Accuracy Assessment of Thematic Maps - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="overview.html">
+                    AcATaMa
+                </a>
+            </li>
+        </ul>
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thematic-map.html">Thematic Map</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Components</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Sampling Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="response-design.html">Response Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html">Analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other Features</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="session-persistence.html">Session Persistence</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About Us</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/SMByC/AcATaMa" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/SMByC/AcATaMa/edit/main/docs/sampling-design.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Sampling Design</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-random-sampling-srs">Simple Random Sampling (SRS)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratified-random-sampling-str">Stratified Random Sampling (STR)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#systematic-sampling-sys">Systematic Sampling (SYS)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aligned-systematic-sampling">Aligned Systematic Sampling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#unaligned-systematic-sampling">Unaligned Systematic Sampling</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-features">Additional Features</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reproducibility">Reproducibility</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#minimum-distance-constraint">Minimum Distance Constraint</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#neighbor-aggregation">Neighbor Aggregation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-stratification">Post-Stratification</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sample-size">Sample Size</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sample-size-for-stratified-sampling">Sample Size for Stratified Sampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#overall-expected-standard-error-s-o">Overall Expected Standard Error - S(Ô)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#user-s-accuracy-confidence">User’s Accuracy Confidence</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#minimum-sample-size-per-stratum">Minimum Sample Size per Stratum</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="sampling-design">
+<h1>Sampling Design<a class="headerlink" href="#sampling-design" title="Link to this heading">#</a></h1>
+<p>Assessing the accuracy of thematic maps requires sampling, as verifying every location on the ground is neither practical nor cost-effective. An effective sampling design depends on characterizing the distribution of map classes, determining the appropriate sample size and allocation, and selecting a suitable sampling scheme.</p>
+<p>Since sampling design directly affects both cost and statistical reliability, it is one of the most critical components of thematic map accuracy assessment, ensuring that reference data are selected using statistically valid and representative procedures <span id="id1">[<a class="reference internal" href="references.html#id45" title="S. V. Stehman and R. L. Czaplewski. Design and analysis for thematic map accuracy assessment: fundamental principles. Remote Sensing of Environment, 64:331–344, 1998. doi:10.1016/S0034-4257(98)00010-8.">Stehman and Czaplewski, 1998</a>]</span>. A well-structured sampling design is essential for producing unbiased accuracy estimates and reliable area estimates.</p>
+<p>According to <span id="id2">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span>, <strong>probability sampling is recommended</strong> because every unit in the population has a known, non-zero chance of selection, thereby allowing for design-based, statistically rigorous inferences.</p>
+<a class="reference internal image-reference" href="_images/sampling_design.webp"><img alt="_images/sampling_design.webp" class="align-center" src="_images/sampling_design.webp" style="width: 85%;" />
+</a>
+<section id="simple-random-sampling-srs">
+<h2>Simple Random Sampling (SRS)<a class="headerlink" href="#simple-random-sampling-srs" title="Link to this heading">#</a></h2>
+<a class="reference internal image-reference" href="_images/simple_sampling.svg"><img alt="_images/simple_sampling.svg" class="align-center" src="_images/simple_sampling.svg" style="width: 25%;" />
+</a>
+<p>Simple random sampling provides <strong>equal probability to all units</strong>. It is appropriate if the sample size is large enough to ensure that all classes are adequately represented and could be useful to serve the needs of a wide group of users.</p>
+<p><strong>Advantages:</strong></p>
+<ul class="simple">
+<li><p>Extremely simple to use</p></li>
+<li><p>Adapts to the need to increase or decrease the sampling units</p></li>
+<li><p>Less complex statistical estimators compared to other sampling designs</p></li>
+</ul>
+<p><strong>Disadvantages:</strong></p>
+<ul class="simple">
+<li><p>Underestimates the less representative classes</p></li>
+<li><p>Not well distributed spatially</p></li>
+</ul>
+</section>
+<section id="stratified-random-sampling-str">
+<h2>Stratified Random Sampling (STR)<a class="headerlink" href="#stratified-random-sampling-str" title="Link to this heading">#</a></h2>
+<a class="reference internal image-reference" href="_images/stratified_sampling.svg"><img alt="_images/stratified_sampling.svg" class="align-center" src="_images/stratified_sampling.svg" style="width: 25%;" />
+</a>
+<p>Stratified random sampling <strong>increases precision via allocation across different map classes or strata</strong>. It is useful for reporting results when strata are of interest and the precision of accuracy and area estimates need to be improved. As a result, it is one of the most commonly used designs.</p>
+<p>This design is recommended by <span id="id3">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span> as a good practice option for ensuring that rare classes are well represented.</p>
+<p>For STR, the sample size for each stratum is calculated based on:</p>
+<ol class="arabic simple">
+<li><p>Class area proportions</p></li>
+<li><p>A target standard error for overall accuracy</p></li>
+<li><p>Anticipated user’s accuracies by stratum</p></li>
+</ol>
+<p>If necessary, the user can manually adjust the number of samples for one or more classes, e.g., to implement the allocation proposed by <span id="id4">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span> or other allocation strategies.</p>
+<p><strong>Advantages:</strong></p>
+<ul class="simple">
+<li><p>Allows to increase the sample size of the less common classes</p></li>
+<li><p>Lowers the standard errors of the accuracy estimates for rare classes</p></li>
+<li><p>Geographic stratification could be used to ensure a good spatial distribution</p></li>
+<li><p>Allows the option of using different sampling designs in different strata</p></li>
+</ul>
+<p><strong>Disadvantages:</strong></p>
+<ul class="simple">
+<li><p>Stratification by geographic region does not result in a gain in precision</p></li>
+<li><p>Only the evaluation of the accuracy of the map that gives rise to the strata is allowed</p></li>
+<li><p>Sampling with an optimal allocation leads to different probabilities of inclusion, making estimator calculation more difficult</p></li>
+</ul>
+</section>
+<section id="systematic-sampling-sys">
+<h2>Systematic Sampling (SYS)<a class="headerlink" href="#systematic-sampling-sys" title="Link to this heading">#</a></h2>
+<a class="reference internal image-reference" href="_images/systematic_sampling_info.svg"><img alt="_images/systematic_sampling_info.svg" class="align-center" src="_images/systematic_sampling_info.svg" style="width: 25%;" />
+</a>
+<p>Systematic sampling <strong>promotes even spatial distribution</strong> by selecting samples at regular intervals across a grid, either by distance or pixel units. Sampling begins from a fixed or random point, starting in the top-left corner, and applies a random offset to the initial grid position.</p>
+<p>We implemented two systematic sampling methodologies: one based on <strong>physical distances</strong> and the other on <strong>pixel units</strong>, both based on the thematic map.</p>
+<a class="reference internal image-reference" href="_images/systematic_sampling_by_distance.svg"><img alt="_images/systematic_sampling_by_distance.svg" class="align-center" src="_images/systematic_sampling_by_distance.svg" style="width: 35%;" />
+</a>
+<p align="center"><em>Systematic sampling by distance</em></p>
+<a class="reference internal image-reference" href="_images/systematic_sampling_by_pixel.svg"><img alt="_images/systematic_sampling_by_pixel.svg" class="align-center" src="_images/systematic_sampling_by_pixel.svg" style="width: 35%;" />
+</a>
+<p align="center"><em>Systematic sampling by pixel</em></p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><strong>Point spacing</strong>: The spacing between points in the systematic grid (in distance units or pixels)</p></li>
+<li><p><strong>Initial inset</strong>: The distance from the top-left corner of the study area to the first point unit</p></li>
+<li><p><strong>Max offset</strong>: Maximum distance along the X and Y axes from the point of the aligned systematic grid</p></li>
+<li><p><strong>Random offset area</strong>: The area surrounding each point where a random offset is applied</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>To ensure the offset area covers the entire thematic map (giving every pixel an equal probability of being selected), set the maximum offset value to half of the point spacing.</p>
+</div>
+<section id="aligned-systematic-sampling">
+<h3>Aligned Systematic Sampling<a class="headerlink" href="#aligned-systematic-sampling" title="Link to this heading">#</a></h3>
+<p><em>(When the max XY offset value is zero)</em></p>
+<p>Distributes the sampling units equally for the entire study area. As long as the first sampling unit is randomly selected, systematic sampling is considered random.</p>
+<p><strong>Advantages:</strong></p>
+<ul class="simple">
+<li><p>Distributes sampling units equitably throughout the study area</p></li>
+<li><p>Simplicity is highly attractive to end users</p></li>
+<li><p>The variance depends on how the error is spatially distributed</p></li>
+</ul>
+<p><strong>Disadvantages:</strong></p>
+<ul class="simple">
+<li><p>If errors are located in certain areas, systematic sampling will have a lower variance</p></li>
+<li><p>Non-existence of an impartial estimator for calculating the variance</p></li>
+<li><p>Not desirable in the presence of uniformly distributed errors</p></li>
+</ul>
+</section>
+<section id="unaligned-systematic-sampling">
+<h3>Unaligned Systematic Sampling<a class="headerlink" href="#unaligned-systematic-sampling" title="Link to this heading">#</a></h3>
+<p><em>(When the max XY offset value is NOT zero)</em></p>
+<p>The area is divided into smaller, regularly spaced regions, with a randomly chosen sample unit within each region. This minimizes the effects of the periodicity of errors.</p>
+<p><strong>Advantages:</strong></p>
+<ul class="simple">
+<li><p>Less susceptible to error if linearity of error is present</p></li>
+<li><p>The calculation of the variance is acceptable and unbiased</p></li>
+</ul>
+<p><strong>Disadvantages:</strong></p>
+<ul class="simple">
+<li><p>Reduces the advantage of spatial distribution of error</p></li>
+<li><p>The lack of an unbiased estimator</p></li>
+</ul>
+</section>
+</section>
+<section id="additional-features">
+<h2>Additional Features<a class="headerlink" href="#additional-features" title="Link to this heading">#</a></h2>
+<section id="reproducibility">
+<h3>Reproducibility<a class="headerlink" href="#reproducibility" title="Link to this heading">#</a></h3>
+<p>The plugin ensures randomness by automatically generating a random seed for all sampling methods. However, if users require reproducible sampling results, they can set a <strong>fixed seed</strong>. Setting a known seed value ensures replicability given identical inputs and configurations.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Setting a known seed ensures that the assessment can be reproduced and validated by other parties, which is critical for scientific studies and decision-making.</p>
+</div>
+</section>
+<section id="minimum-distance-constraint">
+<h3>Minimum Distance Constraint<a class="headerlink" href="#minimum-distance-constraint" title="Link to this heading">#</a></h3>
+<p>A minimum distance constraint between sampling units helps prevent spatial clustering, reduces spatial autocorrelation effects, and ensures a more evenly distributed sample.</p>
+</section>
+<section id="neighbor-aggregation">
+<h3>Neighbor Aggregation<a class="headerlink" href="#neighbor-aggregation" title="Link to this heading">#</a></h3>
+<p>The neighbor-aggregation feature (counting the number of neighbors with the same class) allows users to define sampling based on adjacent pixel values, improving spatial consistency and reducing edge effects.</p>
+</section>
+<section id="post-stratification">
+<h3>Post-Stratification<a class="headerlink" href="#post-stratification" title="Link to this heading">#</a></h3>
+<p>AcATaMa offers post-stratification for SRS and SYS, enabling users to adjust estimation weights after sampling to correct class imbalances, ultimately improving the reliability of accuracy estimates.</p>
+</section>
+</section>
+<section id="sample-size">
+<h2>Sample Size<a class="headerlink" href="#sample-size" title="Link to this heading">#</a></h2>
+<section id="sample-size-for-stratified-sampling">
+<h3>Sample Size for Stratified Sampling<a class="headerlink" href="#sample-size-for-stratified-sampling" title="Link to this heading">#</a></h3>
+<section id="overall-expected-standard-error-s-o">
+<h4>Overall Expected Standard Error - S(Ô)<a class="headerlink" href="#overall-expected-standard-error-s-o" title="Link to this heading">#</a></h4>
+<a class="reference internal image-reference" href="_images/overall_std_error.webp"><img alt="_images/overall_std_error.webp" class="align-center" src="_images/overall_std_error.webp" style="width: 35%;" />
+</a>
+<p>The standard error of the estimated overall accuracy that you would like to achieve. For stratified sampling, <span id="id5">Cochran [<a class="reference internal" href="references.html#id9" title="W. G. Cochran. Sampling Techniques. John Wiley &amp; Sons, 3rd edition, 1977.">1977</a>]</span> provides the sample size formula:</p>
+<a class="reference internal image-reference" href="_images/ecuation_sample_size.webp"><img alt="_images/ecuation_sample_size.webp" class="align-center" src="_images/ecuation_sample_size.webp" style="width: 70%;" />
+</a>
+<p>Where:</p>
+<ul class="simple">
+<li><p>N = number of units in the study region</p></li>
+<li><p>S(Ô) = standard error of the expected global accuracy</p></li>
+<li><p>Wi = mapped proportion of the area of class i</p></li>
+<li><p>Si = standard deviation of stratum i</p></li>
+<li><p>Ui = accuracy expected by class i</p></li>
+</ul>
+<p>Since N is usually very large, the second term in the denominator can be discarded.</p>
+</section>
+<section id="user-s-accuracy-confidence">
+<h4>User’s Accuracy Confidence<a class="headerlink" href="#user-s-accuracy-confidence" title="Link to this heading">#</a></h4>
+<a class="reference internal image-reference" href="_images/user_accuracy.webp"><img alt="_images/user_accuracy.webp" class="align-center" src="_images/user_accuracy.webp" style="width: 35%;" />
+</a>
+<p>The user’s accuracy (Ui) is the probability that a pixel classified as class i is actually class i. In general:</p>
+<ul class="simple">
+<li><p><strong>0.6 - 0.8</strong>: for unstable classes</p></li>
+<li><p><strong>0.8 - 0.95</strong>: for stable classes</p></li>
+</ul>
+<p>Example values based on <span id="id6">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span> for forest change assessment:</p>
+<ul class="simple">
+<li><p>0.6 - 0.7: forest gain (very unstable class)</p></li>
+<li><p>0.7 - 0.8: deforestation (unstable class)</p></li>
+<li><p>0.8 - 0.9: stable forest (stable class)</p></li>
+<li><p>0.95: stable non-forest (very stable class)</p></li>
+</ul>
+</section>
+</section>
+<section id="minimum-sample-size-per-stratum">
+<h3>Minimum Sample Size per Stratum<a class="headerlink" href="#minimum-sample-size-per-stratum" title="Link to this heading">#</a></h3>
+<a class="reference internal image-reference" href="_images/minimum_sampling_per_stratum.webp"><img alt="_images/minimum_sampling_per_stratum.webp" class="align-center" src="_images/minimum_sampling_per_stratum.webp" style="width: 35%;" />
+</a>
+<p>Using stratified or post-stratified sampling, a minimum sample size of <strong>30</strong> <span id="id7">[<a class="reference internal" href="references.html#id4" title="J. L. Van Genderen, B. F. Lock, and P. A. Vass. Remote sensing: statistical testing of thematic map accuracy. Remote Sensing of Environment, 7(1):3–14, 1978.">Van Genderen <em>et al.</em>, 1978</a>]</span> or <strong>50</strong> <span id="id8">[<a class="reference internal" href="references.html#id47" title="S. V. Stehman and G. M. Foody. Key issues in rigorous accuracy assessment of land cover products. Remote Sensing of Environment, 231:111199, 2019. doi:10.1016/j.rse.2019.05.018.">Stehman and Foody, 2019</a>, <a class="reference internal" href="references.html#id5" title="A. M. Hay. Sampling designs to test land-use map accuracy. Photogrammetric Engineering and Remote Sensing, 45(4):529–533, 1979.">Hay, 1979</a>]</span> per evaluated stratum is generally recommended to ensure statistical significance.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="thematic-map.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Thematic Map</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="response-design.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Response Design</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-random-sampling-srs">Simple Random Sampling (SRS)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratified-random-sampling-str">Stratified Random Sampling (STR)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#systematic-sampling-sys">Systematic Sampling (SYS)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aligned-systematic-sampling">Aligned Systematic Sampling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#unaligned-systematic-sampling">Unaligned Systematic Sampling</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-features">Additional Features</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reproducibility">Reproducibility</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#minimum-distance-constraint">Minimum Distance Constraint</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#neighbor-aggregation">Neighbor Aggregation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-stratification">Post-Stratification</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sample-size">Sample Size</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sample-size-for-stratified-sampling">Sample Size for Stratified Sampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#overall-expected-standard-error-s-o">Overall Expected Standard Error - S(Ô)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#user-s-accuracy-confidence">User’s Accuracy Confidence</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#minimum-sample-size-per-stratum">Minimum Sample Size per Stratum</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By SMByC, IDEAM Colombia
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
