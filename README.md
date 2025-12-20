@@ -20,7 +20,7 @@ AcATaMa has been adopted worldwide for diverse applications including deforestat
 The plugin integrates three fundamental components: **sampling design** (supporting simple random, stratified random, and systematic sampling), **response design** (providing a multi-window interface for reference data interpretation), and **analysis** (generating error matrices, accuracy metrics, and area-adjusted estimates with uncertainty quantification).
 
 <div align="center">
-<img src="docs/img/process_overview.webp" height="380px" style="margin: auto;display: block;">
+<img src="docs/img/process_overview.webp" height="450px" style="margin: auto;display: block;">
 </div>
 
 ## Install
