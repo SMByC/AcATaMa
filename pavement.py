@@ -11,8 +11,8 @@ from paver.easy import *
 options(
     plugin=Bunch(
         name='AcATaMa',
-        ext_libs=path('extlibs'),
-        source_dir=path('.'),
+        ext_libs=path('AcATaMa/extlibs'),
+        source_dir=path('AcATaMa'),
         package_dir=path('.'),
         tests=['test', 'tests'],
         excludes=[
@@ -78,9 +78,18 @@ def install(options):
 
 
 def read_requirements():
-    '''return a list of packages in requirements file'''
-    with open('requirements.txt') as f:
-        return [l.strip('\n') for l in f if l.strip('\n') and not l.startswith('#')]
+    '''return a list of packages in pyproject.toml dependencies'''
+    import re
+    with open('pyproject.toml') as f:
+        content = f.read()
+    # match dependencies = [ ... ]
+    match = re.search(r'dependencies\s*=\s*\[(.*?)\]', content, re.DOTALL)
+    if match:
+        deps_str = match.group(1)
+        # extract strings inside quotes
+        deps = re.findall(r'"([^"]*)"', deps_str)
+        return deps
+    return []
 
 
 @task
@@ -111,6 +120,6 @@ def make_zip(zipFile, options):
 
     for root, dirs, files in os.walk(src_dir):
         for f in filter_excludes(files):
-            relpath = os.path.relpath(root, '..')
-            zipFile.write(path(root) / f, path(relpath) / f)
+            relpath = os.path.relpath(root, src_dir)
+            zipFile.write(path(root) / f, path(options.plugin.name) / relpath / f)
         filter_excludes(dirs)

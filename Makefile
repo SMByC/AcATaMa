@@ -35,8 +35,8 @@ LOCALES =
 
 # translation
 SOURCES = \
-    __init__.py \
-    acatama.py
+    AcATaMa/__init__.py \
+    AcATaMa/acatama.py
 
 PLUGINNAME = AcATaMa
 
@@ -61,7 +61,7 @@ PEP8EXCLUDE=pydev,resources.py,conf.py,third_party,ui
 
 PLUGIN_UPLOAD = python3 plugin_upload.py -u xaviercll
 
-RESOURCE_SRC=$(shell grep '^ *<file' resources.qrc | sed 's@</file>@@g;s/.*>//g' | tr '\n' ' ')
+RESOURCE_SRC=$(shell grep '^ *<file' AcATaMa/resources.qrc | sed 's@</file>@@g;s/.*>//g' | sed 's@^ *@@' | sed 's@^@AcATaMa/@' | tr '\n' ' ')
 
 QGISDIR=.local/share/QGIS/QGIS3/profiles/default
 
@@ -69,8 +69,8 @@ default: compile
 
 compile: $(COMPILED_RESOURCE_FILES)
 
-%.py : %.qrc $(RESOURCES_SRC)
-	pyrcc5 -o $*.py  $<
+%.py : AcATaMa/%.qrc $(RESOURCES_SRC)
+	pyrcc5 -o AcATaMa/$*.py  $<
 
 %.qm : %.ts
 	$(LRELEASE) $<
@@ -102,15 +102,16 @@ deploy: compile doc transcompile
 	# the Python plugin directory is located at:
 	# $HOME/$(QGISDIR)/python/plugins
 	mkdir -p $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vf $(PY_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	#cp -vf $(UI_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vf $(COMPILED_RESOURCE_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
+	cd AcATaMa && cp -vf $(PY_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
+	#cd AcATaMa && cp -vf $(UI_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
+	cd AcATaMa && cp -vf $(COMPILED_RESOURCE_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 	cp -vf $(EXTRAS) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -vfr i18n $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
+	cp -vf AcATaMa/metadata.txt $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
+	cp -vfr AcATaMa/i18n $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 	# Copy extra directories if any
 	for dir in $(EXTRA_DIRS); do \
-		if [ -d $$dir ]; then \
-			cp -vfr $$dir $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME); \
+		if [ -d AcATaMa/$$dir ]; then \
+			cp -vfr AcATaMa/$$dir $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME); \
 		fi; \
 	done
 

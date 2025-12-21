@@ -1,6 +1,0 @@
-pytest
-pytest-qgis
-fiona
-shapely
-dask
-toolz

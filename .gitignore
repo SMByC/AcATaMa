@@ -2,6 +2,6 @@
 *.zip
 *.db
 extlibs
-resources.py
+AcATaMa/resources.py
 .venv
 *.aux.xml

@@ -5,22 +5,32 @@ build-backend = "hatchling.build"
 [project]
 name = "acatama"
 version = "25.7"
-description = "AcATaMa is a powerful and complete Qgis plugin for accuracy assessment"
+description = "AcATaMa is an open-source QGIS plugin designed to provide comprehensive support for accuracy assessment and sample-based area estimation of raster thematic maps"
 authors = [{ name = "Xavier C. Llano", email = "xavier.corredor.llano@gmail.com" }]
-requires-python = ">=3.13,<4.0"
+requires-python = ">=3.10"
 dependencies = [
-  "attrs",
-  "cloudpickle",
   "dask",
-  "fiona",
-  "numpy",
-  "partd",
-  "pytest",
-  "pytest-qgis",
-  "setuptools",
-  "shapely",
   "toolz",
 ]
+
+[project.optional-dependencies]
+test = [
+  "pytest",
+  "pytest-qgis",
+  "fiona",
+  "shapely",
+  "dask",
+  "toolz",
+]
+docs = [
+  "jupyter-book<2",
+  "jupytext",
+]
+
+[tool.qgis-plugin-ci]
+plugin_path = "AcATaMa"
+github_organization_slug = "IDEAM"
+project_slug = "acatama"
 
 [tool.uv]
 package = false
