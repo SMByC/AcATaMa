@@ -2,25 +2,24 @@ name: Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        docker_tags: [ ltr, stable ]
+        qgis_version: [ltr, stable]
       fail-fast: false
+
     env:
-      QGIS_TEST_VERSION: ${{ matrix.docker_tags }}
-      # cf https://docs.qgis.org/3.16/en/docs/user_manual/introduction/qgis_configuration.html#running-qgis-with-advanced-settings
-      QGIS_COMMAND: qgis --noplugins --noversioncheck --nologo --version-migration --code ./tests/install_plugin.py
+      QGIS_TEST_VERSION: ${{ matrix.qgis_version }}
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
           lfs: true
@@ -30,17 +29,12 @@ jobs:
           git lfs install
           git lfs pull
 
-      - name: Zip artifact
-        run: (pip3 install PyQt5 && make zip)
-      
-      - name: Pull QGIS ${QGIS_TEST_VERSION}
-        run: docker pull qgis/qgis:${QGIS_TEST_VERSION}
-        
-      # Runs all tests
-      
-      - name: Run install test
-        run: docker run --rm -v `pwd`:/tests_directory -t -w /tests_directory qgis/qgis:${QGIS_TEST_VERSION} sh -c "xvfb-run ${QGIS_COMMAND}"
-      
-      - name: Run tests
-        run: docker compose -f .docker/docker-compose.gh.yml run qgis /usr/src/AcATaMa/.docker/run-docker-tests.sh
+      - name: Build Docker image
+        run: docker compose -f .docker/docker-compose.gh.yml build
 
+      - name: Run tests
+        run: docker compose -f .docker/docker-compose.gh.yml run --rm qgis /usr/src/AcATaMa/.docker/run-docker-tests.sh
+
+      - name: Cleanup
+        if: always()
+        run: docker compose -f .docker/docker-compose.gh.yml down --rmi local

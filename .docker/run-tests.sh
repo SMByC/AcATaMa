@@ -1,5 +1,9 @@
 #!/bin/bash
+# Script to run tests locally using Docker
+# Usage: cd .docker && ./run-tests.sh [pytest args]
 
-export GITHUB_WORKSPACE=$PWD
-docker compose -f docker-compose.gh.yml run qgis /usr/src/AcATaMa/.docker/run-docker-tests.sh $@
-docker compose -f docker-compose.gh.yml rm -s -f
+set -e
+
+export GITHUB_WORKSPACE=$(dirname "$PWD")
+docker compose -f docker-compose.gh.yml run --rm qgis /usr/src/AcATaMa/.docker/run-docker-tests.sh "$@"
+docker compose -f docker-compose.gh.yml down
