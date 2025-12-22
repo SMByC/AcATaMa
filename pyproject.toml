@@ -4,7 +4,6 @@ build-backend = "hatchling.build"
 
 [project]
 name = "acatama"
-version = "25.7"
 description = "AcATaMa is an open-source QGIS plugin designed to provide comprehensive support for accuracy assessment and sample-based area estimation of raster thematic maps"
 authors = [{ name = "Xavier C. Llano", email = "xavier.corredor.llano@gmail.com" }]
 requires-python = ">=3.10"
@@ -26,6 +25,9 @@ docs = [
   "jupyter-book<2",
   "jupytext",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["AcATaMa"]
 
 [tool.qgis-plugin-ci]
 plugin_path = "AcATaMa"
