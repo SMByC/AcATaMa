@@ -4,6 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "acatama"
+version = "1.0"  # actual version is in AcATaMa/metadata.txt
 description = "AcATaMa is an open-source QGIS plugin designed to provide comprehensive support for accuracy assessment and sample-based area estimation of raster thematic maps"
 authors = [{ name = "Xavier C. Llano", email = "xavier.corredor.llano@gmail.com" }]
 requires-python = ">=3.10"
