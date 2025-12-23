@@ -138,7 +138,7 @@ def get_pixel_count_by_pixel_values_qgis_native(layer, band, pixel_values=None, 
 
     # progress dialog with determinate progress (0-100%)
     progress = QProgressDialog('AcATaMa is counting the number of pixels for each thematic value.\n'
-                               'Using QGIS native processing (optimized).',
+                               'Depending on the size of the image, it would take a few minutes.',
                                None, 0, 100)
     progress.setWindowTitle("AcATaMa - Counting unique values...")
     progress.setWindowModality(Qt.WindowModal)
@@ -211,21 +211,19 @@ def chunks(l, n):
         yield l[i:i + n]
 
 
-def pixel_count_in_chunk(img_path, band, pixel_values, xoff, yoff, xsize, ysize):
+def pixel_count_in_chunk(img_path, band, xoff, yoff, xsize, ysize):
+    """Count unique pixel values in a chunk using np.unique."""
     gdal_file = gdal.Open(img_path, gdal.GA_ReadOnly)
     chunk_narray = gdal_file.GetRasterBand(band).ReadAsArray(xoff, yoff, xsize, ysize)
     del gdal_file
-    pixel_count = [0] * len(pixel_values)
-    for idx, pixel_value in enumerate(pixel_values):
-        pixel_count[idx] += (chunk_narray == int(pixel_value)).sum()
-    return pixel_count
+    unique_values, counts = np.unique(chunk_narray, return_counts=True)
+    return dict(zip(unique_values.tolist(), counts.tolist()))
 
 
 @wait_process
 def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None, nodata=None):
-    """Get the total pixel count for each pixel values"""
+    """Get the total pixel count for each pixel values using parallel processing with dask."""
     import dask
-    from AcATaMa.utils.progress_dialog import DaskQTProgressDialog
 
     # check if it was already computed, then return it
     if (layer, band, nodata) in storage_pixel_count_by_pixel_values:
@@ -237,9 +235,9 @@ def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None, nod
                                None, 0, 100)
     progress.setWindowTitle("AcATaMa - Counting unique values...")
     progress.setWindowModality(Qt.WindowModal)
+    progress.setMinimumDuration(0)
     progress.setValue(0)
     progress.show()
-    progress.update()
     QApplication.processEvents()
 
     if pixel_values is None:
@@ -249,11 +247,14 @@ def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None, nod
     if nodata is not None and nodata in pixel_values:
         pixel_values.remove(nodata)
 
-    # split the image in chunks, the 0,0 is left-upper corner
+    # split the image in chunks
     layer_filepath = get_file_path_of_layer(layer)
     gdal_file = gdal.Open(layer_filepath, gdal.GA_ReadOnly)
-    chunk_size_x = gdal_file.RasterXSize//10+1 if gdal_file.RasterXSize > 1000 else gdal_file.RasterXSize
-    chunk_size_y = gdal_file.RasterYSize//10+1 if gdal_file.RasterYSize > 1000 else gdal_file.RasterYSize
+    
+    # Chunk size ~4096x4096 (~64MB for int types), with minimum for parallelism
+    chunk_size = min(4096, gdal_file.RasterXSize, gdal_file.RasterYSize)
+    chunk_size = max(512, chunk_size)
+    chunk_size_x = chunk_size_y = chunk_size
 
     data_in_chunks = []
     for y in chunks(range(gdal_file.RasterYSize), chunk_size_y):
@@ -262,16 +263,34 @@ def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None, nod
         for x in chunks(range(gdal_file.RasterXSize), chunk_size_x):
             xoff = x[0]
             xsize = len(x)
-            data_in_chunks.append((layer_filepath, band, pixel_values, xoff, yoff, xsize, ysize))
+            data_in_chunks.append((layer_filepath, band, xoff, yoff, xsize, ysize))
     del gdal_file
 
-    # compute and merge all parallel process returns in one result
-    with DaskQTProgressDialog(progress_dialog=progress):
-        results = dask.compute(*[dask.delayed(pixel_count_in_chunk)(*chunk) for chunk in data_in_chunks])
-    pixel_counts = np.sum(results, axis=0).tolist()
+    total_chunks = len(data_in_chunks)
+    batch_size = max(1, total_chunks // 20)  # ~20 progress updates
+    
+    # Initialize counts with 0 for all pixel values from symbology
+    pairing_values_and_counts = {pv: 0 for pv in pixel_values}
+
+    for batch_start in range(0, total_chunks, batch_size):
+        batch_end = min(batch_start + batch_size, total_chunks)
+        batch_chunks = data_in_chunks[batch_start:batch_end]
+
+        # Compute batch in parallel
+        batch_results = dask.compute(*[dask.delayed(pixel_count_in_chunk)(*chunk) for chunk in batch_chunks])
+        
+        # Merge counts from this batch
+        for chunk_counts in batch_results:
+            for value, count in chunk_counts.items():
+                if nodata is not None and value == nodata:
+                    continue
+                pairing_values_and_counts[value] = pairing_values_and_counts.get(value, 0) + count
+
+        # Update progress
+        progress.setValue(int((batch_end / total_chunks) * 100))
+        QApplication.processEvents()
 
     progress.close()
-    pairing_values_and_counts = dict(zip(pixel_values, pixel_counts))
     storage_pixel_count_by_pixel_values[(layer, band, nodata)] = pairing_values_and_counts
     return pairing_values_and_counts
 
