@@ -4,7 +4,7 @@ from osgeo import gdal
 
 from AcATaMa.core.map import auto_symbology_classification_render
 from AcATaMa.utils.others_utils import get_pixel_count_by_pixel_values, get_pixel_count_by_pixel_values_sequential, \
-    get_pixel_count_by_pixel_values_parallel, get_nodata_format
+    get_pixel_count_by_pixel_values_parallel, get_pixel_count_by_pixel_values_qgis_native, get_nodata_format
 from AcATaMa.utils.qgis_utils import load_layer
 
 
@@ -26,6 +26,18 @@ def test_pixel_count_without_nodata_parallel(plugin, restore_config_file):
     restore_config_file(input_yml_path)
 
     pixel_count = get_pixel_count_by_pixel_values_parallel(plugin.dockwidget.QCBox_ThematicMap.currentLayer(),
+                                                  band=2, nodata=None)
+
+    assert pixel_count == {0: 3227, 34: 11, 35: 44, 36: 22, 37: 49, 38: 17, 40: 2, 42: 1, 43: 1,
+                           44: 79, 45: 5, 46: 468, 47: 57, 49: 3, 51: 1, 52: 15, 53: 24}
+
+
+def test_pixel_count_without_nodata_qgis_native(plugin, restore_config_file):
+    # restore
+    input_yml_path = pytest.tests_data_dir / "test_pixel_count_acatama.yaml"
+    restore_config_file(input_yml_path)
+
+    pixel_count = get_pixel_count_by_pixel_values_qgis_native(plugin.dockwidget.QCBox_ThematicMap.currentLayer(),
                                                   band=2, nodata=None)
 
     assert pixel_count == {0: 3227, 34: 11, 35: 44, 36: 22, 37: 49, 38: 17, 40: 2, 42: 1, 43: 1,
@@ -54,6 +66,21 @@ def test_pixel_count_with_nodata_parallel(plugin, restore_config_file):
     sampling_design = plugin.dockwidget.sampling_design_window
 
     pixel_count = get_pixel_count_by_pixel_values_parallel(
+        plugin.dockwidget.QCBox_ThematicMap.currentLayer(),
+        band=int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText()),
+        nodata=get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text())
+    )
+
+    assert pixel_count == {1: 10423, 2: 418, 5: 8822}
+
+
+def test_pixel_count_with_nodata_qgis_native(plugin, restore_config_file):
+    # restore
+    input_yml_path = pytest.tests_data_dir / "test_pixel_count_acatama_nodata.yaml"
+    restore_config_file(input_yml_path)
+    sampling_design = plugin.dockwidget.sampling_design_window
+
+    pixel_count = get_pixel_count_by_pixel_values_qgis_native(
         plugin.dockwidget.QCBox_ThematicMap.currentLayer(),
         band=int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText()),
         nodata=get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text())

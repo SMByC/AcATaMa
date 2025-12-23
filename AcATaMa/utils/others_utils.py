@@ -100,13 +100,106 @@ storage_pixel_count_by_pixel_values = {}  # storage the pixel/values computed by
 
 
 def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=None):
-    """Meta function to choose the way to compute the pixel count by pixel values
-    checking if dask library is available or not"""
+    """Meta function to compute the pixel count by pixel values"""
+
+    # Try parallel processing with dask
     try:
         import dask
         return get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values, nodata)
-    except:
-        return get_pixel_count_by_pixel_values_sequential(layer, band, pixel_values, nodata)
+    except Exception:
+        pass
+
+    # Try QGIS native method
+    try:
+        return get_pixel_count_by_pixel_values_qgis_native(layer, band, pixel_values, nodata)
+    except Exception:
+        pass
+
+    # Fallback to sequential processing
+    return get_pixel_count_by_pixel_values_sequential(layer, band, pixel_values, nodata)
+
+
+# --------------------------------------------------------------------------
+# QGIS native processing
+
+@wait_process
+def get_pixel_count_by_pixel_values_qgis_native(layer, band, pixel_values=None, nodata=None):
+    """Get the total pixel count for each pixel values using QGIS native processing algorithm.
+
+    This is a method as it uses QGIS's internal optimized C++ implementation
+    via the 'native:rasterlayeruniquevaluesreport' algorithm.
+    """
+    import processing
+    from qgis.core import QgsProcessingFeedback
+
+    # check if it was already computed, then return it
+    if (layer, band, nodata) in storage_pixel_count_by_pixel_values:
+        return storage_pixel_count_by_pixel_values[(layer, band, nodata)]
+
+    # progress dialog with determinate progress (0-100%)
+    progress = QProgressDialog('AcATaMa is counting the number of pixels for each thematic value.\n'
+                               'Using QGIS native processing (optimized).',
+                               None, 0, 100)
+    progress.setWindowTitle("AcATaMa - Counting unique values...")
+    progress.setWindowModality(Qt.WindowModal)
+    progress.setMinimumDuration(0)
+    progress.show()
+    QApplication.processEvents()
+
+    # Create feedback to capture progress from the processing algorithm
+    feedback = QgsProcessingFeedback()
+
+    def update_progress(value):
+        progress.setValue(int(value))
+        QApplication.processEvents()
+
+    feedback.progressChanged.connect(update_progress)
+
+    try:
+        # Get pixel values from symbology to preserve all defined classes (even with 0 pixels)
+        if pixel_values is None:
+            pixel_values = get_pixel_values(layer, band)
+
+        # Remove nodata from pixel_values if specified
+        if nodata is not None and nodata in pixel_values:
+            pixel_values = [v for v in pixel_values if v != nodata]
+
+        # Initialize all symbology values with 0 count
+        pairing_values_and_counts = {pv: 0 for pv in pixel_values}
+
+        # Run the QGIS native algorithm with feedback for progress updates
+        result = processing.run("native:rasterlayeruniquevaluesreport", {
+            'INPUT': layer,
+            'BAND': band,
+            'OUTPUT_TABLE': 'TEMPORARY_OUTPUT'
+        }, feedback=feedback)
+
+        # Extract counts from the output table and update the dictionary
+        output_layer = result['OUTPUT_TABLE']
+
+        for feature in output_layer.getFeatures():
+            # The algorithm returns 'value', 'count', and 'm2' (area) fields
+            value = feature['value']
+            count = feature['count']
+
+            # Convert value to int if it's a whole number
+            if value == int(value):
+                value = int(value)
+
+            # Skip nodata value if specified
+            if nodata is not None and value == nodata:
+                continue
+
+            # Update count (only for values in the symbology, or add new ones found in raster)
+            pairing_values_and_counts[value] = count
+
+        progress.close()
+        storage_pixel_count_by_pixel_values[(layer, band, nodata)] = pairing_values_and_counts
+        return pairing_values_and_counts
+
+    except Exception as e:
+        progress.close()
+        raise e
 
 
 # --------------------------------------------------------------------------
