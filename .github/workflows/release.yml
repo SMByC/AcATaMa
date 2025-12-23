@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Set up Git LFS
+        run: |
+          git lfs install
+          git lfs pull
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install qgis-plugin-ci
+        run: pip install qgis-plugin-ci
+
+      - name: Package and release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OSGEO_USERNAME: ${{ secrets.OSGEO_USERNAME }}
+          OSGEO_PASSWORD: ${{ secrets.OSGEO_PASSWORD }}
+        run: |
+          # Build arguments for qgis-plugin-ci
+          ARGS="--github-token $GITHUB_TOKEN"
+          
+          # Add OSGEO credentials if available
+          if [ -n "$OSGEO_USERNAME" ] && [ -n "$OSGEO_PASSWORD" ]; then
+            ARGS="$ARGS --osgeo-username $OSGEO_USERNAME --osgeo-password $OSGEO_PASSWORD"
+          fi
+          
+          qgis-plugin-ci release ${{ github.ref_name }} $ARGS
