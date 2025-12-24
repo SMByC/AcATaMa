@@ -32,7 +32,6 @@ jobs:
 
       - name: Install dask and dependencies into extlibs
         run: |
-          # Install dask and dependencies to extlibs folder
           pip install \
             --target=AcATaMa/extlibs \
             --no-deps \
@@ -55,10 +54,8 @@ jobs:
           OSGEO_USERNAME: ${{ secrets.OSGEO_USERNAME }}
           OSGEO_PASSWORD: ${{ secrets.OSGEO_PASSWORD }}
         run: |
-          # Build arguments for qgis-plugin-ci
-          ARGS="--github-token $GITHUB_TOKEN"
+          ARGS="--github-token $GITHUB_TOKEN --asset-path AcATaMa/extlibs"
 
-          # Add OSGEO credentials if available
           if [ -n "$OSGEO_USERNAME" ] && [ -n "$OSGEO_PASSWORD" ]; then
             ARGS="$ARGS --osgeo-username $OSGEO_USERNAME --osgeo-password $OSGEO_PASSWORD"
           fi

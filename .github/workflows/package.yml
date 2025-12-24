@@ -53,11 +53,10 @@ jobs:
           find . -type f \( -name "*.pyc" -o -name "*.pyo" -o -name "*.so" -o -name "*.dll" -o -name "*.dylib" \) -delete 2>/dev/null || true
 
       - name: Build package
-        run: qgis-plugin-ci package ${{ steps.get_tag.outputs.tag }}
+        run: qgis-plugin-ci package ${{ steps.get_tag.outputs.tag }} --asset-path AcATaMa/extlibs
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: AcATaMa-${{ steps.get_tag.outputs.tag }}
           path: AcATaMa.${{ steps.get_tag.outputs.tag }}.zip
-
