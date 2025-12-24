@@ -1,0 +1,63 @@
+name: Package
+
+on:
+  workflow_dispatch:
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 0  # Fetch all history for tags
+
+      - name: Set up Git LFS
+        run: |
+          git lfs install
+          git lfs pull
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install qgis-plugin-ci
+        run: pip install qgis-plugin-ci
+
+      - name: Get latest tag
+        id: get_tag
+        run: |
+          LATEST_TAG=$(git tag --sort=-creatordate | head -1)
+          echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          echo "Latest tag: $LATEST_TAG"
+
+      - name: Install dask and dependencies into extlibs
+        run: |
+          pip install \
+            --target=AcATaMa/extlibs \
+            --no-deps \
+            dask==2024.7.1 \
+            toolz \
+            cloudpickle \
+            fsspec \
+            packaging \
+            partd \
+            locket
+
+          # Clean up unnecessary files
+          cd AcATaMa/extlibs
+          find . -type d \( -name "__pycache__" -o -name "*.dist-info" -o -name "*.egg-info" -o -name "tests" -o -name "test" -o -name "bin" \) -exec rm -rf {} + 2>/dev/null || true
+          find . -type f \( -name "*.pyc" -o -name "*.pyo" -o -name "*.so" -o -name "*.dll" -o -name "*.dylib" \) -delete 2>/dev/null || true
+
+      - name: Build package
+        run: qgis-plugin-ci package ${{ steps.get_tag.outputs.tag }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AcATaMa-${{ steps.get_tag.outputs.tag }}
+          path: AcATaMa.${{ steps.get_tag.outputs.tag }}.zip
+
