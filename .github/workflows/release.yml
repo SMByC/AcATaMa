@@ -30,6 +30,25 @@ jobs:
       - name: Install qgis-plugin-ci
         run: pip install qgis-plugin-ci
 
+      - name: Install dask and dependencies into extlibs
+        run: |
+          # Install dask and dependencies to extlibs folder
+          pip install \
+            --target=AcATaMa/extlibs \
+            --no-deps \
+            dask==2024.7.1 \
+            toolz \
+            cloudpickle \
+            fsspec \
+            packaging \
+            partd \
+            locket
+
+          # Clean up unnecessary files
+          cd AcATaMa/extlibs
+          find . -type d \( -name "__pycache__" -o -name "*.dist-info" -o -name "*.egg-info" -o -name "tests" -o -name "test" -o -name "bin" \) -exec rm -rf {} + 2>/dev/null || true
+          find . -type f \( -name "*.pyc" -o -name "*.pyo" -o -name "*.so" -o -name "*.dll" -o -name "*.dylib" \) -delete 2>/dev/null || true
+
       - name: Package and release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -38,10 +57,10 @@ jobs:
         run: |
           # Build arguments for qgis-plugin-ci
           ARGS="--github-token $GITHUB_TOKEN"
-          
+
           # Add OSGEO credentials if available
           if [ -n "$OSGEO_USERNAME" ] && [ -n "$OSGEO_PASSWORD" ]; then
             ARGS="$ARGS --osgeo-username $OSGEO_USERNAME --osgeo-password $OSGEO_PASSWORD"
           fi
-          
+
           qgis-plugin-ci release ${{ github.ref_name }} $ARGS
