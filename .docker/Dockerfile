@@ -12,5 +12,6 @@ RUN pip3 install "/tmp/.[test]" --break-system-packages
 
 ENV LANG=C.UTF-8
 ENV IS_DOCKER_CONTAINER=true
+ENV PYTHONPATH="${PYTHONPATH}:/usr/share/qgis/python/plugins"
 
 WORKDIR /

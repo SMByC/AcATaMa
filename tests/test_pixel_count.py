@@ -33,6 +33,7 @@ def test_pixel_count_without_nodata_parallel(plugin, restore_config_file):
 
 
 def test_pixel_count_without_nodata_qgis_native(plugin, restore_config_file):
+    pytest.importorskip("processing")
     # restore
     input_yml_path = pytest.tests_data_dir / "test_pixel_count_acatama.yaml"
     restore_config_file(input_yml_path)
@@ -75,6 +76,7 @@ def test_pixel_count_with_nodata_parallel(plugin, restore_config_file):
 
 
 def test_pixel_count_with_nodata_qgis_native(plugin, restore_config_file):
+    pytest.importorskip("processing")
     # restore
     input_yml_path = pytest.tests_data_dir / "test_pixel_count_acatama_nodata.yaml"
     restore_config_file(input_yml_path)
