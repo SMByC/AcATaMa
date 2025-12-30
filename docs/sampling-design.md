@@ -138,11 +138,21 @@ A minimum distance constraint between sampling units helps prevent spatial clust
 
 ### Neighbor Aggregation
 
-The neighbor-aggregation feature (counting the number of neighbors with the same class) allows users to define sampling based on adjacent pixel values, improving spatial consistency and reducing edge effects.
+Neighbor aggregation calculates, for each candidate sample location, the number (or proportion) of adjacent pixels in a user-defined neighborhood that share the same class. This lets sampling incorporate local spatial context by favoring more homogeneous areas (high neighbor agreement) or, if desired, emphasizing transition zones (low agreement) for boundary-focused checks.
+
+Using neighbor agreement as a criterion can improve spatial coherence in the selected samples and help mitigate over-representation of noisy edge pixels in map accuracy assessment workflows.
 
 ### Post-Stratification
 
-AcATaMa offers post-stratification for SRS and SYS, enabling users to adjust estimation weights after sampling to correct class imbalances, ultimately improving the reliability of accuracy estimates.
+AcATaMa supports post-stratification for simple random sampling (SRS) and systematic sampling (SYS), so weights can be adjusted after the sample is drawn to account for class imbalance and improve the reliability of accuracy/area estimates.
+
+#### What post-stratification means
+
+Post-stratification groups the already selected SRS/SYS reference sample into "post-strata" (e.g., map classes) and then adjusts the estimation weights using known totals for those map classes. In AcATaMa’s analysis, based on the confusion-matrix sample counts it creates the estimated area proportions using the post-stratified estimator (tables 3 and 4) described in {cite:t}`Olofsson2014`.
+
+#### When to use it
+
+Post-stratification is useful when SRS/SYS produces an imbalanced realized sample (for example, rare classes end up with too few points), because post-stratification can reweight the sample using known class totals to produce more defensible accuracy/area estimates. However, post-stratification reweights estimates after sampling ("sample first, classify later"), so the number of samples in each post-stratum is determined by how the initial sample falls across classes; as a result, it is not possible to control (or guarantee) the per-class sample size the way stratified sampling does.
 
 ## Sample Size
 

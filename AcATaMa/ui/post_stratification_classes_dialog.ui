@@ -17,7 +17,7 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Select the classes for post-stratification of sampling:</string>
+      <string>Select map classes to use as post-strata (post-stratification):</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignJustify|Qt::AlignVCenter</set>

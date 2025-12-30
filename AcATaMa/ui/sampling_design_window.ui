@@ -216,7 +216,7 @@
                    <item>
                     <widget class="QLabel" name="label_12">
                      <property name="text">
-                      <string>Use a layer with categorical values (the thematic map by default) to validate random sampling exclusively within the selected classes.</string>
+                      <string>Use a categorical layer (default: thematic map) to derive post-strata and restrict random validation sampling to the selected classes.</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -330,7 +330,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <item>
                        <widget class="QLabel" name="label_13">
                         <property name="text">
-                         <string>Classes selected:</string>
+                         <string>Selected classes:</string>
                         </property>
                        </widget>
                       </item>
@@ -1604,7 +1604,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                    <item>
                     <widget class="QLabel" name="label_33">
                      <property name="text">
-                      <string>Use a layer with categorical values (the thematic map by default) to validate random sampling exclusively within the selected classes.</string>
+                      <string>Use a categorical layer (default: thematic map) to derive post-strata and restrict random validation sampling to the selected classes.</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -1718,7 +1718,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <item>
                        <widget class="QLabel" name="label_34">
                         <property name="text">
-                         <string>Classes selected:</string>
+                         <string>Selected classes:</string>
                         </property>
                        </widget>
                       </item>
