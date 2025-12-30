@@ -342,7 +342,11 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reproducibility">Reproducibility</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#minimum-distance-constraint">Minimum Distance Constraint</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#neighbor-aggregation">Neighbor Aggregation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-stratification">Post-Stratification</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-stratification">Post-Stratification</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#what-post-stratification-means">What post-stratification means</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-it">When to use it</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sample-size">Sample Size</a><ul class="nav section-nav flex-column">
@@ -488,11 +492,20 @@ document.write(`
 </section>
 <section id="neighbor-aggregation">
 <h3>Neighbor Aggregation<a class="headerlink" href="#neighbor-aggregation" title="Link to this heading">#</a></h3>
-<p>The neighbor-aggregation feature (counting the number of neighbors with the same class) allows users to define sampling based on adjacent pixel values, improving spatial consistency and reducing edge effects.</p>
+<p>Neighbor aggregation calculates, for each candidate sample location, the number (or proportion) of adjacent pixels in a user-defined neighborhood that share the same class. This lets sampling incorporate local spatial context by favoring more homogeneous areas (high neighbor agreement) or, if desired, emphasizing transition zones (low agreement) for boundary-focused checks.</p>
+<p>Using neighbor agreement as a criterion can improve spatial coherence in the selected samples and help mitigate over-representation of noisy edge pixels in map accuracy assessment workflows.</p>
 </section>
 <section id="post-stratification">
 <h3>Post-Stratification<a class="headerlink" href="#post-stratification" title="Link to this heading">#</a></h3>
-<p>AcATaMa offers post-stratification for SRS and SYS, enabling users to adjust estimation weights after sampling to correct class imbalances, ultimately improving the reliability of accuracy estimates.</p>
+<p>AcATaMa supports post-stratification for simple random sampling (SRS) and systematic sampling (SYS), so weights can be adjusted after the sample is drawn to account for class imbalance and improve the reliability of accuracy/area estimates.</p>
+<section id="what-post-stratification-means">
+<h4>What post-stratification means<a class="headerlink" href="#what-post-stratification-means" title="Link to this heading">#</a></h4>
+<p>Post-stratification groups the already selected SRS/SYS reference sample into “post-strata” (e.g., map classes) and then adjusts the estimation weights using known totals for those map classes. In AcATaMa’s analysis, based on the confusion-matrix sample counts it creates the estimated area proportions using the post-stratified estimator (tables 3 and 4) described in <span id="id5">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span>.</p>
+</section>
+<section id="when-to-use-it">
+<h4>When to use it<a class="headerlink" href="#when-to-use-it" title="Link to this heading">#</a></h4>
+<p>Post-stratification is useful when SRS/SYS produces an imbalanced realized sample (for example, rare classes end up with too few points), because post-stratification can reweight the sample using known class totals to produce more defensible accuracy/area estimates. However, post-stratification reweights estimates after sampling (“sample first, classify later”), so the number of samples in each post-stratum is determined by how the initial sample falls across classes; as a result, it is not possible to control (or guarantee) the per-class sample size the way stratified sampling does.</p>
+</section>
 </section>
 </section>
 <section id="sample-size">
@@ -503,7 +516,7 @@ document.write(`
 <h4>Overall Expected Standard Error - S(Ô)<a class="headerlink" href="#overall-expected-standard-error-s-o" title="Link to this heading">#</a></h4>
 <a class="reference internal image-reference" href="_images/overall_std_error.webp"><img alt="_images/overall_std_error.webp" class="align-center" src="_images/overall_std_error.webp" style="width: 35%;" />
 </a>
-<p>The standard error of the estimated overall accuracy that you would like to achieve. For stratified sampling, <span id="id5">Cochran [<a class="reference internal" href="references.html#id9" title="W. G. Cochran. Sampling Techniques. John Wiley &amp; Sons, 3rd edition, 1977.">1977</a>]</span> provides the sample size formula:</p>
+<p>The standard error of the estimated overall accuracy that you would like to achieve. For stratified sampling, <span id="id6">Cochran [<a class="reference internal" href="references.html#id9" title="W. G. Cochran. Sampling Techniques. John Wiley &amp; Sons, 3rd edition, 1977.">1977</a>]</span> provides the sample size formula:</p>
 <a class="reference internal image-reference" href="_images/ecuation_sample_size.webp"><img alt="_images/ecuation_sample_size.webp" class="align-center" src="_images/ecuation_sample_size.webp" style="width: 70%;" />
 </a>
 <p>Where:</p>
@@ -525,7 +538,7 @@ document.write(`
 <li><p><strong>0.6 - 0.8</strong>: for unstable classes</p></li>
 <li><p><strong>0.8 - 0.95</strong>: for stable classes</p></li>
 </ul>
-<p>Example values based on <span id="id6">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span> for forest change assessment:</p>
+<p>Example values based on <span id="id7">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span> for forest change assessment:</p>
 <ul class="simple">
 <li><p>0.6 - 0.7: forest gain (very unstable class)</p></li>
 <li><p>0.7 - 0.8: deforestation (unstable class)</p></li>
@@ -538,7 +551,7 @@ document.write(`
 <h3>Minimum Sample Size per Stratum<a class="headerlink" href="#minimum-sample-size-per-stratum" title="Link to this heading">#</a></h3>
 <a class="reference internal image-reference" href="_images/minimum_sampling_per_stratum.webp"><img alt="_images/minimum_sampling_per_stratum.webp" class="align-center" src="_images/minimum_sampling_per_stratum.webp" style="width: 35%;" />
 </a>
-<p>Using stratified or post-stratified sampling, a minimum sample size of <strong>30</strong> <span id="id7">[<a class="reference internal" href="references.html#id4" title="J. L. Van Genderen, B. F. Lock, and P. A. Vass. Remote sensing: statistical testing of thematic map accuracy. Remote Sensing of Environment, 7(1):3–14, 1978.">Van Genderen <em>et al.</em>, 1978</a>]</span> or <strong>50</strong> <span id="id8">[<a class="reference internal" href="references.html#id47" title="S. V. Stehman and G. M. Foody. Key issues in rigorous accuracy assessment of land cover products. Remote Sensing of Environment, 231:111199, 2019. doi:10.1016/j.rse.2019.05.018.">Stehman and Foody, 2019</a>, <a class="reference internal" href="references.html#id5" title="A. M. Hay. Sampling designs to test land-use map accuracy. Photogrammetric Engineering and Remote Sensing, 45(4):529–533, 1979.">Hay, 1979</a>]</span> per evaluated stratum is generally recommended to ensure statistical significance.</p>
+<p>Using stratified or post-stratified sampling, a minimum sample size of <strong>30</strong> <span id="id8">[<a class="reference internal" href="references.html#id4" title="J. L. Van Genderen, B. F. Lock, and P. A. Vass. Remote sensing: statistical testing of thematic map accuracy. Remote Sensing of Environment, 7(1):3–14, 1978.">Van Genderen <em>et al.</em>, 1978</a>]</span> or <strong>50</strong> <span id="id9">[<a class="reference internal" href="references.html#id47" title="S. V. Stehman and G. M. Foody. Key issues in rigorous accuracy assessment of land cover products. Remote Sensing of Environment, 231:111199, 2019. doi:10.1016/j.rse.2019.05.018.">Stehman and Foody, 2019</a>, <a class="reference internal" href="references.html#id5" title="A. M. Hay. Sampling designs to test land-use map accuracy. Photogrammetric Engineering and Remote Sensing, 45(4):529–533, 1979.">Hay, 1979</a>]</span> per evaluated stratum is generally recommended to ensure statistical significance.</p>
 </section>
 </section>
 </section>
@@ -618,7 +631,11 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reproducibility">Reproducibility</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#minimum-distance-constraint">Minimum Distance Constraint</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#neighbor-aggregation">Neighbor Aggregation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-stratification">Post-Stratification</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-stratification">Post-Stratification</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#what-post-stratification-means">What post-stratification means</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-it">When to use it</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sample-size">Sample Size</a><ul class="nav section-nav flex-column">
