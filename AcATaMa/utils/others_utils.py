@@ -59,10 +59,47 @@ def mask(input_list, boolean_mask):
 
 # --------------------------------------------------------------------------
 
+def get_unique_values(layer, band, chunk_size=1000):
+    """Get unique values in a raster band using chunked GDAL reading"""
+    gdal_file = gdal.Open(get_file_path_of_layer(layer), gdal.GA_ReadOnly)
+    raster_band = gdal_file.GetRasterBand(band)
 
-def get_pixel_values(layer, band):
-    from AcATaMa.core.map import get_nodata_value
+    # Calculate total chunks for progress
+    x_chunks = (gdal_file.RasterXSize + chunk_size - 1) // chunk_size
+    y_chunks = (gdal_file.RasterYSize + chunk_size - 1) // chunk_size
+    total_chunks = x_chunks * y_chunks
 
+    # Create progress dialog
+    progress = QProgressDialog("Analyzing raster unique values...", "Cancel", 0, total_chunks)
+    progress.setWindowTitle("Processing")
+    progress.setWindowModality(Qt.WindowModal)
+    progress.setMinimumDuration(0)
+
+    unique_values = set()
+    chunk_count = 0
+
+    # Read in chunks to avoid loading entire raster into memory
+    for y in range(0, gdal_file.RasterYSize, chunk_size):
+        ysize = min(chunk_size, gdal_file.RasterYSize - y)
+        for x in range(0, gdal_file.RasterXSize, chunk_size):
+            if progress.wasCanceled():
+                gdal_file = None
+                return []
+
+            xsize = min(chunk_size, gdal_file.RasterXSize - x)
+            chunk = raster_band.ReadAsArray(x, y, xsize, ysize)
+            unique_values.update(np.unique(chunk).tolist())
+
+            chunk_count += 1
+            progress.setValue(chunk_count)
+            QApplication.processEvents()
+
+    progress.close()
+    gdal_file = None  # Close the file
+    return sorted(unique_values)
+
+
+def get_unique_pixel_values(layer, band, nodata=None):
     current_style = layer.styleManager().currentStyle()
     layer_style = layer.styleManager().style(current_style)
     xml_style_str = layer_style.xmlData()
@@ -74,23 +111,19 @@ def get_pixel_values(layer, band):
         # for unique values
         items = xml_style.findall('pipe/rasterrenderer[@band="{}"]/colorPalette/paletteEntry'.format(band))
 
-    pixel_values = []
+    unique_values = []
     for item in items:
-        pixel_values.append(int(item.get("value")))
+        unique_values.append(int(item.get("value")))
 
     # fallback to get the unique values if no xml color style is defined in the layer
-    if not pixel_values:
-        dataset = gdal_array.LoadFile(get_file_path_of_layer(layer))
-        if len(dataset.shape) == 3:
-            dataset = dataset[band - 1]
-        pixel_values = np.unique(dataset).tolist()
+    if not unique_values:
+        unique_values = get_unique_values(layer, band)
 
-    # insert nodata value
-    nodata = get_nodata_format(get_nodata_value(layer, band))
-    if nodata is not None and nodata not in pixel_values:
-        pixel_values.insert(0, nodata)
+    # insert nodata value at the beginning if not present
+    if nodata is not None and nodata not in unique_values:
+        unique_values.insert(0, nodata)
 
-    return pixel_values
+    return unique_values
 
 
 # --------------------------------------------------------------------------
@@ -101,6 +134,10 @@ storage_pixel_count_by_pixel_values = {}  # storage the pixel/values computed by
 
 def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=None):
     """Meta function to compute the pixel count by pixel values"""
+
+    # check if it was already computed, then return it
+    if (layer, band, nodata) in storage_pixel_count_by_pixel_values:
+        return storage_pixel_count_by_pixel_values[(layer, band, nodata)]
 
     # Try parallel processing with dask
     try:
@@ -132,10 +169,6 @@ def get_pixel_count_by_pixel_values_qgis_native(layer, band, pixel_values=None, 
     import processing
     from qgis.core import QgsProcessingFeedback
 
-    # check if it was already computed, then return it
-    if (layer, band, nodata) in storage_pixel_count_by_pixel_values:
-        return storage_pixel_count_by_pixel_values[(layer, band, nodata)]
-
     # progress dialog with determinate progress (0-100%)
     progress = QProgressDialog('AcATaMa is counting the number of pixels for each thematic value.\n'
                                'Depending on the size of the image, it would take a few minutes.',
@@ -158,7 +191,7 @@ def get_pixel_count_by_pixel_values_qgis_native(layer, band, pixel_values=None, 
     try:
         # Get pixel values from symbology to preserve all defined classes (even with 0 pixels)
         if pixel_values is None:
-            pixel_values = get_pixel_values(layer, band)
+            pixel_values = get_unique_pixel_values(layer, band, nodata)
 
         # Remove nodata from pixel_values if specified
         if nodata is not None and nodata in pixel_values:
@@ -225,10 +258,6 @@ def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None, nod
     """Get the total pixel count for each pixel values using parallel processing with dask."""
     import dask
 
-    # check if it was already computed, then return it
-    if (layer, band, nodata) in storage_pixel_count_by_pixel_values:
-        return storage_pixel_count_by_pixel_values[(layer, band, nodata)]
-
     # progress dialog
     progress = QProgressDialog('AcATaMa is counting the number of pixels for each thematic value.\n'
                                'Depending on the size of the image, it would take a few minutes.',
@@ -241,7 +270,7 @@ def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None, nod
     QApplication.processEvents()
 
     if pixel_values is None:
-        pixel_values = get_pixel_values(layer, band)
+        pixel_values = get_unique_pixel_values(layer, band, nodata)
 
     # if nodata is defined by the user, remove it to not count it
     if nodata is not None and nodata in pixel_values:
@@ -250,7 +279,7 @@ def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None, nod
     # split the image in chunks
     layer_filepath = get_file_path_of_layer(layer)
     gdal_file = gdal.Open(layer_filepath, gdal.GA_ReadOnly)
-    
+
     # Chunk size ~4096x4096 (~64MB for int types), with minimum for parallelism
     chunk_size = min(4096, gdal_file.RasterXSize, gdal_file.RasterYSize)
     chunk_size = max(512, chunk_size)
@@ -268,7 +297,7 @@ def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None, nod
 
     total_chunks = len(data_in_chunks)
     batch_size = max(1, total_chunks // 20)  # ~20 progress updates
-    
+
     # Initialize counts with 0 for all pixel values from symbology
     pairing_values_and_counts = {pv: 0 for pv in pixel_values}
 
@@ -278,7 +307,7 @@ def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None, nod
 
         # Compute batch in parallel
         batch_results = dask.compute(*[dask.delayed(pixel_count_in_chunk)(*chunk) for chunk in batch_chunks])
-        
+
         # Merge counts from this batch
         for chunk_counts in batch_results:
             for value, count in chunk_counts.items():
@@ -303,12 +332,8 @@ total_count = 0
 @wait_process
 def get_pixel_count_by_pixel_values_sequential(layer, band, pixel_values=None, nodata=None):
 
-    # check if it was already computed, then return it
-    if (layer, band, nodata) in storage_pixel_count_by_pixel_values:
-        return storage_pixel_count_by_pixel_values[(layer, band, nodata)]
-
     if pixel_values is None:
-        pixel_values = get_pixel_values(layer, band)
+        pixel_values = get_unique_pixel_values(layer, band, nodata)
 
     # put nodata at the beginning, with the idea to include it for stopping
     # the counting when reaching the total pixels, delete it at the end

@@ -26,17 +26,13 @@ from qgis.core import QgsRaster, QgsPointXY, QgsPalettedRasterRenderer
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QMessageBox
 
-from AcATaMa.utils.others_utils import get_pixel_count_by_pixel_values, wait_process
+from AcATaMa.utils.others_utils import get_pixel_count_by_pixel_values, get_unique_values, wait_process
 
 
 @wait_process
 def auto_symbology_classification_render(layer, band):
     # get the unique values in the band
-    rows = layer.height()
-    cols = layer.width()
-    provider = layer.dataProvider()
-    bl = provider.block(band, provider.extent(), cols, rows)
-    unique_values = list(set([bl.value(r, c) for r in range(rows) for c in range(cols)]))
+    unique_values = get_unique_values(layer, band)
 
     # fill categories
     categories = []
