@@ -35,7 +35,6 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 
 class PostStratificationClassesDialog(QDialog, FORM_CLASS):
-    instances = {}
 
     def __init__(self, post_stratification_map_layer, post_stratification_map_band, post_stratification_map_nodata, set_classes_selected=None):
         QDialog.__init__(self)
@@ -46,10 +45,7 @@ class PostStratificationClassesDialog(QDialog, FORM_CLASS):
         self.classes_selected = \
             [i.strip() for i in (set_classes_selected.split(',') if set_classes_selected and
                                                                     set_classes_selected != "click to select" else [])]
-        if self.create_table():
-            # save instance
-            PostStratificationClassesDialog.instances[
-                (post_stratification_map_layer, post_stratification_map_band, post_stratification_map_nodata)] = self
+        self.create_table()
 
     @error_handler
     def create_table(self):
@@ -108,7 +104,6 @@ class PostStratificationClassesDialog(QDialog, FORM_CLASS):
         # adjust the dialog based on table content
         dialog_width = self.tableOfClasses.horizontalHeader().length() + 50
         self.resize(dialog_width, self.height())
-        return True
 
     @pyqtSlot()
     def select_clicked(self):

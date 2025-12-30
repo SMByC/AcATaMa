@@ -305,7 +305,6 @@ def restore(yml_file_path):
         SamplingReport.instance_opened.close()
 
     # clear some stuff
-    PostStratificationClassesDialog.instances = {}
     ResponseDesign.instances = {}
     ResponseDesignWindow.inst = None
     AcATaMa.dockwidget.sampling_design_window = SamplingDesignWindow()

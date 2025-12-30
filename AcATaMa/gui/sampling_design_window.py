@@ -380,12 +380,8 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
 
         # enable pixel value selection
         self.QPBtn_PostStratMapClasses_SimpRS.setEnabled(True)
-        # update button post-stratification classes selection
-        if (post_stratification_map_layer, post_stratification_map_band, post_stratification_map_nodata) in PostStratificationClassesDialog.instances:
-            classes_selection_dialog = PostStratificationClassesDialog.instances[(post_stratification_map_layer, post_stratification_map_band, post_stratification_map_nodata)]
-            pixel_values_selected = classes_selection_dialog.classes_selected
-            if pixel_values_selected:
-                self.QPBtn_PostStratMapClasses_SimpRS.setText(", ".join(classes_selection_dialog.classes_selected))
+        # clear button post-stratification classes selection
+        self.QPBtn_PostStratMapClasses_SimpRS.setText("click to select")
 
     @pyqtSlot("QgsMapLayer*")
     def update_sampling_map_StraRS(self, sampling_map):
@@ -463,12 +459,8 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
 
         # enable pixel value selection
         self.QPBtn_PostStratMapClasses_SystS.setEnabled(True)
-        # update button post-stratification classes selection
-        if (post_stratification_map_layer, post_stratification_map_band, post_stratification_map_nodata) in PostStratificationClassesDialog.instances:
-            classes_selection_dialog = PostStratificationClassesDialog.instances[(post_stratification_map_layer, post_stratification_map_band, post_stratification_map_nodata)]
-            pixel_values_selected = classes_selection_dialog.classes_selected
-            if pixel_values_selected:
-                self.QPBtn_PostStratMapClasses_SystS.setText(", ".join(classes_selection_dialog.classes_selected))
+        # clear button post-stratification classes selection
+        self.QPBtn_PostStratMapClasses_SystS.setText("click to select")
 
     def select_post_stratification_classes(self, sampling_design_type):
         if sampling_design_type == "simple":
@@ -482,17 +474,11 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
             post_stratification_map_nodata = get_nodata_format(self.nodata_PostStratMap_SystS.text())
             QPBtn_PostStratMapClasses = self.QPBtn_PostStratMapClasses_SystS
 
-        # check if instance already exists
-        if (post_stratification_map_layer, post_stratification_map_band, post_stratification_map_nodata) \
-                in PostStratificationClassesDialog.instances:
-            classes_selection_dialog = PostStratificationClassesDialog.instances[(post_stratification_map_layer,
-                                                                                  post_stratification_map_band,
-                                                                                  post_stratification_map_nodata)]
-        else:
-            classes_selection_dialog = PostStratificationClassesDialog(post_stratification_map_layer,
-                                                                       post_stratification_map_band,
-                                                                       post_stratification_map_nodata,
-                                                                       QPBtn_PostStratMapClasses.text())
+        classes_selection_dialog = PostStratificationClassesDialog(post_stratification_map_layer,
+                                                                    post_stratification_map_band,
+                                                                    post_stratification_map_nodata,
+                                                                    QPBtn_PostStratMapClasses.text())
+
         # get classes picked by user
         classes_selection_dialog.exec_()
         classes_selected = classes_selection_dialog.classes_selected
