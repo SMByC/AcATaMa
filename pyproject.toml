@@ -14,6 +14,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# uv pip sync pyproject.toml --extra docs
+docs = [
+  "jupyter-book<2",
+  "jupytext",
+]
+# uv pip sync pyproject.toml --extra test
 test = [
   "pytest",
   "pytest-qgis",
@@ -21,10 +27,6 @@ test = [
   "shapely",
   "dask",
   "toolz",
-]
-docs = [
-  "jupyter-book<2",
-  "jupytext",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -42,7 +44,7 @@ package = false
 qgis = { path = "/usr/lib/python3.13/site-packages" }
 
 [tool.pyright]
-extraPaths = [".."]  # include project folder
+extraPaths = ["/usr/lib/python3.13/site-packages/"]
 venv = ".venv"
 reportUnknownVariableType = "none"
 reportUnknownParameterType = "none"
