@@ -4,19 +4,20 @@ parts:
   - caption: ''
     chapters:
       - file: introduction
-      - file: thematic-map
+  - caption: 'Getting Started'
+    chapters:
+      - file: install_and_example
+      - file: thematic_map
   - caption: 'Components'
     chapters:
-      - file: sampling-design
-      - file: response-design
+      - file: sampling_design
+      - file: response_design
       - file: analysis
   - caption: 'Other Features'
     chapters:
-      - file: session-persistence
+      - file: session_persistence
   - caption: 'About'
     chapters:
-      - file: examples
-        title: Examples
       - file: about
         title: About Us
       - file: references
