@@ -146,6 +146,9 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         self.QCBox_InitialInsetMode_SystS.currentIndexChanged[int].connect(
             lambda index: self.InitialInsetFixed_SystS.setVisible(True if index == 1 else False))
         self.InitialInsetFixed_SystS.setHidden(True)
+        # show/hide confidence level widget based on max offset value (only relevant when offset > 0)
+        self.MaxXYoffset_SystS.valueChanged.connect(lambda value: self.widget_CL_PerPixelCoverage.setVisible(value > 0))
+        self.widget_CL_PerPixelCoverage.setHidden(True)
         # select and check the post-stratification map
         self.widget_SystSwithPS.setHidden(True)
         # set properties to QgsMapLayerComboBox

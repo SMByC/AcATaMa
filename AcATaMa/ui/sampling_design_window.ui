@@ -1537,6 +1537,66 @@ It set automatically from image if the layer has the nodata value set.</string>
                    <item row="0" column="1">
                     <widget class="QDoubleSpinBox" name="MaxXYoffset_SystS"/>
                    </item>
+                   <item row="1" column="0" colspan="2">
+                    <widget class="QWidget" name="widget_CL_PerPixelCoverage" native="true">
+                     <layout class="QHBoxLayout" name="horizontalLayout_13">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QLabel" name="label_23">
+                        <property name="text">
+                         <string>Confidence level (max coverage):</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QComboBox" name="CL_PerPixelCoverage">
+                        <property name="toolTip">
+                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets the upper bound on the probability that each pixel in the offset area will be tested. This determines the maximum number of random attempts (K) per offset area.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                        </property>
+                        <property name="currentIndex">
+                         <number>3</number>
+                        </property>
+                        <item>
+                         <property name="text">
+                          <string>80%</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>85%</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>90%</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>95%</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>99%</string>
+                         </property>
+                        </item>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
                   </layout>
                  </widget>
                 </item>

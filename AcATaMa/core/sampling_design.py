@@ -449,6 +449,9 @@ def do_systematic_sampling():
     else:
         initial_inset = float(sampling_design.InitialInsetFixed_SystS.value())
 
+    # get the confidence level for per-pixel coverage (used to compute max tries in offset area)
+    confidence_level = float(sampling_design.CL_PerPixelCoverage.currentText().replace('%', '')) / 100
+
     # before process
     sampling_design.QPBtn_GenerateSamples_SystS.setText("FINISH")
     sampling_design.QPBtn_GenerateSamples_SystS.setStyleSheet("background-color: red")
@@ -465,7 +468,7 @@ def do_systematic_sampling():
     sampling_conf = {"sampling_type": "systematic", "total_of_samples": total_of_samples, "points_spacing": points_spacing,
                      "initial_inset": initial_inset, "max_xy_offset": max_xy_offset,
                      "classes_selected": classes_selected, "neighbor_aggregation": neighbor_aggregation,
-                     "random_seed": random_seed}
+                     "random_seed": random_seed, "confidence_level": confidence_level}
 
     if systematic_sampling_unit == "Distance":
         systematic_sampling_function = sampling.generate_systematic_sampling_points_by_distance
@@ -635,6 +638,7 @@ class Sampling(object):
         self.neighbor_aggregation = sampling_conf["neighbor_aggregation"]
         self.samples_generated = None  # total generated
         self.random_seed = sampling_conf["random_seed"]
+        self.confidence_level = sampling_conf["confidence_level"]
 
         self.ThematicR_boundaries = QgsGeometry().fromRect(self.thematic_map.extent())
 
@@ -651,6 +655,13 @@ class Sampling(object):
 
         pixel_size_x = self.thematic_map.qgs_layer.rasterUnitsPerPixelX()
         pixel_size_y = self.thematic_map.qgs_layer.rasterUnitsPerPixelY()
+
+        # compute the maximum number of tries (K) based on the confidence level
+        # N is the number of pixels in the offset area (constant based on offset area and pixel size)
+        # formula: K = ceil(ln(1-CL) / ln(1-1/N))
+        if self.max_xy_offset > 0:
+            N = math.ceil(2 * self.max_xy_offset / pixel_size_x) * math.ceil(2 * self.max_xy_offset / pixel_size_y)
+            max_tries = math.ceil(math.log(1 - self.confidence_level) / math.log(1 - 1/N)) if N > 1 else 1
 
         # init the random sampling seed
         random.seed(self.random_seed)
@@ -717,10 +728,14 @@ class Sampling(object):
                     x += self.points_spacing
                     continue
 
+                tries = 0
+
                 while not task.isCanceled():
-                    if not pixels_in_offset_grid:
+                    if not pixels_in_offset_grid or tries >= max_tries:
                         x += self.points_spacing
                         break
+
+                    tries += 1
 
                     # generate a random point inside the offset area
                     _x = random.uniform(x - self.max_xy_offset, x + self.max_xy_offset)
@@ -784,6 +799,7 @@ class Sampling(object):
         self.neighbor_aggregation = sampling_conf["neighbor_aggregation"]
         self.samples_generated = None  # total generated
         self.random_seed = sampling_conf["random_seed"]
+        self.confidence_level = sampling_conf["confidence_level"]
 
         self.ThematicR_boundaries = QgsGeometry().fromRect(self.thematic_map.extent())
 
@@ -798,6 +814,13 @@ class Sampling(object):
 
         pixel_size_x = self.thematic_map.qgs_layer.rasterUnitsPerPixelX()
         pixel_size_y = self.thematic_map.qgs_layer.rasterUnitsPerPixelY()
+
+        # compute the maximum number of tries (K) based on the confidence level
+        # N is the number of pixels in the offset area (constant, max_xy_offset is in pixel units)
+        # formula: K = ceil(ln(1-CL) / ln(1-1/N))
+        if self.max_xy_offset > 0:
+            N = (2 * self.max_xy_offset) * (2 * self.max_xy_offset)  # offset area in pixels squared
+            max_tries = math.ceil(math.log(1 - self.confidence_level) / math.log(1 - 1/N)) if N > 1 else 1
 
         # init the random sampling seed
         random.seed(self.random_seed)
@@ -870,10 +893,14 @@ class Sampling(object):
                     x += pixel_size_x * self.points_spacing
                     continue
 
+                tries = 0
+
                 while not task.isCanceled():
-                    if not pixels_in_offset_grid:
+                    if not pixels_in_offset_grid or tries >= max_tries:
                         x += pixel_size_x * self.points_spacing
                         break
+
+                    tries += 1
 
                     _x, _y = random.choice(pixels_in_offset_grid)
 
