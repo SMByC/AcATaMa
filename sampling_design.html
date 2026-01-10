@@ -339,6 +339,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#systematic-sampling-sys">Systematic Sampling (SYS)</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aligned-systematic-sampling">Aligned Systematic Sampling</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#unaligned-systematic-sampling">Unaligned Systematic Sampling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#confidence-level-for-random-offset">Confidence Level for Random Offset</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-features">Additional Features</a><ul class="nav section-nav flex-column">
@@ -441,6 +442,7 @@ document.write(`
 <li><p><strong>Initial inset</strong>: The distance from the top-left corner of the study area to the first point unit</p></li>
 <li><p><strong>Max offset</strong>: Maximum distance along the X and Y axes from the point of the aligned systematic grid</p></li>
 <li><p><strong>Random offset area</strong>: The area surrounding each point where a random offset is applied</p></li>
+<li><p><strong>Confidence level (max coverage)</strong>: The upper bound on the probability that each pixel in the offset area will be tested during the random selection process (see <a class="reference internal" href="#confidence-level-for-random-offset"><span class="xref myst">Confidence Level for Random Offset</span></a> below)</p></li>
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
@@ -477,6 +479,25 @@ document.write(`
 <li><p>Reduces the advantage of spatial distribution of error</p></li>
 <li><p>The lack of an unbiased estimator</p></li>
 </ul>
+</section>
+<section id="confidence-level-for-random-offset">
+<h3>Confidence Level for Random Offset<a class="headerlink" href="#confidence-level-for-random-offset" title="Link to this heading">#</a></h3>
+<p>When using unaligned systematic sampling (max XY offset &gt; 0), the algorithm randomly selects pixels within each offset area. The <strong>confidence level (CL)</strong> parameter controls the maximum number of random attempts (K) to find a valid pixel, setting an upper bound on the probability that each pixel in the offset area will be tested.</p>
+<p>The probability that a fixed pixel is tested at least once in K independent attempts is:</p>
+<p>$$P(\text{test pixel at least once}) = 1 - \left(1-\frac{1}{N}\right)^K$$</p>
+<p>To ensure this probability is at least the confidence level CL, the minimum number of attempts is:</p>
+<p>$$K = \left\lceil \frac{\ln(1-CL)}{\ln\left(1-\frac{1}{N}\right)} \right\rceil$$</p>
+<p>Where:</p>
+<ul class="simple">
+<li><p><strong>N</strong> = number of pixels in the offset area (computed from max offset and pixel size)</p></li>
+<li><p><strong>CL</strong> = confidence level (0.80, 0.85, 0.90, 0.95, or 0.99)</p></li>
+<li><p><strong>K</strong> = maximum number of random attempts per offset area</p></li>
+</ul>
+<p><strong>Example:</strong> For an offset area with N=16 pixels and CL=0.95, the algorithm will make up to K=47 attempts, generating random points until it finds a valid pixel or reaches the maximum attempts, ensuring each pixel has up to a 95% probability of being tested.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Since the algorithm stops as soon as a valid pixel is found (not all K attempts are always made), the actual testing coverage for other pixels may be lower than the CL target. This is intentional: in edge cases where only a few pixels in the offset area pass the acceptance rules (e.g., post-stratification, neighbor aggregation), the CL acts as an upper bound on the selection probability, preventing the algorithm from being forced to select those few valid pixels with artificially high probability. In this sense, CL controls both the per-pixel testing coverage and the maximum probability of any pixel being selected.</p>
+</div>
 </section>
 </section>
 <section id="additional-features">
@@ -628,6 +649,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#systematic-sampling-sys">Systematic Sampling (SYS)</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aligned-systematic-sampling">Aligned Systematic Sampling</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#unaligned-systematic-sampling">Unaligned Systematic Sampling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#confidence-level-for-random-offset">Confidence Level for Random Offset</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-features">Additional Features</a><ul class="nav section-nav flex-column">
