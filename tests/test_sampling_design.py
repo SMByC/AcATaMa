@@ -143,7 +143,8 @@ def test_systematic_by_distance_post_stratified_random_sampling(plugin, restore_
         "max_xy_offset": max_xy_offset,
         "classes_selected": classes_selected,
         "neighbor_aggregation": neighbor_aggregation,
-        "random_seed": random_seed
+        "random_seed": random_seed,
+        "confidence_level": 0.95
     }
     # run the sampling
     sampling.generate_systematic_sampling_points_by_distance(task, sampling_conf)
@@ -193,7 +194,8 @@ def test_systematic_by_distance_post_stratified_with_initial_inset_random(plugin
         "max_xy_offset": max_xy_offset,
         "classes_selected": classes_selected,
         "neighbor_aggregation": neighbor_aggregation,
-        "random_seed": random_seed
+        "random_seed": random_seed,
+        "confidence_level": 0.95
     }
     # run the sampling
     sampling.generate_systematic_sampling_points_by_distance(task, sampling_conf)
@@ -246,7 +248,8 @@ def test_systematic_by_pixels_no_offset(plugin, restore_config_file, tmpdir):
         "max_xy_offset": max_xy_offset,
         "classes_selected": classes_selected,
         "neighbor_aggregation": neighbor_aggregation,
-        "random_seed": random_seed
+        "random_seed": random_seed,
+        "confidence_level": 0.95
     }
     # run the sampling
     sampling.generate_systematic_sampling_points_by_pixels(task, sampling_conf)
@@ -298,7 +301,8 @@ def test_systematic_by_pixels_with_offset(plugin, restore_config_file, tmpdir):
         "max_xy_offset": max_xy_offset,
         "classes_selected": classes_selected,
         "neighbor_aggregation": neighbor_aggregation,
-        "random_seed": random_seed
+        "random_seed": random_seed,
+        "confidence_level": 0.95
     }
     # run the sampling
     sampling.generate_systematic_sampling_points_by_pixels(task, sampling_conf)
@@ -349,7 +353,8 @@ def test_systematic_right_bottom_borders_with_offset(plugin, restore_config_file
         "max_xy_offset": max_xy_offset,
         "classes_selected": classes_selected,
         "neighbor_aggregation": neighbor_aggregation,
-        "random_seed": random_seed
+        "random_seed": random_seed,
+        "confidence_level": 0.95
     }
     # run the sampling
     sampling.generate_systematic_sampling_points_by_pixels(task, sampling_conf)
