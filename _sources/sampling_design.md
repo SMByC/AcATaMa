@@ -125,22 +125,26 @@ The area is divided into smaller, regularly spaced regions, with a randomly chos
 
 #### Confidence Level for Random Offset
 
-When using unaligned systematic sampling (max XY offset > 0), the algorithm randomly selects pixels within each offset area. The **confidence level (CL)** parameter controls the maximum number of random attempts (K) to find a valid pixel, setting an upper bound on the probability that each pixel in the offset area will be tested.
+When using unaligned systematic sampling (max XY offset > 0), the algorithm randomly selects pixels within each offset area. The **confidence level ($CL$)** parameter controls the maximum number of random attempts ($K$) to find a valid pixel, setting an upper bound on the probability that each pixel in the offset area will be tested.
 
-The probability that a fixed pixel is tested at least once in K independent attempts is:
+The probability that a fixed pixel is tested at least once in $K$ independent attempts is:
 
-$$P(\text{test pixel at least once}) = 1 - \left(1-\frac{1}{N}\right)^K$$
+```{math}
+P(\text{test pixel at least once}) = 1 - \left(1-\frac{1}{N}\right)^K
+```
 
-To ensure this probability is at least the confidence level CL, the minimum number of attempts is:
+To ensure this probability is at least the confidence level $CL$, the minimum number of attempts is:
 
-$$K = \left\lceil \frac{\ln(1-CL)}{\ln\left(1-\frac{1}{N}\right)} \right\rceil$$
+```{math}
+K = \left\lceil \frac{\ln(1-CL)}{\ln\left(1-\frac{1}{N}\right)} \right\rceil
+```
 
 Where:
-- **N** = number of pixels in the offset area (computed from max offset and pixel size)
-- **CL** = confidence level (0.80, 0.85, 0.90, 0.95, or 0.99)
-- **K** = maximum number of random attempts per offset area
+- **$N$** = number of pixels in the offset area (computed from max offset and pixel size)
+- **$CL$** = confidence level (0.80, 0.85, 0.90, 0.95, or 0.99)
+- **$K$** = maximum number of random attempts per offset area
 
-**Example:** For an offset area with N=16 pixels and CL=0.95, the algorithm will make up to K=47 attempts, generating random points until it finds a valid pixel or reaches the maximum attempts, ensuring each pixel has up to a 95% probability of being tested.
+**Example:** For an offset area with $N=16$ pixels and $CL=0.95$, the algorithm will make up to $K=47$ attempts, generating random points until it finds a valid pixel or reaches the maximum attempts, ensuring each pixel has up to a 95% probability of being tested.
 
 ```{note}
 Since the algorithm stops as soon as a valid pixel is found (not all K attempts are always made), the actual testing coverage for other pixels may be lower than the CL target. This is intentional: in edge cases where only a few pixels in the offset area pass the acceptance rules (e.g., post-stratification, neighbor aggregation), the CL acts as an upper bound on the selection probability, preventing the algorithm from being forced to select those few valid pixels with artificially high probability. In this sense, CL controls both the per-pixel testing coverage and the maximum probability of any pixel being selected.
