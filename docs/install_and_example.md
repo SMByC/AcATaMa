@@ -14,7 +14,7 @@ AcATaMa is available from the official QGIS Plugin Repository. To install it:
 
 ```{note}
 **Download** the examples in order to load them in Acatama and explore the configuration and results, you can find the
-zip [**here**](https://drive.google.com/uc?export=download&id=1dZwaxA67FbhXY9MZ62LNVMqd8ZPpGJeE)
+zip [**here**](https://drive.usercontent.google.com/download?id=1dZwaxA67FbhXY9MZ62LNVMqd8ZPpGJeE&export=download&authuser=0)
 ```
 
 ```{note}
