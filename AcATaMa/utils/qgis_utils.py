@@ -28,6 +28,19 @@ from qgis.core import QgsProject, QgsRasterLayer, QgsVectorLayer, Qgis, QgsStyle
 from qgis.utils import iface
 
 
+def is_integer_data_type(layer, band=1):
+    """Check if the raster layer data type for the given band is integer or byte.
+    Uses the Qgis.DataType enum name to detect integer types generically,
+    compatible across different QGIS/GDAL versions (including Int8, etc.).
+    """
+    data_type = layer.dataProvider().dataType(band)
+    try:
+        type_name = Qgis.DataType(data_type).name
+    except ValueError:
+        return False
+    return "Int" in type_name or "Byte" in type_name
+
+
 def get_file_path_of_layer(layer):
     if layer and layer.isValid():
         return layer.source().split("|layername")[0]

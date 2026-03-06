@@ -31,7 +31,7 @@ from AcATaMa.core.sampling_design import do_simple_random_sampling, do_stratifie
 from AcATaMa.utils.sampling_utils import update_stratified_sampling_table, fill_stratified_sampling_table, \
     reload_StraRS_table
 from AcATaMa.gui.post_stratification_classes_dialog import PostStratificationClassesDialog
-from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_filepath_in
+from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_filepath_in, is_integer_data_type
 from AcATaMa.utils.system_utils import block_signals_to
 from AcATaMa.utils.others_utils import set_nodata_format, get_nodata_format, get_pixel_count_by_pixel_values, \
     get_decimal_places
@@ -372,7 +372,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
 
         # check if post-stratification map data type is integer or byte
         if item_changed in ["layer", "band"]:
-            if post_stratification_map_layer.dataProvider().dataType(post_stratification_map_band) not in [1, 2, 3, 4, 5]:
+            if not is_integer_data_type(post_stratification_map_layer, band=post_stratification_map_band):
                 self.QCBox_PostStratMap_SimpRS.setCurrentIndex(-1)
                 self.QCBox_band_PostStratMap_SimpRS.clear()
                 self.nodata_PostStratMap_SimpRS.setText("")
@@ -397,7 +397,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
             self.QGBox_Sampling_Method.setEnabled(False)
             return
         # check if stratification map data type is integer or byte
-        if sampling_map.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
+        if not is_integer_data_type(sampling_map, band=1):
             self.QCBox_SamplingMap_StraRS.setCurrentIndex(-1)
             self.QCBox_band_SamplingMap_StraRS.clear()
             self.nodata_SamplingMap_StraRS.setText("")
@@ -451,7 +451,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
 
         # check if post-stratification map data type is integer or byte
         if item_changed in ["layer", "band"]:
-            if post_stratification_map_layer.dataProvider().dataType(post_stratification_map_band) not in [1, 2, 3, 4, 5]:
+            if not is_integer_data_type(post_stratification_map_layer, band=post_stratification_map_band):
                 self.QCBox_PostStratMap_SystS.setCurrentIndex(-1)
                 self.QCBox_band_PostStratMap_SystS.clear()
                 self.nodata_PostStratMap_SystS.setText("")

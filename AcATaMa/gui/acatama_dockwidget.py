@@ -38,7 +38,7 @@ from AcATaMa.gui.response_design_grid_settings import ResponseDesignGridSettings
 from AcATaMa.gui.sampling_design_window import SamplingDesignWindow
 from AcATaMa.gui.sampling_report import SamplingReport
 from AcATaMa.utils.others_utils import set_nodata_format
-from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_filepath_in, get_file_path_of_layer
+from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_filepath_in, is_integer_data_type, get_file_path_of_layer
 from AcATaMa.utils.system_utils import error_handler, wait_process, block_signals_to, output_file_is_OK, get_save_file_name
 from AcATaMa.gui.about_dialog import AboutDialog
 
@@ -221,8 +221,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         if not thematic_map_layer or not valid_file_selected_in(self.QCBox_ThematicMap, "thematic map"):
             clear_and_unset_the_thematic_map()
             return
-        # check if thematic map data type is integer or byte
-        if thematic_map_layer.dataProvider().dataType(1) not in [1, 2, 3, 4, 5]:
+        if not is_integer_data_type(thematic_map_layer, band=1):
             clear_and_unset_the_thematic_map()
             iface.messageBar().pushMessage("AcATaMa", "Error, thematic map must be byte or integer as data type.",
                                            level=Qgis.Warning, duration=10)
