@@ -36,6 +36,10 @@ def get_plugin_version(version_string):
     if isinstance(version_string, (int, float)):
         version_string = str(version_string)
 
+    # handle non-numeric version strings like "dev"
+    if not re.sub(r'\D', '', version_string):
+        return 999999
+
     version = ''.join(['{:0>2}'.format(re.sub('\D', '', x)) for x in version_string.split('.')])
 
     if len(version) == 4:
