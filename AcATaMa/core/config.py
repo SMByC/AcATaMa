@@ -682,6 +682,7 @@ def restore(yml_file_path):
         ResponseDesignWindow(sampling_layer, response_design.grid_columns, response_design.grid_rows)
 
     else:
+        sampling_layer = None
         response_design = None
 
     # ######### sampling report configuration ######### #
