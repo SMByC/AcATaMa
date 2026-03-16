@@ -7,7 +7,7 @@ name = "acatama"
 version = "0.0"
 description = "AcATaMa is an open-source QGIS plugin designed to provide comprehensive support for accuracy assessment and sample-based area estimation of raster thematic maps"
 authors = [{ name = "Xavier C. Llano", email = "xavier.corredor.llano@gmail.com" }]
-requires-python = ">=3.14"
+requires-python = ">=3.12"
 dependencies = [
   "dask",
   "toolz",
