@@ -95,6 +95,11 @@ To ensure the offset area covers the entire thematic map (giving every pixel an 
 
 #### Aligned Systematic Sampling
 
+```{image} img/aligned_systematic_sampling.webp
+:width: 25%
+:align: left
+```
+
 *(When the max XY offset value is zero)*
 
 Distributes the sampling units equally for the entire study area. As long as the first sampling unit is randomly selected, systematic sampling is considered random.
@@ -111,9 +116,14 @@ Distributes the sampling units equally for the entire study area. As long as the
 
 #### Unaligned Systematic Sampling
 
+```{image} img/unaligned_systematic_sampling.webp
+:width: 25%
+:align: left
+```
+
 *(When the max XY offset value is NOT zero)*
 
-The area is divided into smaller, regularly spaced regions, with a randomly chosen sample unit within each region. This minimizes the effects of the periodicity of errors.
+It is also known as _"Random Sampling Within Blocks"_. The area is divided into smaller, regularly spaced regions, with a randomly chosen sample unit within each region. This minimizes the effects of the periodicity of errors.
 
 **Advantages:**
 - Less susceptible to error if linearity of error is present
