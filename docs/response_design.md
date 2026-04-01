@@ -37,17 +37,22 @@ The response design can be conceptually separated into two components:
 
 ## Sampling Unit and Spatial Support
 
+```{image} img/sampling_unit.webp
+:width: 50%
+:align: center
+```
+
 The sampling unit is a structure that defines a specified space for the comparison of the thematic map and reference data, and defines the space for the labeling protocol.
 
-The sampling unit in an accuracy assessment protocol is crucial because it determines how the landscape is partitioned and represented, influencing the measurement of agreement and disagreement between the map and reference data.
+The sampling unit in an accuracy assessment protocol is crucial because it determines how the landscape is partitioned and represented, influencing the measurement of agreement and disagreement between the map and reference data. However, the sampling unit visualization displayed in the interface serves only as a spatial reference for the interpreter and the sampling unit size has no a direct effect on the assessment results.
 
 ### Pixel-Based Sampling
 
-When a single pixel is used as the spatial unit, a critical decision must be made regarding the labeling process, whether to assign labels based solely on what is observed within each individual pixel or to consider the surrounding context. Pixel-based sampling units are better suited for very detailed assessments.
+When a single pixel is used as the spatial unit (sampling unit size = 0), a critical decision must be made regarding the labeling process, whether to assign labels based solely on what is observed within each individual pixel or to consider the surrounding context. Pixel-based sampling units are better suited for very detailed assessments.
 
 ### Block-Based Sampling
 
-When using blocks of pixels (e.g., a 3×3 pixel block) as the sampling unit, the surrounding area is considered, which can {cite}`Stehman2011`:
+When using blocks of pixels (e.g., sampling unit size = 1 means a 3×3 pixel block) as the sampling unit, the surrounding area is considered, which can {cite}`Stehman2011`:
 - Reduce sensitivity to geo-referencing errors
 - Smooth out small-scale misalignments
 - Provide a more accurate representation of the land cover
