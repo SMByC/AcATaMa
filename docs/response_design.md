@@ -25,7 +25,7 @@ According to {cite:t}`Olofsson2014`, an effective response design must include w
 - Establishing criteria for agreement between map and reference classifications
 
 ```{image} img/response_design_components.png
-:width: 50%
+:width: 35%
 :align: center
 ```
 
