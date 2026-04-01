@@ -53,7 +53,7 @@
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="_static/togglebutton.js?v=1ae7504c"></script>
+    <script src="_static/togglebutton.js?v=b8b12719"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script src="_static/design-tabs.js?v=f930bc37"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
@@ -381,15 +381,17 @@
 </section>
 <section id="sampling-unit-and-spatial-support">
 <h2>Sampling Unit and Spatial Support<a class="headerlink" href="#sampling-unit-and-spatial-support" title="Link to this heading">#</a></h2>
+<a class="reference internal image-reference" href="_images/sampling_unit.webp"><img alt="_images/sampling_unit.webp" class="align-center" src="_images/sampling_unit.webp" style="width: 50%;" />
+</a>
 <p>The sampling unit is a structure that defines a specified space for the comparison of the thematic map and reference data, and defines the space for the labeling protocol.</p>
-<p>The sampling unit in an accuracy assessment protocol is crucial because it determines how the landscape is partitioned and represented, influencing the measurement of agreement and disagreement between the map and reference data.</p>
+<p>The sampling unit in an accuracy assessment protocol is crucial because it determines how the landscape is partitioned and represented, influencing the measurement of agreement and disagreement between the map and reference data. However, the sampling unit visualization displayed in the interface serves only as a spatial reference for the interpreter and the sampling unit size has no a direct effect on the assessment results.</p>
 <section id="pixel-based-sampling">
 <h3>Pixel-Based Sampling<a class="headerlink" href="#pixel-based-sampling" title="Link to this heading">#</a></h3>
-<p>When a single pixel is used as the spatial unit, a critical decision must be made regarding the labeling process, whether to assign labels based solely on what is observed within each individual pixel or to consider the surrounding context. Pixel-based sampling units are better suited for very detailed assessments.</p>
+<p>When a single pixel is used as the spatial unit (sampling unit size = 0), a critical decision must be made regarding the labeling process, whether to assign labels based solely on what is observed within each individual pixel or to consider the surrounding context. Pixel-based sampling units are better suited for very detailed assessments.</p>
 </section>
 <section id="block-based-sampling">
 <h3>Block-Based Sampling<a class="headerlink" href="#block-based-sampling" title="Link to this heading">#</a></h3>
-<p>When using blocks of pixels (e.g., a 3×3 pixel block) as the sampling unit, the surrounding area is considered, which can <span id="id3">[<a class="reference internal" href="references.html#id49" title="S. V. Stehman and J. D. Wickham. Pixels, blocks of pixels, and polygons: choosing a spatial unit for thematic accuracy assessment. Remote Sensing of Environment, 115(12):3044–3055, 2011.">Stehman and Wickham, 2011</a>]</span>:</p>
+<p>When using blocks of pixels (e.g., sampling unit size = 1 means a 3×3 pixel block) as the sampling unit, the surrounding area is considered, which can <span id="id3">[<a class="reference internal" href="references.html#id49" title="S. V. Stehman and J. D. Wickham. Pixels, blocks of pixels, and polygons: choosing a spatial unit for thematic accuracy assessment. Remote Sensing of Environment, 115(12):3044–3055, 2011.">Stehman and Wickham, 2011</a>]</span>:</p>
 <ul class="simple">
 <li><p>Reduce sensitivity to geo-referencing errors</p></li>
 <li><p>Smooth out small-scale misalignments</p></li>
