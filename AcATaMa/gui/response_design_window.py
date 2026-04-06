@@ -134,6 +134,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         self.current_sample = None
         self.pixel_tile = None
         self.sampling_unit = None
+        self.ccd_plugin_available = False
         self.SamplingUnit_Size.setCurrentIndex(self.response_design.sampling_unit_pixel_buffer)
         self.set_current_sample()
         self.change_sampling_unit_color(color=self.response_design.sampling_unit_color)
@@ -211,7 +212,6 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         self.widget_ccd.setVisible(False)
         ccd_widget_layout = self.widget_ccd.layout()
         try:
-            from qgis.PyQt.QtWebKit import QWebSettings  # check if QtWebKit is available (removed in Qt6)
             from CCD_Plugin.CCD_Plugin import CCD_Plugin
             from CCD_Plugin.gui.CCD_Plugin_dockwidget import CCD_PluginDockWidget
             from CCD_Plugin.utils.config import get_plugin_config, restore_plugin_config
@@ -316,27 +316,24 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
 
     @pyqtSlot(bool)
     def ccd_plugin_widget(self, checked):
+        self.widget_ccd.setVisible(checked)
         if checked:
-            self.widget_ccd.setVisible(True)
             self.set_current_sample_in_ccd()
-        else:
-            self.widget_ccd.setVisible(False)
-            if self.ccd_plugin_available:
-                from CCD_Plugin.gui.CCD_Plugin_dockwidget import PickerCoordsOnMap
-                PickerCoordsOnMap.delete_markers()
-                self.ccd_plugin.widget.setup_map_tool(False)
+        elif self.ccd_plugin_available:
+            from CCD_Plugin.gui.CCD_Plugin_dockwidget import PickerCoordsOnMap
+            PickerCoordsOnMap.delete_markers()
+            self.ccd_plugin.widget.setup_map_tool(False)
 
     def set_current_sample_in_ccd(self):
-        if not hasattr(self, "ccd_plugin") or not self.ccd_plugin.widget or not self.ccd_plugin_available:
+        if not self.ccd_plugin_available:
             return
 
-        # get the coordinates of the current sample
+        # get the coordinates of the current sample in WGS84
         crsSrc = QgsCoordinateReferenceSystem(self.sampling_layer.crs())
-        crsDest = QgsCoordinateReferenceSystem(4326)  # WGS84
+        crsDest = QgsCoordinateReferenceSystem(4326)
         xform = QgsCoordinateTransform(crsSrc, crsDest, QgsProject.instance())
-        # forward transformation: src -> dest
         point = xform.transform(self.current_sample.QgsPnt)
-        # set the current sample in the CCD plugin
+
         self.ccd_plugin.widget.longitude.setValue(point.x())
         self.ccd_plugin.widget.latitude.setValue(point.y())
 
