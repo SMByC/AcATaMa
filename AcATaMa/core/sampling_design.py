@@ -605,7 +605,7 @@ class Sampling(object):
             # it requires tmp save the point to check min distance for the next sample
             f = QgsFeature(len(points_generated))
             f.setGeometry(random_sampling_point.QgsGeom)
-            self.index.insertFeature(f)
+            self.index.addFeature(f)
             self.points[len(points_generated)] = random_sampling_point.QgsPnt
 
             points_generated.append(random_sampling_point)

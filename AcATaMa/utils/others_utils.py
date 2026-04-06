@@ -40,7 +40,7 @@ def get_plugin_version(version_string):
     if not re.sub(r'\D', '', version_string):
         return 999999
 
-    version = ''.join(['{:0>2}'.format(re.sub('\D', '', x)) for x in version_string.split('.')])
+    version = ''.join(['{:0>2}'.format(re.sub(r'\D', '', x)) for x in version_string.split('.')])
 
     if len(version) == 4:
         version += '00'
