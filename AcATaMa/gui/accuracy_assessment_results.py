@@ -5,7 +5,7 @@
                                  A QGIS plugin
  AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
                               -------------------
-        copyright            : (C) 2017-2025 by Xavier C. Llano, SMByC
+        copyright            : (C) 2017-2026 by Xavier C. Llano, SMByC
         email                : xavier.corredor.llano@gmail.com
  ***************************************************************************/
 
@@ -108,7 +108,7 @@ def get_html(accu_asse):
         accu_asse.response_design.total_labeled, accu_asse.response_design.num_points)
 
     # warning block if the thematic has a geographic units
-    if accu_asse.base_area_unit == QgsUnitTypes.AreaSquareDegrees:
+    if accu_asse.base_area_unit == QgsUnitTypes.AreaUnit.AreaSquareDegrees:
         html += "<p style='color:black;background-color:#ffc53a;white-space:pre;padding:4px'><strong>Warning!</strong><br/>" \
                 "The thematic map has a geographic coordinate system, therefore all area values are not accurate.<br/>" \
                 "For fix that use the UTM coordinate system.</p>"

@@ -5,7 +5,7 @@
                                  A QGIS plugin
  AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
                               -------------------
-        copyright            : (C) 2017-2025 by Xavier C. Llano, SMByC
+        copyright            : (C) 2017-2026 by Xavier C. Llano, SMByC
         email                : xavier.corredor.llano@gmail.com
  ***************************************************************************/
 
@@ -62,7 +62,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         ResponseDesignWindow.inst = self
 
         # flags
-        self.setWindowFlags(self.windowFlags() | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowMinimizeButtonHint | Qt.WindowType.WindowMaximizeButtonHint)
 
         # get response design done from sampling layer or init new instance
         if sampling_layer in ResponseDesign.instances:
@@ -102,7 +102,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         self.radiusFitToSample.setToolTip(
             "Set the default zoom radius for samples\n"
             "(units in {} based on sampling file selected)".format(str_unit))
-        self.radiusFitToSample.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
+        self.radiusFitToSample.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceUnit.DistanceDegrees else 10e6)
         decimal_places = get_decimal_places(for_crs=self.sampling_layer.crs())
         self.radiusFitToSample.setDecimals(decimal_places)
         self.radiusFitToSample.setSingleStep(10**-decimal_places)
@@ -127,7 +127,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         # dialog buttons box
         self.closeButton.rejected.connect(self.closing)
         # disable enter action
-        self.closeButton.button(QDialogButtonBox.Close).setAutoDefault(False)
+        self.closeButton.button(QDialogButtonBox.StandardButton.Close).setAutoDefault(False)
 
         # init current sample
         self.current_sample_idx = self.response_design.current_sample_idx
@@ -150,13 +150,13 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         h_splitters = []
         view_widgets = []
         for row in range(self.response_design.grid_rows):
-            splitter = QSplitter(Qt.Horizontal)
+            splitter = QSplitter(Qt.Orientation.Horizontal)
             for column in range(self.response_design.grid_columns):
                 new_view_widget = LabelingViewWidget()
                 splitter.addWidget(new_view_widget)
                 h_splitters.append(splitter)
                 view_widgets.append(new_view_widget)
-        v_splitter = QSplitter(Qt.Vertical)
+        v_splitter = QSplitter(Qt.Orientation.Vertical)
         for splitter in h_splitters:
             v_splitter.addWidget(splitter)
         # add to response design window
@@ -178,7 +178,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
                     layer_name = view_config["layer_name"]
                     if not layer_name and view_config["render_file_path"]:
                         layer_name = os.path.splitext(os.path.basename(view_config["render_file_path"]))[0]
-                    file_index = view_widget.QCBox_RenderFile.findText(layer_name, Qt.MatchFixedString)
+                    file_index = view_widget.QCBox_RenderFile.findText(layer_name, Qt.MatchFlag.MatchFixedString)
 
                     if file_index != -1:
                         # select layer if exists in Qgis
@@ -193,13 +193,13 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
                             "Could not to load the layer '{}' in the view {}: no such file {}".format(
                                 layer_name,
                                 "'{}'".format(view_config["view_name"]) if view_config["view_name"] else view_widget.id + 1,
-                                view_config["render_file_path"]), level=Qgis.Warning, duration=0)
+                                view_config["render_file_path"]), level=Qgis.MessageLevel.Warning, duration=0)
                     else:
                         self.MsgBar.pushMessage(
                             "Could not to load the layer '{}' in the view {} (for network layers use save/load a Qgis project)".format(
                                 layer_name,
                                 "'{}'".format(view_config["view_name"]) if view_config["view_name"] else view_widget.id + 1),
-                            level=Qgis.Warning, duration=0)
+                            level=Qgis.MessageLevel.Warning, duration=0)
                     # TODO: restore size by view widget
                     # view_widget.resize(*view_config["view_size"])
                     view_widget.QLabel_ViewName.setText(view_config["view_name"])
@@ -211,7 +211,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         self.widget_ccd.setVisible(False)
         ccd_widget_layout = self.widget_ccd.layout()
         try:
-            from qgis.PyQt.QtWebKit import QWebSettings  # check first if the QtWebKit is available in QT5 client
+            from qgis.PyQt.QtWebKit import QWebSettings  # check if QtWebKit is available (removed in Qt6)
             from CCD_Plugin.CCD_Plugin import CCD_Plugin
             from CCD_Plugin.gui.CCD_Plugin_dockwidget import CCD_PluginDockWidget
             from CCD_Plugin.utils.config import get_plugin_config, restore_plugin_config
@@ -222,9 +222,9 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
                            "CCD-Plugin, install it and restart the response design window.\n\n"
                            "CCD helps to analyze the trends and breakpoints of change of the samples over multi-year\n"
                            "time series using Landsat and Sentinel.\n", self)
-            label.setAlignment(Qt.AlignCenter)
+            label.setAlignment(Qt.AlignmentFlag.AlignCenter)
             ccd_widget_layout.addWidget(label)
-            ccd_widget_layout.setAlignment(Qt.AlignCenter)
+            ccd_widget_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
             self.ccd_plugin_available = False
             self.response_design.ccd_plugin_opened = True
 
@@ -238,11 +238,11 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             view_canvas = [view_widget.render_widget.canvas for view_widget in ResponseDesignWindow.view_widgets]
             self.ccd_plugin.widget = CCD_PluginDockWidget(id=self.ccd_plugin.id, canvas=view_canvas, parent=self)
             # adjust the dockwidget (ccd_widget) as a normal widget
-            self.ccd_plugin.widget.setWindowFlags(Qt.Widget)
-            self.ccd_plugin.widget.setWindowFlag(Qt.WindowCloseButtonHint, False)
+            self.ccd_plugin.widget.setWindowFlags(Qt.WindowType.Widget)
+            self.ccd_plugin.widget.setWindowFlag(Qt.WindowType.WindowCloseButtonHint, False)
             self.ccd_plugin.widget.setFloating(False)
             self.ccd_plugin.widget.setTitleBarWidget(QWidget(None))
-            self.ccd_plugin.widget.setFeatures(QDockWidget.NoDockWidgetFeatures)
+            self.ccd_plugin.widget.setFeatures(QDockWidget.DockWidgetFeature.NoDockWidgetFeatures)
             self.ccd_plugin.widget.setContentsMargins(0, 0, 0, 0)
             self.ccd_plugin.widget.setStyleSheet("QDockWidget { border: 0px; }")
             self.ccd_plugin.widget.MainWidget.layout().setContentsMargins(0, 0, 0, 3)
@@ -433,7 +433,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
                 self.statusCurrentSample.setStyleSheet('QLabel {color: red;}')
                 self.MsgBar.pushMessage(
                     "This sample was labeled with invalid/deleted item, fix the labeling buttons "
-                    "or relabel the sample", level=Qgis.Critical, duration=20)
+                    "or relabel the sample", level=Qgis.MessageLevel.Critical, duration=20)
         else:
             self.statusCurrentSample.setText("not labeled")
             self.statusCurrentSample.setStyleSheet('QLabel {color: gray;}')
@@ -456,14 +456,14 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         # wait
         loop = QEventLoop()
         QTimer.singleShot(300, loop.quit)
-        loop.exec_()
+        loop.exec()
         # delete
         if thematic_pixel and self.current_sample.label_id:
             highlight_pixel_tile.hide()
         # wait
         loop = QEventLoop()
         QTimer.singleShot(150, loop.quit)
-        loop.exec_()
+        loop.exec()
 
     @pyqtSlot()
     def change_sampling_unit_color(self, color=None):
@@ -550,27 +550,27 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
 
     def eventFilter(self, obj, event):
         """Event filter to handle keyboard events."""
-        if event.type() == QEvent.KeyPress:
+        if event.type() == QEvent.Type.KeyPress:
             # Check for Ctrl modifier key combinations
-            if event.modifiers() == Qt.ControlModifier:
-                if event.key() == Qt.Key_Left:  # Ctrl+Left arrow key
+            if event.modifiers() == Qt.KeyboardModifier.ControlModifier:
+                if event.key() == Qt.Key.Key_Left:  # Ctrl+Left arrow key
                     self.previous_sample_not_labeled()
                     return True
-                elif event.key() == Qt.Key_Right:  # Ctrl+Right arrow key
+                elif event.key() == Qt.Key.Key_Right:  # Ctrl+Right arrow key
                     self.next_sample_not_labeled()
                     return True
             # Handle regular key press without modifiers
-            elif event.modifiers() == Qt.NoModifier:
-                if event.key() == Qt.Key_Left:  # Left arrow key
+            elif event.modifiers() == Qt.KeyboardModifier.NoModifier:
+                if event.key() == Qt.Key.Key_Left:  # Left arrow key
                     self.previous_sample()
                     return True
-                elif event.key() == Qt.Key_Right:  # Right arrow key
+                elif event.key() == Qt.Key.Key_Right:  # Right arrow key
                     self.next_sample()
                     return True
-                elif event.key() == Qt.Key_Up:  # Up arrow key - zoom out
+                elif event.key() == Qt.Key.Key_Up:  # Up arrow key - zoom out
                     self.zoom_out_canvas()
                     return True
-                elif event.key() == Qt.Key_Down:  # Down arrow key - zoom in
+                elif event.key() == Qt.Key.Key_Down:  # Down arrow key - zoom in
                     self.zoom_in_canvas()
                     return True
 
@@ -598,10 +598,10 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             msg = ("Some samples are already labeled, so editing the labeling buttons could affect the labeled samples.<br><br>"
                    "<b>Risky edits:</b> Changing thematic classes, removing, or moving buttons<br><br>"
                    "<b>Safe edits:</b> Renaming, changing colors or shortcuts, and adding new buttons.")
-            QMessageBox.warning(self, 'Edit the labeling buttons with caution!', msg, QMessageBox.Ok)
+            QMessageBox.warning(self, 'Edit the labeling buttons with caution!', msg, QMessageBox.StandardButton.Ok)
         # open the labeling setup dialog
         self.labeling_btns_config.create_table()
-        if self.labeling_btns_config.exec_():
+        if self.labeling_btns_config.exec():
             # ok button -> accept the new buttons config
             self.create_labeling_buttons(tableBtnsConfig=self.labeling_btns_config.tableBtnsConfig)
         else:
@@ -635,7 +635,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             QPButton.clicked.connect(lambda state, label_id=item_num: self.label_sample(label_id))
             QPButton.setAutoDefault(False)
             QPButton.setCheckable(True)
-            QPButton.setFocusPolicy(Qt.NoFocus)
+            QPButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
             self.Grid_LabelingButtons.addWidget(QPButton, len(buttons) - 1, 0)
 
             # create keyboard shortcut for the labeling button
@@ -757,8 +757,8 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
         self.create_table()
         #
         self.tableBtnsConfig.itemClicked.connect(self.table_item_clicked)
-        self.buttonBox.button(QDialogButtonBox.Ok).clicked.connect(self.check_before_accept)
-        self.buttonBox.button(QDialogButtonBox.Cancel).clicked.connect(self.reject)
+        self.buttonBox.button(QDialogButtonBox.StandardButton.Ok).clicked.connect(self.check_before_accept)
+        self.buttonBox.button(QDialogButtonBox.StandardButton.Cancel).clicked.connect(self.reject)
         self.QPBtn_AutoFillLabels.clicked.connect(self.apply_auto_fill_from_thematic_map)
 
     @error_handler
@@ -783,7 +783,7 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
                         item_table = QTableWidgetItem(self.buttons_config[m + 1]["name"])
                     else:
                         item_table = QTableWidgetItem(str(item))
-                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
                     item_table.setToolTip("Label button (ID: {})".format(key))
                     self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "Color":
@@ -791,8 +791,8 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
                     item_table = QTableWidgetItem()
                     if m + 1 in self.buttons_config:
                         item_table.setBackground(QColor(self.buttons_config[m + 1]["color"]))
-                    item_table.setFlags(Qt.ItemIsEnabled)
-                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    item_table.setFlags(Qt.ItemFlag.ItemIsEnabled)
+                    item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
                     item_table.setToolTip("Click to set/change the color of this label button")
                     self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "Thematic Class":
@@ -812,8 +812,8 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
                         item_h.setForeground(QColor("lightGrey"))
                         self.tableBtnsConfig.setHorizontalHeaderItem(2, item_h)
 
-                    item_table.setFlags(Qt.ItemIsEnabled)
-                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    item_table.setFlags(Qt.ItemFlag.ItemIsEnabled)
+                    item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
                     self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "Shortcut":
                 for m, item in enumerate(self.table_buttons.values()):
@@ -821,8 +821,8 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
                         item_table = QTableWidgetItem(self.buttons_config[m + 1]["shortcut"])
                     else:
                         item_table = QTableWidgetItem("")
-                    item_table.setFlags(Qt.ItemIsEnabled)
-                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    item_table.setFlags(Qt.ItemFlag.ItemIsEnabled)
+                    item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
                     item_table.setToolTip("Click to set/change the keyboard shortcut for this button")
                     self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "":
@@ -831,8 +831,8 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
                     path = ':/plugins/AcATaMa/icons/trash.svg'
                     icon = QIcon(path)
                     item_table.setIcon(icon)
-                    item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    item_table.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
+                    item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
                     item_table.setToolTip("Clean this row")
                     self.tableBtnsConfig.setItem(m, n, item_table)
 
@@ -865,7 +865,7 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
         # set the thematic class
         if tableItem.column() == 2:
             thematic_map_class = ThematicMapClasses()
-            if thematic_map_class.exec_():
+            if thematic_map_class.exec():
                 tableItem.setText(thematic_map_class.pix_value)
                 self.tableBtnsConfig.item(tableItem.row(), 1).setBackground(thematic_map_class.color)
         # set the shortcut
@@ -874,7 +874,7 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
             # Get the button name from the first column of the same row
             button_name = self.tableBtnsConfig.item(tableItem.row(), 0).text()
             shortcut_dialog = ShortcutDialog(self, current_shortcut, button_name)
-            if shortcut_dialog.exec_():
+            if shortcut_dialog.exec():
                 tableItem.setText(shortcut_dialog.shortcut)
                 self.tableBtnsConfig.clearSelection()
         # clean the current row clicked in the trash icon
@@ -897,7 +897,7 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
                       "you must configure the thematic class value for all buttons. \n\nB) Or if you are " \
                       "labeling the sampling without pairing with thematic classes, then deselect the " \
                       "thematic map."
-                QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.Ok)
+                QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.StandardButton.Ok)
                 return
         # check if all button configured have a valid name
         items_with_valid_names = [self.tableBtnsConfig.item(row, 0).text() != "" for row in
@@ -906,7 +906,7 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
                                   self.tableBtnsConfig.item(row, 2).text() not in ["none", ""]]
         if False in items_with_valid_names:
             msg = "Invalid configuration:\n\nTo create the buttons for labeling, they must have a valid name."
-            QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.Ok)
+            QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.StandardButton.Ok)
             return
         # check if button name exist (not allow duplicate labels with the same names)
         items_with_valid_names = [self.tableBtnsConfig.item(row, 0).text() for row in
@@ -914,7 +914,7 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
                                   self.tableBtnsConfig.item(row, 0).text() != ""]
         if len(items_with_valid_names) != len(set(items_with_valid_names)):
             msg = "Invalid configuration:\n\nTo create the buttons for labeling, the labeling names must be unique."
-            QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.Ok)
+            QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.StandardButton.Ok)
             return
         # check if exists a duplicate thematic class
         items_with_valid_names = [self.tableBtnsConfig.item(row, 2).text() for row in
@@ -922,7 +922,7 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
                                     self.tableBtnsConfig.item(row, 2).text() not in ["", "none"]]
         if len(items_with_valid_names) != len(set(items_with_valid_names)):
             msg = "Invalid configuration:\n\nTo create the buttons for labeling, the thematic class values must be unique."
-            QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.Ok)
+            QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.StandardButton.Ok)
             return
         # check if exists a duplicate shortcut
         shortcuts_with_valid_names = [self.tableBtnsConfig.item(row, 3).text() for row in
@@ -931,7 +931,7 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
                                      self.tableBtnsConfig.item(row, 0).text() != ""]
         if len(shortcuts_with_valid_names) != len(set(shortcuts_with_valid_names)):
             msg = "Invalid configuration:\n\nTo create the buttons for labeling, the keyboard shortcuts must be unique."
-            QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.Ok)
+            QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.StandardButton.Ok)
             return
         # pass all checks
         self.accept()
@@ -945,8 +945,8 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
             quit_msg = ("This action will set up the labeling buttons based on the current thematic map symbology. "
                         "This will replace the currently configured one. Do you want to continue?")
             reply = QMessageBox.question(None, 'Apply auto fill from thematic map',
-                                         quit_msg, QMessageBox.Apply | QMessageBox.Cancel, QMessageBox.Cancel)
-            if reply != QMessageBox.Apply:
+                                         quit_msg, QMessageBox.StandardButton.Apply | QMessageBox.StandardButton.Cancel, QMessageBox.StandardButton.Cancel)
+            if reply != QMessageBox.StandardButton.Apply:
                 return
 
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
@@ -1000,36 +1000,23 @@ class ShortcutDialog(QDialog, FORM_CLASS):
 
     def eventFilter(self, obj, event):
         """Event filter to handle keyboard events."""
-        # Use integer value for KeyPress if attribute is missing
-        KEY_PRESS = getattr(QEvent, 'KeyPress', 6)
-        if obj == self.shortcut_edit and event.type() == KEY_PRESS:
+        if obj == self.shortcut_edit and event.type() == QEvent.Type.KeyPress:
             return self.handle_key_press(event)
         return super().eventFilter(obj, event)
 
     def handle_key_press(self, event):
         """Handle key press events to capture shortcuts."""
-        # Use integer values for modifier keys if linter complains
-        KEY_CONTROL = getattr(Qt, 'Key_Control', 0x01000021)
-        KEY_ALT = getattr(Qt, 'Key_Alt', 0x01000023)
-        KEY_SHIFT = getattr(Qt, 'Key_Shift', 0x01000020)
-        KEY_META = getattr(Qt, 'Key_Meta', 0x01000022)
-        MOD_CONTROL = getattr(Qt, 'ControlModifier', 0x04000000)
-        MOD_ALT = getattr(Qt, 'AltModifier', 0x08000000)
-        MOD_SHIFT = getattr(Qt, 'ShiftModifier', 0x02000000)
-        MOD_META = getattr(Qt, 'MetaModifier', 0x10000000)
-
-        if event.key() in [KEY_CONTROL, KEY_ALT, KEY_SHIFT, KEY_META]:
+        if event.key() in [Qt.Key.Key_Control, Qt.Key.Key_Alt, Qt.Key.Key_Shift, Qt.Key.Key_Meta]:
             return True
 
-        # Build the shortcut string
         modifiers = []
-        if event.modifiers() & MOD_CONTROL:
+        if event.modifiers() & Qt.KeyboardModifier.ControlModifier:
             modifiers.append("Ctrl")
-        if event.modifiers() & MOD_ALT:
+        if event.modifiers() & Qt.KeyboardModifier.AltModifier:
             modifiers.append("Alt")
-        if event.modifiers() & MOD_SHIFT:
+        if event.modifiers() & Qt.KeyboardModifier.ShiftModifier:
             modifiers.append("Shift")
-        if event.modifiers() & MOD_META:
+        if event.modifiers() & Qt.KeyboardModifier.MetaModifier:
             modifiers.append("Meta")
 
         # Get the key name
@@ -1047,24 +1034,22 @@ class ShortcutDialog(QDialog, FORM_CLASS):
 
     def get_key_name(self, key):
         """Convert Qt key to readable name."""
-        # Use getattr for all Qt key enums with fallback values
-        qt_keys = {
-            'Key_F1': 0x01000030, 'Key_F2': 0x01000031, 'Key_F3': 0x01000032, 'Key_F4': 0x01000033,
-            'Key_F5': 0x01000034, 'Key_F6': 0x01000035, 'Key_F7': 0x01000036, 'Key_F8': 0x01000037,
-            'Key_F9': 0x01000038, 'Key_F10': 0x01000039, 'Key_F11': 0x0100003A, 'Key_F12': 0x0100003B,
-            'Key_Left': 0x01000012, 'Key_Right': 0x01000014, 'Key_Up': 0x01000013, 'Key_Down': 0x01000015,
-            'Key_Home': 0x01000010, 'Key_End': 0x01000011, 'Key_PageUp': 0x01000016, 'Key_PageDown': 0x01000017,
-            'Key_Insert': 0x01000006, 'Key_Delete': 0x01000007, 'Key_Backspace': 0x01000003,
-            'Key_Tab': 0x01000001, 'Key_Return': 0x01000004, 'Key_Enter': 0x01000005, 'Key_Escape': 0x01000000,
-            'Key_Space': 0x20
+        special_keys = {
+            Qt.Key.Key_F1: "F1", Qt.Key.Key_F2: "F2", Qt.Key.Key_F3: "F3", Qt.Key.Key_F4: "F4",
+            Qt.Key.Key_F5: "F5", Qt.Key.Key_F6: "F6", Qt.Key.Key_F7: "F7", Qt.Key.Key_F8: "F8",
+            Qt.Key.Key_F9: "F9", Qt.Key.Key_F10: "F10", Qt.Key.Key_F11: "F11", Qt.Key.Key_F12: "F12",
+            Qt.Key.Key_Left: "Left", Qt.Key.Key_Right: "Right", Qt.Key.Key_Up: "Up", Qt.Key.Key_Down: "Down",
+            Qt.Key.Key_Home: "Home", Qt.Key.Key_End: "End", Qt.Key.Key_PageUp: "PageUp", Qt.Key.Key_PageDown: "PageDown",
+            Qt.Key.Key_Insert: "Insert", Qt.Key.Key_Delete: "Delete", Qt.Key.Key_Backspace: "Backspace",
+            Qt.Key.Key_Tab: "Tab", Qt.Key.Key_Return: "Return", Qt.Key.Key_Enter: "Enter", Qt.Key.Key_Escape: "Escape",
+            Qt.Key.Key_Space: "Space",
         }
-        key_names = {getattr(Qt, k, v): k.split('_', 1)[1] for k, v in qt_keys.items()}
 
-        if key in key_names:
-            return key_names[key]
-        elif getattr(Qt, 'Key_A', 0x41) <= key <= getattr(Qt, 'Key_Z', 0x5A):
+        if key in special_keys:
+            return special_keys[key]
+        elif Qt.Key.Key_A <= key <= Qt.Key.Key_Z:
             return chr(key)
-        elif getattr(Qt, 'Key_0', 0x30) <= key <= getattr(Qt, 'Key_9', 0x39):
+        elif Qt.Key.Key_0 <= key <= Qt.Key.Key_9:
             return chr(key)
         else:
             return None
@@ -1121,13 +1106,13 @@ class ThematicMapClasses(QDialog, FORM_CLASS):
             if h == "Pix Val":
                 for m, item in enumerate(thematic_table["values_and_colors_table"]["Pixel Value"]):
                     item_table = QTableWidgetItem(str(item))
-                    item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    item_table.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
+                    item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
                     self.tableOfClasses.setItem(m, n, item_table)
             if h == "Color":
                 for m in range(thematic_table["row_count"]):
                     item_table = QTableWidgetItem()
-                    item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                    item_table.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
                     item_table.setBackground(QColor(thematic_table["values_and_colors_table"]["Red"][m],
                                                     thematic_table["values_and_colors_table"]["Green"][m],
                                                     thematic_table["values_and_colors_table"]["Blue"][m],
@@ -1188,4 +1173,4 @@ class Tile(object):
                 self.create(view_widget.render_widget.canvas)
 
     def hide(self):
-        [rubber_band.reset(QgsWkbTypes.PolygonGeometry) for rubber_band in self.rbs_in_response_design_window if not isdeleted(rubber_band)]
+        [rubber_band.reset(QgsWkbTypes.GeometryType.PolygonGeometry) for rubber_band in self.rbs_in_response_design_window if not isdeleted(rubber_band)]

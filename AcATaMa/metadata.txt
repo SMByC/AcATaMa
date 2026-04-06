@@ -5,7 +5,7 @@ about=AcATaMa is a powerful and complete Qgis plugin for accuracy assessment. It
 
 version=dev
 qgisMinimumVersion=3.30
-qgisMaximumVersion=3.99
+qgisMaximumVersion=4.99
 
 author=Xavier Corredor Llano, SMByC
 email=xavier.corredor.llano@gmail.com

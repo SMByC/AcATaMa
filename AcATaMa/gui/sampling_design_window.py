@@ -5,7 +5,7 @@
                                  A QGIS plugin
  AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
                               -------------------
-        copyright            : (C) 2017-2025 by Xavier C. Llano, SMByC
+        copyright            : (C) 2017-2026 by Xavier C. Llano, SMByC
         email                : xavier.corredor.llano@gmail.com
  ***************************************************************************/
 
@@ -55,7 +55,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         SamplingDesignWindow.inst = self
 
         # flags
-        self.setWindowFlags(self.windowFlags() | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowMinimizeButtonHint | Qt.WindowType.WindowMaximizeButtonHint)
 
         # ######### simple random sampling ######### #
         self.widget_SimpRSwithPS.setHidden(True)
@@ -67,7 +67,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         self.QPBtn_DeterNumSamples_SimpRS.clicked.connect(self.determine_number_samples_SimpRS)
         # set properties to QgsMapLayerComboBox
         self.QCBox_PostStratMap_SimpRS.setCurrentIndex(-1)
-        self.QCBox_PostStratMap_SimpRS.setFilters(QgsMapLayerProxyModel.RasterLayer)
+        self.QCBox_PostStratMap_SimpRS.setFilters(QgsMapLayerProxyModel.Filter.RasterLayer)
         # call to browse the post-stratification map
         self.QPBtn_browsePostStratMap_SimpRS.clicked.connect(lambda: self.browser_dialog_to_load_file(
             self.QCBox_PostStratMap_SimpRS,
@@ -95,7 +95,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         self.widget_random_sampling_options_StraRS.setHidden(True)
         # set properties to QgsMapLayerComboBox
         self.QCBox_SamplingMap_StraRS.setCurrentIndex(-1)
-        self.QCBox_SamplingMap_StraRS.setFilters(QgsMapLayerProxyModel.RasterLayer)
+        self.QCBox_SamplingMap_StraRS.setFilters(QgsMapLayerProxyModel.Filter.RasterLayer)
         # call to browse the post-stratification raster
         self.QPBtn_browseSamplingMap_StraRS.clicked.connect(lambda: self.browser_dialog_to_load_file(
             self.QCBox_SamplingMap_StraRS,
@@ -153,7 +153,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         self.widget_SystSwithPS.setHidden(True)
         # set properties to QgsMapLayerComboBox
         self.QCBox_PostStratMap_SystS.setCurrentIndex(-1)
-        self.QCBox_PostStratMap_SystS.setFilters(QgsMapLayerProxyModel.RasterLayer)
+        self.QCBox_PostStratMap_SystS.setFilters(QgsMapLayerProxyModel.Filter.RasterLayer)
         # post-stratification sampling
         self.QPBtn_browsePostStratMap_SystS.clicked.connect(lambda: self.browser_dialog_to_load_file(
             self.QCBox_PostStratMap_SystS,
@@ -172,7 +172,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         # dialog buttons box
         self.closeButton.rejected.connect(self.closing)
         # disable enter action
-        self.closeButton.button(QDialogButtonBox.Close).setAutoDefault(False)
+        self.closeButton.button(QDialogButtonBox.StandardButton.Close).setAutoDefault(False)
 
     def setup(self, thematic_map_layer):
         self.thematic_map_layer = thematic_map_layer
@@ -186,14 +186,14 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         # SimpRS
         self.minDistance_SimpRS.setSuffix(" {}".format(str_unit))
         self.minDistance_SimpRS.setToolTip("Minimum distance\n(units based on thematic map selected)")
-        self.minDistance_SimpRS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
+        self.minDistance_SimpRS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceUnit.DistanceDegrees else 10e6)
         self.minDistance_SimpRS.setDecimals(decimal_places)
         self.minDistance_SimpRS.setSingleStep(10**-decimal_places)
         self.minDistance_SimpRS.setValue(0)
         # StraRS
         self.minDistance_StraRS.setSuffix(" {}".format(str_unit))
         self.minDistance_StraRS.setToolTip("Minimum distance\n(units based on thematic map selected)")
-        self.minDistance_StraRS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
+        self.minDistance_StraRS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceUnit.DistanceDegrees else 10e6)
         self.minDistance_StraRS.setDecimals(decimal_places)
         self.minDistance_StraRS.setSingleStep(10**-decimal_places)
         self.minDistance_StraRS.setValue(0)
@@ -243,13 +243,13 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
             # set decimals, single step and range
             self.PointSpacing_SystS.setDecimals(decimal_places)
             self.PointSpacing_SystS.setSingleStep(10**-decimal_places)
-            self.PointSpacing_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
+            self.PointSpacing_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceUnit.DistanceDegrees else 10e6)
             self.InitialInsetFixed_SystS.setDecimals(decimal_places)
             self.InitialInsetFixed_SystS.setSingleStep(10**-decimal_places)
-            self.InitialInsetFixed_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
+            self.InitialInsetFixed_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceUnit.DistanceDegrees else 10e6)
             self.MaxXYoffset_SystS.setDecimals(decimal_places)
             self.MaxXYoffset_SystS.setSingleStep(10**-decimal_places)
-            self.MaxXYoffset_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceDegrees else 10e6)
+            self.MaxXYoffset_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceUnit.DistanceDegrees else 10e6)
 
             # define the distance units based on the thematic map
             self.PointSpacing_SystS.setSuffix(" {}".format(str_unit))
@@ -303,13 +303,13 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
 
     @pyqtSlot()
     def determine_number_samples_SimpRS(self):
-        if self.determine_number_samples_dialog_SimpRS.exec_():
+        if self.determine_number_samples_dialog_SimpRS.exec():
             number_of_samples = int(self.determine_number_samples_dialog_SimpRS.NumberOfSamples.text())
             self.numberOfSamples_SimpRS.setValue(number_of_samples)
 
     @pyqtSlot()
     def determine_number_samples_SystS(self):
-        if self.determine_number_samples_dialog_SystS.exec_():
+        if self.determine_number_samples_dialog_SystS.exec():
             from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
             systematic_sampling_unit = self.QCBox_Systematic_Sampling_Unit.currentText()
 
@@ -378,7 +378,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
                 self.nodata_PostStratMap_SimpRS.setText("")
                 self.QPBtn_PostStratMapClasses_SimpRS.setEnabled(False)
                 iface.messageBar().pushMessage("AcATaMa", "Error, post-stratification map must be byte or integer as data type.",
-                                               level=Qgis.Warning, duration=10)
+                                               level=Qgis.MessageLevel.Warning, duration=10)
                 return
 
         # enable pixel value selection
@@ -404,7 +404,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
             self.QGBox_Sampling_Method.setEnabled(False)
             iface.messageBar().pushMessage("AcATaMa",
                                            "Error, stratification map must be byte or integer as data type.",
-                                           level=Qgis.Warning, duration=10)
+                                           level=Qgis.MessageLevel.Warning, duration=10)
             return
         # set band count
         self.QCBox_band_SamplingMap_StraRS.clear()
@@ -457,7 +457,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
                 self.nodata_PostStratMap_SystS.setText("")
                 self.QPBtn_PostStratMapClasses_SystS.setEnabled(False)
                 iface.messageBar().pushMessage("AcATaMa", "Error, post-stratification map must be byte or integer as data type.",
-                                               level=Qgis.Warning, duration=10)
+                                               level=Qgis.MessageLevel.Warning, duration=10)
                 return
 
         # enable pixel value selection
@@ -483,7 +483,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
                                                                     QPBtn_PostStratMapClasses.text())
 
         # get classes picked by user
-        classes_selection_dialog.exec_()
+        classes_selection_dialog.exec()
         classes_selected = classes_selection_dialog.classes_selected
         # update button text
         if classes_selected:

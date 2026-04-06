@@ -5,7 +5,7 @@
                                  A QGIS plugin
  AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
                               -------------------
-        copyright            : (C) 2017-2025 by Xavier C. Llano, SMByC
+        copyright            : (C) 2017-2026 by Xavier C. Llano, SMByC
         email                : xavier.corredor.llano@gmail.com
  ***************************************************************************/
 
@@ -76,7 +76,7 @@ def get_unique_values(layer, band, chunk_size=1000):
     # Create progress dialog
     progress = QProgressDialog("Analyzing raster unique values...", "Cancel", 0, total_chunks)
     progress.setWindowTitle("Processing")
-    progress.setWindowModality(Qt.WindowModal)
+    progress.setWindowModality(Qt.WindowModality.WindowModal)
     progress.setMinimumDuration(0)
 
     unique_values = set()
@@ -178,7 +178,7 @@ def get_pixel_count_by_pixel_values_qgis_native(layer, band, pixel_values=None, 
                                'Depending on the size of the image, it would take a few minutes.',
                                None, 0, 100)
     progress.setWindowTitle("AcATaMa - Counting unique values...")
-    progress.setWindowModality(Qt.WindowModal)
+    progress.setWindowModality(Qt.WindowModality.WindowModal)
     progress.setMinimumDuration(0)
     progress.show()
     QApplication.processEvents()
@@ -267,7 +267,7 @@ def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None, nod
                                'Depending on the size of the image, it would take a few minutes.',
                                None, 0, 100)
     progress.setWindowTitle("AcATaMa - Counting unique values...")
-    progress.setWindowModality(Qt.WindowModal)
+    progress.setWindowModality(Qt.WindowModality.WindowModal)
     progress.setMinimumDuration(0)
     progress.setValue(0)
     progress.show()
@@ -356,7 +356,7 @@ def get_pixel_count_by_pixel_values_sequential(layer, band, pixel_values=None, n
                                'Depending on the size of the image, it would take a few minutes.',
                                None, 0, 100)
     progress.setWindowTitle("AcATaMa - Counting pixels by values...")
-    progress.setWindowModality(Qt.WindowModal)
+    progress.setWindowModality(Qt.WindowModality.WindowModal)
     progress.setValue(0)
     progress.show()
     QApplication.processEvents()

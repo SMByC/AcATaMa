@@ -5,7 +5,7 @@
                                  A QGIS plugin
  AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
                               -------------------
-        copyright            : (C) 2017-2025 by Xavier C. Llano, SMByC
+        copyright            : (C) 2017-2026 by Xavier C. Llano, SMByC
         email                : xavier.corredor.llano@gmail.com
  ***************************************************************************/
 
@@ -136,7 +136,7 @@ class AcATaMa(object):
 
             # show the dockwidget
             # TODO: fix to allow choice of dock location
-            self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
+            self.iface.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
 
     #--------------------------------------------------------------------------
@@ -193,8 +193,8 @@ class AcATaMa(object):
         quit_msg = "Are you sure you want to: clean tmp files, delete unsaved labels, " \
                    "clean all fields and reload plugin?"
         reply = QMessageBox.question(None, 'Clear all and reload the AcATaMa plugin.',
-                                     quit_msg, QMessageBox.Yes, QMessageBox.No)
-        if reply == QMessageBox.No:
+                                     quit_msg, QMessageBox.StandardButton.Yes, QMessageBox.StandardButton.No)
+        if reply == QMessageBox.StandardButton.No:
             return
 
         self.onClosePlugin()

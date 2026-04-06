@@ -5,7 +5,7 @@
                                  A QGIS plugin
  AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
                               -------------------
-        copyright            : (C) 2017-2025 by Xavier C. Llano, SMByC
+        copyright            : (C) 2017-2026 by Xavier C. Llano, SMByC
         email                : xavier.corredor.llano@gmail.com
  ***************************************************************************/
 
@@ -76,13 +76,13 @@ class PostStratificationClassesDialog(QDialog, FORM_CLASS):
             if h == "Pix Val":
                 for m, item in enumerate(classes_table["values_and_colors_table"]["Pixel Value"]):
                     item_table = QTableWidgetItem(str(item))
-                    item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    item_table.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
+                    item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
                     self.tableOfClasses.setItem(m, n, item_table)
             if h == "Color":
                 for m in range(classes_table["row_count"]):
                     item_table = QTableWidgetItem()
-                    item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                    item_table.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
                     item_table.setBackground(QColor(classes_table["values_and_colors_table"]["Red"][m],
                                                     classes_table["values_and_colors_table"]["Green"][m],
                                                     classes_table["values_and_colors_table"]["Blue"][m],

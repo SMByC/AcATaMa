@@ -5,7 +5,7 @@
                                  A QGIS plugin
  AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
                               -------------------
-        copyright            : (C) 2017-2025 by Xavier C. Llano, SMByC
+        copyright            : (C) 2017-2026 by Xavier C. Llano, SMByC
         email                : xavier.corredor.llano@gmail.com
  ***************************************************************************/
 
@@ -59,9 +59,9 @@ class Analysis(object):
         self.csv_decimal = "."
         # define the base area unit based on the thematic map distance unit
         self.dist_unit = self.thematic_map.qgs_layer.crs().mapUnits()
-        if self.dist_unit == QgsUnitTypes.DistanceUnknownUnit:
+        if self.dist_unit == QgsUnitTypes.DistanceUnit.DistanceUnknownUnit:
             # thematic map with unknown map unit
-            self.dist_unit = QgsUnitTypes.DistanceMeters
+            self.dist_unit = QgsUnitTypes.DistanceUnit.DistanceMeters
         self.base_area_unit = QgsUnitTypes.distanceToAreaUnit(self.dist_unit)
 
     @wait_process
@@ -145,8 +145,8 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
         self.setupUi(self)
         # dialog buttons box
         self.DialogButtons.rejected.connect(self.closing)
-        self.DialogButtons.button(QDialogButtonBox.Save).setText("Export to CSV")
-        self.DialogButtons.button(QDialogButtonBox.Save).clicked.connect(self.export_to_csv)
+        self.DialogButtons.button(QDialogButtonBox.StandardButton.Save).setText("Export to CSV")
+        self.DialogButtons.button(QDialogButtonBox.StandardButton.Save).clicked.connect(self.export_to_csv)
 
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile.currentLayer()
@@ -179,12 +179,12 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
             self.analysis.area_unit = QgsUnitTypes.distanceToAreaUnit(self.analysis.dist_unit)
             self.area_unit.setCurrentIndex(self.analysis.area_unit)
             # thematic map with unknown map unit
-            if self.analysis.thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
+            if self.analysis.thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnit.DistanceUnknownUnit:
                 self.MsgBar.pushMessage(
                     "The thematic map \"{}\" does not have a valid map unit, considering \"{}\" as the base unit!".format(
                         self.analysis.thematic_map.qgs_layer.name(),
                         QgsUnitTypes.toString(self.analysis.dist_unit)),
-                    level=Qgis.Warning, duration=0)
+                    level=Qgis.MessageLevel.Warning, duration=0)
 
         self.area_unit.currentIndexChanged.connect(lambda: self.reload(msg_bar=False))
         self.z_score.valueChanged.connect(lambda: self.reload(msg_bar=False))
@@ -198,7 +198,7 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
         if self.analysis.response_design.total_labeled == 0:
             iface.messageBar().pushMessage("AcATaMa",
                                            "The accuracy assessment needs at least one sample labeled",
-                                           level=Qgis.Warning, duration=10)
+                                           level=Qgis.MessageLevel.Warning, duration=10)
             return
 
         AccuracyAssessmentWindow.is_opened = True
@@ -228,7 +228,7 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
         if msg_bar:
             self.MsgBar.pushMessage(
                 "Reload successfully from response design state for \"{}\"".format(
-                    AcATaMa.dockwidget.QCBox_SamplingFile.currentText()), level=Qgis.Success, duration=10)
+                    AcATaMa.dockwidget.QCBox_SamplingFile.currentText()), level=Qgis.MessageLevel.Success, duration=10)
 
     def export_to_csv(self):
         # get file path to suggest where to save but not in tmp directory
@@ -248,10 +248,10 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
                                                           self.analysis.csv_separator,
                                                           self.analysis.csv_decimal)
                 self.MsgBar.pushMessage(
-                    "File saved successfully \"{}\"".format(os.path.basename(output_file)), level=Qgis.Success, duration=10)
+                    "File saved successfully \"{}\"".format(os.path.basename(output_file)), level=Qgis.MessageLevel.Success, duration=10)
             except Exception as err:
                 self.MsgBar.pushMessage(
-                    "Failed saving the csv file: {}".format(err), level=Qgis.Critical, duration=10)
+                    "Failed saving the csv file: {}".format(err), level=Qgis.MessageLevel.Critical, duration=10)
 
     def closeEvent(self, event):
         self.closing()

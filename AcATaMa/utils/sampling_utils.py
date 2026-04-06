@@ -5,7 +5,7 @@
                                  A QGIS plugin
  AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
                               -------------------
-        copyright            : (C) 2017-2025 by Xavier C. Llano, SMByC
+        copyright            : (C) 2017-2026 by Xavier C. Llano, SMByC
         email                : xavier.corredor.llano@gmail.com
  ***************************************************************************/
 
@@ -117,9 +117,9 @@ def update_srs_table_content(srs_table):
                     if srs_table["pixel_count"][m] == 0:
                         srs_table["On"][m] = False
                         item_table = QTableWidgetItem()
-                        item_table.setFlags(item_table.flags() & ~Qt.ItemIsEnabled)
-                        item_table.setCheckState(Qt.Unchecked)
-                        item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                        item_table.setFlags(item_table.flags() & ~Qt.ItemFlag.ItemIsEnabled)
+                        item_table.setCheckState(Qt.CheckState.Unchecked)
+                        item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
                         item_table.setToolTip("DISABLED: This class has 0 pixels on the map")
                         sampling_design.QTableW_StraRS.setItem(m, n, item_table)
 
@@ -128,13 +128,13 @@ def update_srs_table_content(srs_table):
             if key == "Pix Val":
                 for m, item in enumerate(srs_table["values_and_colors_table"]["Pixel Value"]):
                     item_table = QTableWidgetItem(str(item))
-                    item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    item_table.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
+                    item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
                     sampling_design.QTableW_StraRS.setItem(m, n, item_table)
             if key == "Color":
                 for m in range(srs_table["row_count"]):
                     item_table = QTableWidgetItem()
-                    item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                    item_table.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
                     item_table.setBackground(QColor(srs_table["values_and_colors_table"]["Red"][m],
                                                     srs_table["values_and_colors_table"]["Green"][m],
                                                     srs_table["values_and_colors_table"]["Blue"][m],
@@ -143,7 +143,7 @@ def update_srs_table_content(srs_table):
             if key == "Num Samples":
                 for m in range(srs_table["row_count"]):
                     item_table = QTableWidgetItem(srs_table["num_samples"][m])
-                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
                     if sampling_design.QCBox_StraRS_Method.currentText().startswith("Area based proportion"):
                         item_table.setToolTip("Total number of samples for this class, this is generated\n"
                                               "automatically based on the area proportion by the activated\n"
@@ -151,31 +151,31 @@ def update_srs_table_content(srs_table):
                                               "accuracy expected value.")
                     if not srs_table["On"][m]:
                         item_table.setForeground(QColor("lightGrey"))
-                        item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                        item_table.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
                     sampling_design.QTableW_StraRS.setItem(m, n, item_table)
             if key == "Ui":
                 for m in range(srs_table["row_count"]):
                     item_table = QTableWidgetItem(srs_table["ui"][m])
-                    item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
                     item_table.setToolTip("User's accuracy confidence for this map class. This is the\n"
                                           "probability that a pixel classified as class i is actually class i.\n\n"
                                           "Between 0.6 - 0.8 for unstable classes\n"
                                           "Between 0.8 - 0.95 for stable classes")
                     if not srs_table["On"][m]:
                         item_table.setForeground(QColor("lightGrey"))
-                        item_table.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                        item_table.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
                     sampling_design.QTableW_StraRS.setItem(m, n, item_table)
             if key == "On":
                 for m in range(srs_table["row_count"]):
                     if srs_table["pixel_count"][m] > 0:
                         item_table = QTableWidgetItem()
-                        item_table.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
-                        item_table.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                        item_table.setFlags(Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsEnabled)
+                        item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
                         item_table.setToolTip("Enable/disable this class")
                         if srs_table["On"][m]:
-                            item_table.setCheckState(Qt.Checked)
+                            item_table.setCheckState(Qt.CheckState.Checked)
                         else:
-                            item_table.setCheckState(Qt.Unchecked)
+                            item_table.setCheckState(Qt.CheckState.Unchecked)
                         sampling_design.QTableW_StraRS.setItem(m, n, item_table)
 
         # hidden row labels

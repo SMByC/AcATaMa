@@ -31,7 +31,7 @@ AcATaMa is available from the official QGIS Plugin Repository. To install it:
 2. In the search bar, type `AcATaMa` and click `Install Plugin`.
 3. Once installed, activate the plugin via the `Plugins` menu or `Plugins toolbar`.
 
-> **Warning:** The latest versions of AcATaMa (>=24.10) are not compatible with QGIS 3.28 or older versions due to changes in a QGIS function introduced in QGIS 3.30 (see issue #22). Please update QGIS to at least the LTR version (recommended) or the latest version.
+> **Note:** AcATaMa is compatible with both QGIS 3 (3.30+) and QGIS 4.
 
 ## About Us
 

@@ -5,7 +5,7 @@
                                  A QGIS plugin
  AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
                               -------------------
-        copyright            : (C) 2017-2025 by Xavier C. Llano, SMByC
+        copyright            : (C) 2017-2026 by Xavier C. Llano, SMByC
         email                : xavier.corredor.llano@gmail.com
  ***************************************************************************/
 
@@ -288,7 +288,7 @@ def restore(yml_file_path):
             yaml_config = yaml.load(yaml_file, Loader=LegacyLoader)
     except Exception as err:
         iface.messageBar().pushMessage("AcATaMa", "Error while read the AcATaMa configuration file: {}".format(err),
-                                        level=Qgis.Critical, duration=20)
+                                        level=Qgis.MessageLevel.Critical, duration=20)
         return
 
     # close the windows opened
@@ -722,7 +722,7 @@ def restore(yml_file_path):
             analysis.area_unit = QgsUnitTypes.AreaUnit(yaml_config["analysis"]["accuracy_assessment"]["area_unit"])
         else:  # old format
             area_unit, success = QgsUnitTypes.stringToAreaUnit(yaml_config["analysis"]["accuracy_assessment"]["area_unit"])
-            analysis.area_unit = area_unit if success else QgsUnitTypes.AreaSquareMeters
+            analysis.area_unit = area_unit if success else QgsUnitTypes.AreaUnit.AreaSquareMeters
         analysis.z_score = yaml_config["analysis"]["accuracy_assessment"]["z_score"]
         analysis.csv_separator = yaml_config["analysis"]["accuracy_assessment"]["csv_separator"]
         analysis.csv_decimal = yaml_config["analysis"]["accuracy_assessment"]["csv_decimal"]

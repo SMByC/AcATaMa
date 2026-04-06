@@ -38,7 +38,7 @@
       </sizepolicy>
      </property>
      <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
+      <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
      </property>
      <property name="widgetResizable">
       <bool>true</bool>
@@ -49,7 +49,7 @@
         <x>0</x>
         <y>0</y>
         <width>695</width>
-        <height>662</height>
+        <height>680</height>
        </rect>
       </property>
      </widget>
@@ -58,10 +58,10 @@
    <item>
     <widget class="QDialogButtonBox" name="DialogButtons">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
      </property>
     </widget>
    </item>

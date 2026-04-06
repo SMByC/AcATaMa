@@ -5,7 +5,7 @@
                                  A QGIS plugin
  AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
                               -------------------
-        copyright            : (C) 2017-2025 by Xavier C. Llano, SMByC
+        copyright            : (C) 2017-2026 by Xavier C. Llano, SMByC
         email                : xavier.corredor.llano@gmail.com
  ***************************************************************************/
 
@@ -64,8 +64,8 @@ def error_handler(func):
                                           "<a href='https://github.com/SMByC/AcATaMa/issues'>issue tracker</a>"
                                           " including the traceback below.")
                 msgBox.setDetailedText(more_details)
-                msgBox.setTextFormat(Qt.RichText)
-                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.setTextFormat(Qt.TextFormat.RichText)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
                 msgBox.exec()
                 del msgBox
 
@@ -78,7 +78,7 @@ def error_handler(func):
             button.pressed.connect(lambda: details_message_box(error, more_details))
             widget.layout().addWidget(button)
 
-            msg_bar.pushWidget(widget, level=Qgis.Warning, duration=20)
+            msg_bar.pushWidget(widget, level=Qgis.MessageLevel.Warning, duration=20)
 
     return wrapper
 
@@ -88,7 +88,7 @@ def wait_process(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         # mouse wait
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
         # do
         obj_returned = func(*args, **kwargs)
         # restore mouse
@@ -119,11 +119,11 @@ def output_file_is_OK(output_file):
         return False
     if not os.path.exists(os.path.dirname(output_file)):
         QMessageBox.critical(None, "AcATaMa", "Error: The output file path does not exist:\n\n {}"
-                             .format(os.path.dirname(output_file)), QMessageBox.Ok)
+                             .format(os.path.dirname(output_file)), QMessageBox.StandardButton.Ok)
         return False
     if not os.access(os.path.dirname(output_file), os.W_OK):
         QMessageBox.critical(None, "AcATaMa", "Error: The output file path is not writable:\n\n {}"
-                             .format(output_file), QMessageBox.Ok)
+                             .format(output_file), QMessageBox.StandardButton.Ok)
         return False
     return True
 
@@ -162,7 +162,7 @@ def get_save_file_name(parent, title, default_path, filter_str):
         valid_extensions = [f".{ext}" for ext in re.findall(r'\*\.([a-zA-Z]+)', filter_str)]
         if file_path.suffix not in valid_extensions:
             QMessageBox.critical(parent, "AcATaMa", "Error: The file extension is not valid:\n\n {}\n\nValid extensions are: {}"
-            .format(output_file, " ".join(valid_extensions)), QMessageBox.Ok)
+            .format(output_file, " ".join(valid_extensions)), QMessageBox.StandardButton.Ok)
             return None
 
     return output_file

@@ -5,7 +5,7 @@
                                  A QGIS plugin
  AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
                               -------------------
-        copyright            : (C) 2017-2025 by Xavier C. Llano, SMByC
+        copyright            : (C) 2017-2026 by Xavier C. Llano, SMByC
         email                : xavier.corredor.llano@gmail.com
  ***************************************************************************/
 
@@ -50,7 +50,7 @@ class PanAndZoomMapTool(QgsMapToolPan):
         QTimer.singleShot(10, self.update_canvas)
 
     def keyReleaseEvent(self, event):
-        if event.key() in [Qt.Key_Up, Qt.Key_Down, Qt.Key_Right, Qt.Key_Left, Qt.Key_PageUp, Qt.Key_PageDown]:
+        if event.key() in [Qt.Key.Key_Up, Qt.Key.Key_Down, Qt.Key.Key_Right, Qt.Key.Key_Left, Qt.Key.Key_PageUp, Qt.Key.Key_PageDown]:
             QTimer.singleShot(10, self.update_canvas)
 
 
@@ -69,7 +69,7 @@ class Marker(object):
             self.marker = QgsVertexMarker(self.canvas)
             self.marker.setIconSize(18)
             self.marker.setPenWidth(2)
-            self.marker.setIconType(QgsVertexMarker.ICON_CROSS)
+            self.marker.setIconType(QgsVertexMarker.IconType.ICON_CROSS)
         self.marker.setCenter(in_point.QgsPnt)
         self.marker.updatePosition()
 
@@ -94,9 +94,9 @@ class Marker(object):
         horiz_line = QgsGeometry.fromPolyline([left_point, right_point])
         vert_line = QgsGeometry.fromPolyline([top_point, bottom_point])
 
-        cross_rb = QgsRubberBand(self.canvas, QgsWkbTypes.LineGeometry)
+        cross_rb = QgsRubberBand(self.canvas, QgsWkbTypes.GeometryType.LineGeometry)
         cross_rb.setColor(QColor(255, 0, 0))
-        cross_rb.reset(QgsWkbTypes.LineGeometry)
+        cross_rb.reset(QgsWkbTypes.GeometryType.LineGeometry)
         cross_rb.addGeometry(horiz_line, None)
         cross_rb.addGeometry(vert_line, None)
 
@@ -167,7 +167,7 @@ class RenderWidget(QWidget):
 
     def layer_style_editor(self):
         style_editor_dlg = StyleEditorDialog(self.layer, self.canvas, self.parent_view)
-        if style_editor_dlg.exec_():
+        if style_editor_dlg.exec():
             style_editor_dlg.apply()
 
 
@@ -196,7 +196,7 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
         self.render_widget.parent_view = self
         # set properties to QgsMapLayerComboBox
         self.QCBox_RenderFile.setCurrentIndex(-1)
-        self.QCBox_RenderFile.setFilters(QgsMapLayerProxyModel.All)
+        self.QCBox_RenderFile.setFilters(QgsMapLayerProxyModel.Filter.All)
         # ignore and not show the sampling layer
         self.QCBox_RenderFile.setExceptedLayerList([self.sampling_layer])
         # handle connect layer selection with render canvas
@@ -293,6 +293,6 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
         self.current_scale_factor = round(self.scaleFactor.value(), 1)
 
     def eventFilter(self, obj, event):
-        if event.type() == QEvent.Wheel:
+        if event.type() == QEvent.Type.Wheel:
             return True  # Block the event
         return super().eventFilter(obj, event)

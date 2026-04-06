@@ -5,7 +5,7 @@
                                  A QGIS plugin
  AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
                               -------------------
-        copyright            : (C) 2017-2025 by Xavier C. Llano, SMByC
+        copyright            : (C) 2017-2026 by Xavier C. Llano, SMByC
         email                : xavier.corredor.llano@gmail.com
  ***************************************************************************/
 
@@ -75,8 +75,8 @@ def get_xml_style(layer, band):
               "See more</a>.<br/><br/>" \
               "Allow AcATaMa apply an automatic classification symbology to this layer{band}?" \
             .format(layer=layer.name(), band=" in the band {}".format(band) if layer.bandCount() > 1 else "")
-        reply = QMessageBox.question(None, 'Reading the symbology layer style...', msg, QMessageBox.Apply, QMessageBox.Cancel)
-        if reply == QMessageBox.Apply:
+        reply = QMessageBox.question(None, 'Reading the symbology layer style...', msg, QMessageBox.StandardButton.Apply, QMessageBox.StandardButton.Cancel)
+        if reply == QMessageBox.StandardButton.Apply:
             auto_symbology_classification_render(layer, band)
             return get_xml_style(layer, band)
         else:
@@ -120,10 +120,10 @@ class Map(object):
         return self.qgs_layer.extent()
 
     def get_pixel_value_from_xy(self, x, y):
-        return self.qgs_layer.dataProvider().identify(QgsPointXY(x, y), QgsRaster.IdentifyFormatValue).results()[self.band]
+        return self.qgs_layer.dataProvider().identify(QgsPointXY(x, y), QgsRaster.IdentifyFormat.IdentifyFormatValue).results()[self.band]
 
     def get_pixel_value_from_pnt(self, point):
-        return self.qgs_layer.dataProvider().identify(point, QgsRaster.IdentifyFormatValue).results()[self.band]
+        return self.qgs_layer.dataProvider().identify(point, QgsRaster.IdentifyFormat.IdentifyFormatValue).results()[self.band]
 
     def get_total_pixels_by_value(self, pixel_value):
         pixel_counts_by_value = get_pixel_count_by_pixel_values(self.qgs_layer, self.band, None, self.nodata)

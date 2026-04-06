@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        qgis_version: [3.44]
+        qgis_version: ["3.44", "4.0-trixie"]
       fail-fast: false
 
     env:

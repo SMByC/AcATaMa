@@ -5,7 +5,7 @@
                                  A QGIS plugin
  AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
                               -------------------
-        copyright            : (C) 2017-2025 by Xavier C. Llano, SMByC
+        copyright            : (C) 2017-2026 by Xavier C. Llano, SMByC
         email                : xavier.corredor.llano@gmail.com
  ***************************************************************************/
 
@@ -23,7 +23,7 @@ from random import shuffle
 from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.QtCore import NULL
 from qgis.PyQt.QtGui import QColor
-from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsVectorFileWriter, Qgis, QgsUnitTypes
+from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsVectorFileWriter, Qgis, QgsUnitTypes, QgsProject
 from qgis.utils import iface
 
 from AcATaMa.core.point import LabelingPoint
@@ -54,11 +54,11 @@ class ResponseDesign(object):
         self.sampling_unit_color = QColor("red")
         # default radius to fit the sample based on the units of the sampling file selected
         layer_dist_unit = self.sampling_layer.crs().mapUnits()
-        fit_to_sample_list = {QgsUnitTypes.DistanceMeters: 120, QgsUnitTypes.DistanceKilometers: 0.120,
-                              QgsUnitTypes.DistanceFeet: 393, QgsUnitTypes.DistanceNauticalMiles: 0.065,
-                              QgsUnitTypes.DistanceYards: 132, QgsUnitTypes.DistanceMiles: 0.075,
-                              QgsUnitTypes.DistanceDegrees: 0.0011, QgsUnitTypes.DistanceCentimeters: 12000,
-                              QgsUnitTypes.DistanceMillimeters: 120000}
+        fit_to_sample_list = {QgsUnitTypes.DistanceUnit.DistanceMeters: 120, QgsUnitTypes.DistanceUnit.DistanceKilometers: 0.120,
+                              QgsUnitTypes.DistanceUnit.DistanceFeet: 393, QgsUnitTypes.DistanceUnit.DistanceNauticalMiles: 0.065,
+                              QgsUnitTypes.DistanceUnit.DistanceYards: 132, QgsUnitTypes.DistanceUnit.DistanceMiles: 0.075,
+                              QgsUnitTypes.DistanceUnit.DistanceDegrees: 0.0011, QgsUnitTypes.DistanceUnit.DistanceCentimeters: 12000,
+                              QgsUnitTypes.DistanceUnit.DistanceMillimeters: 120000}
         self.fit_to_sample = fit_to_sample_list[layer_dist_unit]
         # save views widget config
         # {N: {"view_name", "layer_name", "render_file_path", "render_activated", "scale_factor"}, ...}
@@ -153,7 +153,7 @@ class ResponseDesign(object):
         # check if sampling has not changed
         if modified == 0 and added == 0 and removed == 0:
             iface.messageBar().pushMessage("AcATaMa", "The sampling file has not detected changes",
-                                           level=Qgis.Success, duration=10)
+                                           level=Qgis.MessageLevel.Success, duration=10)
             return False
         # reassign points
         self.points = points_from_shapefile
@@ -163,7 +163,7 @@ class ResponseDesign(object):
         # notify
         iface.messageBar().pushMessage("AcATaMa", "Sampling file reloaded successfully: {} modified,"
                                                   "{} added and {} removed".format(modified, added, removed),
-                                       level=Qgis.Success, duration=10)
+                                       level=Qgis.MessageLevel.Success, duration=10)
         return True
 
     @wait_process
@@ -213,4 +213,8 @@ class ResponseDesign(object):
 
         file_format = \
             "GPKG" if file_out.endswith(".gpkg") else "ESRI Shapefile" if file_out.endswith(".shp") else None
-        QgsVectorFileWriter.writeAsVectorFormat(vlayer, file_out, "System", self.sampling_layer.crs(), file_format)
+        save_options = QgsVectorFileWriter.SaveVectorOptions()
+        save_options.driverName = file_format
+        save_options.fileEncoding = "System"
+        QgsVectorFileWriter.writeAsVectorFormatV3(
+            vlayer, file_out, QgsProject.instance().transformContext(), save_options)

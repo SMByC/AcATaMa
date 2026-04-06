@@ -17,7 +17,7 @@
    <item>
     <widget class="QgsMessageBar" name="MsgBar">
      <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
+      <enum>QFrame::Shape::NoFrame</enum>
      </property>
      <property name="lineWidth">
       <number>0</number>
@@ -55,7 +55,7 @@
           <normaloff>:/plugins/AcATaMa/icons/zoom-out.svg</normaloff>:/plugins/AcATaMa/icons/zoom-out.svg</iconset>
         </property>
         <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonIconOnly</enum>
+         <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
         </property>
         <property name="autoRaise">
          <bool>true</bool>
@@ -75,7 +75,7 @@
           <normaloff>:/plugins/AcATaMa/icons/zoom-in.svg</normaloff>:/plugins/AcATaMa/icons/zoom-in.svg</iconset>
         </property>
         <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonIconOnly</enum>
+         <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
         </property>
         <property name="autoRaise">
          <bool>true</bool>
@@ -92,7 +92,7 @@
       <item>
        <widget class="QDialogButtonBox" name="buttonBox">
         <property name="standardButtons">
-         <set>QDialogButtonBox::Ok</set>
+         <set>QDialogButtonBox::StandardButton::Ok</set>
         </property>
        </widget>
       </item>

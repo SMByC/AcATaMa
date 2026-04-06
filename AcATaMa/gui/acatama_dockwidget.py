@@ -5,7 +5,7 @@
                                  A QGIS plugin
  AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
                               -------------------
-        copyright            : (C) 2017-2025 by Xavier C. Llano, SMByC
+        copyright            : (C) 2017-2026 by Xavier C. Llano, SMByC
         email                : xavier.corredor.llano@gmail.com
  ***************************************************************************/
 
@@ -79,9 +79,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # first warn before exit if at least exist one response design instance created
         if ResponseDesign.instances and self.isVisible():
             msg_box = QMessageBox()
-            msg_box.setIcon(QMessageBox.Question)
+            msg_box.setIcon(QMessageBox.Icon.Question)
             msg_box.setWindowTitle(self.tr("Close AcATaMa"))
-            msg_box.setTextFormat(Qt.RichText)
+            msg_box.setTextFormat(Qt.TextFormat.RichText)
             msg_box.setText("<p>{}</p>".format(
                 self.tr("Do you want to save the current configuration before exiting AcATaMa?")
             ))
@@ -96,24 +96,24 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                     pass
                 msg_box.setInformativeText(self.tr("<b>Current config file:</b> {0}").format(escape(config_path)))
 
-            msg_box.setStandardButtons(QMessageBox.Save | QMessageBox.Close | QMessageBox.Cancel)
-            msg_box.setDefaultButton(QMessageBox.Save)
-            msg_box.setEscapeButton(QMessageBox.Cancel)
+            msg_box.setStandardButtons(QMessageBox.StandardButton.Save | QMessageBox.StandardButton.Close | QMessageBox.StandardButton.Cancel)
+            msg_box.setDefaultButton(QMessageBox.StandardButton.Save)
+            msg_box.setEscapeButton(QMessageBox.StandardButton.Cancel)
             button_box = msg_box.findChild(QDialogButtonBox)
             if button_box:
-                button_box.button(QDialogButtonBox.Save).setText(self.tr("Save and close"))
-                button_box.button(QDialogButtonBox.Close).setText(self.tr("Close"))
-                button_box.button(QDialogButtonBox.Cancel).setText(self.tr("Cancel"))
+                button_box.button(QDialogButtonBox.StandardButton.Save).setText(self.tr("Save and close"))
+                button_box.button(QDialogButtonBox.StandardButton.Close).setText(self.tr("Close"))
+                button_box.button(QDialogButtonBox.StandardButton.Cancel).setText(self.tr("Cancel"))
 
-            reply = msg_box.exec_()
-            if reply == QMessageBox.Save:
+            reply = msg_box.exec()
+            if reply == QMessageBox.StandardButton.Save:
                 if not self.save_acatama_config():
                     event.ignore()
                     return
-            elif reply == QMessageBox.Close:
+            elif reply == QMessageBox.StandardButton.Close:
                 event.accept()
                 return
-            elif reply == QMessageBox.Cancel:
+            elif reply == QMessageBox.StandardButton.Cancel:
                 event.ignore()
                 return
 
@@ -130,7 +130,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # ######### load thematic map image ######### #
         # set properties to QgsMapLayerComboBox
         self.QCBox_ThematicMap.setCurrentIndex(-1)
-        self.QCBox_ThematicMap.setFilters(QgsMapLayerProxyModel.RasterLayer)
+        self.QCBox_ThematicMap.setFilters(QgsMapLayerProxyModel.Filter.RasterLayer)
         # call to browse the thematic map file
         self.QPBtn_browseThematicMap.clicked.connect(lambda: self.browser_dialog_to_load_file(
             self.QCBox_ThematicMap,
@@ -156,7 +156,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # ######### Response Design tab ######### #
         # set properties to QgsMapLayerComboBox
         self.QCBox_SamplingFile.setCurrentIndex(-1)
-        self.QCBox_SamplingFile.setFilters(QgsMapLayerProxyModel.PointLayer)
+        self.QCBox_SamplingFile.setFilters(QgsMapLayerProxyModel.Filter.PointLayer)
         # show the response design state for the sampling file selected
         self.QCBox_SamplingFile.layerChanged.connect(self.update_response_design_config)
         # call to browse the sampling file
@@ -224,7 +224,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         if not is_integer_data_type(thematic_map_layer, band=1):
             clear_and_unset_the_thematic_map()
             iface.messageBar().pushMessage("AcATaMa", "Error, thematic map must be byte or integer as data type.",
-                                           level=Qgis.Warning, duration=10)
+                                           level=Qgis.MessageLevel.Warning, duration=10)
             return
         # set band count
         self.QCBox_band_ThematicMap.clear()
@@ -356,7 +356,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.update_analysis_config()
         else:
             iface.messageBar().pushMessage("AcATaMa", "No sampling file selected",
-                                           level=Qgis.Warning, duration=10)
+                                           level=Qgis.MessageLevel.Warning, duration=10)
 
 
     def update_save_buttons_state(self):
@@ -402,7 +402,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             config.save(self.suggested_yml_file)
             self.update_save_buttons_state()
             iface.messageBar().pushMessage("AcATaMa", "Configuration saved to '{}'".format(self.suggested_yml_file),
-                                           level=Qgis.Success, duration=10)
+                                           level=Qgis.MessageLevel.Success, duration=10)
             return True
         else:
             # If no config file set, fall back to Save As dialog
@@ -420,7 +420,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.suggested_yml_file = file_path
             self.update_save_buttons_state()
             iface.messageBar().pushMessage("AcATaMa", "Configuration restored successfully",
-                                           level=Qgis.Success, duration=10)
+                                           level=Qgis.MessageLevel.Success, duration=10)
 
     @pyqtSlot()
     @error_handler
@@ -450,7 +450,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.suggested_yml_file = output_file
             self.update_save_buttons_state()
             iface.messageBar().pushMessage("AcATaMa", "Configuration file saved successfully in '{}'".format(output_file),
-                                           level=Qgis.Success, duration=10)
+                                           level=Qgis.MessageLevel.Success, duration=10)
             return True
         return False
 
@@ -459,7 +459,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
     def file_dialog_save_sampling_labeled(self):
         if not valid_file_selected_in(self.QCBox_SamplingFile):
             iface.messageBar().pushMessage("AcATaMa", "Error, please first select a sampling file",
-                                           level=Qgis.Warning, duration=10)
+                                           level=Qgis.MessageLevel.Warning, duration=10)
             return
         # get instance
         sampling_layer = self.QCBox_SamplingFile.currentLayer()
@@ -470,13 +470,13 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                            "the result will have all sampling partially labeled." \
                            "\nDo you want to continue?"
                 reply = QMessageBox.question(None, 'The labeling is not completed',
-                                             quit_msg, QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
-                if reply == QMessageBox.No:
+                                             quit_msg, QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, QMessageBox.StandardButton.Yes)
+                if reply == QMessageBox.StandardButton.No:
                     return
         else:
             iface.messageBar().pushMessage("AcATaMa",
                                            "Error, the response design for the sampling selected has not been initiated",
-                                           level=Qgis.Warning, duration=10)
+                                           level=Qgis.MessageLevel.Warning, duration=10)
             return
         # get file path to suggest where to save but not in tmp directory
         file_path = get_file_path_of_layer(self.QCBox_SamplingFile.currentLayer())
@@ -489,7 +489,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
         if output_file_is_OK(output_file):
             response_design.save_sampling_labeled(output_file)
-            iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=Qgis.Success, duration=10)
+            iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=Qgis.MessageLevel.Success, duration=10)
 
     @pyqtSlot()
     @error_handler
@@ -498,7 +498,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             # an instance of response design dialog is already created
             # brings that instance to front even if it is minimized
             self.sampling_design_window.setWindowState(self.sampling_design_window.windowState()
-                                                       & ~Qt.WindowMinimized | Qt.WindowActive)
+                                                       & ~Qt.WindowState.WindowMinimized | Qt.WindowState.WindowActive)
             self.sampling_design_window.raise_()
             self.sampling_design_window.activateWindow()
             return
@@ -519,7 +519,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             # an instance of response design dialog is already created
             # brings that instance to front even if it is minimized
             sampling_report.setWindowState(sampling_report.windowState()
-                                           & ~Qt.WindowMinimized | Qt.WindowActive)
+                                           & ~Qt.WindowState.WindowMinimized | Qt.WindowState.WindowActive)
             sampling_report.raise_()
             sampling_report.activateWindow()
             return
@@ -535,19 +535,19 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             # an instance of response design dialog is already created
             # brings that instance to front even if it is minimized
             self.response_design_window.setWindowState(self.response_design_window.windowState()
-                                                       & ~Qt.WindowMinimized | Qt.WindowActive)
+                                                       & ~Qt.WindowState.WindowMinimized | Qt.WindowState.WindowActive)
             self.response_design_window.raise_()
             self.response_design_window.activateWindow()
             return
         sampling_layer = self.QCBox_SamplingFile.currentLayer()
         if not sampling_layer:
             iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid sampling file.",
-                                           level=Qgis.Warning, duration=10)
+                                           level=Qgis.MessageLevel.Warning, duration=10)
             return
 
         # only open the response_design_grid_settings dialog the first time
         if ResponseDesignGridSettings.is_first_open:
-            if not self.response_design_grid_settings.exec_():
+            if not self.response_design_grid_settings.exec():
                 return
 
         self.response_design_window = ResponseDesignWindow(sampling_layer,
@@ -556,7 +556,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # open dialog
         self.response_design_window.show()
         # set focus, necessary to use keyboard shortcuts
-        self.response_design_window.setFocusPolicy(Qt.StrongFocus)
+        self.response_design_window.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.response_design_window.setFocus()
 
     @pyqtSlot("QgsMapLayer*")
@@ -614,7 +614,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             # an instance of Accuracy assessment dialog is already created
             # brings that instance to front even if it is minimized
             self.accuracy_assessment_window.setWindowState(self.accuracy_assessment_window.windowState()
-                                                           & ~Qt.WindowMinimized | Qt.WindowActive)
+                                                           & ~Qt.WindowState.WindowMinimized | Qt.WindowState.WindowActive)
             self.accuracy_assessment_window.raise_()
             self.accuracy_assessment_window.activateWindow()
             return

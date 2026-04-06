@@ -5,7 +5,7 @@
                                  A QGIS plugin
  AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
                               -------------------
-        copyright            : (C) 2017-2025 by Xavier C. Llano, SMByC
+        copyright            : (C) 2017-2026 by Xavier C. Llano, SMByC
         email                : xavier.corredor.llano@gmail.com
  ***************************************************************************/
 
@@ -55,7 +55,7 @@ def valid_file_selected_in(combo_box, combobox_name=False):
     else:
         if combobox_name:
             iface.messageBar().pushMessage("AcATaMa", "Error, please browse/select a valid file in "
-                                           + combobox_name, level=Qgis.Warning, duration=10)
+                                           + combobox_name, level=Qgis.MessageLevel.Warning, duration=10)
         combo_box.setCurrentIndex(-1)
         return False
 
@@ -71,12 +71,12 @@ def get_current_file_path_in(combo_box, show_message=True):
     if os.path.isfile(file_path):
         return file_path
     elif show_message:
-        iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file", level=Qgis.Warning, duration=10)
+        iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file", level=Qgis.MessageLevel.Warning, duration=10)
     return None
 
 
 def select_item_in(combo_box, item):
-    selected_index = combo_box.findText(item, Qt.MatchFixedString)
+    selected_index = combo_box.findText(item, Qt.MatchFlag.MatchFixedString)
     combo_box.setCurrentIndex(selected_index)
 
 
@@ -121,7 +121,7 @@ def load_layer(file_path, name=None, add_to_legend=True):
         add_layer(qgslayer, add_to_legend)
     else:
         iface.messageBar().pushMessage("AcATaMa", "Could not to load the layer \"{}\" no such file: \"{}\""
-                                       .format(name, file_path), level=Qgis.Warning, duration=20)
+                                       .format(name, file_path), level=Qgis.MessageLevel.Warning, duration=20)
 
     return qgslayer
 
@@ -172,17 +172,17 @@ class StyleEditorDialog(QDialog, FORM_CLASS):
 
         self.setWindowTitle("{} - style editor".format(self.layer.name()))
 
-        if self.layer.type() == QgsMapLayer.VectorLayer:
+        if self.layer.type() == QgsMapLayer.LayerType.VectorLayer:
             self.StyleEditorWidget = QgsRendererPropertiesDialog(self.layer, QgsStyle(), True, parent)
 
-        if self.layer.type() == QgsMapLayer.RasterLayer:
+        if self.layer.type() == QgsMapLayer.LayerType.RasterLayer:
             self.StyleEditorWidget = QgsRendererRasterPropertiesWidget(self.layer, canvas, parent)
 
         self.scrollArea.setWidget(self.StyleEditorWidget)
 
-        self.DialogButtons.button(QDialogButtonBox.Cancel).clicked.connect(self.reject)
-        self.DialogButtons.button(QDialogButtonBox.Ok).clicked.connect(self.accept)
-        self.DialogButtons.button(QDialogButtonBox.Apply).clicked.connect(self.apply)
+        self.DialogButtons.button(QDialogButtonBox.StandardButton.Cancel).clicked.connect(self.reject)
+        self.DialogButtons.button(QDialogButtonBox.StandardButton.Ok).clicked.connect(self.accept)
+        self.DialogButtons.button(QDialogButtonBox.StandardButton.Apply).clicked.connect(self.apply)
 
     def apply(self):
         self.StyleEditorWidget.apply()

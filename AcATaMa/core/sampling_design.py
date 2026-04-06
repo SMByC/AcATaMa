@@ -5,7 +5,7 @@
                                  A QGIS plugin
  AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
                               -------------------
-        copyright            : (C) 2017-2025 by Xavier C. Llano, SMByC
+        copyright            : (C) 2017-2026 by Xavier C. Llano, SMByC
         email                : xavier.corredor.llano@gmail.com
  ***************************************************************************/
 
@@ -25,7 +25,7 @@ import math
 import numpy as np
 from qgis.PyQt.QtCore import QVariant
 from qgis.core import QgsGeometry, QgsField, QgsFields, QgsSpatialIndex, QgsFeature, Qgis, \
-    QgsVectorFileWriter, QgsWkbTypes, QgsUnitTypes, QgsTask, QgsApplication
+    QgsVectorFileWriter, QgsWkbTypes, QgsUnitTypes, QgsTask, QgsApplication, QgsProject
 
 from AcATaMa.core.point import RandomPoint
 from AcATaMa.core.map import Map
@@ -51,7 +51,7 @@ def do_simple_random_sampling():
     if sampling_design.QGBox_SimpRSwithPS.isChecked():
         if not valid_file_selected_in(sampling_design.QCBox_PostStratMap_SimpRS, "post-stratification map"):
             sampling_design.MsgBar.pushMessage("Error, post-stratification option is enabled but not configured",
-                                               level=Qgis.Warning, duration=10)
+                                               level=Qgis.MessageLevel.Warning, duration=10)
             return
 
     # get and define some variables
@@ -72,7 +72,7 @@ def do_simple_random_sampling():
                 raise Exception
         except:
             sampling_design.MsgBar.pushMessage("Error, post-stratification option is enabled but none of the classes were selected",
-                                               level=Qgis.Warning, duration=10)
+                                               level=Qgis.MessageLevel.Warning, duration=10)
             return
     else:
         post_stratification_map = None
@@ -155,7 +155,7 @@ def simple_random_sampling_finished(exception, result=None):
     # zero points
     if sampling.samples_generated < sampling_conf["total_of_samples"] and sampling.samples_generated == 0:
         sampling_design.MsgBar.pushMessage("Error, could not generate any random points with this settings",
-                                           level=Qgis.Warning, duration=10)
+                                           level=Qgis.MessageLevel.Warning, duration=10)
         return
 
     sampling_layer_generated = load_layer(sampling.output_file)
@@ -175,20 +175,20 @@ def simple_random_sampling_finished(exception, result=None):
     # success
     if sampling.samples_generated == sampling_conf["total_of_samples"]:
         sampling_report.MsgBar.pushMessage("Simple random sampling successful: {} samples generated"
-                                           .format(sampling.samples_generated), level=Qgis.Success, duration=20)
+                                           .format(sampling.samples_generated), level=Qgis.MessageLevel.Success, duration=20)
     # success but not completed
     if sampling_conf["total_of_samples"] > sampling.samples_generated > 0:
         sampling_report.MsgBar.pushMessage("Simple random sampling successful: {} samples generated from {}".format(
                                            sampling.samples_generated, sampling_conf["total_of_samples"]),
-                                           level=Qgis.Info, duration=20)
+                                           level=Qgis.MessageLevel.Info, duration=20)
     # check the thematic map unit to calculate the minimum distances
     if sampling_conf["min_distance"] > 0:
-        if sampling.thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
+        if sampling.thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnit.DistanceUnknownUnit:
             sampling_report.MsgBar.pushMessage("The thematic map \"{}\" does not have a valid map unit, AcATaMa is using "
                                                "\"{}\" as the base unit to calculate the minimum distances".format(
                                                sampling.thematic_map.qgs_layer.name(),
                                                QgsUnitTypes.toString(sampling_layer_generated.crs().mapUnits())),
-                                               level=Qgis.Warning, duration=20)
+                                               level=Qgis.MessageLevel.Warning, duration=20)
 
 
 def do_stratified_random_sampling():
@@ -228,12 +228,12 @@ def do_stratified_random_sampling():
             raise Exception
     except:
         sampling_design.MsgBar.pushMessage("Error, the number of samples should be only positive integers",
-                                           level=Qgis.Warning, duration=10)
+                                           level=Qgis.MessageLevel.Warning, duration=10)
         return
     total_of_samples = sum(total_of_samples_by_stratum)
     if total_of_samples == 0:
         sampling_design.MsgBar.pushMessage("Error, no number of samples configured!",
-                                           level=Qgis.Warning, duration=10)
+                                           level=Qgis.MessageLevel.Warning, duration=10)
         return
 
     # check neighbors aggregation
@@ -329,7 +329,7 @@ def stratified_random_sampling_finished(exception, result=None):
     # zero points
     if sampling.samples_generated < sum(sampling_conf["total_of_samples"]) and sampling.samples_generated == 0:
         sampling_design.MsgBar.pushMessage("Error, could not generate any stratified random points with this settings",
-                                           level=Qgis.Warning, duration=10)
+                                           level=Qgis.MessageLevel.Warning, duration=10)
         return
 
     sampling_layer_generated = load_layer(sampling.output_file)
@@ -349,20 +349,20 @@ def stratified_random_sampling_finished(exception, result=None):
     # success
     if sampling.samples_generated == sum(sampling_conf["total_of_samples"]):
         sampling_report.MsgBar.pushMessage("Stratified random sampling successful: {} samples generated"
-                                           .format(sampling.samples_generated), level=Qgis.Success, duration=20)
+                                           .format(sampling.samples_generated), level=Qgis.MessageLevel.Success, duration=20)
     # success but not completed
     if sampling.samples_generated < sum(sampling_conf["total_of_samples"]) and sampling.samples_generated > 0:
         sampling_report.MsgBar.pushMessage("Stratified random sampling successful: {} samples generated from {}".format(
                                            sampling.samples_generated, sum(sampling_conf["total_of_samples"])),
-                                           level=Qgis.Info, duration=20)
+                                           level=Qgis.MessageLevel.Info, duration=20)
     # check the thematic map unit to calculate the minimum distances
     if sampling_conf["min_distance"] > 0:
-        if sampling.thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnknownUnit:
+        if sampling.thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnit.DistanceUnknownUnit:
             sampling_report.MsgBar.pushMessage("The thematic map \"{}\" does not have a valid map unit, AcATaMa is using "
                                                "\"{}\" as the base unit to calculate the minimum distances".format(
                                                sampling.thematic_map.qgs_layer.name(),
                                                 QgsUnitTypes.toString(sampling_layer_generated.crs().mapUnits())),
-                                               level=Qgis.Warning, duration=20)
+                                               level=Qgis.MessageLevel.Warning, duration=20)
 
 
 def do_systematic_sampling():
@@ -380,7 +380,7 @@ def do_systematic_sampling():
     if sampling_design.QGBox_SystSwithPS.isChecked():
         if not valid_file_selected_in(sampling_design.QCBox_PostStratMap_SystS, "post-stratification map"):
             sampling_design.MsgBar.pushMessage("Error, post-stratification option enabled but not configured",
-                                               level=Qgis.Warning, duration=10)
+                                               level=Qgis.MessageLevel.Warning, duration=10)
             return
 
     # get and define some variables
@@ -403,7 +403,7 @@ def do_systematic_sampling():
                 raise Exception
         except:
             sampling_design.MsgBar.pushMessage("Error, post-stratification option is enabled but none of the classes were selected",
-                                               level=Qgis.Warning, duration=10)
+                                               level=Qgis.MessageLevel.Warning, duration=10)
             return
     else:
         post_stratification_map = None
@@ -510,7 +510,7 @@ def systematic_sampling_finished(exception, result=None):
     # zero points
     if sampling.samples_generated < sampling_conf["total_of_samples"] and sampling.samples_generated == 0:
         sampling_design.MsgBar.pushMessage("Error, could not generate any random points with this settings",
-                                           level=Qgis.Warning, duration=10)
+                                           level=Qgis.MessageLevel.Warning, duration=10)
         return
 
     sampling_layer_generated = load_layer(sampling.output_file)
@@ -530,12 +530,12 @@ def systematic_sampling_finished(exception, result=None):
     # success
     if sampling.samples_generated == sampling_conf["total_of_samples"]:
         sampling_report.MsgBar.pushMessage("Systematic random sampling successful: {} samples generated".format(
-                                           sampling.samples_generated), level=Qgis.Success, duration=20)
+                                           sampling.samples_generated), level=Qgis.MessageLevel.Success, duration=20)
     # success but not completed
     if sampling_conf["total_of_samples"] > sampling.samples_generated > 0:
         sampling_report.MsgBar.pushMessage("Systematic random sampling successful: {} samples generated from {}".format(
                                            sampling.samples_generated, sampling_conf["total_of_samples"]),
-                                           level=Qgis.Success, duration=20)
+                                           level=Qgis.MessageLevel.Success, duration=20)
 
 
 class Sampling(object):
@@ -577,7 +577,12 @@ class Sampling(object):
         thematic_CRS = self.thematic_map.qgs_layer.crs()
         file_format = \
             "GPKG" if self.output_file.endswith(".gpkg") else "ESRI Shapefile" if self.output_file.endswith(".shp") else None
-        writer = QgsVectorFileWriter(self.output_file, "System", fields, QgsWkbTypes.Point, thematic_CRS, file_format)
+        save_options = QgsVectorFileWriter.SaveVectorOptions()
+        save_options.driverName = file_format
+        save_options.fileEncoding = "System"
+        writer = QgsVectorFileWriter.create(
+            self.output_file, fields, QgsWkbTypes.Type.Point, thematic_CRS,
+            QgsProject.instance().transformContext(), save_options)
 
         self.index = QgsSpatialIndex()
 
@@ -651,7 +656,12 @@ class Sampling(object):
         thematic_CRS = self.thematic_map.qgs_layer.crs()
         file_format = \
             "GPKG" if self.output_file.endswith(".gpkg") else "ESRI Shapefile" if self.output_file.endswith(".shp") else None
-        writer = QgsVectorFileWriter(self.output_file, "System", fields, QgsWkbTypes.Point, thematic_CRS, file_format)
+        save_options = QgsVectorFileWriter.SaveVectorOptions()
+        save_options.driverName = file_format
+        save_options.fileEncoding = "System"
+        writer = QgsVectorFileWriter.create(
+            self.output_file, fields, QgsWkbTypes.Type.Point, thematic_CRS,
+            QgsProject.instance().transformContext(), save_options)
 
         pixel_size_x = self.thematic_map.qgs_layer.rasterUnitsPerPixelX()
         pixel_size_y = self.thematic_map.qgs_layer.rasterUnitsPerPixelY()
@@ -810,7 +820,12 @@ class Sampling(object):
         thematic_CRS = self.thematic_map.qgs_layer.crs()
         file_format = \
             "GPKG" if self.output_file.endswith(".gpkg") else "ESRI Shapefile" if self.output_file.endswith(".shp") else None
-        writer = QgsVectorFileWriter(self.output_file, "System", fields, QgsWkbTypes.Point, thematic_CRS, file_format)
+        save_options = QgsVectorFileWriter.SaveVectorOptions()
+        save_options.driverName = file_format
+        save_options.fileEncoding = "System"
+        writer = QgsVectorFileWriter.create(
+            self.output_file, fields, QgsWkbTypes.Type.Point, thematic_CRS,
+            QgsProject.instance().transformContext(), save_options)
 
         pixel_size_x = self.thematic_map.qgs_layer.rasterUnitsPerPixelX()
         pixel_size_y = self.thematic_map.qgs_layer.rasterUnitsPerPixelY()
