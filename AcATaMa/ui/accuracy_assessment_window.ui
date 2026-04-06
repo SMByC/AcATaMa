@@ -32,10 +32,10 @@
    <item>
     <widget class="QgsMessageBar" name="MsgBar">
      <property name="frameShape">
-      <enum>QFrame::Shape::NoFrame</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Shadow::Plain</enum>
+      <enum>QFrame::Plain</enum>
      </property>
      <property name="lineWidth">
       <number>0</number>
@@ -211,7 +211,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                         <number>1</number>
                        </property>
                        <property name="alignment">
-                        <set>Qt::AlignmentFlag::AlignCenter</set>
+                        <set>Qt::AlignCenter</set>
                        </property>
                       </widget>
                      </item>
@@ -237,14 +237,14 @@ li.checked::marker { content: &quot;\2612&quot;; }
                         <number>1</number>
                        </property>
                        <property name="alignment">
-                        <set>Qt::AlignmentFlag::AlignCenter</set>
+                        <set>Qt::AlignCenter</set>
                        </property>
                       </widget>
                      </item>
                      <item>
                       <spacer name="horizontalSpacer">
                        <property name="orientation">
-                        <enum>Qt::Orientation::Horizontal</enum>
+                        <enum>Qt::Horizontal</enum>
                        </property>
                        <property name="sizeHint" stdset="0">
                         <size>
@@ -297,7 +297,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <normaloff>:/plugins/AcATaMa/icons/reload.svg</normaloff>:/plugins/AcATaMa/icons/reload.svg</iconset>
            </property>
            <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
+            <enum>Qt::ToolButtonIconOnly</enum>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
@@ -317,7 +317,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <normaloff>:/plugins/AcATaMa/icons/zoom-out.svg</normaloff>:/plugins/AcATaMa/icons/zoom-out.svg</iconset>
            </property>
            <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
+            <enum>Qt::ToolButtonIconOnly</enum>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
@@ -337,7 +337,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <normaloff>:/plugins/AcATaMa/icons/zoom-in.svg</normaloff>:/plugins/AcATaMa/icons/zoom-in.svg</iconset>
            </property>
            <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
+            <enum>Qt::ToolButtonIconOnly</enum>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
@@ -347,10 +347,10 @@ li.checked::marker { content: &quot;\2612&quot;; }
          <item>
           <widget class="QDialogButtonBox" name="DialogButtons">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="standardButtons">
-            <set>QDialogButtonBox::StandardButton::Close|QDialogButtonBox::StandardButton::Save</set>
+            <set>QDialogButtonBox::Close|QDialogButtonBox::Save</set>
            </property>
           </widget>
          </item>

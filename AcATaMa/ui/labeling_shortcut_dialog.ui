@@ -57,7 +57,7 @@
           <normaloff>:/plugins/AcATaMa/icons/clear.svg</normaloff>:/plugins/AcATaMa/icons/clear.svg</iconset>
         </property>
         <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
+         <enum>Qt::ToolButtonIconOnly</enum>
         </property>
         <property name="autoRaise">
          <bool>true</bool>
@@ -70,10 +70,10 @@
    <item>
     <widget class="QDialogButtonBox" name="button_box">
      <property name="orientation">
-      <enum>Qt::Orientation::Horizontal</enum>
+      <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>

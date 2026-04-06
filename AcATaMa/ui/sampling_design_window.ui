@@ -29,7 +29,7 @@
       </size>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Shape::NoFrame</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="lineWidth">
       <number>0</number>
@@ -68,7 +68,7 @@
              <string>Simple random sampling along the thematic map where each pixel has the same probability of being selected, with optional conditions and constraints</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignmentFlag::AlignJustify|Qt::AlignmentFlag::AlignVCenter</set>
+             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -120,7 +120,7 @@
                    <string>Set the sampling strategy based on points count and minimum distance between samples:</string>
                   </property>
                   <property name="alignment">
-                   <set>Qt::AlignmentFlag::AlignJustify|Qt::AlignmentFlag::AlignVCenter</set>
+                   <set>Qt::AlignJustify|Qt::AlignVCenter</set>
                   </property>
                   <property name="wordWrap">
                    <bool>true</bool>
@@ -219,7 +219,7 @@
                       <string>Use a categorical layer (default: thematic map) to derive post-strata and restrict random validation sampling to the selected classes.</string>
                      </property>
                      <property name="alignment">
-                      <set>Qt::AlignmentFlag::AlignJustify|Qt::AlignmentFlag::AlignVCenter</set>
+                      <set>Qt::AlignJustify|Qt::AlignVCenter</set>
                      </property>
                      <property name="wordWrap">
                       <bool>true</bool>
@@ -253,7 +253,7 @@
                          </sizepolicy>
                         </property>
                         <property name="focusPolicy">
-                         <enum>Qt::FocusPolicy::StrongFocus</enum>
+                         <enum>Qt::StrongFocus</enum>
                         </property>
                         <property name="editable">
                          <bool>false</bool>
@@ -350,7 +350,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <item>
                        <spacer name="horizontalSpacer_6">
                         <property name="orientation">
-                         <enum>Qt::Orientation::Horizontal</enum>
+                         <enum>Qt::Horizontal</enum>
                         </property>
                         <property name="sizeHint" stdset="0">
                          <size>
@@ -372,7 +372,7 @@ It set automatically from image if the layer has the nodata value set.</string>
              <item>
               <spacer name="verticalSpacer_5">
                <property name="orientation">
-                <enum>Qt::Orientation::Vertical</enum>
+                <enum>Qt::Vertical</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
@@ -433,7 +433,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <string>Accept samples only if they have a minimum number of neighboring pixels with the same class:</string>
                      </property>
                      <property name="alignment">
-                      <set>Qt::AlignmentFlag::AlignJustify|Qt::AlignmentFlag::AlignVCenter</set>
+                      <set>Qt::AlignJustify|Qt::AlignVCenter</set>
                      </property>
                      <property name="wordWrap">
                       <bool>true</bool>
@@ -458,7 +458,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <item row="0" column="1">
                        <widget class="QComboBox" name="QCBox_NumberOfNeighbors_SimpRS">
                         <property name="sizeAdjustPolicy">
-                         <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
+                         <enum>QComboBox::AdjustToContents</enum>
                         </property>
                         <item>
                          <property name="text">
@@ -494,7 +494,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <item row="1" column="1">
                        <widget class="QComboBox" name="QCBox_SameClassOfNeighbors_SimpRS">
                         <property name="sizeAdjustPolicy">
-                         <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
+                         <enum>QComboBox::AdjustToContents</enum>
                         </property>
                        </widget>
                       </item>
@@ -540,7 +540,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <string>Specify a particular seed for the random process to ensure reproducible sampling:</string>
                      </property>
                      <property name="alignment">
-                      <set>Qt::AlignmentFlag::AlignJustify|Qt::AlignmentFlag::AlignVCenter</set>
+                      <set>Qt::AlignJustify|Qt::AlignVCenter</set>
                      </property>
                      <property name="wordWrap">
                       <bool>true</bool>
@@ -586,7 +586,7 @@ It set automatically from image if the layer has the nodata value set.</string>
              <item>
               <spacer name="verticalSpacer_3">
                <property name="orientation">
-                <enum>Qt::Orientation::Vertical</enum>
+                <enum>Qt::Vertical</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
@@ -672,7 +672,7 @@ It set automatically from image if the layer has the nodata value set.</string>
              <string>A stratified random sampling design divides the population into distinct strata, and then randomly selects samples from each stratum, either manually or relative to their area proportion, to ensure balanced representation across all strata.</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignmentFlag::AlignJustify|Qt::AlignmentFlag::AlignVCenter</set>
+             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -724,7 +724,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                    <string>Select the map on which you wish to design and stratify the samples. The thematic map by default:</string>
                   </property>
                   <property name="alignment">
-                   <set>Qt::AlignmentFlag::AlignJustify|Qt::AlignmentFlag::AlignVCenter</set>
+                   <set>Qt::AlignJustify|Qt::AlignVCenter</set>
                   </property>
                   <property name="wordWrap">
                    <bool>true</bool>
@@ -758,7 +758,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                       </sizepolicy>
                      </property>
                      <property name="focusPolicy">
-                      <enum>Qt::FocusPolicy::StrongFocus</enum>
+                      <enum>Qt::StrongFocus</enum>
                      </property>
                      <property name="toolTip">
                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;NOTE: Normally this should be the thematic map, however in special user cases a different map would be used for sampling and validation. If so, Acatama only uses the thematic map to obtain the valid sampling area, but uses the sampling map to distribute the samples in the strata.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -860,7 +860,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                       </sizepolicy>
                      </property>
                      <property name="focusPolicy">
-                      <enum>Qt::FocusPolicy::StrongFocus</enum>
+                      <enum>Qt::StrongFocus</enum>
                      </property>
                      <property name="currentIndex">
                       <number>-1</number>
@@ -896,7 +896,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                        <normaloff>:/plugins/AcATaMa/icons/reload.svg</normaloff>:/plugins/AcATaMa/icons/reload.svg</iconset>
                      </property>
                      <property name="toolButtonStyle">
-                      <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
+                      <enum>Qt::ToolButtonIconOnly</enum>
                      </property>
                     </widget>
                    </item>
@@ -984,14 +984,14 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <string/>
                      </property>
                      <property name="alignment">
-                      <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+                      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                      </property>
                     </widget>
                    </item>
                    <item>
                     <spacer name="horizontalSpacer_2">
                      <property name="orientation">
-                      <enum>Qt::Orientation::Horizontal</enum>
+                      <enum>Qt::Horizontal</enum>
                      </property>
                      <property name="sizeHint" stdset="0">
                       <size>
@@ -1102,7 +1102,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <string>Accept samples only if they have a minimum number of neighboring pixels with the same class:</string>
                      </property>
                      <property name="alignment">
-                      <set>Qt::AlignmentFlag::AlignJustify|Qt::AlignmentFlag::AlignVCenter</set>
+                      <set>Qt::AlignJustify|Qt::AlignVCenter</set>
                      </property>
                      <property name="wordWrap">
                       <bool>true</bool>
@@ -1127,7 +1127,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <item row="0" column="1">
                        <widget class="QComboBox" name="QCBox_NumberOfNeighbors_StraRS">
                         <property name="sizeAdjustPolicy">
-                         <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
+                         <enum>QComboBox::AdjustToContents</enum>
                         </property>
                         <item>
                          <property name="text">
@@ -1163,7 +1163,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <item row="1" column="1">
                        <widget class="QComboBox" name="QCBox_SameClassOfNeighbors_StraRS">
                         <property name="sizeAdjustPolicy">
-                         <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
+                         <enum>QComboBox::AdjustToContents</enum>
                         </property>
                        </widget>
                       </item>
@@ -1209,7 +1209,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <string>Specify a particular seed for the random process to ensure reproducible sampling:</string>
                      </property>
                      <property name="alignment">
-                      <set>Qt::AlignmentFlag::AlignJustify|Qt::AlignmentFlag::AlignVCenter</set>
+                      <set>Qt::AlignJustify|Qt::AlignVCenter</set>
                      </property>
                      <property name="wordWrap">
                       <bool>true</bool>
@@ -1255,7 +1255,7 @@ It set automatically from image if the layer has the nodata value set.</string>
              <item>
               <spacer name="verticalSpacer">
                <property name="orientation">
-                <enum>Qt::Orientation::Vertical</enum>
+                <enum>Qt::Vertical</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
@@ -1341,7 +1341,7 @@ It set automatically from image if the layer has the nodata value set.</string>
              <string>Systematic random sampling involves selecting samples at regular intervals along a grid by distances or pixel units, starting from a random or fixed point from the top-left corner, and then applying a random offset to the original grid location.</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignmentFlag::AlignJustify|Qt::AlignmentFlag::AlignVCenter</set>
+             <set>Qt::AlignJustify|Qt::AlignVCenter</set>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -1426,7 +1426,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                    <string>Set points spacing grid</string>
                   </property>
                   <property name="alignment">
-                   <set>Qt::AlignmentFlag::AlignCenter</set>
+                   <set>Qt::AlignCenter</set>
                   </property>
                  </widget>
                 </item>
@@ -1508,7 +1508,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                    <string>Apply a random offset from the grid position</string>
                   </property>
                   <property name="alignment">
-                   <set>Qt::AlignmentFlag::AlignCenter</set>
+                   <set>Qt::AlignCenter</set>
                   </property>
                  </widget>
                 </item>
@@ -1600,7 +1600,7 @@ It set automatically from image if the layer has the nodata value set.</string>
              <item>
               <spacer name="verticalSpacer_6">
                <property name="orientation">
-                <enum>Qt::Orientation::Vertical</enum>
+                <enum>Qt::Vertical</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
@@ -1661,7 +1661,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <string>Use a categorical layer (default: thematic map) to derive post-strata and restrict random validation sampling to the selected classes.</string>
                      </property>
                      <property name="alignment">
-                      <set>Qt::AlignmentFlag::AlignJustify|Qt::AlignmentFlag::AlignVCenter</set>
+                      <set>Qt::AlignJustify|Qt::AlignVCenter</set>
                      </property>
                      <property name="wordWrap">
                       <bool>true</bool>
@@ -1695,7 +1695,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                          </sizepolicy>
                         </property>
                         <property name="focusPolicy">
-                         <enum>Qt::FocusPolicy::StrongFocus</enum>
+                         <enum>Qt::StrongFocus</enum>
                         </property>
                         <property name="editable">
                          <bool>false</bool>
@@ -1792,7 +1792,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <item>
                        <spacer name="horizontalSpacer_5">
                         <property name="orientation">
-                         <enum>Qt::Orientation::Horizontal</enum>
+                         <enum>Qt::Horizontal</enum>
                         </property>
                         <property name="sizeHint" stdset="0">
                          <size>
@@ -1844,7 +1844,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <string>Accept samples only if they have a minimum number of neighboring pixels with the same class:</string>
                      </property>
                      <property name="alignment">
-                      <set>Qt::AlignmentFlag::AlignJustify|Qt::AlignmentFlag::AlignVCenter</set>
+                      <set>Qt::AlignJustify|Qt::AlignVCenter</set>
                      </property>
                      <property name="wordWrap">
                       <bool>true</bool>
@@ -1869,7 +1869,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <item row="0" column="1">
                        <widget class="QComboBox" name="QCBox_NumberOfNeighbors_SystS">
                         <property name="sizeAdjustPolicy">
-                         <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
+                         <enum>QComboBox::AdjustToContents</enum>
                         </property>
                         <item>
                          <property name="text">
@@ -1905,7 +1905,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <item row="1" column="1">
                        <widget class="QComboBox" name="QCBox_SameClassOfNeighbors_SystS">
                         <property name="sizeAdjustPolicy">
-                         <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
+                         <enum>QComboBox::AdjustToContents</enum>
                         </property>
                        </widget>
                       </item>
@@ -1951,7 +1951,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <string>Specify a particular seed for the random process to ensure reproducible sampling:</string>
                      </property>
                      <property name="alignment">
-                      <set>Qt::AlignmentFlag::AlignJustify|Qt::AlignmentFlag::AlignVCenter</set>
+                      <set>Qt::AlignJustify|Qt::AlignVCenter</set>
                      </property>
                      <property name="wordWrap">
                       <bool>true</bool>
@@ -1997,7 +1997,7 @@ It set automatically from image if the layer has the nodata value set.</string>
              <item>
               <spacer name="verticalSpacer_2">
                <property name="orientation">
-                <enum>Qt::Orientation::Vertical</enum>
+                <enum>Qt::Vertical</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
@@ -2061,7 +2061,7 @@ It set automatically from image if the layer has the nodata value set.</string>
    <item>
     <widget class="QDialogButtonBox" name="closeButton">
      <property name="standardButtons">
-      <set>QDialogButtonBox::StandardButton::Close</set>
+      <set>QDialogButtonBox::Close</set>
      </property>
     </widget>
    </item>
@@ -2071,7 +2071,7 @@ It set automatically from image if the layer has the nodata value set.</string>
   <customwidget>
    <class>QgsMapLayerComboBox</class>
    <extends>QComboBox</extends>
-   <header>qgsmaplayercombobox.h</header>
+   <header>qgis.gui</header>
   </customwidget>
   <customwidget>
    <class>QgsMessageBar</class>

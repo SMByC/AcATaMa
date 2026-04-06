@@ -78,7 +78,7 @@
 classification</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignmentFlag::AlignCenter</set>
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
@@ -100,7 +100,7 @@ classification</string>
             <item>
              <spacer name="horizontalSpacer_3">
               <property name="orientation">
-               <enum>Qt::Orientation::Horizontal</enum>
+               <enum>Qt::Horizontal</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -126,7 +126,7 @@ classification</string>
                 <normaloff>:/plugins/AcATaMa/icons/setup.svg</normaloff>:/plugins/AcATaMa/icons/setup.svg</iconset>
               </property>
               <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
               </property>
               <property name="autoRaise">
                <bool>true</bool>
@@ -136,7 +136,7 @@ classification</string>
             <item>
              <spacer name="horizontalSpacer_6">
               <property name="orientation">
-               <enum>Qt::Orientation::Horizontal</enum>
+               <enum>Qt::Horizontal</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -152,23 +152,23 @@ classification</string>
          <item>
           <widget class="Line" name="line_3">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QScrollArea" name="scrollArea">
            <property name="frameShape">
-            <enum>QFrame::Shape::NoFrame</enum>
+            <enum>QFrame::NoFrame</enum>
            </property>
            <property name="frameShadow">
-            <enum>QFrame::Shadow::Plain</enum>
+            <enum>QFrame::Plain</enum>
            </property>
            <property name="lineWidth">
             <number>0</number>
            </property>
            <property name="horizontalScrollBarPolicy">
-            <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+            <enum>Qt::ScrollBarAlwaysOff</enum>
            </property>
            <property name="widgetResizable">
             <bool>true</bool>
@@ -214,7 +214,7 @@ classification</string>
              <item>
               <spacer name="verticalSpacer">
                <property name="orientation">
-                <enum>Qt::Orientation::Vertical</enum>
+                <enum>Qt::Vertical</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
@@ -231,10 +231,10 @@ classification</string>
          <item>
           <spacer name="horizontalSpacer_4">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Policy::Fixed</enum>
+            <enum>QSizePolicy::Fixed</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -275,7 +275,7 @@ classification</string>
             <item>
              <spacer name="horizontalSpacer_5">
               <property name="orientation">
-               <enum>Qt::Orientation::Horizontal</enum>
+               <enum>Qt::Horizontal</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -301,7 +301,7 @@ classification</string>
             <item>
              <spacer name="horizontalSpacer_7">
               <property name="orientation">
-               <enum>Qt::Orientation::Horizontal</enum>
+               <enum>Qt::Horizontal</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -317,7 +317,7 @@ classification</string>
          <item>
           <widget class="Line" name="line_4">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
@@ -327,7 +327,7 @@ classification</string>
             <string>samples labeled</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignmentFlag::AlignCenter</set>
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
@@ -353,7 +353,7 @@ classification</string>
          <item>
           <widget class="QDialogButtonBox" name="closeButton">
            <property name="standardButtons">
-            <set>QDialogButtonBox::StandardButton::Close</set>
+            <set>QDialogButtonBox::Close</set>
            </property>
           </widget>
          </item>
@@ -396,7 +396,7 @@ classification</string>
                <string>Sampling unit</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignmentFlag::AlignCenter</set>
+               <set>Qt::AlignCenter</set>
               </property>
              </widget>
             </item>
@@ -530,7 +530,7 @@ QToolButton
                   <string>Zoom to sample</string>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignmentFlag::AlignCenter</set>
+                  <set>Qt::AlignCenter</set>
                  </property>
                 </widget>
                </item>
@@ -561,7 +561,7 @@ QToolButton
                   <bool>false</bool>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignmentFlag::AlignCenter</set>
+                  <set>Qt::AlignCenter</set>
                  </property>
                 </widget>
                </item>
@@ -574,7 +574,7 @@ QToolButton
          <item row="0" column="3">
           <widget class="Line" name="line_5">
            <property name="orientation">
-            <enum>Qt::Orientation::Vertical</enum>
+            <enum>Qt::Vertical</enum>
            </property>
           </widget>
          </item>
@@ -627,7 +627,7 @@ QToolButton
                    <normaloff>:/plugins/AcATaMa/icons/previous_nc.svg</normaloff>:/plugins/AcATaMa/icons/previous_nc.svg</iconset>
                  </property>
                  <property name="toolButtonStyle">
-                  <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
+                  <enum>Qt::ToolButtonIconOnly</enum>
                  </property>
                  <property name="autoRaise">
                   <bool>true</bool>
@@ -650,7 +650,7 @@ QToolButton
                    <normaloff>:/plugins/AcATaMa/icons/previous.svg</normaloff>:/plugins/AcATaMa/icons/previous.svg</iconset>
                  </property>
                  <property name="toolButtonStyle">
-                  <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
                  </property>
                  <property name="autoRaise">
                   <bool>true</bool>
@@ -675,7 +675,7 @@ QToolButton
                   <item>
                    <spacer name="horizontalSpacer_8">
                     <property name="orientation">
-                     <enum>Qt::Orientation::Horizontal</enum>
+                     <enum>Qt::Horizontal</enum>
                     </property>
                     <property name="sizeHint" stdset="0">
                      <size>
@@ -701,7 +701,7 @@ QToolButton
                       <normaloff>:/plugins/AcATaMa/icons/go_to_sample.svg</normaloff>:/plugins/AcATaMa/icons/go_to_sample.svg</iconset>
                     </property>
                     <property name="toolButtonStyle">
-                     <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
+                     <enum>Qt::ToolButtonTextBesideIcon</enum>
                     </property>
                     <property name="autoRaise">
                      <bool>true</bool>
@@ -721,7 +721,7 @@ QToolButton
                   <item>
                    <spacer name="horizontalSpacer_9">
                     <property name="orientation">
-                     <enum>Qt::Orientation::Horizontal</enum>
+                     <enum>Qt::Horizontal</enum>
                     </property>
                     <property name="sizeHint" stdset="0">
                      <size>
@@ -743,7 +743,7 @@ QToolButton
                   <string>Go to the next sample (Arrow-Right)</string>
                  </property>
                  <property name="layoutDirection">
-                  <enum>Qt::LayoutDirection::RightToLeft</enum>
+                  <enum>Qt::RightToLeft</enum>
                  </property>
                  <property name="text">
                   <string>Next</string>
@@ -753,7 +753,7 @@ QToolButton
                    <normaloff>:/plugins/AcATaMa/icons/next.svg</normaloff>:/plugins/AcATaMa/icons/next.svg</iconset>
                  </property>
                  <property name="toolButtonStyle">
-                  <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
                  </property>
                  <property name="autoRaise">
                   <bool>true</bool>
@@ -769,14 +769,14 @@ QToolButton
                   <string>Go to the next sample not labeled (Ctrl + Arrow-Right)</string>
                  </property>
                  <property name="layoutDirection">
-                  <enum>Qt::LayoutDirection::RightToLeft</enum>
+                  <enum>Qt::RightToLeft</enum>
                  </property>
                  <property name="icon">
                   <iconset>
                    <normaloff>:/plugins/AcATaMa/icons/next_nc.svg</normaloff>:/plugins/AcATaMa/icons/next_nc.svg</iconset>
                  </property>
                  <property name="toolButtonStyle">
-                  <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
+                  <enum>Qt::ToolButtonIconOnly</enum>
                  </property>
                  <property name="autoRaise">
                   <bool>true</bool>
@@ -811,10 +811,10 @@ QToolButton
          <item row="0" column="10">
           <spacer name="horizontalSpacer_10">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Policy::Fixed</enum>
+            <enum>QSizePolicy::Fixed</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -827,10 +827,10 @@ QToolButton
          <item row="0" column="2">
           <spacer name="horizontalSpacer_2">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Policy::Fixed</enum>
+            <enum>QSizePolicy::Fixed</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -843,10 +843,10 @@ QToolButton
          <item row="0" column="4">
           <spacer name="horizontalSpacer">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Policy::Fixed</enum>
+            <enum>QSizePolicy::Fixed</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -859,10 +859,10 @@ QToolButton
          <item row="0" column="14">
           <spacer name="horizontalSpacer_12">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Policy::Fixed</enum>
+            <enum>QSizePolicy::Fixed</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -875,17 +875,17 @@ QToolButton
          <item row="0" column="13">
           <widget class="Line" name="line_7">
            <property name="orientation">
-            <enum>Qt::Orientation::Vertical</enum>
+            <enum>Qt::Vertical</enum>
            </property>
           </widget>
          </item>
          <item row="0" column="7">
           <spacer name="horizontalSpacer_11">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Policy::Fixed</enum>
+            <enum>QSizePolicy::Fixed</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -898,7 +898,7 @@ QToolButton
          <item row="0" column="8">
           <widget class="Line" name="line_6">
            <property name="orientation">
-            <enum>Qt::Orientation::Vertical</enum>
+            <enum>Qt::Vertical</enum>
            </property>
           </widget>
          </item>
@@ -958,10 +958,10 @@ QToolButton
                <item>
                 <spacer name="horizontalSpacer_14">
                  <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
+                  <enum>Qt::Horizontal</enum>
                  </property>
                  <property name="sizeType">
-                  <enum>QSizePolicy::Policy::Fixed</enum>
+                  <enum>QSizePolicy::Fixed</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -987,7 +987,7 @@ QToolButton
                   <bool>true</bool>
                  </property>
                  <property name="toolButtonStyle">
-                  <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
+                  <enum>Qt::ToolButtonIconOnly</enum>
                  </property>
                  <property name="autoRaise">
                   <bool>true</bool>
@@ -1007,7 +1007,7 @@ QToolButton
                    <normaloff>:/plugins/AcATaMa/icons/open_in_ge.svg</normaloff>:/plugins/AcATaMa/icons/open_in_ge.svg</iconset>
                  </property>
                  <property name="toolButtonStyle">
-                  <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
+                  <enum>Qt::ToolButtonIconOnly</enum>
                  </property>
                  <property name="autoRaise">
                   <bool>true</bool>
@@ -1080,7 +1080,7 @@ QToolButton
                    <normaloff>:/plugins/AcATaMa/icons/go.svg</normaloff>:/plugins/AcATaMa/icons/go.svg</iconset>
                  </property>
                  <property name="toolButtonStyle">
-                  <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
+                  <enum>Qt::ToolButtonIconOnly</enum>
                  </property>
                  <property name="autoRaise">
                   <bool>true</bool>
@@ -1096,10 +1096,10 @@ QToolButton
          <item row="0" column="12">
           <spacer name="horizontalSpacer_13">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Policy::Fixed</enum>
+            <enum>QSizePolicy::Fixed</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -1115,14 +1115,14 @@ QToolButton
       <item row="0" column="1" rowspan="3">
        <widget class="Line" name="line_2">
         <property name="orientation">
-         <enum>Qt::Orientation::Vertical</enum>
+         <enum>Qt::Vertical</enum>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
        <widget class="Line" name="line">
         <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
+         <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
@@ -1147,7 +1147,7 @@ QToolButton
          <item>
           <widget class="QSplitter" name="splitter">
            <property name="orientation">
-            <enum>Qt::Orientation::Vertical</enum>
+            <enum>Qt::Vertical</enum>
            </property>
            <property name="childrenCollapsible">
             <bool>false</bool>
@@ -1213,7 +1213,7 @@ QToolButton
       </sizepolicy>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Shape::NoFrame</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="lineWidth">
       <number>0</number>
