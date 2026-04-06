@@ -21,8 +21,8 @@ def test_point_spacing_calculates_correct_samples_systematic(plugin, restore_con
 
     determine_number_samples_dialog = sampling_design.determine_number_samples_dialog_SystS
 
-    # Replace QDialog.exec_ to always return QDialog.Accepted
-    monkeypatch.setattr(determine_number_samples_dialog, "exec_", lambda: determine_number_samples_dialog.Accepted)
+    # Replace QDialog.exec to always return QDialog.Accepted
+    monkeypatch.setattr(determine_number_samples_dialog, "exec", lambda: determine_number_samples_dialog.Accepted)
     sampling_design.determine_number_samples_dialog_SystS.get_n()
 
     assert sampling_design.PointSpacing_SystS.value() == 1028.9
