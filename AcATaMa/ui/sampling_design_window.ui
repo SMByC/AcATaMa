@@ -281,11 +281,14 @@
                       </item>
                       <item>
                        <widget class="QComboBox" name="QCBox_band_PostStratMap_SimpRS">
+                        <property name="maximumSize">
+                         <size>
+                          <width>50</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
                         <property name="toolTip">
                          <string>Band</string>
-                        </property>
-                        <property name="minimumContentsLength">
-                         <number>1</number>
                         </property>
                        </widget>
                       </item>
@@ -789,11 +792,14 @@ It set automatically from image if the layer has the nodata value set.</string>
                    </item>
                    <item>
                     <widget class="QComboBox" name="QCBox_band_SamplingMap_StraRS">
+                     <property name="maximumSize">
+                      <size>
+                       <width>50</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="toolTip">
                       <string>Band</string>
-                     </property>
-                     <property name="minimumContentsLength">
-                      <number>1</number>
                      </property>
                     </widget>
                    </item>
@@ -1723,11 +1729,14 @@ It set automatically from image if the layer has the nodata value set.</string>
                       </item>
                       <item>
                        <widget class="QComboBox" name="QCBox_band_PostStratMap_SystS">
+                        <property name="maximumSize">
+                         <size>
+                          <width>50</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
                         <property name="toolTip">
                          <string>Band</string>
-                        </property>
-                        <property name="minimumContentsLength">
-                         <number>1</number>
                         </property>
                        </widget>
                       </item>
