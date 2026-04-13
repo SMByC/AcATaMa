@@ -174,6 +174,8 @@ class LabelingPoint(Point):
         extent = data_provider.extent()
         width = data_provider.xSize()
         height = data_provider.ySize()
+        if not width or not height:
+            return
         xres = extent.width() / width
         yres = extent.height() / height
 
