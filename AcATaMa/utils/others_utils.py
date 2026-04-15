@@ -28,7 +28,7 @@ from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QProgressDialog, QApplication
 from qgis.core import QgsUnitTypes
 
-from AcATaMa.utils.qgis_utils import get_file_path_of_layer
+from AcATaMa.utils.qgis_utils import get_source_from
 from AcATaMa.utils.system_utils import wait_process
 
 
@@ -65,7 +65,7 @@ def mask(input_list, boolean_mask):
 
 def get_unique_values(layer, band, chunk_size=1000):
     """Get unique values in a raster band using chunked GDAL reading"""
-    gdal_file = gdal.Open(get_file_path_of_layer(layer), gdal.GA_ReadOnly)
+    gdal_file = gdal.Open(get_source_from(layer), gdal.GA_ReadOnly)
     raster_band = gdal_file.GetRasterBand(band)
 
     # Calculate total chunks for progress
@@ -281,7 +281,7 @@ def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None, nod
         pixel_values.remove(nodata)
 
     # split the image in chunks
-    layer_filepath = get_file_path_of_layer(layer)
+    layer_filepath = get_source_from(layer)
     gdal_file = gdal.Open(layer_filepath, gdal.GA_ReadOnly)
 
     # Chunk size ~4096x4096 (~64MB for int types), with minimum for parallelism
@@ -345,7 +345,7 @@ def get_pixel_count_by_pixel_values_sequential(layer, band, pixel_values=None, n
         if nodata in pixel_values: pixel_values.remove(nodata)
         pixel_values.insert(0, nodata)
 
-    dataset = gdal_array.LoadFile(get_file_path_of_layer(layer))
+    dataset = gdal_array.LoadFile(get_source_from(layer))
 
     if len(dataset.shape) == 3:
         dataset = dataset[band - 1]

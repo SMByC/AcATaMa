@@ -38,7 +38,7 @@ from AcATaMa.gui.response_design_grid_settings import ResponseDesignGridSettings
 from AcATaMa.gui.sampling_design_window import SamplingDesignWindow
 from AcATaMa.gui.sampling_report import SamplingReport
 from AcATaMa.utils.others_utils import set_nodata_format
-from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_filepath_in, is_integer_data_type, get_file_path_of_layer
+from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_layer_in, is_integer_data_type, get_source_from
 from AcATaMa.utils.system_utils import error_handler, wait_process, block_signals_to, output_file_is_OK, get_save_file_name
 from AcATaMa.gui.about_dialog import AboutDialog
 
@@ -196,7 +196,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         file_path, _ = QFileDialog.getOpenFileName(self, dialog_title, "", file_filters)
         if file_path != '' and os.path.isfile(file_path):
             # load to qgis and update combobox list
-            load_and_select_filepath_in(combo_box, file_path)
+            load_and_select_layer_in(file_path, combo_box)
 
     @pyqtSlot("QgsMapLayer*")
     def select_thematic_map(self, thematic_map_layer):
@@ -434,9 +434,9 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         elif valid_file_selected_in(self.QCBox_ThematicMap) or valid_file_selected_in(self.QCBox_SamplingFile):
             # get file path to suggest where to save
             if valid_file_selected_in(self.QCBox_ThematicMap):
-                file_path = get_file_path_of_layer(self.QCBox_ThematicMap.currentLayer())
+                file_path = get_source_from(self.QCBox_ThematicMap)
             else:
-                file_path = get_file_path_of_layer(self.QCBox_SamplingFile.currentLayer())
+                file_path = get_source_from(self.QCBox_SamplingFile)
             path, filename = os.path.split(file_path)
             suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + " - acatama.yaml" if filename else "acatama.yaml"
         else:
@@ -479,10 +479,10 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                                            level=Qgis.MessageLevel.Warning, duration=10)
             return
         # get file path to suggest where to save but not in tmp directory
-        file_path = get_file_path_of_layer(self.QCBox_SamplingFile.currentLayer())
+        file_path = get_source_from(self.QCBox_SamplingFile)
         path, filename = os.path.split(file_path)
         if self.tmp_dir in path:
-            path = os.path.split(get_file_path_of_layer(self.QCBox_ThematicMap.currentLayer()))[0]
+            path = os.path.split(get_source_from(self.QCBox_ThematicMap))[0]
         suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + " - labeled.gpkg" if filename else "samples labeled.gpkg"
         output_file = get_save_file_name(self, "Save sampling file with the response_design", suggested_filename,
                                          "GeoPackage files (*.gpkg);;Shape files (*.shp);;All files (*.*)")

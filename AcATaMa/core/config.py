@@ -37,8 +37,7 @@ from AcATaMa.gui.response_design_grid_settings import ResponseDesignGridSettings
 from AcATaMa.gui.post_stratification_classes_dialog import PostStratificationClassesDialog
 from AcATaMa.utils.system_utils import LegacyLoader, wait_process, block_signals_to
 from AcATaMa.utils.sampling_utils import fill_stratified_sampling_table
-from AcATaMa.utils.qgis_utils import get_current_file_path_in, get_file_path_of_layer, load_and_select_filepath_in, \
-    select_item_in
+from AcATaMa.utils.qgis_utils import get_source_from, load_and_select_layer_in, select_item_in
 from AcATaMa.utils.others_utils import set_nodata_format, get_plugin_version, get_nodata_format
 
 CONFIG_FILE_VERSION = None
@@ -96,7 +95,7 @@ def save(file_out):
 
     # ######### thematic ######### #
     data["thematic_map"] = \
-        {"path": setup_path(get_current_file_path_in(AcATaMa.dockwidget.QCBox_ThematicMap, show_message=False)),
+        {"path": setup_path(get_source_from(AcATaMa.dockwidget.QCBox_ThematicMap)),
          "band": int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
             if AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText() != '' else -1,
          "nodata": AcATaMa.dockwidget.nodata_ThematicMap.text()}
@@ -114,7 +113,7 @@ def save(file_out):
         "min_distance": sampling_design.minDistance_SimpRS.value(),
 
         "post_stratification": sampling_design.QGBox_SimpRSwithPS.isChecked(),
-        "post_stratification_map_path": setup_path(get_current_file_path_in(sampling_design.QCBox_PostStratMap_SimpRS, show_message=False)),
+        "post_stratification_map_path": setup_path(get_source_from(sampling_design.QCBox_PostStratMap_SimpRS)),
         "post_stratification_map_band": int(sampling_design.QCBox_band_PostStratMap_SimpRS.currentText())
             if sampling_design.QCBox_band_PostStratMap_SimpRS.currentText() != '' else -1,
         "post_stratification_map_nodata": sampling_design.nodata_PostStratMap_SimpRS.text(),
@@ -135,7 +134,7 @@ def save(file_out):
     with_srs_table = sampling_design.QCBox_SamplingMap_StraRS.currentText() in sampling_design.srs_tables and \
         srs_method in sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()]
     data["sampling_design"]["stratified_random_sampling"] = {
-        "stratification_map_path": setup_path(get_current_file_path_in(sampling_design.QCBox_SamplingMap_StraRS, show_message=False)),
+        "stratification_map_path": setup_path(get_source_from(sampling_design.QCBox_SamplingMap_StraRS)),
         "stratification_map_band": int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText())
             if sampling_design.QCBox_band_SamplingMap_StraRS.currentText() != '' else -1,
         "stratification_map_nodata": sampling_design.nodata_SamplingMap_StraRS.text(),
@@ -170,7 +169,7 @@ def save(file_out):
         "max_xy_offset": sampling_design.MaxXYoffset_SystS.value(),
 
         "post_stratification": sampling_design.QGBox_SystSwithPS.isChecked(),
-        "post_stratification_map_path": setup_path(get_current_file_path_in(sampling_design.QCBox_PostStratMap_SystS, show_message=False)),
+        "post_stratification_map_path": setup_path(get_source_from(sampling_design.QCBox_PostStratMap_SystS)),
         "post_stratification_map_band": int(sampling_design.QCBox_band_PostStratMap_SystS.currentText())
             if sampling_design.QCBox_band_PostStratMap_SystS.currentText() != '' else -1,
         "post_stratification_map_nodata": sampling_design.nodata_PostStratMap_SystS.text(),
@@ -206,7 +205,7 @@ def save(file_out):
             view_widgets_config[view_widget.id] = \
                 {"view_name": view_widget.QLabel_ViewName.text(),
                  "layer_name": view_widget.QCBox_RenderFile.currentLayer().name() if view_widget.QCBox_RenderFile.currentLayer() else None,
-                 "render_file_path": setup_path(get_current_file_path_in(view_widget.QCBox_RenderFile, show_message=False)),
+                 "render_file_path": setup_path(get_source_from(view_widget.QCBox_RenderFile)),
                  # "view_size": (view_widget.size().width(), view_widget.size().height()),
                  "scale_factor": view_widget.current_scale_factor}
         response_design.view_widgets_config = view_widgets_config
@@ -223,7 +222,7 @@ def save(file_out):
 
         # ###
 
-        data["sampling_layer"] = setup_path(get_file_path_of_layer(response_design.sampling_layer))
+        data["sampling_layer"] = setup_path(get_source_from(response_design.sampling_layer))
         # TODO:
         # save sampling_layer style
 
@@ -380,8 +379,8 @@ def restore(yml_file_path):
     # restore the thematic map
     if yaml_config["thematic_map"]["path"]:
         # thematic map
-        load_status = load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_ThematicMap,
-                                                  get_restore_path(yaml_config["thematic_map"]["path"]))
+        load_status = load_and_select_layer_in(get_restore_path(yaml_config["thematic_map"]["path"]),
+                                               AcATaMa.dockwidget.QCBox_ThematicMap)
         if not load_status:
             return
         AcATaMa.dockwidget.select_thematic_map(AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer())
@@ -418,8 +417,8 @@ def restore(yml_file_path):
             yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification'])
         sampling_design.widget_SimpRSwithPS.setVisible(
             yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification'])
-        load_and_select_filepath_in(sampling_design.QCBox_PostStratMap_SimpRS,
-                                    get_restore_path(yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification_map_path']))
+        load_and_select_layer_in(get_restore_path(yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification_map_path']),
+                                 sampling_design.QCBox_PostStratMap_SimpRS)
         sampling_design.update_post_stratification_map_SimpRS(item_changed="layer")
         sampling_design.QCBox_band_PostStratMap_SimpRS.setCurrentIndex(
             yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification_map_band'] - 1)
@@ -452,8 +451,8 @@ def restore(yml_file_path):
             yaml_config["sampling_design"]["simple_random_sampling"]['random_seed_by_user'])
 
         # stratified random sampling
-        load_and_select_filepath_in(sampling_design.QCBox_SamplingMap_StraRS,
-                                    get_restore_path(yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_path']))
+        load_and_select_layer_in(get_restore_path(yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_path']),
+                                 sampling_design.QCBox_SamplingMap_StraRS)
         sampling_design.update_sampling_map_StraRS(sampling_design.QCBox_SamplingMap_StraRS.currentLayer())
         sampling_design.QCBox_band_SamplingMap_StraRS.setCurrentIndex(
             yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_band'] - 1)
@@ -555,8 +554,8 @@ def restore(yml_file_path):
                 yaml_config["sampling_design"]["systematic_sampling"]['post_stratification'])
             sampling_design.widget_SystSwithPS.setVisible(
                 yaml_config["sampling_design"]["systematic_sampling"]['post_stratification'])
-            load_and_select_filepath_in(sampling_design.QCBox_PostStratMap_SystS,
-                                        get_restore_path(yaml_config["sampling_design"]["systematic_sampling"]['post_stratification_map_path']))
+            load_and_select_layer_in(get_restore_path(yaml_config["sampling_design"]["systematic_sampling"]['post_stratification_map_path']),
+                                     sampling_design.QCBox_PostStratMap_SystS)
             sampling_design.update_post_stratification_map_SystS(item_changed="layer")
             sampling_design.QCBox_band_PostStratMap_SystS.setCurrentIndex(
                 yaml_config["sampling_design"]["systematic_sampling"]['post_stratification_map_band'] - 1)
@@ -592,8 +591,8 @@ def restore(yml_file_path):
     # restore the response_design settings
     # load the sampling file save in yaml config
     if "sampling_layer" in yaml_config and os.path.isfile(get_restore_path(yaml_config["sampling_layer"])):
-        sampling_layer = load_and_select_filepath_in(AcATaMa.dockwidget.QCBox_SamplingFile,
-                                                     get_restore_path(yaml_config["sampling_layer"]))
+        sampling_layer = load_and_select_layer_in(get_restore_path(yaml_config["sampling_layer"]),
+                                                  AcATaMa.dockwidget.QCBox_SamplingFile)
         if not sampling_layer:
             return
         response_design = ResponseDesign(sampling_layer)

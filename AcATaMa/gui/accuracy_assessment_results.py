@@ -25,7 +25,7 @@ import numpy as np
 
 from qgis.core import QgsUnitTypes
 
-from AcATaMa.utils.qgis_utils import get_file_path_of_layer
+from AcATaMa.utils.qgis_utils import get_source_from
 from AcATaMa.utils.system_utils import error_handler
 
 
@@ -67,7 +67,7 @@ def get_html(accu_asse):
     # #### html init
     html = '''
         <head>
-        
+
         <style type="text/css">
         table {
           table-layout: fixed;
@@ -102,7 +102,7 @@ def get_html(accu_asse):
     html += "<h2>Analysis - Accuracy assessment results</h2>"
     html += "<p><strong>Thematic map:</strong> {}</p>".format(os.path.basename(accu_asse.thematic_map.file_path))
     html += "<p><strong>Sampling file:</strong> {}</p>".format(
-        os.path.basename(get_file_path_of_layer(accu_asse.response_design.sampling_layer)))
+        os.path.basename(get_source_from(accu_asse.response_design.sampling_layer)))
     html += "<p><strong>Estimator:</strong> {}</p>".format(accu_asse.estimator)
     html += "<p><strong>Response design state:</strong> {}/{} samples labeled</p>".format(
         accu_asse.response_design.total_labeled, accu_asse.response_design.num_points)
@@ -193,7 +193,7 @@ def get_html(accu_asse):
                        if sum(accuracy_table[idx_row]) > 0 else "-",
                        total_class_area=rf(accu_asse.thematic_pixels_count[value] * accu_asse.pixel_area_value),
                        wi=rf(accu_asse.thematic_pixels_count[value] / total_pixels_classes))
-    html += '''    
+    html += '''
         <tr>
         <td class="empty"></td>
           <th>Total</th>
@@ -469,7 +469,7 @@ def get_html(accu_asse):
                 <td>{wi}</td>
                 </tr>
                 '''.format(wi=rf(sum(error_matrix_area_prop[idx_row])) if sum(error_matrix_area_prop[idx_row]) > 0 else "-")
-        html += '''    
+        html += '''
             <tr>
             <td class="empty"></td>
               <th>total</th>
@@ -520,7 +520,7 @@ def get_html(accu_asse):
                 <td class="highlight">{table_field}</td>
                 '''.format(table_field=(rf(t)) if t > 0 else "-") for t in quadratic_error_matrix[idx_row]])
             html += "</tr>"
-        html += '''    
+        html += '''
             <tr>
             <td class="empty"></td>
               <th>total</th>
@@ -599,7 +599,7 @@ def get_html(accu_asse):
         html += '''<td>{u}</th>'''.format(u=rf(u))
         html += "</tr>"
 
-    html += '''    
+    html += '''
         <tr>
           <th>total</th>
         '''
@@ -631,7 +631,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     csv_rows.append([os.path.basename(accu_asse.thematic_map.file_path)])
     csv_rows.append([])
     csv_rows.append(["Sampling file:"])
-    csv_rows.append([os.path.basename(get_file_path_of_layer(accu_asse.response_design.sampling_layer))])
+    csv_rows.append([os.path.basename(get_source_from(accu_asse.response_design.sampling_layer))])
     csv_rows.append([])
     csv_rows.append(["Estimator:"])
     csv_rows.append([accu_asse.estimator])
@@ -955,4 +955,3 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
                 csv_rows[idx] = [str(item).replace('.', csv_decimal_separator) if isinstance(item, float) else item for item in row]
 
         csv_w.writerows(csv_rows)
-

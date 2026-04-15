@@ -30,7 +30,7 @@ from qgis.core import QgsGeometry, QgsField, QgsFields, QgsSpatialIndex, QgsFeat
 from AcATaMa.core.point import RandomPoint
 from AcATaMa.core.map import Map
 from AcATaMa.core.response_design import ResponseDesign
-from AcATaMa.utils.qgis_utils import load_layer, valid_file_selected_in, get_file_path_of_layer
+from AcATaMa.utils.qgis_utils import load_and_select_layer_in, valid_file_selected_in, get_source_from
 from AcATaMa.utils.system_utils import error_handler, output_file_is_OK, get_save_file_name
 from AcATaMa.gui.sampling_report import SamplingReport
 from AcATaMa.utils.others_utils import get_nodata_format, get_epsilon
@@ -87,7 +87,7 @@ def do_simple_random_sampling():
         neighbor_aggregation = None
 
     # first select the target file for save the sampling file
-    suggested_filename = get_file_path_of_layer(AcATaMa.dockwidget.QCBox_SamplingFile.currentLayer()) or \
+    suggested_filename = get_source_from(AcATaMa.dockwidget.QCBox_SamplingFile) or \
                          os.path.join(os.path.dirname(thematic_map.file_path), "simple {}sampling.gpkg"
                                       .format("post-stratified " if post_stratification_map else ""))
 
@@ -158,10 +158,8 @@ def simple_random_sampling_finished(exception, result=None):
                                            level=Qgis.MessageLevel.Warning, duration=10)
         return
 
-    sampling_layer_generated = load_layer(sampling.output_file)
-
     # select the sampling file generated in respond design and analysis tab
-    AcATaMa.dockwidget.QCBox_SamplingFile.setLayer(sampling_layer_generated)
+    sampling_layer_generated = load_and_select_layer_in(sampling.output_file, AcATaMa.dockwidget.QCBox_SamplingFile)
     if sampling_layer_generated not in ResponseDesign.instances:
         ResponseDesign(sampling_layer_generated)
     AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(-1)
@@ -259,7 +257,7 @@ def do_stratified_random_sampling():
             srs_config["ui"].append(float(sampling_design.QTableW_StraRS.item(row, 3).text()))
 
     # first select the target file for save the sampling file
-    suggested_filename = get_file_path_of_layer(AcATaMa.dockwidget.QCBox_SamplingFile.currentLayer()) or \
+    suggested_filename = get_source_from(AcATaMa.dockwidget.QCBox_SamplingFile) or \
                          os.path.join(os.path.dirname(thematic_map.file_path), "stratified sampling.gpkg")
 
     output_file = get_save_file_name(
@@ -332,10 +330,8 @@ def stratified_random_sampling_finished(exception, result=None):
                                            level=Qgis.MessageLevel.Warning, duration=10)
         return
 
-    sampling_layer_generated = load_layer(sampling.output_file)
-
     # select the sampling file generated in respond design and analysis tab
-    AcATaMa.dockwidget.QCBox_SamplingFile.setLayer(sampling_layer_generated)
+    sampling_layer_generated = load_and_select_layer_in(sampling.output_file, AcATaMa.dockwidget.QCBox_SamplingFile)
     if sampling_layer_generated not in ResponseDesign.instances:
         ResponseDesign(sampling_layer_generated)
     AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(-1)
@@ -418,7 +414,7 @@ def do_systematic_sampling():
         neighbor_aggregation = None
 
     # first select the target file for save the sampling file
-    suggested_filename = get_file_path_of_layer(AcATaMa.dockwidget.QCBox_SamplingFile.currentLayer()) or \
+    suggested_filename = get_source_from(AcATaMa.dockwidget.QCBox_SamplingFile) or \
                          os.path.join(os.path.dirname(thematic_map.file_path), "systematic {}sampling.gpkg"
                                       .format("post-stratified " if post_stratification_map else ""))
 
@@ -513,10 +509,8 @@ def systematic_sampling_finished(exception, result=None):
                                            level=Qgis.MessageLevel.Warning, duration=10)
         return
 
-    sampling_layer_generated = load_layer(sampling.output_file)
-
     # select the sampling file generated in respond design and analysis tab
-    AcATaMa.dockwidget.QCBox_SamplingFile.setLayer(sampling_layer_generated)
+    sampling_layer_generated = load_and_select_layer_in(sampling.output_file, AcATaMa.dockwidget.QCBox_SamplingFile)
     if sampling_layer_generated not in ResponseDesign.instances:
         ResponseDesign(sampling_layer_generated)
     AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(-1)

@@ -24,7 +24,7 @@ from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
 from qgis.gui import QgsRendererPropertiesDialog, QgsRendererRasterPropertiesWidget, QgsMapLayerComboBox
-from qgis.core import QgsProject, QgsRasterLayer, QgsVectorLayer, Qgis, QgsStyle, QgsMapLayer
+from qgis.core import QgsProject, QgsProviderRegistry, QgsRasterLayer, QgsVectorLayer, Qgis, QgsStyle, QgsMapLayer
 from qgis.utils import iface
 
 
@@ -41,9 +41,15 @@ def is_integer_data_type(layer, band=1):
     return "Int" in type_name or "Byte" in type_name
 
 
-def get_file_path_of_layer(layer):
+def get_source_from(item):
+    """Get the source/path of a QgsMapLayer or the current layer in a QgsMapLayerComboBox."""
+    layer = item.currentLayer() if isinstance(item, QgsMapLayerComboBox) else item
     if layer and layer.isValid():
-        return layer.source().split("|layername")[0]
+        source = layer.source().split("|layername")[0]
+        if os.path.isfile(source):
+            return source
+        # for remote/non-filesystem layers return the full source as identifier
+        return layer.source()
     return ""
 
 
@@ -60,19 +66,12 @@ def valid_file_selected_in(combo_box, combobox_name=False):
         return False
 
 
-def get_layer_by_name(layer_name):
-    layer = QgsProject.instance().mapLayersByName(layer_name)
-    if layer:
-        return layer[0]
-
-
-def get_current_file_path_in(combo_box, show_message=True):
-    file_path = get_file_path_of_layer(combo_box.currentLayer())
-    if os.path.isfile(file_path):
-        return file_path
-    elif show_message:
-        iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid file", level=Qgis.MessageLevel.Warning, duration=10)
-    return None
+def get_loaded_layer(layer_path):
+    # return the loaded layer in Qgis that matches the file path
+    # whatever the name of the layer
+    for layer in QgsProject.instance().mapLayers().values():
+        if layer.source() == layer_path:
+            return layer
 
 
 def select_item_in(combo_box, item):
@@ -80,56 +79,107 @@ def select_item_in(combo_box, item):
     combo_box.setCurrentIndex(selected_index)
 
 
-def load_and_select_filepath_in(combo_box, file_path, layer_name=None):
-    if not file_path:
+def load_and_select_layer_in(source, combo_box, layer_name=None):
+    if not source:
         combo_box.setCurrentIndex(-1)
         return
-    if not layer_name:
-        layer_name = os.path.splitext(os.path.basename(file_path))[0]
-    layer = get_layer_by_name(layer_name)
-    # load
-    if not layer:
-        layer = load_layer(file_path, name=layer_name)
-        if not layer.isValid():
+    qgslayer = get_loaded_layer(source)
+    # try to load the layer if not already in QGIS
+    if qgslayer is None:
+        qgslayer = load_layer(source, name=layer_name)
+        if qgslayer is None or not qgslayer.isValid():
             return
-    # select the layer in the combobox
-    if isinstance(combo_box, QgsMapLayerComboBox):
-        combo_box.setLayer(layer)
-    else:
-        select_item_in(combo_box, layer_name)
-
-    return layer
-
-
-def add_layer(layer, add_to_legend=True):
-    QgsProject.instance().addMapLayer(layer, add_to_legend)
-
-
-def load_layer(file_path, name=None, add_to_legend=True):
-    # first unload layer from qgis if exists
-    unload_layer(file_path)
-
-    name = name or os.path.splitext(os.path.basename(file_path))[0]
-    # vector
-    qgslayer = QgsVectorLayer(file_path, name, "ogr")
-    if not qgslayer.isValid():
-        # raster
-        qgslayer = QgsRasterLayer(file_path, name, "gdal")
-
-    # load
-    if qgslayer.isValid():
-        add_layer(qgslayer, add_to_legend)
-    else:
-        iface.messageBar().pushMessage("AcATaMa", "Could not to load the layer \"{}\" no such file: \"{}\""
-                                       .format(name, file_path), level=Qgis.MessageLevel.Warning, duration=20)
+    # select the exact layer in combobox
+    combo_box.setLayer(qgslayer)
 
     return qgslayer
 
 
-def unload_layer(layer_path):
+RASTER_EXTENSIONS = (".tif", ".tiff", ".vrt", ".img", ".jp2", ".asc", ".nc", ".hdf", ".ecw", ".dt2")
+VECTOR_EXTENSIONS = (".shp", ".gpkg", ".geojson", ".json", ".kml", ".gml", ".csv", ".xlsx", ".ods", ".dxf", ".tab")
+
+
+def detect_provider(source):
+    """Detect the provider key and layer class from a file path or datasource URI."""
+    s = source.lower().strip()
+
+    # Local filesystem files (let QGIS auto-detect the best provider)
+    ext = os.path.splitext(s)[1]
+    if ext:
+        if ext in RASTER_EXTENSIONS:
+            return None, QgsRasterLayer
+        if ext in VECTOR_EXTENSIONS:
+            return None, QgsVectorLayer
+
+    # Google Earth Engine
+    if "type=xyz" in s and "url=https://earthengine.googleapis.com" in s:
+        if "EE" in QgsProviderRegistry.instance().providerList():
+            return "EE", QgsRasterLayer
+        else:
+            iface.messageBar().pushMessage("AcATaMa",
+                "Google Earth Engine plugin is required to load this layer, install and configure it.",
+                level=Qgis.MessageLevel.Warning, duration=20)
+            return None, None
+
+    # OGC services
+    if "type=xyz" in s or "provider=xyz" in s:
+        return "wms", QgsRasterLayer
+    if "service=wms" in s or "request=getmap" in s or "contextualwmslegend" in s or "contextualwmslegen" in s:
+        return "wms", QgsRasterLayer
+    if "service=wmts" in s or "tilematrixset" in s:
+        return "wms", QgsRasterLayer
+    if "service=wfs" in s or "typename=" in s or "provider=wfs" in s:
+        return "wfs", QgsVectorLayer
+    if "service=wcs" in s or "coverage=" in s or "coverageid=" in s:
+        return "wcs", QgsRasterLayer
+
+    # Databases
+    if s.startswith("postgresql://") or "provider=postgres" in s or (
+            "dbname=" in s and ("table=" in s or "schema=" in s)):
+        return "postgres", QgsVectorLayer
+    if "spatialite" in s or "provider=spatialite" in s or (
+            ".sqlite" in s and "table=" in s):
+        return "spatialite", QgsVectorLayer
+
+    # ArcGIS REST services
+    if "mapserver" in s or "arcgismapserver" in s:
+        return "arcgismapserver", QgsRasterLayer
+    if "featureserver" in s or "arcgisfeatureserver" in s:
+        return "arcgisfeatureserver", QgsVectorLayer
+
+    # Vector tile datasource URIs
+    if "provider=vectortile" in s or "type=vtpk" in s or "type=mbtiles" in s or "vectortile" in s:
+        return "vectortile", QgsVectorLayer
+
+    # Remote direct file URLs
+    if s.startswith("http://") or s.startswith("https://") or "url=http" in s:
+        if any(ext in s for ext in RASTER_EXTENSIONS):
+            return "gdal", QgsRasterLayer
+        if any(ext in s for ext in VECTOR_EXTENSIONS):
+            return "ogr", QgsVectorLayer
+        return "wms", QgsRasterLayer
+
+    return None, None
+
+
+def load_layer(source, name=None, add_to_legend=True):
+    """Load a layer from a file path or remote datasource URI and add it to the project."""
+    name = name or (os.path.splitext(os.path.basename(source))[0] if os.path.isfile(source) else "Remote Layer")
+
+    provider_key, layer_class = detect_provider(source)
+    layer = (layer_class(source, name, provider_key) if provider_key else layer_class(source, name)) if layer_class else None
+
+    if layer and layer.isValid():
+        QgsProject.instance().addMapLayer(layer, add_to_legend)
+        return layer
+
+    return None
+
+
+def unload_layer(source):
     layers_loaded = QgsProject.instance().mapLayers().values()
     for layer_loaded in layers_loaded:
-        if layer_path == get_file_path_of_layer(layer_loaded):
+        if source == get_source_from(layer_loaded):
             QgsProject.instance().removeMapLayer(layer_loaded.id())
 
 

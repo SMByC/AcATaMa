@@ -34,10 +34,9 @@ from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, Qgis
     QgsRectangle, QgsPointXY, QgsGeometry, QgsWkbTypes
 
 from AcATaMa.core.response_design import ResponseDesign
-from AcATaMa.utils.qgis_utils import valid_file_selected_in, get_current_file_path_in, \
-    load_and_select_filepath_in, get_symbology_table
+from AcATaMa.utils.qgis_utils import valid_file_selected_in, get_source_from, load_and_select_layer_in, get_symbology_table
 from AcATaMa.core.map import get_values_and_colors_table
-from AcATaMa.utils.system_utils import open_file, block_signals_to, error_handler
+from AcATaMa.utils.system_utils import open_file, error_handler
 from AcATaMa.gui.response_design_view_widget import LabelingViewWidget
 from AcATaMa.utils.others_utils import get_nodata_format, get_decimal_places
 
@@ -175,32 +174,15 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             for view_widget in ResponseDesignWindow.view_widgets:
                 if config_id == view_widget.id:
                     view_widget = ResponseDesignWindow.view_widgets[config_id]
-                    # select the file for this view widget if exists and is loaded in Qgis
+                    # select the layer for this view widget if exists and is loaded in Qgis
                     layer_name = view_config["layer_name"]
-                    if not layer_name and view_config["render_file_path"]:
-                        layer_name = os.path.splitext(os.path.basename(view_config["render_file_path"]))[0]
-                    file_index = view_widget.QCBox_RenderFile.findText(layer_name, Qt.MatchFlag.MatchFixedString)
-
-                    if file_index != -1:
-                        # select layer if exists in Qgis
-                        with block_signals_to(view_widget.QCBox_RenderFile):
-                            view_widget.QCBox_RenderFile.setCurrentIndex(file_index)
-                    elif view_config["render_file_path"] and os.path.isfile(view_config["render_file_path"]):
-                        # load file and select in view if this exists and not load in Qgis
-                        load_and_select_filepath_in(view_widget.QCBox_RenderFile, view_config["render_file_path"],
-                                                    layer_name=layer_name)
-                    elif view_config["render_file_path"] and not os.path.isfile(view_config["render_file_path"]):
-                        self.MsgBar.pushMessage(
-                            "Could not to load the layer '{}' in the view {}: no such file {}".format(
-                                layer_name,
-                                "'{}'".format(view_config["view_name"]) if view_config["view_name"] else view_widget.id + 1,
-                                view_config["render_file_path"]), level=Qgis.MessageLevel.Warning, duration=0)
-                    else:
-                        self.MsgBar.pushMessage(
-                            "Could not to load the layer '{}' in the view {} (for network layers use save/load a Qgis project)".format(
-                                layer_name,
-                                "'{}'".format(view_config["view_name"]) if view_config["view_name"] else view_widget.id + 1),
-                            level=Qgis.MessageLevel.Warning, duration=0)
+                    source_file = view_config["render_file_path"]
+                    if source_file:
+                        layer = load_and_select_layer_in(source_file, view_widget.QCBox_RenderFile, layer_name=layer_name)
+                        if not layer:
+                            view_name = "'{}'".format(view_config["view_name"]) if view_config["view_name"] else view_widget.id + 1
+                            msg = "Could not load the layer '{}' in the view {}: {}".format(layer_name, view_name, source_file)
+                            self.MsgBar.pushMessage(msg, level=Qgis.MessageLevel.Warning, duration=0)
                     # TODO: restore size by view widget
                     # view_widget.resize(*view_config["view_size"])
                     view_widget.QLabel_ViewName.setText(view_config["view_name"])
@@ -702,7 +684,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             view_widgets_config[view_widget.id] = \
                 {"view_name": view_widget.QLabel_ViewName.text(),
                  "layer_name": view_widget.QCBox_RenderFile.currentLayer().name() if view_widget.QCBox_RenderFile.currentLayer() else None,
-                 "render_file_path": get_current_file_path_in(view_widget.QCBox_RenderFile, show_message=False),
+                 "render_file_path": get_source_from(view_widget.QCBox_RenderFile),
                  # "view_size": (view_widget.size().width(), view_widget.size().height()),
                  "scale_factor": view_widget.current_scale_factor}
 

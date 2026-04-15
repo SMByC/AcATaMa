@@ -29,7 +29,7 @@ from qgis.core import QgsGeometry, QgsMapLayerProxyModel, QgsWkbTypes, QgsPoint
 from qgis.gui import QgsMapCanvas, QgsMapToolPan, QgsRubberBand, QgsVertexMarker
 from qgis.utils import iface
 
-from AcATaMa.utils.qgis_utils import load_and_select_filepath_in, StyleEditorDialog
+from AcATaMa.utils.qgis_utils import load_and_select_layer_in, StyleEditorDialog
 from AcATaMa.utils.system_utils import block_signals_to
 
 
@@ -258,7 +258,7 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
         file_path, _ = QFileDialog.getOpenFileName(self, dialog_title, "", file_filters)
         if file_path != '' and os.path.isfile(file_path):
             # load to qgis and update combobox list
-            load_and_select_filepath_in(combo_box, file_path)
+            load_and_select_layer_in(file_path, combo_box)
 
             self.set_render_layer(combo_box.currentLayer())
 

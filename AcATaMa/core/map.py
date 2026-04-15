@@ -110,8 +110,8 @@ def get_values_and_colors_table(layer, band=1, nodata=None):
 
 class Map(object):
     def __init__(self, file_selected_combo_box, band=1, nodata=None):
-        from AcATaMa.utils.qgis_utils import get_current_file_path_in
-        self.file_path = get_current_file_path_in(file_selected_combo_box)
+        from AcATaMa.utils.qgis_utils import get_source_from
+        self.file_path = get_source_from(file_selected_combo_box)
         self.qgs_layer = file_selected_combo_box.currentLayer()
         self.band = band
         self.nodata = nodata

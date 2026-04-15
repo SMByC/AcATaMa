@@ -31,7 +31,7 @@ from AcATaMa.core.sampling_design import do_simple_random_sampling, do_stratifie
 from AcATaMa.utils.sampling_utils import update_stratified_sampling_table, fill_stratified_sampling_table, \
     reload_StraRS_table
 from AcATaMa.gui.post_stratification_classes_dialog import PostStratificationClassesDialog
-from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_filepath_in, is_integer_data_type
+from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_layer_in, is_integer_data_type
 from AcATaMa.utils.system_utils import block_signals_to
 from AcATaMa.utils.others_utils import set_nodata_format, get_nodata_format, get_pixel_count_by_pixel_values, \
     get_decimal_places
@@ -220,7 +220,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         file_path, _ = QFileDialog.getOpenFileName(self, dialog_title, "", file_filters)
         if file_path != '' and os.path.isfile(file_path):
             # load to qgis and update combobox list
-            load_and_select_filepath_in(combo_box, file_path)
+            load_and_select_layer_in(file_path, combo_box)
 
     @pyqtSlot(str)
     def set_systematic_sampling_unit(self, systematic_sampling_unit):

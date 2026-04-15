@@ -28,7 +28,7 @@ from qgis.utils import iface
 from AcATaMa.core.map import Map
 from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.gui import accuracy_assessment_results
-from AcATaMa.utils.qgis_utils import get_file_path_of_layer
+from AcATaMa.utils.qgis_utils import get_source_from
 from AcATaMa.utils.system_utils import wait_process, output_file_is_OK, get_save_file_name
 from AcATaMa.utils.others_utils import get_nodata_format
 
@@ -233,10 +233,10 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
     def export_to_csv(self):
         # get file path to suggest where to save but not in tmp directory
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        file_path = get_file_path_of_layer(AcATaMa.dockwidget.QCBox_SamplingFile.currentLayer())
+        file_path = get_source_from(AcATaMa.dockwidget.QCBox_SamplingFile)
         path, filename = os.path.split(file_path)
         if AcATaMa.dockwidget.tmp_dir in path:
-            path = os.path.split(get_file_path_of_layer(AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer()))[0]
+            path = os.path.split(get_source_from(AcATaMa.dockwidget.QCBox_ThematicMap))[0]
         suggested_filename = os.path.splitext(os.path.join(path, filename))[0] + " - results.csv" if filename else "acatama results.csv"
 
         output_file = get_save_file_name(self, "Export accuracy assessment results to csv",
