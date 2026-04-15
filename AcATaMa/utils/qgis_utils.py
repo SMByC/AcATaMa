@@ -82,13 +82,13 @@ def select_item_in(combo_box, item):
 def load_and_select_layer_in(source, combo_box, layer_name=None):
     if not source:
         combo_box.setCurrentIndex(-1)
-        return
+        return True
     qgslayer = get_loaded_layer(source)
     # try to load the layer if not already in QGIS
     if qgslayer is None:
         qgslayer = load_layer(source, name=layer_name)
         if qgslayer is None or not qgslayer.isValid():
-            return
+            return False
     # select the exact layer in combobox
     combo_box.setLayer(qgslayer)
 
