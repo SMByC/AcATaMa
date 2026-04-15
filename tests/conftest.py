@@ -1,6 +1,7 @@
 import os
 import pytest
 from pathlib import Path
+from unittest.mock import MagicMock
 
 from qgis.testing import start_app
 
@@ -40,6 +41,10 @@ def unwrap():
 
 @pytest.fixture
 def restore_config_file(monkeypatch):
+    mock_iface = MagicMock()
+    monkeypatch.setattr("AcATaMa.core.config.iface", mock_iface)
+    monkeypatch.setattr("AcATaMa.utils.system_utils.iface", mock_iface)
+
     def _load_config_file(input_yml_path):
         config.restore(input_yml_path)
     return _load_config_file

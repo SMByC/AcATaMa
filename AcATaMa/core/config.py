@@ -34,7 +34,6 @@ from qgis.utils import iface
 from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.gui.response_design_window import ResponseDesignWindow
 from AcATaMa.gui.response_design_grid_settings import ResponseDesignGridSettings
-from AcATaMa.gui.post_stratification_classes_dialog import PostStratificationClassesDialog
 from AcATaMa.utils.system_utils import LegacyLoader, wait_process, block_signals_to
 from AcATaMa.utils.sampling_utils import fill_stratified_sampling_table
 from AcATaMa.utils.qgis_utils import get_source_from, load_and_select_layer_in, select_item_in
