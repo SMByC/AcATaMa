@@ -402,7 +402,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             config.save(self.suggested_yml_file)
             self.update_save_buttons_state()
             iface.messageBar().pushMessage("AcATaMa", "Configuration saved to '{}'".format(self.suggested_yml_file),
-                                           level=Qgis.MessageLevel.Success, duration=10)
+                                           level=Qgis.MessageLevel.Success, duration=5)
             return True
         else:
             # If no config file set, fall back to Save As dialog
@@ -416,11 +416,12 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
         if file_path != '' and os.path.isfile(file_path):
             # restore configuration and response design state
-            config.restore(file_path)
-            self.suggested_yml_file = file_path
-            self.update_save_buttons_state()
-            iface.messageBar().pushMessage("AcATaMa", "Configuration restored successfully",
-                                           level=Qgis.MessageLevel.Success, duration=10)
+            restore_status = config.restore(file_path)
+            if restore_status:
+                self.suggested_yml_file = file_path
+                self.update_save_buttons_state()
+                iface.messageBar().pushMessage("AcATaMa", "Configuration restored successfully",
+                                           level=Qgis.MessageLevel.Success, duration=5)
 
     @pyqtSlot()
     @error_handler
@@ -450,7 +451,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
             self.suggested_yml_file = output_file
             self.update_save_buttons_state()
             iface.messageBar().pushMessage("AcATaMa", "Configuration file saved successfully in '{}'".format(output_file),
-                                           level=Qgis.MessageLevel.Success, duration=10)
+                                           level=Qgis.MessageLevel.Success, duration=5)
             return True
         return False
 
@@ -459,7 +460,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
     def file_dialog_save_sampling_labeled(self):
         if not valid_file_selected_in(self.QCBox_SamplingFile):
             iface.messageBar().pushMessage("AcATaMa", "Error, please first select a sampling file",
-                                           level=Qgis.MessageLevel.Warning, duration=10)
+                                           level=Qgis.MessageLevel.Warning, duration=5)
             return
         # get instance
         sampling_layer = self.QCBox_SamplingFile.currentLayer()
@@ -476,7 +477,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         else:
             iface.messageBar().pushMessage("AcATaMa",
                                            "Error, the response design for the sampling selected has not been initiated",
-                                           level=Qgis.MessageLevel.Warning, duration=10)
+                                           level=Qgis.MessageLevel.Warning, duration=5)
             return
         # get file path to suggest where to save but not in tmp directory
         file_path = get_source_from(self.QCBox_SamplingFile)
@@ -489,7 +490,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
 
         if output_file_is_OK(output_file):
             response_design.save_sampling_labeled(output_file)
-            iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=Qgis.MessageLevel.Success, duration=10)
+            iface.messageBar().pushMessage("AcATaMa", "File saved successfully", level=Qgis.MessageLevel.Success, duration=5)
 
     @pyqtSlot()
     @error_handler
@@ -542,7 +543,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         sampling_layer = self.QCBox_SamplingFile.currentLayer()
         if not sampling_layer:
             iface.messageBar().pushMessage("AcATaMa", "Error, please select a valid sampling file.",
-                                           level=Qgis.MessageLevel.Warning, duration=10)
+                                           level=Qgis.MessageLevel.Warning, duration=5)
             return
 
         # only open the response_design_grid_settings dialog the first time

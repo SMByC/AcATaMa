@@ -153,7 +153,7 @@ class ResponseDesign(object):
         # check if sampling has not changed
         if modified == 0 and added == 0 and removed == 0:
             iface.messageBar().pushMessage("AcATaMa", "The sampling file has not detected changes",
-                                           level=Qgis.MessageLevel.Success, duration=10)
+                                           level=Qgis.MessageLevel.Success, duration=5)
             return False
         # reassign points
         self.points = points_from_shapefile

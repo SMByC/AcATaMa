@@ -198,7 +198,7 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
         if self.analysis.response_design.total_labeled == 0:
             iface.messageBar().pushMessage("AcATaMa",
                                            "The accuracy assessment needs at least one sample labeled",
-                                           level=Qgis.MessageLevel.Warning, duration=10)
+                                           level=Qgis.MessageLevel.Warning, duration=5)
             return
 
         AccuracyAssessmentWindow.is_opened = True
@@ -228,7 +228,7 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
         if msg_bar:
             self.MsgBar.pushMessage(
                 "Reload successfully from response design state for \"{}\"".format(
-                    AcATaMa.dockwidget.QCBox_SamplingFile.currentText()), level=Qgis.MessageLevel.Success, duration=10)
+                    AcATaMa.dockwidget.QCBox_SamplingFile.currentText()), level=Qgis.MessageLevel.Success, duration=5)
 
     def export_to_csv(self):
         # get file path to suggest where to save but not in tmp directory
@@ -248,7 +248,7 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
                                                           self.analysis.csv_separator,
                                                           self.analysis.csv_decimal)
                 self.MsgBar.pushMessage(
-                    "File saved successfully \"{}\"".format(os.path.basename(output_file)), level=Qgis.MessageLevel.Success, duration=10)
+                    "File saved successfully \"{}\"".format(os.path.basename(output_file)), level=Qgis.MessageLevel.Success, duration=5)
             except Exception as err:
                 self.MsgBar.pushMessage(
                     "Failed saving the csv file: {}".format(err), level=Qgis.MessageLevel.Critical, duration=10)

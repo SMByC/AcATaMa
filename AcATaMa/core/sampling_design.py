@@ -160,6 +160,10 @@ def simple_random_sampling_finished(exception, result=None):
 
     # select the sampling file generated in respond design and analysis tab
     sampling_layer_generated = load_and_select_layer_in(sampling.output_file, AcATaMa.dockwidget.QCBox_SamplingFile)
+    if not sampling_layer_generated:
+        sampling_design.MsgBar.pushMessage("Failed to load the generated sampling file: {}".format(sampling.output_file),
+                                           level=Qgis.MessageLevel.Critical, duration=20)
+        return
     if sampling_layer_generated not in ResponseDesign.instances:
         ResponseDesign(sampling_layer_generated)
     AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(-1)
@@ -332,6 +336,10 @@ def stratified_random_sampling_finished(exception, result=None):
 
     # select the sampling file generated in respond design and analysis tab
     sampling_layer_generated = load_and_select_layer_in(sampling.output_file, AcATaMa.dockwidget.QCBox_SamplingFile)
+    if not sampling_layer_generated:
+        sampling_design.MsgBar.pushMessage("Failed to load the generated sampling file: {}".format(sampling.output_file),
+                                           level=Qgis.MessageLevel.Critical, duration=20)
+        return
     if sampling_layer_generated not in ResponseDesign.instances:
         ResponseDesign(sampling_layer_generated)
     AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(-1)
@@ -511,6 +519,10 @@ def systematic_sampling_finished(exception, result=None):
 
     # select the sampling file generated in respond design and analysis tab
     sampling_layer_generated = load_and_select_layer_in(sampling.output_file, AcATaMa.dockwidget.QCBox_SamplingFile)
+    if not sampling_layer_generated:
+        sampling_design.MsgBar.pushMessage("Failed to load the generated sampling file: {}".format(sampling.output_file),
+                                           level=Qgis.MessageLevel.Critical, duration=20)
+        return
     if sampling_layer_generated not in ResponseDesign.instances:
         ResponseDesign(sampling_layer_generated)
     AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(-1)
