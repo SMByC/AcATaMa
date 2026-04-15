@@ -618,7 +618,7 @@ It set automatically from image if the layer has the nodata value set.</string>
        <item>
         <widget class="QPushButton" name="QPBtn_RestoreAcatamaConfig">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Restore configuration&lt;/span&gt;&lt;br/&gt;Restore a previous AcATaMa configuration from a YAML file.&lt;/p&gt;&lt;p&gt;It is recommended to &lt;span style=&quot; font-style:italic;&quot;&gt;Clear/Reload&lt;/span&gt; the plugin and (optional) restore the Qgis project before restore an AcATaMa configuration.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Restore configuration&lt;/span&gt;&lt;br/&gt;Restore a previous AcATaMa configuration from a YAML file.&lt;/p&gt;&lt;p&gt;It is recommended to &lt;span style=&quot; font-style:italic;&quot;&gt;Clear/Reload&lt;/span&gt; the plugin before.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
           <string>Restore</string>
@@ -635,7 +635,7 @@ It set automatically from image if the layer has the nodata value set.</string>
        <item>
         <widget class="QPushButton" name="QPBtn_SaveAcatamaConfig">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Overwrite current file&lt;/span&gt;&lt;br/&gt;Save the current AcATaMa configuration to a YAML file for later restoration.&lt;/p&gt;&lt;p&gt;(Optional) Save the Qgis project along with this configuration file when using remote/network layers.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Overwrite current file&lt;/span&gt;&lt;br/&gt;Save the current AcATaMa configuration to a YAML file for later restoration.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
           <string>Save</string>

@@ -379,15 +379,13 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
                 "<html><head/><body><p><span style='font-weight:600;'>Overwrite config file</span><br/>"
                 "Save the current AcATaMa configuration to a YAML file for later restoration."
                 "</p><p><b>Current file:</b> {}{}"
-                "</p><p>(Optional) Also save the QGIS project when using remote/network layers.</p>"
-                "</body></html>"
+                "</p></body></html>"
             ).format(escape(self.suggested_yml_file), escape(saved_suffix))
         else:
             tooltip = (
                 "<html><head/><body><p><span style='font-weight:600;'>Set up the config file</span><br/>"
                 "Save the current AcATaMa configuration to a YAML file for later restoration."
-                "</p><p>(Optional) Also save the QGIS project when using remote/network layers.</p>"
-                "</body></html>"
+                "</p></body></html>"
             )
         self.QPBtn_SaveAcatamaConfig.setToolTip(tooltip)
 
