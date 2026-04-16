@@ -413,19 +413,21 @@ def get_epsilon(for_crs):
     """
     Determines a small epsilon value based on the distance unit of the given CRS.
     """
-    # Get the unit type of the CRS
-    unit = QgsUnitTypes.toAbbreviatedString(for_crs.mapUnits())
+    unit = for_crs.mapUnits()
 
-    # Define epsilon values for different units
     epsilon_values = {
-        "m": 1e-6,  # Meters (UTM, projected systems)
-        "km": 1e-9,  # Kilometers
-        "ft": 1e-5,  # Feet (imperial units)
-        "mi": 1e-8,  # Miles
-        "deg": 1e-10,  # Degrees (Geographic CRS like EPSG:4326)
+        QgsUnitTypes.DistanceUnit.DistanceMeters: 1e-6,       # Meters (UTM, projected systems)
+        QgsUnitTypes.DistanceUnit.DistanceKilometers: 1e-9,   # Kilometers
+        QgsUnitTypes.DistanceUnit.DistanceFeet: 1e-5,         # Feet (imperial units)
+        QgsUnitTypes.DistanceUnit.DistanceYards: 1e-5,        # Yards
+        QgsUnitTypes.DistanceUnit.DistanceMiles: 1e-8,        # Miles
+        QgsUnitTypes.DistanceUnit.DistanceNauticalMiles: 1e-8,  # Nautical miles
+        QgsUnitTypes.DistanceUnit.DistanceCentimeters: 1e-4,  # Centimeters
+        QgsUnitTypes.DistanceUnit.DistanceMillimeters: 1e-3,  # Millimeters
+        QgsUnitTypes.DistanceUnit.DistanceDegrees: 1e-10,     # Degrees (Geographic CRS like EPSG:4326)
     }
 
-    # Default to meters if unit not found
+    # Default to meters epsilon if unit not found
     return epsilon_values.get(unit, 1e-6)
 
 # --------------------------------------------------------------------------
@@ -435,17 +437,18 @@ def get_decimal_places(for_crs):
     """
     Determines an appropriate number of decimal places for distances based on CRS units.
     """
-    # Get the unit type of the CRS
-    unit = QgsUnitTypes.toAbbreviatedString(for_crs.mapUnits())
+    unit = for_crs.mapUnits()
 
-    # Define decimal precision based on distance units
     decimal_places = {
-        "m": 1,    # Meters (e.g., 10.1 m)
-        "km": 4,   # Kilometers (e.g., 0.0001 km = 0.1 m)
-        "ft": 1,   # Feet (e.g., 10.1 ft)
-        "mi": 4,   # Miles (e.g., 0.0001 mi ≈ 0.16 m)
-        "yd": 2,   # Yards (e.g., 10.01 yd)
-        "deg": 6,  # Degrees (Geographic CRS, e.g., 0.000001° ≈ 0.11 m at equator)
+        QgsUnitTypes.DistanceUnit.DistanceMeters: 1,         # Meters (e.g., 10.1 m)
+        QgsUnitTypes.DistanceUnit.DistanceKilometers: 4,     # Kilometers (e.g., 0.0001 km = 0.1 m)
+        QgsUnitTypes.DistanceUnit.DistanceFeet: 1,           # Feet (e.g., 10.1 ft)
+        QgsUnitTypes.DistanceUnit.DistanceYards: 1,          # Yards (e.g., 10.1 yd)
+        QgsUnitTypes.DistanceUnit.DistanceMiles: 4,          # Miles (e.g., 0.0001 mi ≈ 0.16 m)
+        QgsUnitTypes.DistanceUnit.DistanceNauticalMiles: 4,  # Nautical miles
+        QgsUnitTypes.DistanceUnit.DistanceCentimeters: 0,    # Centimeters (integer precision is fine)
+        QgsUnitTypes.DistanceUnit.DistanceMillimeters: 0,    # Millimeters (integer precision is fine)
+        QgsUnitTypes.DistanceUnit.DistanceDegrees: 6,        # Degrees (Geographic CRS, e.g., 0.000001° ≈ 0.11 m at equator)
     }
 
     # Default to 1 decimal place if unit is unknown
