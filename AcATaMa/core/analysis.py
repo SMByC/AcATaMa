@@ -57,6 +57,7 @@ class Analysis(object):
         self.z_score = 1.96
         self.csv_separator = ";"
         self.csv_decimal = "."
+
         # define the base area unit based on the thematic map distance unit
         self.dist_unit = self.thematic_map.qgs_layer.crs().mapUnits()
         if self.dist_unit == QgsUnitTypes.DistanceUnit.DistanceUnknownUnit:
@@ -144,9 +145,11 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
         QDialog.__init__(self)
         self.setupUi(self)
         # dialog buttons box
-        self.DialogButtons.rejected.connect(self.closing)
         self.DialogButtons.button(QDialogButtonBox.StandardButton.Save).setText("Export to CSV")
         self.DialogButtons.button(QDialogButtonBox.StandardButton.Save).clicked.connect(self.export_to_csv)
+        self.DialogButtons.button(QDialogButtonBox.StandardButton.Close).setDefault(True)
+
+        self.settingsWidget.setVisible(False)
 
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile.currentLayer()
@@ -161,8 +164,8 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
                     self.analysis = response_design.analysis
                     # restore config to window
                     self.z_score.setValue(self.analysis.z_score)
-                    self.CSV_separator.setText(self.analysis.csv_separator)
-                    self.CSV_decimal_sep.setText(self.analysis.csv_decimal)
+                    self.csvSeparator.setText(self.analysis.csv_separator)
+                    self.csvDecimal.setText(self.analysis.csv_decimal)
                 else:
                     self.analysis = Analysis(response_design)
                     response_design.analysis = self.analysis
@@ -170,6 +173,8 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
         # fill the area units
         self.area_unit.clear()
         for area_unit in sorted(QgsUnitTypes.AreaUnit, key=lambda x: x.value):
+            if area_unit == QgsUnitTypes.AreaUnit.AreaUnknownUnit:
+                continue
             self.area_unit.addItem("{} ({})".format(QgsUnitTypes.toString(area_unit),
                                                     QgsUnitTypes.toAbbreviatedString(area_unit)))
         # set the area unit saved or based on the sampling file by default
@@ -188,8 +193,8 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
 
         self.area_unit.currentIndexChanged.connect(lambda: self.reload(msg_bar=False))
         self.z_score.valueChanged.connect(lambda: self.reload(msg_bar=False))
-        self.CSV_separator.textChanged.connect(lambda value: setattr(self.analysis, "csv_separator", value))
-        self.CSV_decimal_sep.textChanged.connect(lambda value: setattr(self.analysis, "csv_decimal", value))
+        self.csvSeparator.textChanged.connect(lambda value: setattr(self.analysis, "csv_separator", value))
+        self.csvDecimal.textChanged.connect(lambda value: setattr(self.analysis, "csv_decimal", value))
         self.reloadButton.clicked.connect(lambda: self.reload(msg_bar=True))
 
     def show(self):

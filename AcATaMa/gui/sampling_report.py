@@ -19,13 +19,16 @@
  ***************************************************************************/
 """
 import os
+import csv
 import numpy as np
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QDialog
-from qgis.core import QgsUnitTypes
+from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox
+from qgis.core import Qgis, QgsUnitTypes
 
 from AcATaMa.core.map import get_values_and_colors_table
+from AcATaMa.utils.qgis_utils import get_source_from
+from AcATaMa.utils.system_utils import output_file_is_OK, get_save_file_name
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
@@ -82,16 +85,33 @@ class SamplingReport(QDialog, FORM_CLASS):
         self.sampling_layer = sampling_layer
         self.sampling = sampling
         self.sampling_conf = sampling_conf
-        # fill the area units
+        # CSV export settings (defaults match the csvSeparator/csvDecimal fields in the ui)
+        self.settingsWidget.setVisible(False)
+        self.csv_separator = self.csvSeparator.text() or ";"
+        self.csv_decimal = self.csvDecimal.text() or "."
+        self.csvSeparator.textChanged.connect(lambda value: setattr(self, "csv_separator", value))
+        self.csvDecimal.textChanged.connect(lambda value: setattr(self, "csv_decimal", value))
+        # dialog buttons box: rename Save button and wire it to the CSV export
+        self.DialogButtons.button(QDialogButtonBox.StandardButton.Save).setText("Export to CSV")
+        self.DialogButtons.button(QDialogButtonBox.StandardButton.Save).clicked.connect(self.export_to_csv)
+        self.DialogButtons.button(QDialogButtonBox.StandardButton.Close).setDefault(True)
+        # fill the area units (available both for fresh samplings and for
+        # reports restored from a yaml configuration; in the restored case
+        # we can no longer recompute from the raster, but we can still
+        # convert the stored area values between units with a factor)
+        self.area_unit.clear()
+        for area_unit in sorted(QgsUnitTypes.AreaUnit, key=lambda x: x.value):
+            if area_unit == QgsUnitTypes.AreaUnit.AreaUnknownUnit:
+                continue
+            self.area_unit.addItem("{} ({})".format(QgsUnitTypes.toString(area_unit),
+                                                    QgsUnitTypes.toAbbreviatedString(area_unit)))
+        self.area_unit.blockSignals(True)
         if sampling:
-            self.area_unit.clear()
-            for area_unit in sorted(QgsUnitTypes.AreaUnit, key=lambda x: x.value):
-                self.area_unit.addItem("{} ({})".format(QgsUnitTypes.toString(area_unit),
-                                                        QgsUnitTypes.toAbbreviatedString(area_unit)))
-            self.area_unit.currentIndexChanged.connect(self.reload)
             self.area_unit.setCurrentIndex(QgsUnitTypes.distanceToAreaUnit(sampling_layer.crs().mapUnits()))
-        else:
-            self.area_unit.hide()
+        elif report is not None:
+            self.area_unit.setCurrentIndex(report["general"]["area_unit"])
+        self.area_unit.blockSignals(False)
+        self.area_unit.currentIndexChanged.connect(self.reload)
 
         if report is not None:
             self.report = report
@@ -182,9 +202,22 @@ class SamplingReport(QDialog, FORM_CLASS):
         super(SamplingReport, self).show()
 
     def reload(self):
-        if not self.sampling:
-            return
-        self.generate_sampling_report()
+        if self.sampling:
+            # fresh sampling: recompute everything from the map layers
+            self.generate_sampling_report()
+        else:
+            # report restored from yaml: the map layers are not available,
+            # so convert the already-computed total_area values using the
+            # unit factor, then update the report's stored area_unit
+            old_area_unit = QgsUnitTypes.AreaUnit(self.report["general"]["area_unit"])
+            new_area_unit_index = self.area_unit.currentIndex()
+            new_area_unit = QgsUnitTypes.AreaUnit(new_area_unit_index)
+            factor = QgsUnitTypes.fromUnitToUnitFactor(old_area_unit, new_area_unit)
+            for table_key in ("thematic_map", "sampling_map", "post_stratification"):
+                table = self.report["samples"].get(table_key)
+                if table:
+                    table["total_area"] = [v * factor for v in table["total_area"]]
+            self.report["general"]["area_unit"] = new_area_unit_index
         self.sampling_report.setHtml(self.get_html())
         self.sampling_report.setOpenExternalLinks(True)
 
@@ -455,12 +488,6 @@ class SamplingReport(QDialog, FORM_CLASS):
 
         ### warning boxes
 
-        html += """
-            <br/>
-            <p style="font-size: 80%; color: #3b3b3b">
-            ---------</p>
-        """
-
         # simple num samples mismatch
         if self.sampling_conf is not None and self.report["general"]["sampling_type"] == "simple":
             desired_num_samples = self.sampling_conf["total_of_samples"]
@@ -471,12 +498,12 @@ class SamplingReport(QDialog, FORM_CLASS):
                     <div style="background-color: #fffff3; font-size: 80%">
                         <p style="font-size: 80%; color: #3b3b3b">
                         <span style="font-weight: bold;">Warning: Desired/actual sample count mismatch!</span><br>
-                        The number of samples generated does not match the user’s desired number of samples. This is 
-                        generally acceptable, as the actual number may be smaller than the target due to the sampling 
-                        method and certain restrictions in the sampling conditions. However, if the discrepancy is 
+                        The number of samples generated does not match the user’s desired number of samples. This is
+                        generally acceptable, as the actual number may be smaller than the target due to the sampling
+                        method and certain restrictions in the sampling conditions. However, if the discrepancy is
                         significantly large, please review the sampling design options.
                         </p>
-                        
+
                         <table>
                             <tr>
                                 <th>Desired Samples</th>
@@ -507,12 +534,12 @@ class SamplingReport(QDialog, FORM_CLASS):
                     <div style="background-color: #fffff3; font-size: 80%">
                         <p style="font-size: 80%; color: #3b3b3b">
                         <span style="font-weight: bold;">Warning: Desired/actual sample count mismatch!</span><br>
-                        The number of samples generated does not match the user’s desired number of samples. This is 
-                        generally acceptable, as the actual number may be smaller than the target due to the sampling 
-                        method and certain restrictions in the sampling conditions. However, if the discrepancy is 
+                        The number of samples generated does not match the user’s desired number of samples. This is
+                        generally acceptable, as the actual number may be smaller than the target due to the sampling
+                        method and certain restrictions in the sampling conditions. However, if the discrepancy is
                         significantly large, please review the sampling design options.
                         </p>
-                        
+
                         <table>
                             <tr>
                                 <th>Pix Val</th>
@@ -566,11 +593,11 @@ class SamplingReport(QDialog, FORM_CLASS):
                     <div style="background-color: #fffff3;">
                         <p style="font-size: 80%; color: #3b3b3b">
                         <span style="font-weight: bold;">Warning: Check minimum samples in strata!</span><br>
-                        Using stratified or post-stratified sampling for map data analysis, land use/land cover 
-                        classification and similar topics, a minimum sample size of 30 (Van Genderen et al., 1978) or 
-                        50 (Stehman & Foody, 2019; Hay, 1979) per evaluated stratum is generally recommended to ensure 
-                        statistical significance. However, determining the optimal minimum sample size requires 
-                        consideration of several factors such as data type, the specific research objectives, and the 
+                        Using stratified or post-stratified sampling for map data analysis, land use/land cover
+                        classification and similar topics, a minimum sample size of 30 (Van Genderen et al., 1978) or
+                        50 (Stehman & Foody, 2019; Hay, 1979) per evaluated stratum is generally recommended to ensure
+                        statistical significance. However, determining the optimal minimum sample size requires
+                        consideration of several factors such as data type, the specific research objectives, and the
                         desired level of precision.
                         </p>
                     </div>
@@ -582,8 +609,164 @@ class SamplingReport(QDialog, FORM_CLASS):
 
         return html
 
-    def export_report(self):
-        pass
+    def _build_csv_rows(self):
+        """
+        Build the list of CSV rows directly from the structured report data.
+        This avoids any HTML parsing: the html representation and the csv
+        export share the same source (self.report), so they stay in sync.
+        """
+        sampling_type_label = {"simple": "Simple random sampling",
+                               "stratified": "Stratified random sampling",
+                               "systematic": "Systematic random sampling"}
+
+        general = self.report["general"]
+        samples = self.report["samples"]
+        area_unit_abbr = QgsUnitTypes.toAbbreviatedString(QgsUnitTypes.AreaUnit(general["area_unit"]))
+
+        rows = []
+        rows.append(["Sampling Report"])
+        rows.append([])
+
+        # --- General ---
+        rows.append(["General"])
+        rows.append(["Sampling Layer", general["sampling_layer"]])
+        rows.append(["Thematic Map", general["thematic_map"]])
+        if general["sampling_map"]:
+            rows.append(["Sampling Map", general["sampling_map"]])
+        rows.append(["Sampling Type", sampling_type_label.get(general["sampling_type"], general["sampling_type"])])
+        if general["sampling_type"] == "stratified" and general["stratified_method"]:
+            rows.append(["Stratified method", general["stratified_method"].capitalize()])
+        rows.append(["Total of Samples", general["total_of_samples"]])
+        if general["sampling_type"] == "systematic":
+            rows.append(["Points Spacing (XY)", general["points_spacing"]])
+            rows.append(["Initial Inset", general["initial_inset"]])
+            rows.append(["Max XY Offset", general["max_xy_offset"]])
+        if general["sampling_type"] in ["simple", "systematic"]:
+            rows.append(["Post-Stratification Map", general["post_stratification_map"]])
+            post_classes = general["post_stratification_classes"]
+            rows.append(["Post-Stratification Classes",
+                         ", ".join([str(x) for x in post_classes]) if post_classes else None])
+        if general["sampling_type"] in ["simple", "stratified"]:
+            rows.append(["Min Distance", general["min_distance"]])
+        neighbor_aggregation = general["neighbor_aggregation"]
+        rows.append(["Neighbor Aggregation",
+                     "{}/{}".format(neighbor_aggregation[1], neighbor_aggregation[0]) if neighbor_aggregation else None])
+        rows.append(["Random Seed", general["random_seed"]])
+        rows.append([])
+
+        def _distribution_rows(title, table, samples_not_in_map_key, not_in_map_label,
+                               include_color=True):
+            rows.append([title])
+            header = ["Pix Val"]
+            if include_color:
+                header.append("Color (RGBA)")
+            header += ["Num Samples", "Total Pixels", "Total Area ({})".format(area_unit_abbr)]
+            rows.append(header)
+            for i, pix_val in enumerate(table["pix_val"]):
+                row = [pix_val]
+                if include_color:
+                    rgba = table["color"][i]
+                    row.append("rgba({}, {}, {}, {})".format(rgba[0], rgba[1], rgba[2], rgba[3]))
+                row += [table["num_samples"][i],
+                        table["total_pixels"][i],
+                        rf(table["total_area"][i])]
+                rows.append(row)
+            not_in_map = samples[samples_not_in_map_key]
+            if not_in_map is not None and not_in_map > 0:
+                rows.append([])
+                rows.append([not_in_map_label, not_in_map])
+                rows.append(["(Samples in no-data or outside)"])
+            rows.append([])
+
+        # --- Distribution of samples on the thematic map ---
+        _distribution_rows("Distribution of samples on the thematic map",
+                           samples["thematic_map"],
+                           "samples_not_in_thematic_map",
+                           "Samples not in the thematic map",
+                           include_color=False)
+
+        # --- Distribution of samples on the sampling map ---
+        if samples["sampling_map"]:
+            _distribution_rows("Distribution of samples on the sampling map",
+                               samples["sampling_map"],
+                               "samples_not_in_sampling_map",
+                               "Samples not in the sampling map")
+
+        # --- Distribution of samples on the post-stratification map ---
+        if samples["post_stratification"]:
+            _distribution_rows("Distribution of samples on the post-stratification map",
+                               samples["post_stratification"],
+                               "samples_not_in_post_stratification",
+                               "Samples not in the post-stratification map")
+
+        # --- Desired/actual sample count mismatch warnings ---
+        if self.sampling_conf is not None and general["sampling_type"] == "simple":
+            desired = self.sampling_conf["total_of_samples"]
+            actual = sum(samples["thematic_map"]["num_samples"])
+            if desired != actual:
+                rows.append(["Warning: Desired/actual sample count mismatch"])
+                rows.append(["Desired Samples", "Actual Samples", "Difference"])
+                rows.append([desired, actual, desired - actual])
+                rows.append([])
+
+        if self.sampling_conf is not None and general["sampling_type"] == "stratified":
+            desired_per_stratum = self.sampling_conf["total_of_samples"]
+            actual_per_stratum = samples["thematic_map"]["num_samples"]
+            if sum(desired_per_stratum) != sum(actual_per_stratum):
+                rows.append(["Warning: Desired/actual sample count mismatch (per stratum)"])
+                rows.append(["Pix Val", "Desired Samples", "Actual Samples", "Difference"])
+                for i, pix_val in enumerate(samples["thematic_map"]["pix_val"]):
+                    rows.append([pix_val,
+                                 desired_per_stratum[i],
+                                 actual_per_stratum[i],
+                                 desired_per_stratum[i] - actual_per_stratum[i]])
+                rows.append([])
+
+        return rows
+
+    def export_to_csv(self):
+        # build a suggested file path based on the sampling file location,
+        # falling back to the thematic map folder if the sampling file lives in tmp
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+        file_path = get_source_from(AcATaMa.dockwidget.QCBox_SamplingFile)
+        path, filename = os.path.split(file_path) if file_path else ("", "")
+        if file_path and AcATaMa.dockwidget.tmp_dir in path:
+            path = os.path.split(get_source_from(AcATaMa.dockwidget.QCBox_ThematicMap))[0]
+        suggested_filename = (os.path.splitext(os.path.join(path, filename))[0] + " - sampling report.csv"
+                              if filename else "acatama sampling report.csv")
+
+        output_file = get_save_file_name(self, "Export sampling report to csv",
+                                         suggested_filename, "CSV files (*.csv);;All files (*.*)")
+
+        if not output_file_is_OK(output_file):
+            return
+
+        try:
+            csv_rows = self._build_csv_rows()
+            # normalize cell values: None -> "None", and apply the decimal
+            # separator only inside float values (keeping the column
+            # delimiter untouched)
+            normalized_rows = []
+            for row in csv_rows:
+                normalized_row = []
+                for item in row:
+                    if item is None:
+                        normalized_row.append("None")
+                    elif isinstance(item, float) and self.csv_decimal != ".":
+                        normalized_row.append(str(item).replace('.', self.csv_decimal))
+                    else:
+                        normalized_row.append(item)
+                normalized_rows.append(normalized_row)
+            with open(output_file, 'w', newline='') as csvfile:
+                csv_w = csv.writer(csvfile, delimiter=str(self.csv_separator))
+                csv_w.writerows(normalized_rows)
+            self.MsgBar.pushMessage(
+                "File saved successfully \"{}\"".format(os.path.basename(output_file)),
+                level=Qgis.MessageLevel.Success, duration=5)
+        except Exception as err:
+            self.MsgBar.pushMessage(
+                "Failed saving the csv file: {}".format(err),
+                level=Qgis.MessageLevel.Critical, duration=10)
 
     def closeEvent(self, event):
         SamplingReport.instance_opened = False
