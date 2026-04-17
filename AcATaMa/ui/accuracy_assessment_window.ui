@@ -257,7 +257,7 @@
          </sizepolicy>
         </property>
         <property name="toolTip">
-         <string>Set up the CSV file format for export</string>
+         <string>More options</string>
         </property>
         <property name="text">
          <string/>
