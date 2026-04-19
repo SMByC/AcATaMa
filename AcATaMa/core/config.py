@@ -376,15 +376,15 @@ def restore(yml_file_path):
                 yaml_config["sampling_design"]["stratified_random_sampling"].pop("categ_map_nodata")
 
     # restore the thematic map
-    if yaml_config["thematic_map"]["path"]:
+    if yaml_config["thematic_map"]["path"] and get_restore_path(yaml_config["thematic_map"]["path"]):
         # thematic map
-        load_status = load_and_select_layer_in(get_restore_path(yaml_config["thematic_map"]["path"]),
-                                               AcATaMa.dockwidget.QCBox_ThematicMap)
-        if not load_status:
-            iface.messageBar().pushMessage("AcATaMa", f"Failed to restore thematic map: {get_restore_path(yaml_config['thematic_map']['path'])}",
+        source = get_restore_path(yaml_config["thematic_map"]["path"])
+        thematic_qgslayer = load_and_select_layer_in(source, AcATaMa.dockwidget.QCBox_ThematicMap)
+        if not thematic_qgslayer:
+            iface.messageBar().pushMessage("AcATaMa", f"Failed to restore thematic map: {source}",
                                            level=Qgis.MessageLevel.Critical)
             return
-        AcATaMa.dockwidget.select_thematic_map(AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer())
+        AcATaMa.dockwidget.select_thematic_map(thematic_qgslayer)
         # band number
         if "band" in yaml_config["thematic_map"]:
             AcATaMa.dockwidget.QCBox_band_ThematicMap.setCurrentIndex(yaml_config["thematic_map"]["band"] - 1)
@@ -418,11 +418,10 @@ def restore(yml_file_path):
             yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification'])
         sampling_design.widget_SimpRSwithPS.setVisible(
             yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification'])
-        load_status = load_and_select_layer_in(get_restore_path(yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification_map_path']),
-                                               sampling_design.QCBox_PostStratMap_SimpRS)
-        if not load_status:
-            iface.messageBar().pushMessage("AcATaMa", f"Failed to restore post-stratification map (simple random sampling): "
-                                           f"{get_restore_path(yaml_config['sampling_design']['simple_random_sampling']['post_stratification_map_path'])}",
+        source = get_restore_path(yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification_map_path'])
+        thematic_qgslayer = load_and_select_layer_in(source, sampling_design.QCBox_PostStratMap_SimpRS)
+        if source and not thematic_qgslayer:
+            iface.messageBar().pushMessage(f"AcATaMa", f"Failed to restore post-stratification map (simple random sampling): {source}",
                                            level=Qgis.MessageLevel.Warning)
         sampling_design.update_post_stratification_map_SimpRS(item_changed="layer")
         sampling_design.QCBox_band_PostStratMap_SimpRS.setCurrentIndex(
@@ -456,11 +455,10 @@ def restore(yml_file_path):
             yaml_config["sampling_design"]["simple_random_sampling"]['random_seed_by_user'])
 
         # stratified random sampling
-        load_status = load_and_select_layer_in(get_restore_path(yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_path']),
-                                               sampling_design.QCBox_SamplingMap_StraRS)
-        if not load_status:
-            iface.messageBar().pushMessage("AcATaMa", f"Failed to restore stratification map (stratified random sampling): "
-                                           f"{get_restore_path(yaml_config['sampling_design']['stratified_random_sampling']['stratification_map_path'])}",
+        source = get_restore_path(yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_path'])
+        thematic_qgslayer = load_and_select_layer_in(source, sampling_design.QCBox_SamplingMap_StraRS)
+        if source and not thematic_qgslayer:
+            iface.messageBar().pushMessage(f"AcATaMa", f"Failed to restore stratification map (stratified random sampling): {source}",
                                            level=Qgis.MessageLevel.Warning)
         sampling_design.update_sampling_map_StraRS(sampling_design.QCBox_SamplingMap_StraRS.currentLayer())
         sampling_design.QCBox_band_SamplingMap_StraRS.setCurrentIndex(
@@ -563,11 +561,10 @@ def restore(yml_file_path):
                 yaml_config["sampling_design"]["systematic_sampling"]['post_stratification'])
             sampling_design.widget_SystSwithPS.setVisible(
                 yaml_config["sampling_design"]["systematic_sampling"]['post_stratification'])
-            load_status = load_and_select_layer_in(get_restore_path(yaml_config["sampling_design"]["systematic_sampling"]['post_stratification_map_path']),
-                                                   sampling_design.QCBox_PostStratMap_SystS)
-            if not load_status:
-                iface.messageBar().pushMessage("AcATaMa", f"Failed to restore post-stratification map (systematic sampling): "
-                                               f"{get_restore_path(yaml_config['sampling_design']['systematic_sampling']['post_stratification_map_path'])}",
+            source = get_restore_path(yaml_config["sampling_design"]["systematic_sampling"]['post_stratification_map_path'])
+            thematic_qgslayer = load_and_select_layer_in(source, sampling_design.QCBox_PostStratMap_SystS)
+            if source and not thematic_qgslayer:
+                iface.messageBar().pushMessage(f"AcATaMa", f"Failed to restore post-stratification map (systematic sampling): {source}",
                                                level=Qgis.MessageLevel.Warning)
             sampling_design.update_post_stratification_map_SystS(item_changed="layer")
             sampling_design.QCBox_band_PostStratMap_SystS.setCurrentIndex(
@@ -603,11 +600,11 @@ def restore(yml_file_path):
     # ######### response_design configuration ######### #
     # restore the response_design settings
     # load the sampling file save in yaml config
-    if "sampling_layer" in yaml_config and os.path.isfile(get_restore_path(yaml_config["sampling_layer"])):
-        sampling_layer = load_and_select_layer_in(get_restore_path(yaml_config["sampling_layer"]),
-                                                  AcATaMa.dockwidget.QCBox_SamplingFile)
+    if "sampling_layer" in yaml_config and get_restore_path(yaml_config["sampling_layer"]):
+        source = get_restore_path(yaml_config["sampling_layer"])
+        sampling_layer = load_and_select_layer_in(source, AcATaMa.dockwidget.QCBox_SamplingFile)
         if not sampling_layer:
-            iface.messageBar().pushMessage("AcATaMa", f"Failed to restore sampling layer: {get_restore_path(yaml_config['sampling_layer'])}",
+            iface.messageBar().pushMessage("AcATaMa", f"Failed to restore sampling layer: {source}",
                                            level=Qgis.MessageLevel.Critical)
             return
         response_design = ResponseDesign(sampling_layer)

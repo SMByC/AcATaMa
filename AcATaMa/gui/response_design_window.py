@@ -174,21 +174,18 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             for view_widget in ResponseDesignWindow.view_widgets:
                 if config_id == view_widget.id:
                     view_widget = ResponseDesignWindow.view_widgets[config_id]
-                    # select the layer for this view widget if exists and is loaded in Qgis
                     layer_name = view_config["layer_name"]
                     source_file = view_config["render_file_path"]
-                    if source_file:
-                        layer = load_and_select_layer_in(source_file, view_widget.QCBox_RenderFile, layer_name=layer_name)
-                        if not layer:
-                            view_name = "'{}'".format(view_config["view_name"]) if view_config["view_name"] else view_widget.id + 1
-                            msg = "Could not load the layer '{}' in the view {}: {}".format(layer_name, view_name, source_file)
-                            self.MsgBar.pushMessage(msg, level=Qgis.MessageLevel.Warning, duration=0)
-                    # TODO: restore size by view widget
-                    # view_widget.resize(*view_config["view_size"])
-                    view_widget.QLabel_ViewName.setText(view_config["view_name"])
+                    view_widget.QLabel_ViewName.setText(layer_name)
                     view_widget.scaleFactor.setValue(view_config["scale_factor"])
-                    # active render layer in canvas
-                    view_widget.set_render_layer(view_widget.QCBox_RenderFile.currentLayer())
+                    # select the layer for this view widget if exists and is loaded in Qgis
+                    qgslayer = load_and_select_layer_in(source_file, view_widget.QCBox_RenderFile, layer_name=layer_name)
+                    if source_file and not qgslayer:
+                        view_name = "'{}'".format(view_config["view_name"]) if view_config["view_name"] else view_widget.id + 1
+                        msg = "Could not load the layer '{}' in the view {}: {}".format(layer_name, view_name, source_file)
+                        self.MsgBar.pushMessage(msg, level=Qgis.MessageLevel.Warning, duration=0)
+                        continue
+                    view_widget.set_render_layer(qgslayer)
 
         #### CCD widget
         self.widget_ccd.setVisible(False)

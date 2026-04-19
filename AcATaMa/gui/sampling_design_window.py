@@ -23,7 +23,7 @@ import sys
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt, pyqtSlot
-from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QDialogButtonBox
+from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox
 from qgis.core import QgsMapLayerProxyModel, Qgis, QgsUnitTypes
 from qgis.utils import iface
 
@@ -31,7 +31,7 @@ from AcATaMa.core.sampling_design import do_simple_random_sampling, do_stratifie
 from AcATaMa.utils.sampling_utils import update_stratified_sampling_table, fill_stratified_sampling_table, \
     reload_StraRS_table
 from AcATaMa.gui.post_stratification_classes_dialog import PostStratificationClassesDialog
-from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_layer_in, is_integer_data_type
+from AcATaMa.utils.qgis_utils import valid_file_selected_in, browser_dialog_to_load_file, is_integer_data_type
 from AcATaMa.utils.system_utils import block_signals_to
 from AcATaMa.utils.others_utils import set_nodata_format, get_nodata_format, get_pixel_count_by_pixel_values, \
     get_decimal_places
@@ -69,10 +69,12 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         self.QCBox_PostStratMap_SimpRS.setCurrentIndex(-1)
         self.QCBox_PostStratMap_SimpRS.setFilters(QgsMapLayerProxyModel.Filter.RasterLayer)
         # call to browse the post-stratification map
-        self.QPBtn_browsePostStratMap_SimpRS.clicked.connect(lambda: self.browser_dialog_to_load_file(
+        self.QPBtn_browsePostStratMap_SimpRS.clicked.connect(lambda: browser_dialog_to_load_file(
+            self,
             self.QCBox_PostStratMap_SimpRS,
             dialog_title=self.tr("Select the post-stratification map"),
-            file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
+            file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)"),
+            msg_bar=self.MsgBar))
         # select and check the post-stratification map
         self.QCBox_PostStratMap_SimpRS.layerChanged.connect(lambda: self.update_post_stratification_map_SimpRS("layer"))
         self.QCBox_band_PostStratMap_SimpRS.currentIndexChanged.connect(lambda: self.update_post_stratification_map_SimpRS("band"))
@@ -97,10 +99,12 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         self.QCBox_SamplingMap_StraRS.setCurrentIndex(-1)
         self.QCBox_SamplingMap_StraRS.setFilters(QgsMapLayerProxyModel.Filter.RasterLayer)
         # call to browse the post-stratification raster
-        self.QPBtn_browseSamplingMap_StraRS.clicked.connect(lambda: self.browser_dialog_to_load_file(
+        self.QPBtn_browseSamplingMap_StraRS.clicked.connect(lambda: browser_dialog_to_load_file(
+            self,
             self.QCBox_SamplingMap_StraRS,
             dialog_title=self.tr("Select the post-stratification map"),
-            file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
+            file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)"),
+            msg_bar=self.MsgBar))
         # select and check the post-stratification map
         self.QCBox_SamplingMap_StraRS.layerChanged.connect(self.update_sampling_map_StraRS)
         self.QCBox_band_SamplingMap_StraRS.currentIndexChanged.connect(self.reset_StraRS_method)
@@ -155,10 +159,12 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         self.QCBox_PostStratMap_SystS.setCurrentIndex(-1)
         self.QCBox_PostStratMap_SystS.setFilters(QgsMapLayerProxyModel.Filter.RasterLayer)
         # post-stratification sampling
-        self.QPBtn_browsePostStratMap_SystS.clicked.connect(lambda: self.browser_dialog_to_load_file(
+        self.QPBtn_browsePostStratMap_SystS.clicked.connect(lambda: browser_dialog_to_load_file(
+            self,
             self.QCBox_PostStratMap_SystS,
             dialog_title=self.tr("Select the post-stratification map"),
-            file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
+            file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)"),
+            msg_bar=self.MsgBar))
         self.QCBox_PostStratMap_SystS.layerChanged.connect(lambda: self.update_post_stratification_map_SystS("layer"))
         self.QCBox_band_PostStratMap_SystS.currentIndexChanged.connect(lambda: self.update_post_stratification_map_SystS("band"))
         self.nodata_PostStratMap_SystS.textChanged.connect(lambda: self.update_post_stratification_map_SystS("nodata"))
@@ -214,13 +220,6 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         AcATaMa.dockwidget.QPBtn_OpenSamplingDesignWindow.setText("Sampling design is opened, click to show")
 
         super(SamplingDesignWindow, self).show()
-
-    @pyqtSlot()
-    def browser_dialog_to_load_file(self, combo_box, dialog_title, file_filters):
-        file_path, _ = QFileDialog.getOpenFileName(self, dialog_title, "", file_filters)
-        if file_path != '' and os.path.isfile(file_path):
-            # load to qgis and update combobox list
-            load_and_select_layer_in(file_path, combo_box)
 
     @pyqtSlot(str)
     def set_systematic_sampling_unit(self, systematic_sampling_unit):

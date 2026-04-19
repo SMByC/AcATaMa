@@ -20,7 +20,7 @@
 """
 import os
 
-from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox
+from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox, QFileDialog
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
 from qgis.gui import QgsRendererPropertiesDialog, QgsRendererRasterPropertiesWidget, QgsMapLayerComboBox
@@ -66,11 +66,11 @@ def valid_file_selected_in(combo_box, combobox_name=False):
         return False
 
 
-def get_loaded_layer(layer_path):
-    # return the loaded layer in Qgis that matches the file path
+def get_loaded_layer(source):
+    # return the loaded layer in Qgis that matches the source
     # whatever the name of the layer
     for layer in QgsProject.instance().mapLayers().values():
-        if layer.source() == layer_path:
+        if layer.source() == source:
             return layer
 
 
@@ -82,13 +82,13 @@ def select_item_in(combo_box, item):
 def load_and_select_layer_in(source, combo_box, layer_name=None):
     if not source:
         combo_box.setCurrentIndex(-1)
-        return True
+        return None
     qgslayer = get_loaded_layer(source)
     # try to load the layer if not already in QGIS
     if qgslayer is None:
         qgslayer = load_layer(source, name=layer_name)
         if qgslayer is None or not qgslayer.isValid():
-            return False
+            return None
     # select the exact layer in combobox
     combo_box.setLayer(qgslayer)
 
@@ -167,13 +167,22 @@ def load_layer(source, name=None, add_to_legend=True):
     name = name or (os.path.splitext(os.path.basename(source))[0] if os.path.isfile(source) else "Remote Layer")
 
     provider_key, layer_class = detect_provider(source)
-    layer = (layer_class(source, name, provider_key) if provider_key else layer_class(source, name)) if layer_class else None
+    qgslayer = (layer_class(source, name, provider_key) if provider_key else layer_class(source, name)) if layer_class else None
 
-    if layer and layer.isValid():
-        QgsProject.instance().addMapLayer(layer, add_to_legend)
-        return layer
+    if qgslayer and qgslayer.isValid():
+        QgsProject.instance().addMapLayer(qgslayer, add_to_legend)
+        return qgslayer
 
     return None
+
+
+def browser_dialog_to_load_file(parent, combo_box, dialog_title, file_filters, msg_bar=None):
+    file_path, _ = QFileDialog.getOpenFileName(parent, dialog_title, "", file_filters)
+    if file_path != '' and os.path.isfile(file_path):
+        qgslayer = load_and_select_layer_in(file_path, combo_box)
+        if not qgslayer:
+            (msg_bar or iface.messageBar()).pushMessage(f"Failed to load layer: {file_path}",
+                                                        level=Qgis.MessageLevel.Warning, duration=10)
 
 
 def unload_layer(source):

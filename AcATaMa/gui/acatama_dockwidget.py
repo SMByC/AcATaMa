@@ -38,7 +38,7 @@ from AcATaMa.gui.response_design_grid_settings import ResponseDesignGridSettings
 from AcATaMa.gui.sampling_design_window import SamplingDesignWindow
 from AcATaMa.gui.sampling_report import SamplingReport
 from AcATaMa.utils.others_utils import set_nodata_format
-from AcATaMa.utils.qgis_utils import valid_file_selected_in, load_and_select_layer_in, is_integer_data_type, get_source_from
+from AcATaMa.utils.qgis_utils import valid_file_selected_in, browser_dialog_to_load_file, is_integer_data_type, get_source_from
 from AcATaMa.utils.system_utils import error_handler, wait_process, block_signals_to, output_file_is_OK, get_save_file_name
 from AcATaMa.gui.about_dialog import AboutDialog
 
@@ -132,7 +132,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QCBox_ThematicMap.setCurrentIndex(-1)
         self.QCBox_ThematicMap.setFilters(QgsMapLayerProxyModel.Filter.RasterLayer)
         # call to browse the thematic map file
-        self.QPBtn_browseThematicMap.clicked.connect(lambda: self.browser_dialog_to_load_file(
+        self.QPBtn_browseThematicMap.clicked.connect(lambda: browser_dialog_to_load_file(
+            self,
             self.QCBox_ThematicMap,
             dialog_title=self.tr("Select the thematic map to evaluate"),
             file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)")))
@@ -160,7 +161,8 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # show the response design state for the sampling file selected
         self.QCBox_SamplingFile.layerChanged.connect(self.update_response_design_config)
         # call to browse the sampling file
-        self.QPBtn_browseSamplingFile.clicked.connect(lambda: self.browser_dialog_to_load_file(
+        self.QPBtn_browseSamplingFile.clicked.connect(lambda: browser_dialog_to_load_file(
+            self,
             self.QCBox_SamplingFile,
             dialog_title=self.tr("Select the Sampling points file"),
             file_filters=self.tr("Vector files (*.gpkg *.shp);;All files (*.*)")))
@@ -190,13 +192,6 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QGBox_Analysis.setDisabled(True)
 
         self.update_response_design_config()
-
-    @pyqtSlot()
-    def browser_dialog_to_load_file(self, combo_box, dialog_title, file_filters):
-        file_path, _ = QFileDialog.getOpenFileName(self, dialog_title, "", file_filters)
-        if file_path != '' and os.path.isfile(file_path):
-            # load to qgis and update combobox list
-            load_and_select_layer_in(file_path, combo_box)
 
     @pyqtSlot("QgsMapLayer*")
     def select_thematic_map(self, thematic_map_layer):

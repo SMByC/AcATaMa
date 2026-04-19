@@ -22,14 +22,14 @@ import os
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtWidgets import QWidget, QGridLayout, QFileDialog
+from qgis.PyQt.QtWidgets import QWidget, QGridLayout
 from qgis.PyQt.QtCore import QSettings, pyqtSlot, QTimer, Qt, QEvent
 from qgis.PyQt.sip import isdeleted
 from qgis.core import QgsGeometry, QgsMapLayerProxyModel, QgsWkbTypes, QgsPoint
 from qgis.gui import QgsMapCanvas, QgsMapToolPan, QgsRubberBand, QgsVertexMarker
 from qgis.utils import iface
 
-from AcATaMa.utils.qgis_utils import load_and_select_layer_in, StyleEditorDialog
+from AcATaMa.utils.qgis_utils import browser_dialog_to_load_file, StyleEditorDialog
 from AcATaMa.utils.system_utils import block_signals_to
 
 
@@ -192,6 +192,7 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
             ui_item.installEventFilter(self)
 
     def setup_view_widget(self, sampling_layer):
+        from AcATaMa.gui.response_design_window import ResponseDesignWindow
         self.sampling_layer = sampling_layer
         self.render_widget.parent_view = self
         # set properties to QgsMapLayerComboBox
@@ -202,10 +203,12 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
         # handle connect layer selection with render canvas
         self.QCBox_RenderFile.layerChanged.connect(self.set_render_layer)
         # call to browse the render file
-        self.QCBox_browseRenderFile.clicked.connect(lambda: self.browser_dialog_to_load_file(
+        self.QCBox_browseRenderFile.clicked.connect(lambda: browser_dialog_to_load_file(
+            self,
             self.QCBox_RenderFile,
             dialog_title=self.tr("Select the file for this view"),
-            file_filters=self.tr("Raster or vector files (*.tif *.img *.gpkg *.shp);;All files (*.*)")))
+            file_filters=self.tr("Raster or vector files (*.tif *.img *.gpkg *.shp);;All files (*.*)"),
+            msg_bar=ResponseDesignWindow.inst.MsgBar))
         # zoom scale factor
         self.scaleFactor.valueChanged.connect(self.scalefactor_changed)
         # edit layer properties
@@ -252,15 +255,6 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
 
         self.enable()
         self.render_widget.render_layer(layer)
-
-    @pyqtSlot()
-    def browser_dialog_to_load_file(self, combo_box, dialog_title, file_filters):
-        file_path, _ = QFileDialog.getOpenFileName(self, dialog_title, "", file_filters)
-        if file_path != '' and os.path.isfile(file_path):
-            # load to qgis and update combobox list
-            load_and_select_layer_in(file_path, combo_box)
-
-            self.set_render_layer(combo_box.currentLayer())
 
     @pyqtSlot()
     def canvas_changed(self):
