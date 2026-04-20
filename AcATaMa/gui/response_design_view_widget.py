@@ -29,7 +29,7 @@ from qgis.core import QgsGeometry, QgsMapLayerProxyModel, QgsWkbTypes, QgsPoint
 from qgis.gui import QgsMapCanvas, QgsMapToolPan, QgsRubberBand, QgsVertexMarker
 from qgis.utils import iface
 
-from AcATaMa.utils.qgis_utils import browser_dialog_to_load_file, StyleEditorDialog
+from AcATaMa.utils.qgis_utils import browse_dialog_to_load_file, StyleEditorDialog
 from AcATaMa.utils.system_utils import block_signals_to
 
 
@@ -203,7 +203,7 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
         # handle connect layer selection with render canvas
         self.QCBox_RenderFile.layerChanged.connect(self.set_render_layer)
         # call to browse the render file
-        self.QCBox_browseRenderFile.clicked.connect(lambda: browser_dialog_to_load_file(
+        self.QCBox_browseRenderFile.clicked.connect(lambda: browse_dialog_to_load_file(
             self,
             self.QCBox_RenderFile,
             dialog_title=self.tr("Select the file for this view"),

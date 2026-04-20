@@ -38,7 +38,7 @@ from AcATaMa.gui.response_design_grid_settings import ResponseDesignGridSettings
 from AcATaMa.gui.sampling_design_window import SamplingDesignWindow
 from AcATaMa.gui.sampling_report import SamplingReport
 from AcATaMa.utils.others_utils import set_nodata_format
-from AcATaMa.utils.qgis_utils import valid_file_selected_in, browser_dialog_to_load_file, is_integer_data_type, get_source_from
+from AcATaMa.utils.qgis_utils import valid_file_selected_in, browse_dialog_to_load_file, is_integer_data_type, get_source_from
 from AcATaMa.utils.system_utils import error_handler, wait_process, block_signals_to, output_file_is_OK, get_save_file_name
 from AcATaMa.gui.about_dialog import AboutDialog
 
@@ -132,7 +132,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         self.QCBox_ThematicMap.setCurrentIndex(-1)
         self.QCBox_ThematicMap.setFilters(QgsMapLayerProxyModel.Filter.RasterLayer)
         # call to browse the thematic map file
-        self.QPBtn_browseThematicMap.clicked.connect(lambda: browser_dialog_to_load_file(
+        self.QPBtn_browseThematicMap.clicked.connect(lambda: browse_dialog_to_load_file(
             self,
             self.QCBox_ThematicMap,
             dialog_title=self.tr("Select the thematic map to evaluate"),
@@ -161,7 +161,7 @@ class AcATaMaDockWidget(QDockWidget, FORM_CLASS):
         # show the response design state for the sampling file selected
         self.QCBox_SamplingFile.layerChanged.connect(self.update_response_design_config)
         # call to browse the sampling file
-        self.QPBtn_browseSamplingFile.clicked.connect(lambda: browser_dialog_to_load_file(
+        self.QPBtn_browseSamplingFile.clicked.connect(lambda: browse_dialog_to_load_file(
             self,
             self.QCBox_SamplingFile,
             dialog_title=self.tr("Select the Sampling points file"),

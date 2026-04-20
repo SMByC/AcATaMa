@@ -176,12 +176,12 @@ def load_layer(source, name=None, add_to_legend=True):
     return None
 
 
-def browser_dialog_to_load_file(parent, combo_box, dialog_title, file_filters, msg_bar=None):
+def browse_dialog_to_load_file(parent, combo_box, dialog_title, file_filters, msg_bar=None):
     file_path, _ = QFileDialog.getOpenFileName(parent, dialog_title, "", file_filters)
     if file_path != '' and os.path.isfile(file_path):
         qgslayer = load_and_select_layer_in(file_path, combo_box)
         if not qgslayer:
-            (msg_bar or iface.messageBar()).pushMessage(f"Failed to load layer: {file_path}",
+            (msg_bar or iface.messageBar()).pushMessage(f"Could not load the layer: {file_path}",
                                                         level=Qgis.MessageLevel.Warning, duration=10)
 
 
