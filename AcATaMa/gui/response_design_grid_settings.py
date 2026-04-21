@@ -50,10 +50,14 @@ class ResponseDesignGridSettings(QDialog, FORM_CLASS):
             response_design.grid_columns = self.columns.value()
             response_design.grid_rows = self.rows.value()
 
-        if ResponseDesignGridSettings.is_first_open:
+        was_first_open = ResponseDesignGridSettings.is_first_open
+        if was_first_open:
             ResponseDesignGridSettings.is_first_open = False
 
         self.accept()
+
+        if not was_first_open:
+            AcATaMa.dockwidget.open_response_design_window()
 
     @pyqtSlot()
     def on_buttonBox_rejected(self):
