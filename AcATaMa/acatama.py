@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  AcATaMa
@@ -18,28 +17,29 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import os.path
 import shutil
 
-from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt, QLocale
-from qgis.PyQt.QtWidgets import QAction, QMessageBox
+from qgis.PyQt.QtCore import QCoreApplication, QLocale, QSettings, Qt, QTranslator
 from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QAction, QMessageBox
 
 from AcATaMa.core.analysis import AccuracyAssessmentWindow
-from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget
 from AcATaMa.gui.about_dialog import AboutDialog
+from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget
 from AcATaMa.gui.response_design_window import ResponseDesignWindow
 from AcATaMa.gui.sampling_design_window import SamplingDesignWindow
-from AcATaMa.utils.qgis_utils import unload_layer
 from AcATaMa.gui.sampling_report import SamplingReport
+from AcATaMa.utils.qgis_utils import unload_layer
 
 try:
-    from . import resources_rc
+    from . import resources_rc  # noqa: F401
 except ImportError:
     pass
 
 
-class AcATaMa(object):
+class AcATaMa:
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):
@@ -58,10 +58,10 @@ class AcATaMa(object):
 
         # initialize locale
         try:
-            locale = QSettings().value('locale/userLocale', QLocale().name(), type=str)[0:2]
-        except:
-            locale = 'en'
-        locale_path = os.path.join(self.plugin_dir, 'i18n', 'AcATaMa_{}.qm'.format(locale))
+            locale = QSettings().value("locale/userLocale", QLocale().name(), type=str)[0:2]
+        except Exception:
+            locale = "en"
+        locale_path = os.path.join(self.plugin_dir, "i18n", f"AcATaMa_{locale}.qm")
 
         if os.path.exists(locale_path):
             self.translator = QTranslator()
@@ -92,7 +92,7 @@ class AcATaMa(object):
     def initGui(self):
         ### Main dockwidget menu
         # Create action that will start plugin configuration
-        icon_path = ':/plugins/AcATaMa/icons/acatama.svg'
+        icon_path = ":/plugins/AcATaMa/icons/acatama.svg"
         self.dockable_action = QAction(QIcon(icon_path), "AcATaMa", self.iface.mainWindow())
         # connect the action to the run method
         self.dockable_action.triggered.connect(self.run)
@@ -102,8 +102,8 @@ class AcATaMa(object):
 
         # Plugin info
         # Create action that will start plugin configuration
-        icon_path = ':/plugins/AcATaMa/icons/about.svg'
-        self.about_action = QAction(QIcon(icon_path), self.tr('About'), self.iface.mainWindow())
+        icon_path = ":/plugins/AcATaMa/icons/about.svg"
+        self.about_action = QAction(QIcon(icon_path), self.tr("About"), self.iface.mainWindow())
         # connect the action to the run method
         self.about_action.triggered.connect(self.about)
         # Add toolbar button and menu item
@@ -112,7 +112,7 @@ class AcATaMa(object):
     def about(self):
         self.about_dialog.show()
 
-    #--------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
 
     def run(self):
         """Run method that loads and starts the plugin"""
@@ -120,12 +120,12 @@ class AcATaMa(object):
         if not self.pluginIsActive:
             self.pluginIsActive = True
 
-            #print "** STARTING AcATaMa"
+            # print "** STARTING AcATaMa"
 
             # dockwidget may not exist if:
             #    first run of plugin
             #    removed on close (see self.onClosePlugin method)
-            if self.dockwidget == None:
+            if self.dockwidget is None:
                 # Create the dockwidget (after translation) and keep reference
                 self.dockwidget = AcATaMaDockWidget()
 
@@ -139,7 +139,7 @@ class AcATaMa(object):
             self.iface.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
 
-    #--------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
 
     def onClosePlugin(self):
         """Cleanup necessary items here when plugin dockwidget is closed"""
@@ -175,6 +175,7 @@ class AcATaMa(object):
         self.pluginIsActive = False
 
         from qgis.utils import reloadPlugin
+
         reloadPlugin("AcATaMa")
 
     def unload(self):
@@ -190,15 +191,22 @@ class AcATaMa(object):
 
     def clear_reload_plugin(self):
         # first prompt
-        quit_msg = "Are you sure you want to: clean tmp files, delete unsaved labels, " \
-                   "clean all fields and reload plugin?"
-        reply = QMessageBox.question(None, 'Clear all and reload the AcATaMa plugin.',
-                                     quit_msg, QMessageBox.StandardButton.Yes, QMessageBox.StandardButton.No)
+        quit_msg = (
+            "Are you sure you want to: clean tmp files, delete unsaved labels, clean all fields and reload plugin?"
+        )
+        reply = QMessageBox.question(
+            None,
+            "Clear all and reload the AcATaMa plugin.",
+            quit_msg,
+            QMessageBox.StandardButton.Yes,
+            QMessageBox.StandardButton.No,
+        )
         if reply == QMessageBox.StandardButton.No:
             return
 
         self.onClosePlugin()
         from qgis.utils import plugins
+
         plugins["AcATaMa"].run()
 
     def removes_temporary_files(self):
@@ -207,9 +215,9 @@ class AcATaMa(object):
         # unload all layers instances from Qgis saved in tmp dir
         try:
             d = self.dockwidget.tmp_dir
-            files_in_tmp_dir = [os.path.join(d, f) for f in os.listdir(d)
-                                if os.path.isfile(os.path.join(d, f))]
-        except: files_in_tmp_dir = []
+            files_in_tmp_dir = [os.path.join(d, f) for f in os.listdir(d) if os.path.isfile(os.path.join(d, f))]
+        except Exception:
+            files_in_tmp_dir = []
 
         for file_tmp in files_in_tmp_dir:
             unload_layer(file_tmp)

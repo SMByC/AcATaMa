@@ -53,3 +53,21 @@ reportUnknownMemberType = "none"
 reportUnknownArgumentType = "none"
 reportMissingTypeStubs = false
 reportMissingParameterType = false
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+extend-exclude = ["extlibs", "resources_rc.py"]
+
+[tool.ruff.lint]
+preview = true
+explicit-preview-rules = true
+select = ["E", "W", "F", "I", "UP", "B", "C4", "RUF", "SIM"]
+extend-select = ["E226"]
+ignore = ["B904", "SIM102", "SIM105"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+docstring-code-format = true

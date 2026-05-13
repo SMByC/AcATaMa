@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  AcATaMa
@@ -18,23 +17,24 @@
  *                                                                         *
  ***************************************************************************/
 """
-from random import shuffle
 
-from qgis.PyQt.QtCore import QVariant
-from qgis.PyQt.QtCore import NULL
+from random import shuffle
+from typing import ClassVar
+
+from qgis.core import Qgis, QgsFeature, QgsField, QgsProject, QgsUnitTypes, QgsVectorFileWriter, QgsVectorLayer
+from qgis.PyQt.QtCore import NULL, QVariant
 from qgis.PyQt.QtGui import QColor
-from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsVectorFileWriter, Qgis, QgsUnitTypes, QgsProject
 from qgis.utils import iface
 
-from AcATaMa.core.point import LabelingPoint
 from AcATaMa.core.map import Map
-from AcATaMa.utils.system_utils import wait_process
+from AcATaMa.core.point import LabelingPoint
 from AcATaMa.utils.others_utils import get_nodata_format
+from AcATaMa.utils.system_utils import wait_process
 
 
-class ResponseDesign(object):
+class ResponseDesign:
     # save instances for each sampling layer
-    instances = {}
+    instances: ClassVar[dict] = {}
 
     def __init__(self, sampling_layer):
         self.sampling_layer = sampling_layer
@@ -54,11 +54,17 @@ class ResponseDesign(object):
         self.sampling_unit_color = QColor("red")
         # default radius to fit the sample based on the units of the sampling file selected
         layer_dist_unit = self.sampling_layer.crs().mapUnits()
-        fit_to_sample_list = {QgsUnitTypes.DistanceUnit.DistanceMeters: 120, QgsUnitTypes.DistanceUnit.DistanceKilometers: 0.120,
-                              QgsUnitTypes.DistanceUnit.DistanceFeet: 393, QgsUnitTypes.DistanceUnit.DistanceNauticalMiles: 0.065,
-                              QgsUnitTypes.DistanceUnit.DistanceYards: 132, QgsUnitTypes.DistanceUnit.DistanceMiles: 0.075,
-                              QgsUnitTypes.DistanceUnit.DistanceDegrees: 0.0011, QgsUnitTypes.DistanceUnit.DistanceCentimeters: 12000,
-                              QgsUnitTypes.DistanceUnit.DistanceMillimeters: 120000}
+        fit_to_sample_list = {
+            QgsUnitTypes.DistanceUnit.DistanceMeters: 120,
+            QgsUnitTypes.DistanceUnit.DistanceKilometers: 0.120,
+            QgsUnitTypes.DistanceUnit.DistanceFeet: 393,
+            QgsUnitTypes.DistanceUnit.DistanceNauticalMiles: 0.065,
+            QgsUnitTypes.DistanceUnit.DistanceYards: 132,
+            QgsUnitTypes.DistanceUnit.DistanceMiles: 0.075,
+            QgsUnitTypes.DistanceUnit.DistanceDegrees: 0.0011,
+            QgsUnitTypes.DistanceUnit.DistanceCentimeters: 12000,
+            QgsUnitTypes.DistanceUnit.DistanceMillimeters: 120000,
+        }
         self.fit_to_sample = fit_to_sample_list[layer_dist_unit]
         # save views widget config
         # {N: {"view_name", "layer_name", "render_file_path", "render_activated", "scale_factor"}, ...}
@@ -105,12 +111,12 @@ class ResponseDesign(object):
                 self.total_unlabel += 1
             current_sample.label_id = None
             current_sample.is_labeled = False
-        self.is_completed = True if self.total_unlabel == 0 else False
+        self.is_completed = self.total_unlabel == 0
 
     def reload_labeling_status(self):
         self.total_labeled = sum(sample.is_labeled for sample in self.points)
         self.total_unlabel = sum(not sample.is_labeled for sample in self.points)
-        self.is_completed = True if self.total_unlabel == 0 else False
+        self.is_completed = self.total_unlabel == 0
 
     def get_points_from_shapefile(self):
         points = []
@@ -119,11 +125,8 @@ class ResponseDesign(object):
             if not geom.isGeosValid():
                 continue
             # get the id from shape file using column name "id" else use auto-enumeration
-            attr_id = self.sampling_layer.fields().lookupField('id')
-            if attr_id != -1:
-                sample_id = qgs_feature.attributes()[attr_id]
-            else:
-                sample_id = enum_id
+            attr_id = self.sampling_layer.fields().lookupField("id")
+            sample_id = qgs_feature.attributes()[attr_id] if attr_id != -1 else enum_id
             x, y = geom.asPoint()
             points.append(LabelingPoint(x, y, sample_id))
         self.num_points = len(points)
@@ -132,28 +135,30 @@ class ResponseDesign(object):
     @wait_process
     def reload_sampling_file(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
         # update all points from file and restore its labels
         points_from_shapefile = self.get_points_from_shapefile()
         modified = 0
         for point in self.points:
             if point.sample_id in [p.sample_id for p in points_from_shapefile]:
-                point_to_restore = [p for p in points_from_shapefile if p.sample_id == point.sample_id][0]
+                point_to_restore = next(p for p in points_from_shapefile if p.sample_id == point.sample_id)
                 point_to_restore.label_id = point.label_id
                 if point_to_restore.label_id is not None:
                     point_to_restore.is_labeled = True
                 if point.QgsPnt != point_to_restore.QgsPnt:
                     modified += 1
         # calc added/removed changes
-        added = len(set([p.sample_id for p in points_from_shapefile]) - set([p.sample_id for p in self.points]))
-        removed = len(set([p.sample_id for p in self.points]) - set([p.sample_id for p in points_from_shapefile]))
+        added = len({p.sample_id for p in points_from_shapefile} - {p.sample_id for p in self.points})
+        removed = len({p.sample_id for p in self.points} - {p.sample_id for p in points_from_shapefile})
         # adjust the current sample id if some points are eliminated, and it's located before it
-        for rm_sample_id in set([p.sample_id for p in self.points]) - set([p.sample_id for p in points_from_shapefile]):
+        for rm_sample_id in {p.sample_id for p in self.points} - {p.sample_id for p in points_from_shapefile}:
             if [p.sample_id for p in self.points].index(rm_sample_id) <= self.current_sample_idx:
                 self.current_sample_idx -= 1
         # check if sampling has not changed
         if modified == 0 and added == 0 and removed == 0:
-            iface.messageBar().pushMessage("AcATaMa", "The sampling file has not detected changes",
-                                           level=Qgis.MessageLevel.Success, duration=5)
+            iface.messageBar().pushMessage(
+                "AcATaMa", "The sampling file has not detected changes", level=Qgis.MessageLevel.Success, duration=5
+            )
             return False
         # reassign points
         self.points = points_from_shapefile
@@ -161,9 +166,12 @@ class ResponseDesign(object):
         self.reload_labeling_status()
         AcATaMa.dockwidget.update_response_design_config()
         # notify
-        iface.messageBar().pushMessage("AcATaMa", "Sampling file reloaded successfully: {} modified,"
-                                                  "{} added and {} removed".format(modified, added, removed),
-                                       level=Qgis.MessageLevel.Success, duration=10)
+        iface.messageBar().pushMessage(
+            "AcATaMa",
+            f"Sampling file reloaded successfully: {modified} modified,{added} added and {removed} removed",
+            level=Qgis.MessageLevel.Success,
+            duration=10,
+        )
         return True
 
     @wait_process
@@ -174,22 +182,29 @@ class ResponseDesign(object):
         pr = vlayer.dataProvider()
         # add fields
         if self.with_thematic_classes:
-            pr.addAttributes([QgsField("ID", QVariant.Int),
-                              QgsField("Label", QVariant.String),
-                              QgsField("Is labeled as", QVariant.Int),
-                              QgsField("In thematic map as", QVariant.Int),
-                              QgsField("Match", QVariant.String)])
+            pr.addAttributes(
+                [
+                    QgsField("ID", QVariant.Int),
+                    QgsField("Label", QVariant.String),
+                    QgsField("Is labeled as", QVariant.Int),
+                    QgsField("In thematic map as", QVariant.Int),
+                    QgsField("Match", QVariant.String),
+                ]
+            )
         else:
-            pr.addAttributes([QgsField("ID", QVariant.Int),
-                              QgsField("Label", QVariant.String),
-                              QgsField("Label ID", QVariant.Int)])
+            pr.addAttributes(
+                [QgsField("ID", QVariant.Int), QgsField("Label", QVariant.String), QgsField("Label ID", QVariant.Int)]
+            )
         vlayer.updateFields()  # tell the vector layer to fetch changes from the provider
 
         if self.with_thematic_classes:
             from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-            thematic_map = Map(file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicMap,
-                               band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
-                               nodata=get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text()))
+
+            thematic_map = Map(
+                file_selected_combo_box=AcATaMa.dockwidget.QCBox_ThematicMap,
+                band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
+                nodata=get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text()),
+            )
 
         points_ordered = sorted(self.points, key=lambda p: p.sample_id)
         for point in points_ordered:
@@ -198,11 +213,15 @@ class ResponseDesign(object):
             feature.setGeometry(point.QgsGeom)
             name = self.buttons_config[point.label_id]["name"] if point.is_labeled else NULL
             if self.with_thematic_classes:
-                sample_labeled_as = int(
-                    self.buttons_config[point.label_id]["thematic_class"]) if point.is_labeled else NULL
-                sample_in_thematic_map = int(thematic_map.get_pixel_value_from_pnt(point.QgsPnt)) \
-                    if point.is_labeled and thematic_map.get_pixel_value_from_pnt(point.QgsPnt) else NULL
-                match = ('Yes' if sample_in_thematic_map == sample_labeled_as else 'No') if point.is_labeled else NULL
+                sample_labeled_as = (
+                    int(self.buttons_config[point.label_id]["thematic_class"]) if point.is_labeled else NULL
+                )
+                sample_in_thematic_map = (
+                    int(thematic_map.get_pixel_value_from_pnt(point.QgsPnt))
+                    if point.is_labeled and thematic_map.get_pixel_value_from_pnt(point.QgsPnt)
+                    else NULL
+                )
+                match = ("Yes" if sample_in_thematic_map == sample_labeled_as else "No") if point.is_labeled else NULL
                 feature.setAttributes([point.sample_id, name, sample_labeled_as, sample_in_thematic_map, match])
             else:
                 feature.setAttributes([point.sample_id, name, point.label_id])
@@ -211,10 +230,10 @@ class ResponseDesign(object):
         vlayer.commitChanges()
         vlayer.updateExtents()
 
-        file_format = \
-            "GPKG" if file_out.endswith(".gpkg") else "ESRI Shapefile" if file_out.endswith(".shp") else None
+        file_format = "GPKG" if file_out.endswith(".gpkg") else "ESRI Shapefile" if file_out.endswith(".shp") else None
         save_options = QgsVectorFileWriter.SaveVectorOptions()
         save_options.driverName = file_format
         save_options.fileEncoding = "System"
         QgsVectorFileWriter.writeAsVectorFormatV3(
-            vlayer, file_out, QgsProject.instance().transformContext(), save_options)
+            vlayer, file_out, QgsProject.instance().transformContext(), save_options
+        )

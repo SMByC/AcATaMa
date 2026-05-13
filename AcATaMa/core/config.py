@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  AcATaMa
@@ -18,34 +17,37 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import os
 from collections import OrderedDict
+
 import yaml
 
 try:
-    from yaml import CSafeLoader as SafeLoader, CSafeDumper as SafeDumper
+    from yaml import CSafeDumper as SafeDumper
+    from yaml import CSafeLoader as SafeLoader
 except ImportError:
-    from yaml import SafeLoader, SafeDumper
+    from yaml import SafeDumper, SafeLoader
 
 from qgis.core import Qgis, QgsUnitTypes
 from qgis.PyQt.QtGui import QColor
 from qgis.utils import iface
 
 from AcATaMa.core.response_design import ResponseDesign
-from AcATaMa.gui.response_design_window import ResponseDesignWindow
 from AcATaMa.gui.response_design_grid_settings import ResponseDesignGridSettings
-from AcATaMa.utils.system_utils import LegacyLoader, wait_process, block_signals_to
-from AcATaMa.utils.sampling_utils import fill_stratified_sampling_table
+from AcATaMa.gui.response_design_window import ResponseDesignWindow
+from AcATaMa.utils.others_utils import get_nodata_format, get_plugin_version, set_nodata_format
 from AcATaMa.utils.qgis_utils import get_source_from, load_and_select_layer_in, select_item_in
-from AcATaMa.utils.others_utils import set_nodata_format, get_plugin_version, get_nodata_format
+from AcATaMa.utils.sampling_utils import fill_stratified_sampling_table
+from AcATaMa.utils.system_utils import LegacyLoader, block_signals_to, wait_process
 
 CONFIG_FILE_VERSION = None
 
 
 @wait_process
 def save(file_out):
-    from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
     from AcATaMa.gui.acatama_dockwidget import VERSION
+    from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
 
     def setup_yaml():
         """
@@ -54,12 +56,11 @@ def save(file_out):
 
         class OrderedDumper(SafeDumper):
             """Custom dumper that keeps insertion order for dict-like objects."""
+
             pass
 
         def represent_ordered_mapping(dumper, data):
-            return dumper.represent_mapping(
-                yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
-                list(data.items()))
+            return dumper.represent_mapping(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, list(data.items()))
 
         OrderedDumper.add_representer(dict, represent_ordered_mapping)
         OrderedDumper.add_representer(OrderedDict, represent_ordered_mapping)
@@ -67,7 +68,8 @@ def save(file_out):
 
     def setup_path(_path):
         """
-        Sets up the path by calculating the relative path of input path to the directory of where yaml file is being saving.
+        Sets up the path by calculating the relative path of input path to
+        the directory of where yaml file is being saving.
         """
         if _path is None:
             return None
@@ -80,7 +82,7 @@ def save(file_out):
                 return relative_path
             else:
                 return _path
-        except:
+        except Exception:
             # If the paths cannot be related, return the original input path
             return _path
 
@@ -89,36 +91,39 @@ def save(file_out):
     data = OrderedDict()
 
     # ######### general configuration ######### #
-    data["general"] = \
-        {"config_file_version": get_plugin_version(VERSION)}
+    data["general"] = {"config_file_version": get_plugin_version(VERSION)}
 
     # ######### thematic ######### #
-    data["thematic_map"] = \
-        {"path": setup_path(get_source_from(AcATaMa.dockwidget.QCBox_ThematicMap)),
-         "band": int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
-            if AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText() != '' else -1,
-         "nodata": AcATaMa.dockwidget.nodata_ThematicMap.text()}
+    data["thematic_map"] = {
+        "path": setup_path(get_source_from(AcATaMa.dockwidget.QCBox_ThematicMap)),
+        "band": int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
+        if AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText() != ""
+        else -1,
+        "nodata": AcATaMa.dockwidget.nodata_ThematicMap.text(),
+    }
 
     # ######### sampling design ######### #
     sampling_design = AcATaMa.dockwidget.sampling_design_window
-    data["sampling_design"] = {}
-    data["sampling_design"]["tab_activated"] = sampling_design.tabs_SamplingStrategy.currentIndex()
+    sd_data = data["sampling_design"] = {}
+    sd_data["tab_activated"] = sampling_design.tabs_SamplingStrategy.currentIndex()
     # simple random sampling
-    data["sampling_design"]["simple_random_sampling"] = {
+    sd_data["simple_random_sampling"] = {
         "num_samples": sampling_design.numberOfSamples_SimpRS.value(),
         "num_samples_overall_accuracy": sampling_design.determine_number_samples_dialog_SimpRS.OverallAccuracy.text(),
         "num_samples_half_width_ci": sampling_design.determine_number_samples_dialog_SimpRS.HalfWidthCI.text(),
-        "num_samples_confidence_interval": sampling_design.determine_number_samples_dialog_SimpRS.ConfidenceInterval.currentText(),
+        "num_samples_confidence_interval": (
+            sampling_design.determine_number_samples_dialog_SimpRS.ConfidenceInterval.currentText()
+        ),
         "min_distance": sampling_design.minDistance_SimpRS.value(),
-
         "post_stratification": sampling_design.QGBox_SimpRSwithPS.isChecked(),
         "post_stratification_map_path": setup_path(get_source_from(sampling_design.QCBox_PostStratMap_SimpRS)),
         "post_stratification_map_band": int(sampling_design.QCBox_band_PostStratMap_SimpRS.currentText())
-            if sampling_design.QCBox_band_PostStratMap_SimpRS.currentText() != '' else -1,
+        if sampling_design.QCBox_band_PostStratMap_SimpRS.currentText() != ""
+        else -1,
         "post_stratification_map_nodata": sampling_design.nodata_PostStratMap_SimpRS.text(),
         "classes_selected_for_sampling": sampling_design.QPBtn_PostStratMapClasses_SimpRS.text()
-            if sampling_design.QPBtn_PostStratMapClasses_SimpRS.text() != 'click to select' else None,
-
+        if sampling_design.QPBtn_PostStratMapClasses_SimpRS.text() != "click to select"
+        else None,
         "with_neighbors_aggregation": sampling_design.QGBox_neighbour_aggregation_SimpRS.isChecked(),
         "num_neighbors": sampling_design.QCBox_NumberOfNeighbors_SimpRS.currentText(),
         "min_neighbors_with_the_same_class": sampling_design.QCBox_SameClassOfNeighbors_SimpRS.currentText(),
@@ -128,25 +133,27 @@ def save(file_out):
         "random_seed_by_user": sampling_design.random_seed_by_user_SimpRS.text(),
     }
     # stratified random sampling
-    srs_method = "fixed values" if sampling_design.QCBox_StraRS_Method.currentText().startswith("Fixed values") \
+    srs_method = (
+        "fixed values"
+        if sampling_design.QCBox_StraRS_Method.currentText().startswith("Fixed values")
         else "area based proportion"
-    with_srs_table = sampling_design.QCBox_SamplingMap_StraRS.currentText() in sampling_design.srs_tables and \
-        srs_method in sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()]
-    data["sampling_design"]["stratified_random_sampling"] = {
+    )
+    srs_map_key = sampling_design.QCBox_SamplingMap_StraRS.currentText()
+    with_srs_table = srs_map_key in sampling_design.srs_tables and srs_method in sampling_design.srs_tables[srs_map_key]
+    sd_data["stratified_random_sampling"] = {
         "stratification_map_path": setup_path(get_source_from(sampling_design.QCBox_SamplingMap_StraRS)),
         "stratification_map_band": int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText())
-            if sampling_design.QCBox_band_SamplingMap_StraRS.currentText() != '' else -1,
+        if sampling_design.QCBox_band_SamplingMap_StraRS.currentText() != ""
+        else -1,
         "stratification_map_nodata": sampling_design.nodata_SamplingMap_StraRS.text(),
-
         "sampling_random_method": sampling_design.QCBox_StraRS_Method.currentText(),
         "overall_std_error": sampling_design.TotalExpectedSE.value(),
         "minimum_samples_per_stratum": sampling_design.MinimumSamplesPerStratum.value(),
-        "stratified_random_sampling_table": sampling_design.srs_tables
-            [sampling_design.QCBox_SamplingMap_StraRS.currentText()][srs_method] if with_srs_table else None,
-
+        "stratified_random_sampling_table": sampling_design.srs_tables[srs_map_key][srs_method]
+        if with_srs_table
+        else None,
         # TODO:
         # save the values color table of the QCBox_SamplingMap_StraRS
-
         "min_distance": sampling_design.minDistance_StraRS.value(),
         "with_neighbors_aggregation": sampling_design.QGBox_neighbour_aggregation_StraRS.isChecked(),
         "num_neighbors": sampling_design.QCBox_NumberOfNeighbors_StraRS.currentText(),
@@ -157,23 +164,26 @@ def save(file_out):
         "random_seed_by_user": sampling_design.random_seed_by_user_StraRS.text(),
     }
     # systematic sampling
-    data["sampling_design"]["systematic_sampling"] = {
+    sd_data["systematic_sampling"] = {
         "systematic_sampling_unit": sampling_design.QCBox_Systematic_Sampling_Unit.currentText(),
         "points_spacing": sampling_design.PointSpacing_SystS.value(),
         "num_samples_overall_accuracy": sampling_design.determine_number_samples_dialog_SystS.OverallAccuracy.text(),
         "num_samples_half_width_ci": sampling_design.determine_number_samples_dialog_SystS.HalfWidthCI.text(),
-        "num_samples_confidence_interval": sampling_design.determine_number_samples_dialog_SystS.ConfidenceInterval.currentText(),
+        "num_samples_confidence_interval": (
+            sampling_design.determine_number_samples_dialog_SystS.ConfidenceInterval.currentText()
+        ),
         "initial_inset_mode": sampling_design.QCBox_InitialInsetMode_SystS.currentText(),
         "initial_inset": sampling_design.InitialInsetFixed_SystS.value(),
         "max_xy_offset": sampling_design.MaxXYoffset_SystS.value(),
-
         "post_stratification": sampling_design.QGBox_SystSwithPS.isChecked(),
         "post_stratification_map_path": setup_path(get_source_from(sampling_design.QCBox_PostStratMap_SystS)),
         "post_stratification_map_band": int(sampling_design.QCBox_band_PostStratMap_SystS.currentText())
-            if sampling_design.QCBox_band_PostStratMap_SystS.currentText() != '' else -1,
+        if sampling_design.QCBox_band_PostStratMap_SystS.currentText() != ""
+        else -1,
         "post_stratification_map_nodata": sampling_design.nodata_PostStratMap_SystS.text(),
         "classes_selected_for_sampling": sampling_design.QPBtn_PostStratMapClasses_SystS.text()
-            if sampling_design.QPBtn_PostStratMapClasses_SystS.text() != 'click to select' else None,
+        if sampling_design.QPBtn_PostStratMapClasses_SystS.text() != "click to select"
+        else None,
         "with_neighbors_aggregation": sampling_design.QGBox_neighbour_aggregation_SystS.isChecked(),
         "num_neighbors": sampling_design.QCBox_NumberOfNeighbors_SystS.currentText(),
         "min_neighbors_with_the_same_class": sampling_design.QCBox_SameClassOfNeighbors_SystS.currentText(),
@@ -185,6 +195,7 @@ def save(file_out):
 
     # ######### sampling report configuration ######### #
     from AcATaMa.gui.sampling_report import SamplingReport
+
     sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile.currentLayer()
     if sampling_layer and sampling_layer in SamplingReport.instances:
         sampling_report = SamplingReport.instances[sampling_layer]
@@ -201,21 +212,28 @@ def save(file_out):
         view_widgets_config = {}
         for view_widget in ResponseDesignWindow.view_widgets:
             # {N: {"view_name", "layer_name", "render_file_path", "scale_factor"}, ...}
-            view_widgets_config[view_widget.id] = \
-                {"view_name": view_widget.QLabel_ViewName.text(),
-                 "layer_name": view_widget.QCBox_RenderFile.currentLayer().name() if view_widget.QCBox_RenderFile.currentLayer() else None,
-                 "render_file_path": setup_path(get_source_from(view_widget.QCBox_RenderFile)),
-                 # "view_size": (view_widget.size().width(), view_widget.size().height()),
-                 "scale_factor": view_widget.current_scale_factor}
+            view_widgets_config[view_widget.id] = {
+                "view_name": view_widget.QLabel_ViewName.text(),
+                "layer_name": view_widget.QCBox_RenderFile.currentLayer().name()
+                if view_widget.QCBox_RenderFile.currentLayer()
+                else None,
+                "render_file_path": setup_path(get_source_from(view_widget.QCBox_RenderFile)),
+                # "view_size": (view_widget.size().width(), view_widget.size().height()),
+                "scale_factor": view_widget.current_scale_factor,
+            }
         response_design.view_widgets_config = view_widgets_config
 
         if ResponseDesignWindow.inst is not None:
             response_design.fit_to_sample = ResponseDesignWindow.inst.radiusFitToSample.value()
-            response_design.dialog_size = (ResponseDesignWindow.inst.size().width(), ResponseDesignWindow.inst.size().height())
+            response_design.dialog_size = (
+                ResponseDesignWindow.inst.size().width(),
+                ResponseDesignWindow.inst.size().height(),
+            )
             response_design.auto_next_sample = ResponseDesignWindow.inst.autoNextSample.isChecked()
 
             if ResponseDesignWindow.inst.ccd_plugin_available:
                 from CCD_Plugin.utils.config import get_plugin_config
+
                 response_design.ccd_plugin_config = get_plugin_config(ResponseDesignWindow.inst.ccd_plugin.id)
                 response_design.ccd_plugin_opened = ResponseDesignWindow.inst.QPBtn_CCDPlugin.isChecked()
 
@@ -264,29 +282,33 @@ def save(file_out):
             "csv_decimal": response_design.analysis.csv_decimal,
         }
 
-    with open(file_out, 'w', encoding='utf-8') as yaml_file:
+    with open(file_out, "w", encoding="utf-8") as yaml_file:
         yaml.dump(data, yaml_file, Dumper=dumper, default_flow_style=False, sort_keys=False)
 
 
 @wait_process
 def restore(yml_file_path):
-    from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-    from AcATaMa.gui.sampling_design_window import SamplingDesignWindow
-    from AcATaMa.gui.response_design_window import ResponseDesignWindow
     from AcATaMa.core.analysis import AccuracyAssessmentWindow
+    from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+    from AcATaMa.gui.response_design_window import ResponseDesignWindow
+    from AcATaMa.gui.sampling_design_window import SamplingDesignWindow
     from AcATaMa.gui.sampling_report import SamplingReport
 
     # load the yaml file
     try:
-        with open(yml_file_path, 'r', encoding='utf-8') as yaml_file:
+        with open(yml_file_path, encoding="utf-8") as yaml_file:
             yaml_config = yaml.load(yaml_file, Loader=SafeLoader)
     except yaml.constructor.ConstructorError:
         # Support legacy YAML files that store ordered mappings and tuples
-        with open(yml_file_path, 'r', encoding='utf-8') as yaml_file:
+        with open(yml_file_path, encoding="utf-8") as yaml_file:
             yaml_config = yaml.load(yaml_file, Loader=LegacyLoader)
     except Exception as err:
-        iface.messageBar().pushMessage("AcATaMa", "Error while read the AcATaMa configuration file: {}".format(err),
-                                        level=Qgis.MessageLevel.Critical, duration=20)
+        iface.messageBar().pushMessage(
+            "AcATaMa",
+            f"Error while read the AcATaMa configuration file: {err}",
+            level=Qgis.MessageLevel.Critical,
+            duration=20,
+        )
         return
 
     # close the windows opened
@@ -339,41 +361,34 @@ def restore(yml_file_path):
         yaml_config["analysis"] = yaml_config.pop("accuracy_assessment")
     if "analysis" in yaml_config and "dialog" in yaml_config["analysis"]:
         yaml_config["analysis"]["accuracy_assessment"] = yaml_config["analysis"].pop("dialog")
-    if "sampling_design" in yaml_config and "pixel_values_categ_map" in yaml_config["sampling_design"]["simple_random_sampling"]:
-        yaml_config["sampling_design"]["simple_random_sampling"]['classes_selected_for_sampling'] = \
-            yaml_config["sampling_design"]["simple_random_sampling"].pop("pixel_values_categ_map")
     if "sampling_design" in yaml_config:
+        srs_simp = yaml_config["sampling_design"]["simple_random_sampling"]
+        srs_stra = yaml_config["sampling_design"]["stratified_random_sampling"]
+        if "pixel_values_categ_map" in srs_simp:
+            srs_simp["classes_selected_for_sampling"] = srs_simp.pop("pixel_values_categ_map")
         # old post stratification section
-        if "post_stratify" in yaml_config["sampling_design"]["simple_random_sampling"]:
-            yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification'] = \
-                yaml_config["sampling_design"]["simple_random_sampling"].pop("post_stratify")
-        if "systematic_sampling" in yaml_config["sampling_design"] and "post_stratify" in yaml_config["sampling_design"]["systematic_sampling"]:
-            yaml_config["sampling_design"]["systematic_sampling"]['post_stratification'] = \
-                yaml_config["sampling_design"]["systematic_sampling"].pop("post_stratify")
+        if "post_stratify" in srs_simp:
+            srs_simp["post_stratification"] = srs_simp.pop("post_stratify")
         # old post stratification map path
-        if "categ_map_path" in yaml_config["sampling_design"]["simple_random_sampling"]:
-            yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification_map_path'] = \
-                yaml_config["sampling_design"]["simple_random_sampling"].pop("categ_map_path")
-        if "systematic_sampling" in yaml_config["sampling_design"] and "categ_map_path" in yaml_config["sampling_design"]["systematic_sampling"]:
-            yaml_config["sampling_design"]["systematic_sampling"]['post_stratification_map_path'] = \
-                yaml_config["sampling_design"]["systematic_sampling"].pop("categ_map_path")
-        if "categ_map_path" in yaml_config["sampling_design"]["stratified_random_sampling"]:
-            yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_path'] = \
-                yaml_config["sampling_design"]["stratified_random_sampling"].pop("categ_map_path")
+        if "categ_map_path" in srs_simp:
+            srs_simp["post_stratification_map_path"] = srs_simp.pop("categ_map_path")
         # old post stratification map band
-        if "categ_map_band" in yaml_config["sampling_design"]["simple_random_sampling"]:
-            yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification_map_band'] = \
-                yaml_config["sampling_design"]["simple_random_sampling"].pop("categ_map_band")
-        if "systematic_sampling" in yaml_config["sampling_design"] and "categ_map_band" in yaml_config["sampling_design"]["systematic_sampling"]:
-            yaml_config["sampling_design"]["systematic_sampling"]['post_stratification_map_band'] = \
-                yaml_config["sampling_design"]["systematic_sampling"].pop("categ_map_band")
-        if "categ_map_band" in yaml_config["sampling_design"]["stratified_random_sampling"]:
-            yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_band'] = \
-                yaml_config["sampling_design"]["stratified_random_sampling"].pop("categ_map_band")
-        # old post stratification map nodata
-        if "categ_map_nodata" in yaml_config["sampling_design"]["stratified_random_sampling"]:
-            yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_nodata'] = \
-                yaml_config["sampling_design"]["stratified_random_sampling"].pop("categ_map_nodata")
+        if "categ_map_band" in srs_simp:
+            srs_simp["post_stratification_map_band"] = srs_simp.pop("categ_map_band")
+        if "systematic_sampling" in yaml_config["sampling_design"]:
+            srs_syst = yaml_config["sampling_design"]["systematic_sampling"]
+            if "post_stratify" in srs_syst:
+                srs_syst["post_stratification"] = srs_syst.pop("post_stratify")
+            if "categ_map_path" in srs_syst:
+                srs_syst["post_stratification_map_path"] = srs_syst.pop("categ_map_path")
+            if "categ_map_band" in srs_syst:
+                srs_syst["post_stratification_map_band"] = srs_syst.pop("categ_map_band")
+        if "categ_map_path" in srs_stra:
+            srs_stra["stratification_map_path"] = srs_stra.pop("categ_map_path")
+        if "categ_map_band" in srs_stra:
+            srs_stra["stratification_map_band"] = srs_stra.pop("categ_map_band")
+        if "categ_map_nodata" in srs_stra:
+            srs_stra["stratification_map_nodata"] = srs_stra.pop("categ_map_nodata")
 
     # restore the thematic map
     if yaml_config["thematic_map"]["path"] and get_restore_path(yaml_config["thematic_map"]["path"]):
@@ -381,8 +396,9 @@ def restore(yml_file_path):
         source = get_restore_path(yaml_config["thematic_map"]["path"])
         thematic_qgslayer = load_and_select_layer_in(source, AcATaMa.dockwidget.QCBox_ThematicMap)
         if not thematic_qgslayer:
-            iface.messageBar().pushMessage("AcATaMa", f"Failed to restore thematic map: {source}",
-                                           level=Qgis.MessageLevel.Critical)
+            iface.messageBar().pushMessage(
+                "AcATaMa", f"Failed to restore thematic map: {source}", level=Qgis.MessageLevel.Critical
+            )
             return
         AcATaMa.dockwidget.select_thematic_map(thematic_qgslayer)
         # band number
@@ -398,204 +414,190 @@ def restore(yml_file_path):
     # ######### sampling design configuration ######### #
     if "sampling_design" in yaml_config:
         sampling_design = AcATaMa.dockwidget.sampling_design_window
-        sampling_design.tabs_SamplingStrategy.setCurrentIndex(yaml_config["sampling_design"]["tab_activated"])
+        sd_cfg = yaml_config["sampling_design"]
+        srs_simp = sd_cfg["simple_random_sampling"]
+        srs_stra = sd_cfg["stratified_random_sampling"]
+        sampling_design.tabs_SamplingStrategy.setCurrentIndex(sd_cfg["tab_activated"])
 
         # simple random sampling
-        sampling_design.numberOfSamples_SimpRS.setValue(
-            yaml_config["sampling_design"]["simple_random_sampling"]['num_samples'])
-        if "num_samples_overall_accuracy" in yaml_config["sampling_design"]["simple_random_sampling"]:
+        sampling_design.numberOfSamples_SimpRS.setValue(srs_simp["num_samples"])
+        if "num_samples_overall_accuracy" in srs_simp:
             sampling_design.determine_number_samples_dialog_SimpRS.OverallAccuracy.setValue(
-                int(yaml_config["sampling_design"]["simple_random_sampling"]['num_samples_overall_accuracy'].replace('%', '')))
-        if "num_samples_half_width_ci" in yaml_config["sampling_design"]["simple_random_sampling"]:
+                int(srs_simp["num_samples_overall_accuracy"].replace("%", ""))
+            )
+        if "num_samples_half_width_ci" in srs_simp:
             sampling_design.determine_number_samples_dialog_SimpRS.HalfWidthCI.setValue(
-                float(yaml_config["sampling_design"]["simple_random_sampling"]['num_samples_half_width_ci'].replace(',', '.').replace('%', '')))
-        if "num_samples_confidence_interval" in yaml_config["sampling_design"]["simple_random_sampling"]:
-            select_item_in(sampling_design.determine_number_samples_dialog_SimpRS.ConfidenceInterval,
-                           yaml_config["sampling_design"]["simple_random_sampling"]['num_samples_confidence_interval'])
-        sampling_design.minDistance_SimpRS.setValue(
-            yaml_config["sampling_design"]["simple_random_sampling"]['min_distance'])
-        sampling_design.QGBox_SimpRSwithPS.setChecked(
-            yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification'])
-        sampling_design.widget_SimpRSwithPS.setVisible(
-            yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification'])
-        source = get_restore_path(yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification_map_path'])
+                float(srs_simp["num_samples_half_width_ci"].replace(",", ".").replace("%", ""))
+            )
+        if "num_samples_confidence_interval" in srs_simp:
+            select_item_in(
+                sampling_design.determine_number_samples_dialog_SimpRS.ConfidenceInterval,
+                srs_simp["num_samples_confidence_interval"],
+            )
+        sampling_design.minDistance_SimpRS.setValue(srs_simp["min_distance"])
+        sampling_design.QGBox_SimpRSwithPS.setChecked(srs_simp["post_stratification"])
+        sampling_design.widget_SimpRSwithPS.setVisible(srs_simp["post_stratification"])
+        source = get_restore_path(srs_simp["post_stratification_map_path"])
         thematic_qgslayer = load_and_select_layer_in(source, sampling_design.QCBox_PostStratMap_SimpRS)
         if source and not thematic_qgslayer:
-            iface.messageBar().pushMessage(f"AcATaMa", f"Failed to restore post-stratification map (simple random sampling): {source}",
-                                           level=Qgis.MessageLevel.Warning)
+            iface.messageBar().pushMessage(
+                "AcATaMa",
+                f"Failed to restore post-stratification map (simple random sampling): {source}",
+                level=Qgis.MessageLevel.Warning,
+            )
         sampling_design.update_post_stratification_map_SimpRS(item_changed="layer")
-        sampling_design.QCBox_band_PostStratMap_SimpRS.setCurrentIndex(
-            yaml_config["sampling_design"]["simple_random_sampling"]['post_stratification_map_band'] - 1)
+        sampling_design.QCBox_band_PostStratMap_SimpRS.setCurrentIndex(srs_simp["post_stratification_map_band"] - 1)
         sampling_design.update_post_stratification_map_SimpRS(item_changed="band")
-        if "post_stratification_map_nodata" in yaml_config["sampling_design"]["simple_random_sampling"]:
-            nodata = set_nodata_format(yaml_config["sampling_design"]["simple_random_sampling"]["post_stratification_map_nodata"])
-            sampling_design.nodata_PostStratMap_SimpRS.setText(nodata)
+        if "post_stratification_map_nodata" in srs_simp:
+            sampling_design.nodata_PostStratMap_SimpRS.setText(
+                set_nodata_format(srs_simp["post_stratification_map_nodata"])
+            )
         sampling_design.update_post_stratification_map_SimpRS(item_changed="nodata")
         sampling_design.QPBtn_PostStratMapClasses_SimpRS.setText(
-            yaml_config["sampling_design"]["simple_random_sampling"]['classes_selected_for_sampling']
-            if yaml_config["sampling_design"]["simple_random_sampling"]['classes_selected_for_sampling'] else "click to select")
-
-        sampling_design.QGBox_neighbour_aggregation_SimpRS.setChecked(
-            yaml_config["sampling_design"]["simple_random_sampling"]['with_neighbors_aggregation'])
-        sampling_design.widget_neighbour_aggregation_SimpRS.setVisible(
-            yaml_config["sampling_design"]["simple_random_sampling"]['with_neighbors_aggregation'])
-        select_item_in(sampling_design.QCBox_NumberOfNeighbors_SimpRS,
-                       yaml_config["sampling_design"]["simple_random_sampling"]['num_neighbors'])
-        select_item_in(sampling_design.QCBox_SameClassOfNeighbors_SimpRS,
-                       yaml_config["sampling_design"]["simple_random_sampling"]['min_neighbors_with_the_same_class'])
-        sampling_design.QGBox_random_sampling_options_SimpRS.setChecked(
-            yaml_config["sampling_design"]["simple_random_sampling"]['random_sampling_options'])
-        sampling_design.widget_random_sampling_options_SimpRS.setVisible(
-            yaml_config["sampling_design"]["simple_random_sampling"]['random_sampling_options'])
-        sampling_design.automatic_random_seed_SimpRS.setChecked(
-            yaml_config["sampling_design"]["simple_random_sampling"]['automatic_random_seed'])
-        sampling_design.with_random_seed_by_user_SimpRS.setChecked(
-            yaml_config["sampling_design"]["simple_random_sampling"]['with_random_seed_by_user'])
-        sampling_design.random_seed_by_user_SimpRS.setText(
-            yaml_config["sampling_design"]["simple_random_sampling"]['random_seed_by_user'])
+            srs_simp["classes_selected_for_sampling"] or "click to select"
+        )
+        sampling_design.QGBox_neighbour_aggregation_SimpRS.setChecked(srs_simp["with_neighbors_aggregation"])
+        sampling_design.widget_neighbour_aggregation_SimpRS.setVisible(srs_simp["with_neighbors_aggregation"])
+        select_item_in(sampling_design.QCBox_NumberOfNeighbors_SimpRS, srs_simp["num_neighbors"])
+        select_item_in(sampling_design.QCBox_SameClassOfNeighbors_SimpRS, srs_simp["min_neighbors_with_the_same_class"])
+        sampling_design.QGBox_random_sampling_options_SimpRS.setChecked(srs_simp["random_sampling_options"])
+        sampling_design.widget_random_sampling_options_SimpRS.setVisible(srs_simp["random_sampling_options"])
+        sampling_design.automatic_random_seed_SimpRS.setChecked(srs_simp["automatic_random_seed"])
+        sampling_design.with_random_seed_by_user_SimpRS.setChecked(srs_simp["with_random_seed_by_user"])
+        sampling_design.random_seed_by_user_SimpRS.setText(srs_simp["random_seed_by_user"])
 
         # stratified random sampling
-        source = get_restore_path(yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_path'])
+        source = get_restore_path(srs_stra["stratification_map_path"])
         thematic_qgslayer = load_and_select_layer_in(source, sampling_design.QCBox_SamplingMap_StraRS)
         if source and not thematic_qgslayer:
-            iface.messageBar().pushMessage(f"AcATaMa", f"Failed to restore stratification map (stratified random sampling): {source}",
-                                           level=Qgis.MessageLevel.Warning)
+            iface.messageBar().pushMessage(
+                "AcATaMa",
+                f"Failed to restore stratification map (stratified random sampling): {source}",
+                level=Qgis.MessageLevel.Warning,
+            )
         sampling_design.update_sampling_map_StraRS(sampling_design.QCBox_SamplingMap_StraRS.currentLayer())
-        sampling_design.QCBox_band_SamplingMap_StraRS.setCurrentIndex(
-            yaml_config["sampling_design"]["stratified_random_sampling"]['stratification_map_band'] - 1)
+        sampling_design.QCBox_band_SamplingMap_StraRS.setCurrentIndex(srs_stra["stratification_map_band"] - 1)
         # nodata
-        nodata = set_nodata_format(yaml_config["sampling_design"]["stratified_random_sampling"]["stratification_map_nodata"])
+        nodata = set_nodata_format(srs_stra["stratification_map_nodata"])
         if CONFIG_FILE_VERSION == 191121 and nodata == "-1":
             sampling_design.nodata_SamplingMap_StraRS.setText("nan")
         else:
             sampling_design.nodata_SamplingMap_StraRS.setText(nodata)
 
         with block_signals_to(sampling_design.QCBox_StraRS_Method):
-            select_item_in(sampling_design.QCBox_StraRS_Method,
-                           yaml_config["sampling_design"]["stratified_random_sampling"]['sampling_random_method'])
+            select_item_in(sampling_design.QCBox_StraRS_Method, srs_stra["sampling_random_method"])
         with block_signals_to(sampling_design.TotalExpectedSE):
-            sampling_design.TotalExpectedSE.setValue(
-                yaml_config["sampling_design"]["stratified_random_sampling"]['overall_std_error'])
-        if "minimum_samples_per_stratum" in yaml_config["sampling_design"]["stratified_random_sampling"]:
+            sampling_design.TotalExpectedSE.setValue(srs_stra["overall_std_error"])
+        if "minimum_samples_per_stratum" in srs_stra:
             with block_signals_to(sampling_design.MinimumSamplesPerStratum):
-                sampling_design.MinimumSamplesPerStratum.setValue(
-                    yaml_config["sampling_design"]["stratified_random_sampling"]['minimum_samples_per_stratum'])
+                sampling_design.MinimumSamplesPerStratum.setValue(srs_stra["minimum_samples_per_stratum"])
 
-        srs_table = yaml_config["sampling_design"]["stratified_random_sampling"]['stratified_random_sampling_table']
+        srs_table = srs_stra["stratified_random_sampling_table"]
 
         # import Ui from old versions
         if CONFIG_FILE_VERSION < 240600:
-            if srs_table and 'std_dev' in srs_table:
-                srs_table['ui'] = srs_table.pop('std_dev')
+            if srs_table and "std_dev" in srs_table:
+                srs_table["ui"] = srs_table.pop("std_dev")
             # change the header 'Std Dev' to 'Ui' in the header list inside srs_table
-            if srs_table and 'Std Dev' in srs_table['header']:
+            if srs_table and "Std Dev" in srs_table["header"]:
                 # replace the header python list 'Std Dev' to 'Ui'
-                srs_table['header'][srs_table['header'].index('Std Dev')] = 'Ui'
+                srs_table["header"][srs_table["header"].index("Std Dev")] = "Ui"
 
-        srs_method = "fixed values" if sampling_design.QCBox_StraRS_Method.currentText().startswith("Fixed values") \
+        srs_method = (
+            "fixed values"
+            if sampling_design.QCBox_StraRS_Method.currentText().startswith("Fixed values")
             else "area based proportion"
-        sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()] = {}
-        sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()][srs_method] = srs_table
+        )
+        srs_map_key = sampling_design.QCBox_SamplingMap_StraRS.currentText()
+        sampling_design.srs_tables[srs_map_key] = {}
+        sampling_design.srs_tables[srs_map_key][srs_method] = srs_table
         fill_stratified_sampling_table()
         # restore the pixel count by pixel value
-        if srs_table and 'pixel_count' in srs_table:
+        if srs_table and "pixel_count" in srs_table:
             from AcATaMa.utils.others_utils import storage_pixel_count_by_pixel_values
-            global storage_pixel_count_by_pixel_values
+
             storage_pixel_count_by_pixel_values[
-                (sampling_design.QCBox_SamplingMap_StraRS.currentLayer(),
-                 int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText()),
-                 get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text()))
-            ] = dict(zip(srs_table['values_and_colors_table']['Pixel Value'], srs_table['pixel_count']))
+                (
+                    sampling_design.QCBox_SamplingMap_StraRS.currentLayer(),
+                    int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText()),
+                    get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text()),
+                )
+            ] = dict(zip(srs_table["values_and_colors_table"]["Pixel Value"], srs_table["pixel_count"], strict=False))
 
         # TODO:
         # restore the values color table of the QCBox_SamplingMap_StraRS saved
 
-        sampling_design.minDistance_StraRS.setValue(
-            yaml_config["sampling_design"]["stratified_random_sampling"]['min_distance'])
-        sampling_design.QGBox_neighbour_aggregation_StraRS.setChecked(
-            yaml_config["sampling_design"]["stratified_random_sampling"]['with_neighbors_aggregation'])
-        sampling_design.widget_neighbour_aggregation_StraRS.setVisible(
-            yaml_config["sampling_design"]["stratified_random_sampling"]['with_neighbors_aggregation'])
-        select_item_in(sampling_design.QCBox_NumberOfNeighbors_StraRS,
-                       yaml_config["sampling_design"]["stratified_random_sampling"]['num_neighbors'])
-        select_item_in(sampling_design.QCBox_SameClassOfNeighbors_StraRS,
-                       yaml_config["sampling_design"]["stratified_random_sampling"]['min_neighbors_with_the_same_class'])
-        sampling_design.QGBox_random_sampling_options_StraRS.setChecked(
-            yaml_config["sampling_design"]["stratified_random_sampling"]['random_sampling_options'])
-        sampling_design.widget_random_sampling_options_StraRS.setVisible(
-            yaml_config["sampling_design"]["stratified_random_sampling"]['random_sampling_options'])
-        sampling_design.automatic_random_seed_StraRS.setChecked(
-            yaml_config["sampling_design"]["stratified_random_sampling"]['automatic_random_seed'])
-        sampling_design.with_random_seed_by_user_StraRS.setChecked(
-            yaml_config["sampling_design"]["stratified_random_sampling"]['with_random_seed_by_user'])
-        sampling_design.random_seed_by_user_StraRS.setText(
-            yaml_config["sampling_design"]["stratified_random_sampling"]['random_seed_by_user'])
+        sampling_design.minDistance_StraRS.setValue(srs_stra["min_distance"])
+        sampling_design.QGBox_neighbour_aggregation_StraRS.setChecked(srs_stra["with_neighbors_aggregation"])
+        sampling_design.widget_neighbour_aggregation_StraRS.setVisible(srs_stra["with_neighbors_aggregation"])
+        select_item_in(sampling_design.QCBox_NumberOfNeighbors_StraRS, srs_stra["num_neighbors"])
+        select_item_in(sampling_design.QCBox_SameClassOfNeighbors_StraRS, srs_stra["min_neighbors_with_the_same_class"])
+        sampling_design.QGBox_random_sampling_options_StraRS.setChecked(srs_stra["random_sampling_options"])
+        sampling_design.widget_random_sampling_options_StraRS.setVisible(srs_stra["random_sampling_options"])
+        sampling_design.automatic_random_seed_StraRS.setChecked(srs_stra["automatic_random_seed"])
+        sampling_design.with_random_seed_by_user_StraRS.setChecked(srs_stra["with_random_seed_by_user"])
+        sampling_design.random_seed_by_user_StraRS.setText(srs_stra["random_seed_by_user"])
 
         # systematic sampling
-        if "systematic_sampling" in yaml_config["sampling_design"]:
-            if "systematic_sampling_unit" in yaml_config["sampling_design"]["systematic_sampling"]:
-                select_item_in(sampling_design.QCBox_Systematic_Sampling_Unit,
-                               yaml_config["sampling_design"]["systematic_sampling"]['systematic_sampling_unit'])
-            sampling_design.PointSpacing_SystS.setValue(
-                yaml_config["sampling_design"]["systematic_sampling"]['points_spacing'])
-            if "num_samples_overall_accuracy" in yaml_config["sampling_design"]["systematic_sampling"]:
+        if "systematic_sampling" in sd_cfg:
+            srs_syst = sd_cfg["systematic_sampling"]
+            if "systematic_sampling_unit" in srs_syst:
+                select_item_in(sampling_design.QCBox_Systematic_Sampling_Unit, srs_syst["systematic_sampling_unit"])
+            sampling_design.PointSpacing_SystS.setValue(srs_syst["points_spacing"])
+            if "num_samples_overall_accuracy" in srs_syst:
                 sampling_design.determine_number_samples_dialog_SystS.OverallAccuracy.setValue(
-                    int(yaml_config["sampling_design"]["systematic_sampling"]['num_samples_overall_accuracy'].replace('%', '')))
-            if "num_samples_half_width_ci" in yaml_config["sampling_design"]["systematic_sampling"]:
+                    int(srs_syst["num_samples_overall_accuracy"].replace("%", ""))
+                )
+            if "num_samples_half_width_ci" in srs_syst:
                 sampling_design.determine_number_samples_dialog_SystS.HalfWidthCI.setValue(
-                    float(yaml_config["sampling_design"]["systematic_sampling"]['num_samples_half_width_ci'].replace(',', '.').replace('%', '')))
-            if "num_samples_confidence_interval" in yaml_config["sampling_design"]["systematic_sampling"]:
-                select_item_in(sampling_design.determine_number_samples_dialog_SystS.ConfidenceInterval,
-                               yaml_config["sampling_design"]["systematic_sampling"]['num_samples_confidence_interval'])
-            if "initial_inset_mode" in yaml_config["sampling_design"]["systematic_sampling"]:
-                select_item_in(sampling_design.QCBox_InitialInsetMode_SystS,
-                               yaml_config["sampling_design"]["systematic_sampling"]['initial_inset_mode'])
+                    float(srs_syst["num_samples_half_width_ci"].replace(",", ".").replace("%", ""))
+                )
+            if "num_samples_confidence_interval" in srs_syst:
+                select_item_in(
+                    sampling_design.determine_number_samples_dialog_SystS.ConfidenceInterval,
+                    srs_syst["num_samples_confidence_interval"],
+                )
+            if "initial_inset_mode" in srs_syst:
+                select_item_in(sampling_design.QCBox_InitialInsetMode_SystS, srs_syst["initial_inset_mode"])
             else:
                 select_item_in(sampling_design.QCBox_InitialInsetMode_SystS, "Fixed")
-            sampling_design.InitialInsetFixed_SystS.setValue(
-                yaml_config["sampling_design"]["systematic_sampling"]['initial_inset'])
-            sampling_design.MaxXYoffset_SystS.setValue(
-                yaml_config["sampling_design"]["systematic_sampling"]['max_xy_offset'])
+            sampling_design.InitialInsetFixed_SystS.setValue(srs_syst["initial_inset"])
+            sampling_design.MaxXYoffset_SystS.setValue(srs_syst["max_xy_offset"])
 
-            sampling_design.QGBox_SystSwithPS.setChecked(
-                yaml_config["sampling_design"]["systematic_sampling"]['post_stratification'])
-            sampling_design.widget_SystSwithPS.setVisible(
-                yaml_config["sampling_design"]["systematic_sampling"]['post_stratification'])
-            source = get_restore_path(yaml_config["sampling_design"]["systematic_sampling"]['post_stratification_map_path'])
+            sampling_design.QGBox_SystSwithPS.setChecked(srs_syst["post_stratification"])
+            sampling_design.widget_SystSwithPS.setVisible(srs_syst["post_stratification"])
+            source = get_restore_path(srs_syst["post_stratification_map_path"])
             thematic_qgslayer = load_and_select_layer_in(source, sampling_design.QCBox_PostStratMap_SystS)
             if source and not thematic_qgslayer:
-                iface.messageBar().pushMessage(f"AcATaMa", f"Failed to restore post-stratification map (systematic sampling): {source}",
-                                               level=Qgis.MessageLevel.Warning)
+                iface.messageBar().pushMessage(
+                    "AcATaMa",
+                    f"Failed to restore post-stratification map (systematic sampling): {source}",
+                    level=Qgis.MessageLevel.Warning,
+                )
             sampling_design.update_post_stratification_map_SystS(item_changed="layer")
-            sampling_design.QCBox_band_PostStratMap_SystS.setCurrentIndex(
-                yaml_config["sampling_design"]["systematic_sampling"]['post_stratification_map_band'] - 1)
+            sampling_design.QCBox_band_PostStratMap_SystS.setCurrentIndex(srs_syst["post_stratification_map_band"] - 1)
             sampling_design.update_post_stratification_map_SystS(item_changed="band")
-            if "post_stratification_map_nodata" in yaml_config["sampling_design"]["systematic_sampling"]:
-                nodata = set_nodata_format(yaml_config["sampling_design"]["systematic_sampling"]["post_stratification_map_nodata"])
-                sampling_design.nodata_PostStratMap_SystS.setText(nodata)
+            if "post_stratification_map_nodata" in srs_syst:
+                sampling_design.nodata_PostStratMap_SystS.setText(
+                    set_nodata_format(srs_syst["post_stratification_map_nodata"])
+                )
             sampling_design.update_post_stratification_map_SystS(item_changed="nodata")
             sampling_design.QPBtn_PostStratMapClasses_SystS.setText(
-                yaml_config["sampling_design"]["systematic_sampling"]['classes_selected_for_sampling']
-                if yaml_config["sampling_design"]["systematic_sampling"]['classes_selected_for_sampling'] else "click to select")
-
-            sampling_design.QGBox_neighbour_aggregation_SystS.setChecked(
-                yaml_config["sampling_design"]["systematic_sampling"]['with_neighbors_aggregation'])
-            sampling_design.widget_neighbour_aggregation_SystS.setVisible(
-                yaml_config["sampling_design"]["systematic_sampling"]['with_neighbors_aggregation'])
-            select_item_in(sampling_design.QCBox_NumberOfNeighbors_SystS,
-                           yaml_config["sampling_design"]["systematic_sampling"]['num_neighbors'])
-            select_item_in(sampling_design.QCBox_SameClassOfNeighbors_SystS,
-                           yaml_config["sampling_design"]["systematic_sampling"]['min_neighbors_with_the_same_class'])
-            sampling_design.QGBox_random_sampling_options_SystS.setChecked(
-                yaml_config["sampling_design"]["systematic_sampling"]['random_sampling_options'])
-            sampling_design.widget_random_sampling_options_SystS.setVisible(
-                yaml_config["sampling_design"]["systematic_sampling"]['random_sampling_options'])
-            sampling_design.automatic_random_seed_SystS.setChecked(
-                yaml_config["sampling_design"]["systematic_sampling"]['automatic_random_seed'])
-            sampling_design.with_random_seed_by_user_SystS.setChecked(
-                yaml_config["sampling_design"]["systematic_sampling"]['with_random_seed_by_user'])
-            sampling_design.random_seed_by_user_SystS.setText(
-                yaml_config["sampling_design"]["systematic_sampling"]['random_seed_by_user'])
+                srs_syst["classes_selected_for_sampling"]
+                if srs_syst["classes_selected_for_sampling"]
+                else "click to select"
+            )
+            sampling_design.QGBox_neighbour_aggregation_SystS.setChecked(srs_syst["with_neighbors_aggregation"])
+            sampling_design.widget_neighbour_aggregation_SystS.setVisible(srs_syst["with_neighbors_aggregation"])
+            select_item_in(sampling_design.QCBox_NumberOfNeighbors_SystS, srs_syst["num_neighbors"])
+            select_item_in(
+                sampling_design.QCBox_SameClassOfNeighbors_SystS, srs_syst["min_neighbors_with_the_same_class"]
+            )
+            sampling_design.QGBox_random_sampling_options_SystS.setChecked(srs_syst["random_sampling_options"])
+            sampling_design.widget_random_sampling_options_SystS.setVisible(srs_syst["random_sampling_options"])
+            sampling_design.automatic_random_seed_SystS.setChecked(srs_syst["automatic_random_seed"])
+            sampling_design.with_random_seed_by_user_SystS.setChecked(srs_syst["with_random_seed_by_user"])
+            sampling_design.random_seed_by_user_SystS.setText(srs_syst["random_seed_by_user"])
 
     # ######### response_design configuration ######### #
     # restore the response_design settings
@@ -604,8 +606,9 @@ def restore(yml_file_path):
         source = get_restore_path(yaml_config["sampling_layer"])
         sampling_layer = load_and_select_layer_in(source, AcATaMa.dockwidget.QCBox_SamplingFile)
         if not sampling_layer:
-            iface.messageBar().pushMessage("AcATaMa", f"Failed to restore sampling layer: {source}",
-                                           level=Qgis.MessageLevel.Critical)
+            iface.messageBar().pushMessage(
+                "AcATaMa", f"Failed to restore sampling layer: {source}", level=Qgis.MessageLevel.Critical
+            )
             return
         response_design = ResponseDesign(sampling_layer)
         # TODO:
@@ -663,16 +666,16 @@ def restore(yml_file_path):
         for sample_id in yaml_config["samples_order"]:
             # point saved exist in shape file
             if sample_id in [p.sample_id for p in response_design.points]:
-                samples_ordered.append([p for p in response_design.points if p.sample_id == sample_id][0])
+                samples_ordered.append(next(p for p in response_design.points if p.sample_id == sample_id))
         # added new point inside shape file that not exists in yaml config
-        for new_point_id in set([p.sample_id for p in response_design.points]) - set(yaml_config["samples_order"]):
-            samples_ordered.append([p for p in response_design.points if p.sample_id == new_point_id][0])
+        for new_point_id in {p.sample_id for p in response_design.points} - set(yaml_config["samples_order"]):
+            samples_ordered.append(next(p for p in response_design.points if p.sample_id == new_point_id))
         # reassign points loaded and ordered
         response_design.points = samples_ordered
         # restore sample state response_design
         for sample in yaml_config["samples"].values():
             if sample["sample_id"] in [p.sample_id for p in response_design.points]:
-                sample_to_restore = [p for p in response_design.points if p.sample_id == sample["sample_id"]][0]
+                sample_to_restore = next(p for p in response_design.points if p.sample_id == sample["sample_id"])
                 sample_to_restore.label_id = sample["label_id"]
                 if sample_to_restore.label_id is not None:
                     sample_to_restore.is_labeled = True
@@ -680,8 +683,15 @@ def restore(yml_file_path):
         response_design.reload_labeling_status()
         AcATaMa.dockwidget.update_response_design_config()
         # define if this response_design was made with thematic classes
-        if response_design.buttons_config and yaml_config["thematic_map"]["path"] and \
-                True in [bc["thematic_class"] is not None and bc["thematic_class"] != "" for bc in response_design.buttons_config.values()]:
+        if (
+            response_design.buttons_config
+            and yaml_config["thematic_map"]["path"]
+            and True
+            in [
+                bc["thematic_class"] is not None and bc["thematic_class"] != ""
+                for bc in response_design.buttons_config.values()
+            ]
+        ):
             response_design.with_thematic_classes = True
 
         # restore the ccd plugin config
@@ -698,6 +708,7 @@ def restore(yml_file_path):
 
     # ######### sampling report configuration ######### #
     from AcATaMa.gui.sampling_report import SamplingReport
+
     if "sampling_report" in yaml_config:
         if "sampling_layer" in yaml_config and sampling_layer:
             SamplingReport(sampling_layer, report=yaml_config["sampling_report"])
@@ -711,6 +722,7 @@ def restore(yml_file_path):
 
     if "accuracy_assessment_dialog" in yaml_config and response_design:
         from AcATaMa.core.analysis import Analysis
+
         analysis = Analysis(response_design)
         area_unit, success = QgsUnitTypes.stringToAreaUnit(yaml_config["accuracy_assessment_dialog"]["area_unit"])
         if success:
@@ -722,21 +734,27 @@ def restore(yml_file_path):
     # support load the old format end here
     if "analysis" in yaml_config and "estimator" in yaml_config["analysis"]:
         AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(-1)
-        estimators = {'Simple/systematic estimator': 0, 'Simple/systematic post-stratified estimator': 1, 'Stratified estimator': 2}
+        estimators = {
+            "Simple/systematic estimator": 0,
+            "Simple/systematic post-stratified estimator": 1,
+            "Stratified estimator": 2,
+        }
         if yaml_config["analysis"]["estimator"] in estimators:
             AcATaMa.dockwidget.QCBox_SamplingEstimator.setCurrentIndex(estimators[yaml_config["analysis"]["estimator"]])
 
     if "analysis" in yaml_config and "accuracy_assessment" in yaml_config["analysis"] and response_design:
         from AcATaMa.core.analysis import Analysis
+
         analysis = Analysis(response_design)
-        if yaml_config["analysis"]["accuracy_assessment"]["area_unit"] in [e.value for e in QgsUnitTypes.AreaUnit]:
-            analysis.area_unit = QgsUnitTypes.AreaUnit(yaml_config["analysis"]["accuracy_assessment"]["area_unit"])
+        aa_cfg = yaml_config["analysis"]["accuracy_assessment"]
+        if aa_cfg["area_unit"] in [e.value for e in QgsUnitTypes.AreaUnit]:
+            analysis.area_unit = QgsUnitTypes.AreaUnit(aa_cfg["area_unit"])
         else:  # old format
-            area_unit, success = QgsUnitTypes.stringToAreaUnit(yaml_config["analysis"]["accuracy_assessment"]["area_unit"])
+            area_unit, success = QgsUnitTypes.stringToAreaUnit(aa_cfg["area_unit"])
             analysis.area_unit = area_unit if success else QgsUnitTypes.AreaUnit.AreaSquareMeters
-        analysis.z_score = yaml_config["analysis"]["accuracy_assessment"]["z_score"]
-        analysis.csv_separator = yaml_config["analysis"]["accuracy_assessment"]["csv_separator"]
-        analysis.csv_decimal = yaml_config["analysis"]["accuracy_assessment"]["csv_decimal"]
+        analysis.z_score = aa_cfg["z_score"]
+        analysis.csv_separator = aa_cfg["csv_separator"]
+        analysis.csv_decimal = aa_cfg["csv_decimal"]
         response_design.analysis = analysis
 
     # reload analysis status in accuracy assessment

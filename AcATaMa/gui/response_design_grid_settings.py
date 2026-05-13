@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  AcATaMa
@@ -18,18 +17,18 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import os
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QDialog
 from qgis.PyQt.QtCore import pyqtSlot
+from qgis.PyQt.QtWidgets import QDialog
 
 from AcATaMa.core.response_design import ResponseDesign
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'response_design_grid_settings.ui'))
+FORM_CLASS, _ = uic.loadUiType(os.path.join(plugin_folder, "ui", "response_design_grid_settings.ui"))
 
 
 class ResponseDesignGridSettings(QDialog, FORM_CLASS):
@@ -37,13 +36,13 @@ class ResponseDesignGridSettings(QDialog, FORM_CLASS):
 
     def __init__(self, parent=None):
         """Constructor."""
-        super(ResponseDesignGridSettings, self).__init__(parent)
+        super().__init__(parent)
         self.setupUi(self)
-
 
     @pyqtSlot()
     def on_buttonBox_accepted(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
         sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile.currentLayer()
         if sampling_layer in ResponseDesign.instances:
             response_design = ResponseDesign.instances[sampling_layer]
@@ -62,6 +61,7 @@ class ResponseDesignGridSettings(QDialog, FORM_CLASS):
     @pyqtSlot()
     def on_buttonBox_rejected(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
         sampling_layer = AcATaMa.dockwidget.QCBox_SamplingFile.currentLayer()
         if sampling_layer in ResponseDesign.instances:
             response_design = ResponseDesign.instances[sampling_layer]

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  AcATaMa
@@ -18,20 +17,19 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import os
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QDialog
 from qgis.PyQt.QtCore import pyqtSlot
+from qgis.PyQt.QtWidgets import QDialog
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'determine_num_samples_simple.ui'))
+FORM_CLASS, _ = uic.loadUiType(os.path.join(plugin_folder, "ui", "determine_num_samples_simple.ui"))
 
 
 class DetermineNumberSamplesDialog(QDialog, FORM_CLASS):
-
     def __init__(self):
         QDialog.__init__(self)
         self.setupUi(self)
@@ -44,13 +42,7 @@ class DetermineNumberSamplesDialog(QDialog, FORM_CLASS):
 
     @staticmethod
     def get_z_value(confidence_interval):
-        z_values = {
-            0.80: 1.282,
-            0.85: 1.440,
-            0.90: 1.645,
-            0.95: 1.96,
-            0.99: 2.576
-        }
+        z_values = {0.80: 1.282, 0.85: 1.440, 0.90: 1.645, 0.95: 1.96, 0.99: 2.576}
         return z_values[confidence_interval]
 
     @pyqtSlot()
@@ -58,9 +50,9 @@ class DetermineNumberSamplesDialog(QDialog, FORM_CLASS):
         """
         Determine the number of samples
         """
-        overall_accuracy = self.OverallAccuracy.value()/100
-        half_width_ci = self.HalfWidthCI.value()/100
-        confidence_interval = float(self.ConfidenceInterval.currentText().replace('%', ''))/100
+        overall_accuracy = self.OverallAccuracy.value() / 100
+        half_width_ci = self.HalfWidthCI.value() / 100
+        confidence_interval = float(self.ConfidenceInterval.currentText().replace("%", "")) / 100
 
         z = self.get_z_value(confidence_interval)
         n = (z**2 * overall_accuracy * (1 - overall_accuracy)) / (half_width_ci**2)
@@ -71,4 +63,3 @@ class DetermineNumberSamplesDialog(QDialog, FORM_CLASS):
             self.NoteMinSamples.setVisible(True)
         else:
             self.NoteMinSamples.setVisible(False)
-

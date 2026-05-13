@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  AcATaMa
@@ -18,43 +17,56 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import os
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QDialog, QTableWidgetItem, QPushButton
 from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtWidgets import QDialog, QPushButton, QTableWidgetItem
 
 from AcATaMa.core.map import get_values_and_colors_table
 from AcATaMa.utils.system_utils import error_handler
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'post_stratification_classes_dialog.ui'))
+FORM_CLASS, _ = uic.loadUiType(os.path.join(plugin_folder, "ui", "post_stratification_classes_dialog.ui"))
 
 
 class PostStratificationClassesDialog(QDialog, FORM_CLASS):
-
-    def __init__(self, post_stratification_map_layer, post_stratification_map_band, post_stratification_map_nodata, set_classes_selected=None):
+    def __init__(
+        self,
+        post_stratification_map_layer,
+        post_stratification_map_band,
+        post_stratification_map_nodata,
+        set_classes_selected=None,
+    ):
         QDialog.__init__(self)
         self.setupUi(self)
         self.post_stratification_map_layer = post_stratification_map_layer
         self.post_stratification_map_band = post_stratification_map_band
         self.post_stratification_map_nodata = post_stratification_map_nodata
-        self.classes_selected = \
-            [i.strip() for i in (set_classes_selected.split(',') if set_classes_selected and
-                                                                    set_classes_selected != "click to select" else [])]
+        self.classes_selected = [
+            i.strip()
+            for i in (
+                set_classes_selected.split(",")
+                if set_classes_selected and set_classes_selected != "click to select"
+                else []
+            )
+        ]
         self.create_table()
 
     @error_handler
     def create_table(self):
         header = ["Pix Val", "Color", "Select"]
         # get color table from raster
-        classes_table = {"values_and_colors_table": get_values_and_colors_table(
-            self.post_stratification_map_layer,
-            band=self.post_stratification_map_band,
-            nodata=self.post_stratification_map_nodata)}
+        classes_table = {
+            "values_and_colors_table": get_values_and_colors_table(
+                self.post_stratification_map_layer,
+                band=self.post_stratification_map_band,
+                nodata=self.post_stratification_map_nodata,
+            )
+        }
 
         if not classes_table["values_and_colors_table"]:
             # clear table
@@ -62,7 +74,7 @@ class PostStratificationClassesDialog(QDialog, FORM_CLASS):
             self.tableOfClasses.setColumnCount(0)
             return False
 
-        classes_table["row_count"] = len(list(classes_table["values_and_colors_table"].values())[0])
+        classes_table["row_count"] = len(next(iter(classes_table["values_and_colors_table"].values())))
         # init table
         self.tableOfClasses.setRowCount(classes_table["row_count"])
         self.tableOfClasses.setColumnCount(3)
@@ -83,10 +95,14 @@ class PostStratificationClassesDialog(QDialog, FORM_CLASS):
                 for m in range(classes_table["row_count"]):
                     item_table = QTableWidgetItem()
                     item_table.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
-                    item_table.setBackground(QColor(classes_table["values_and_colors_table"]["Red"][m],
-                                                    classes_table["values_and_colors_table"]["Green"][m],
-                                                    classes_table["values_and_colors_table"]["Blue"][m],
-                                                    classes_table["values_and_colors_table"]["Alpha"][m]))
+                    item_table.setBackground(
+                        QColor(
+                            classes_table["values_and_colors_table"]["Red"][m],
+                            classes_table["values_and_colors_table"]["Green"][m],
+                            classes_table["values_and_colors_table"]["Blue"][m],
+                            classes_table["values_and_colors_table"]["Alpha"][m],
+                        )
+                    )
                     self.tableOfClasses.setItem(m, n, item_table)
             if h == "Select":
                 for m, item in enumerate(classes_table["values_and_colors_table"]["Pixel Value"]):

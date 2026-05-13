@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  AcATaMa
@@ -18,6 +17,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import random
 from math import floor
 
@@ -29,19 +29,17 @@ from AcATaMa.utils.sampling_utils import check_min_distance
 from AcATaMa.utils.system_utils import block_signals_to
 
 
-class Point(object):
+class Point:
     def __init__(self, x, y):
         self.QgsPnt = QgsPointXY(x, y)
         self.QgsGeom = QgsGeometry.fromPointXY(self.QgsPnt)
 
 
 class RandomPoint(Point):
-    """Class for generate, check and validate the random points
-    """
+    """Class for generate, check and validate the random points"""
 
     def __init__(self, x, y):
-        """Init Qgis point
-        """
+        """Init Qgis point"""
         super().__init__(x, y)
 
     @classmethod
@@ -56,15 +54,12 @@ class RandomPoint(Point):
         return cls(rx, ry)
 
     def in_valid_data(self, thematic_map):
-        """Check if the point is in valid data in thematic map
-        """
+        """Check if the point is in valid data in thematic map"""
         try:
             point_value_in_thematic = int(thematic_map.get_pixel_value_from_pnt(self.QgsPnt))
-        except:
+        except Exception:
             return False
-        if point_value_in_thematic == thematic_map.nodata:
-            return False
-        return True
+        return point_value_in_thematic != thematic_map.nodata
 
     def in_extent(self, boundaries):
         """Check if the point is inside boundaries
@@ -72,9 +67,7 @@ class RandomPoint(Point):
         Args:
             boundaries (QgsGeometry)
         """
-        if self.QgsGeom.within(boundaries):
-            return True
-        return False
+        return bool(self.QgsGeom.within(boundaries))
 
     def in_mim_distance(self, index, min_distance, points):
         """Check if the point have at least the mim distance with respect
@@ -82,16 +75,16 @@ class RandomPoint(Point):
         """
         if min_distance == 0:
             return True
-        if check_min_distance(self.QgsPnt, index, min_distance, points):
-            return True
-        return False
+        return check_min_distance(self.QgsPnt, index, min_distance, points)
 
     def in_post_stratification_map(self, classes_for_sampling, post_stratification_map):
-        """Check if point is at least in one pixel values set in the post-stratification map
-        """
+        """Check if point is at least in one pixel values set in the post-stratification map"""
         if classes_for_sampling is not None:
             sample_value_in_post_strat_map = post_stratification_map.get_pixel_value_from_pnt(self.QgsPnt)
-            if sample_value_in_post_strat_map is None or int(sample_value_in_post_strat_map) not in classes_for_sampling:
+            if (
+                sample_value_in_post_strat_map is None
+                or int(sample_value_in_post_strat_map) not in classes_for_sampling
+            ):
                 return False
         return True
 
@@ -103,12 +96,13 @@ class RandomPoint(Point):
         if sample_value_in_sampling_map is None:
             return False
         sample_value_in_sampling_map = int(sample_value_in_sampling_map)
-        if sample_value_in_sampling_map == sampling_map.nodata or sample_value_in_sampling_map not in classes_for_sampling:
+        if (
+            sample_value_in_sampling_map == sampling_map.nodata
+            or sample_value_in_sampling_map not in classes_for_sampling
+        ):
             return False
         self.index_pixel_value = classes_for_sampling.index(sample_value_in_sampling_map)
-        if samples_in_strata[self.index_pixel_value] >= total_of_samples[self.index_pixel_value]:
-            return False
-        return True
+        return samples_in_strata[self.index_pixel_value] < total_of_samples[self.index_pixel_value]
 
     def check_neighbors_aggregation(self, thematic_map, num_neighbors, min_with_same_class):
         """Check if the pixel have at least the minimum the neighbors with the
@@ -120,30 +114,26 @@ class RandomPoint(Point):
         pixel_size_y = thematic_map.qgs_layer.rasterUnitsPerPixelY()
 
         if num_neighbors == 8:
-            x_list = [pixel_size_x*mul+self.QgsPnt.x() for mul in range(-1, 2)]
-            y_list = [pixel_size_y*mul+self.QgsPnt.y() for mul in range(-1, 2)]
+            x_list = [pixel_size_x * mul + self.QgsPnt.x() for mul in range(-1, 2)]
+            y_list = [pixel_size_y * mul + self.QgsPnt.y() for mul in range(-1, 2)]
         if num_neighbors == 24:
-            x_list = [pixel_size_x*mul+self.QgsPnt.x() for mul in range(-2, 3)]
-            y_list = [pixel_size_y*mul+self.QgsPnt.y() for mul in range(-2, 3)]
+            x_list = [pixel_size_x * mul + self.QgsPnt.x() for mul in range(-2, 3)]
+            y_list = [pixel_size_y * mul + self.QgsPnt.y() for mul in range(-2, 3)]
         if num_neighbors == 48:
-            x_list = [pixel_size_x*mul+self.QgsPnt.x() for mul in range(-3, 4)]
-            y_list = [pixel_size_y*mul+self.QgsPnt.y() for mul in range(-3, 4)]
+            x_list = [pixel_size_x * mul + self.QgsPnt.x() for mul in range(-3, 4)]
+            y_list = [pixel_size_y * mul + self.QgsPnt.y() for mul in range(-3, 4)]
 
         neighbors = []
         for x, y in ((_x, _y) for _x in x_list for _y in y_list):
             try:
                 neighbors.append(int(thematic_map.get_pixel_value_from_xy(x, y)))
-            except:
+            except Exception:
                 continue
 
-        if neighbors.count(pixel_class_value) > min_with_same_class:
-            return True
-
-        return False
+        return neighbors.count(pixel_class_value) > min_with_same_class
 
 
 class LabelingPoint(Point):
-
     def __init__(self, x, y, sample_id=None):
         super().__init__(x, y)
         # shape id is the order of the points inside the shapefile
@@ -157,14 +147,16 @@ class LabelingPoint(Point):
         if isdeleted(view_widget.render_widget.canvas):
             return
         # fit to current sample with min radius of extent
-        fit_extent = QgsRectangle(self.QgsPnt.x()-radius, self.QgsPnt.y()-radius,
-                                  self.QgsPnt.x()+radius, self.QgsPnt.y()+radius)
+        fit_extent = QgsRectangle(
+            self.QgsPnt.x() - radius, self.QgsPnt.y() - radius, self.QgsPnt.x() + radius, self.QgsPnt.y() + radius
+        )
         with block_signals_to(view_widget.render_widget.canvas):
             view_widget.render_widget.set_extents_and_scalefactor(fit_extent)
 
     def get_thematic_pixel_edges(self, with_buffer=0):
         """Get the edges of the thematic pixel respectively of the current labeling point"""
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
         if not valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicMap):
             return
         thematic_layer = AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer()
@@ -179,13 +171,15 @@ class LabelingPoint(Point):
         xres = extent.width() / width
         yres = extent.height() / height
 
-        if extent.xMinimum() <= self.QgsPnt.x() <= extent.xMaximum() and \
-                extent.yMinimum() <= self.QgsPnt.y() <= extent.yMaximum():
-            col = int(floor((self.QgsPnt.x() - extent.xMinimum()) / xres))
-            row = int(floor((extent.yMaximum() - self.QgsPnt.y()) / yres))
+        if (
+            extent.xMinimum() <= self.QgsPnt.x() <= extent.xMaximum()
+            and extent.yMinimum() <= self.QgsPnt.y() <= extent.yMaximum()
+        ):
+            col = floor((self.QgsPnt.x() - extent.xMinimum()) / xres)
+            row = floor((extent.yMaximum() - self.QgsPnt.y()) / yres)
             xmin = extent.xMinimum() + col * xres - with_buffer * xres
-            xmax = xmin + xres + 2*(with_buffer * xres)
+            xmax = xmin + xres + 2 * (with_buffer * xres)
             ymax = extent.yMaximum() - row * yres + with_buffer * yres
-            ymin = ymax - yres - 2*(with_buffer * yres)
+            ymin = ymax - yres - 2 * (with_buffer * yres)
 
             return xmin, xmax, ymin, ymax

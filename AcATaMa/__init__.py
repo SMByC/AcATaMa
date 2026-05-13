@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  AcATaMa
@@ -19,6 +18,7 @@
  ***************************************************************************/
  This script initializes the plugin, making it known to QGIS.
 """
+
 import os
 import site
 
@@ -31,6 +31,7 @@ def pre_init_plugin():
         # register with pkg_resources if available (not bundled in Python 3.12+)
         try:
             import pkg_resources
+
             pkg_resources.working_set.add_entry(extra_libs_path)
         except ImportError:
             pass
@@ -48,4 +49,5 @@ def classFactory(iface):  # pylint: disable=invalid-name
 
     #
     from .acatama import AcATaMa
+
     return AcATaMa(iface)

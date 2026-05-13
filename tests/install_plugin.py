@@ -12,6 +12,7 @@ Verifies:
     - PLQGIS-TC01
     - PLQGIS-TC02
 """
+
 import os
 import pathlib
 import traceback
@@ -45,12 +46,10 @@ try:
             " Is the script running in the QGIS env?"
         )
 
-    zip_files = [file for file in pathlib.Path("./").glob("*.zip")]
+    zip_files = list(pathlib.Path("./").glob("*.zip"))
 
     if not zip_files:
-        raise PluginInstallException(
-            f"ERROR: No plugin zip file found at {pathlib.Path('./').absolute()}."
-        )
+        raise PluginInstallException(f"ERROR: No plugin zip file found at {pathlib.Path('./').absolute()}.")
 
     if len(zip_files) > 1:
         raise PluginInstallException(
@@ -61,25 +60,19 @@ try:
     plugin_install_zip = zip_files[0]
     plugin_installer = pyplugin_installer.instance()
     # Make sure plugin is not installed
-    assert (
-        "AcATaMa" not in pyplugin_installer.installer_data.plugins.all().keys()
-    ), "AcATaMa plugin is already installed!"
+    assert "AcATaMa" not in pyplugin_installer.installer_data.plugins.all(), "AcATaMa plugin is already installed!"
 
     # Attach the error catcher
     QgsApplication.messageLog().messageReceived.connect(error_catcher)
 
     # Install from the zip file
     plugin_installer.installFromZipFile(str(plugin_install_zip.absolute()))
-    assert (
-        "AcATaMa" in pyplugin_installer.installer_data.plugins.all().keys()
-    ), "AcATaMa plugin failed to install!"
+    assert "AcATaMa" in pyplugin_installer.installer_data.plugins.all(), "AcATaMa plugin failed to install!"
 
     if ERROR_OCCURRED:
-        raise PluginInstallException(
-            f"Python exception hit during plugin install: \n {ERROR_MSG}"
-        )
+        raise PluginInstallException(f"Python exception hit during plugin install: \n {ERROR_MSG}")
 
-except Exception:  # noqa
+except Exception:
     # Print the error so we know where it failed,
     # and exit with a non-zero status code so CI will fail.
     print("FAIL: Plugin install failed with the following:")
@@ -87,7 +80,5 @@ except Exception:  # noqa
     os._exit(1)
 finally:
     # The install worked! Exit QGIS with a 0 status code.
-    print(
-        f"PASS: Plugin install successful for {str(plugin_install_zip)}"
-    )
+    print(f"PASS: Plugin install successful for {plugin_install_zip!s}")
     os._exit(0)

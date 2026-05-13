@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  AcATaMa
@@ -18,27 +17,30 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
-import csv
-import numpy as np
 
+import csv
+import os
+from typing import ClassVar
+
+import numpy as np
+from qgis.core import Qgis, QgsUnitTypes
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox
-from qgis.core import Qgis, QgsUnitTypes
 
 from AcATaMa.core.map import get_values_and_colors_table
 from AcATaMa.utils.qgis_utils import get_source_from
-from AcATaMa.utils.system_utils import output_file_is_OK, get_save_file_name
+from AcATaMa.utils.system_utils import get_save_file_name, output_file_is_OK
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'sampling_report.ui'))
+FORM_CLASS, _ = uic.loadUiType(os.path.join(plugin_folder, "ui", "sampling_report.ui"))
+
 
 def rf(fv, r=5):
     if np.isnan(fv):
         return "-"
     return round(fv, r)
+
 
 def get_samples_distribution_table(map_layer, points, area_unit):
     table = {
@@ -59,15 +61,20 @@ def get_samples_distribution_table(map_layer, points, area_unit):
     values_and_colors_table = get_values_and_colors_table(map_layer.qgs_layer, map_layer.band, map_layer.nodata)
     pixel_area_base = map_layer.qgs_layer.rasterUnitsPerPixelX() * map_layer.qgs_layer.rasterUnitsPerPixelY()
     pixel_area_value = pixel_area_base * QgsUnitTypes.fromUnitToUnitFactor(
-        QgsUnitTypes.distanceToAreaUnit(map_layer.qgs_layer.crs().mapUnits()), area_unit)
+        QgsUnitTypes.distanceToAreaUnit(map_layer.qgs_layer.crs().mapUnits()), area_unit
+    )
 
     for i, pix_val in enumerate(values_and_colors_table["Pixel Value"]):
         table["pix_val"].append(pix_val)
-        table["color"].append([values_and_colors_table["Red"][i],
-                               values_and_colors_table["Green"][i],
-                               values_and_colors_table["Blue"][i],
-                               values_and_colors_table["Alpha"][i]])
-        table["num_samples"].append(samples_in_pix_val[pix_val] if pix_val in samples_in_pix_val else 0)
+        table["color"].append(
+            [
+                values_and_colors_table["Red"][i],
+                values_and_colors_table["Green"][i],
+                values_and_colors_table["Blue"][i],
+                values_and_colors_table["Alpha"][i],
+            ]
+        )
+        table["num_samples"].append(samples_in_pix_val.get(pix_val, 0))
         total_pixels = map_layer.get_total_pixels_by_value(pix_val)
         table["total_pixels"].append(total_pixels)
         table["total_area"].append(total_pixels * pixel_area_value)
@@ -77,7 +84,7 @@ def get_samples_distribution_table(map_layer, points, area_unit):
 
 class SamplingReport(QDialog, FORM_CLASS):
     instance_opened = False
-    instances = {}
+    instances: ClassVar[dict] = {}
 
     def __init__(self, sampling_layer, sampling=None, sampling_conf=None, report=None):
         QDialog.__init__(self)
@@ -103,8 +110,9 @@ class SamplingReport(QDialog, FORM_CLASS):
         for area_unit in sorted(QgsUnitTypes.AreaUnit, key=lambda x: x.value):
             if area_unit == QgsUnitTypes.AreaUnit.AreaUnknownUnit:
                 continue
-            self.area_unit.addItem("{} ({})".format(QgsUnitTypes.toString(area_unit),
-                                                    QgsUnitTypes.toAbbreviatedString(area_unit)))
+            self.area_unit.addItem(
+                f"{QgsUnitTypes.toString(area_unit)} ({QgsUnitTypes.toAbbreviatedString(area_unit)})"
+            )
         self.area_unit.blockSignals(True)
         if sampling:
             self.area_unit.setCurrentIndex(QgsUnitTypes.distanceToAreaUnit(sampling_layer.crs().mapUnits()))
@@ -125,35 +133,57 @@ class SamplingReport(QDialog, FORM_CLASS):
     def generate_sampling_report(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
 
-        thematic_map_table = \
-            get_samples_distribution_table(self.sampling.thematic_map,
-                                           self.sampling.points.values(),
-                                           QgsUnitTypes.AreaUnit(self.area_unit.currentIndex()))
+        thematic_map_table = get_samples_distribution_table(
+            self.sampling.thematic_map,
+            self.sampling.points.values(),
+            QgsUnitTypes.AreaUnit(self.area_unit.currentIndex()),
+        )
 
         systematic_unit = AcATaMa.dockwidget.sampling_design_window.PointSpacing_SystS.suffix().strip()
         if self.sampling_conf["sampling_type"] == "systematic":
-            points_spacing = "{} {}".format(int(self.sampling_conf["points_spacing"]) if systematic_unit == "pixels"
-                                            else self.sampling_conf["points_spacing"], systematic_unit)
-            initial_inset = "{} {}".format(int(self.sampling_conf["initial_inset"]) if systematic_unit == "pixels"
-                                           else self.sampling_conf["initial_inset"], systematic_unit)
-            max_xy_offset = "{} {}".format(int(self.sampling_conf["max_xy_offset"]) if systematic_unit == "pixels"
-                                           else self.sampling_conf["max_xy_offset"], systematic_unit)
+            points_spacing = "{} {}".format(
+                int(self.sampling_conf["points_spacing"])
+                if systematic_unit == "pixels"
+                else self.sampling_conf["points_spacing"],
+                systematic_unit,
+            )
+            initial_inset = "{} {}".format(
+                int(self.sampling_conf["initial_inset"])
+                if systematic_unit == "pixels"
+                else self.sampling_conf["initial_inset"],
+                systematic_unit,
+            )
+            max_xy_offset = "{} {}".format(
+                int(self.sampling_conf["max_xy_offset"])
+                if systematic_unit == "pixels"
+                else self.sampling_conf["max_xy_offset"],
+                systematic_unit,
+            )
         else:
             points_spacing = initial_inset = max_xy_offset = None
 
-        if self.sampling.post_stratification_map and self.sampling.thematic_map.qgs_layer != self.sampling.post_stratification_map.qgs_layer:
-            post_stratification_table = \
-                get_samples_distribution_table(self.sampling.post_stratification_map,
-                                               self.sampling.points.values(),
-                                               QgsUnitTypes.AreaUnit(self.area_unit.currentIndex()))
+        if (
+            self.sampling.post_stratification_map
+            and self.sampling.thematic_map.qgs_layer != self.sampling.post_stratification_map.qgs_layer
+        ):
+            post_stratification_table = get_samples_distribution_table(
+                self.sampling.post_stratification_map,
+                self.sampling.points.values(),
+                QgsUnitTypes.AreaUnit(self.area_unit.currentIndex()),
+            )
         else:
             post_stratification_table = None
 
-        if self.sampling.sampling_map is not None and self.sampling.sampling_map.qgs_layer != self.sampling.thematic_map.qgs_layer:
+        if (
+            self.sampling.sampling_map is not None
+            and self.sampling.sampling_map.qgs_layer != self.sampling.thematic_map.qgs_layer
+        ):
             sampling_map = self.sampling.sampling_map.qgs_layer.name()
-            sampling_map_table = get_samples_distribution_table(self.sampling.sampling_map,
-                                                                self.sampling.points.values(),
-                                                                QgsUnitTypes.AreaUnit(self.area_unit.currentIndex()))
+            sampling_map_table = get_samples_distribution_table(
+                self.sampling.sampling_map,
+                self.sampling.points.values(),
+                QgsUnitTypes.AreaUnit(self.area_unit.currentIndex()),
+            )
         else:
             sampling_map = None
             sampling_map_table = None
@@ -164,34 +194,47 @@ class SamplingReport(QDialog, FORM_CLASS):
                 "thematic_map": self.sampling.thematic_map.qgs_layer.name(),
                 "sampling_map": sampling_map,
                 "sampling_type": self.sampling_conf["sampling_type"],
-                "stratified_method": self.sampling.sampling_method if self.sampling_conf["sampling_type"] == "stratified" else None,
+                "stratified_method": self.sampling.sampling_method
+                if self.sampling_conf["sampling_type"] == "stratified"
+                else None,
                 "total_of_samples": self.sampling.samples_generated,
                 "points_spacing": points_spacing,
                 "initial_inset": initial_inset,
                 "max_xy_offset": max_xy_offset,
-                "post_stratification_map": self.sampling.post_stratification_map.qgs_layer.name() if self.sampling.post_stratification_map else None,
-                "post_stratification_classes": self.sampling_conf["classes_selected"] if self.sampling.post_stratification_map else [],
-                "min_distance": "{} {}".format(self.sampling_conf["min_distance"], QgsUnitTypes.toString(self.sampling.thematic_map.qgs_layer.crs().mapUnits()))
-                    if self.sampling_conf["sampling_type"] in ["simple", "stratified"] else None,
+                "post_stratification_map": self.sampling.post_stratification_map.qgs_layer.name()
+                if self.sampling.post_stratification_map
+                else None,
+                "post_stratification_classes": self.sampling_conf["classes_selected"]
+                if self.sampling.post_stratification_map
+                else [],
+                "min_distance": "{} {}".format(
+                    self.sampling_conf["min_distance"],
+                    QgsUnitTypes.toString(self.sampling.thematic_map.qgs_layer.crs().mapUnits()),
+                )
+                if self.sampling_conf["sampling_type"] in ["simple", "stratified"]
+                else None,
                 "neighbor_aggregation": self.sampling_conf["neighbor_aggregation"],
-                "random_seed": self.sampling_conf["random_seed"] if self.sampling_conf["random_seed"] is not None else "Auto",
+                "random_seed": self.sampling_conf["random_seed"]
+                if self.sampling_conf["random_seed"] is not None
+                else "Auto",
                 "area_unit": self.area_unit.currentIndex(),
             },
             "samples": {
                 "thematic_map": thematic_map_table,
                 "total_of_samples_by_stratum": self.sampling_conf["total_of_samples"]
-                    if self.sampling_conf["sampling_type"] == "stratified" else None,
-                "samples_not_in_thematic_map":
-                    self.sampling.samples_generated - sum(thematic_map_table["num_samples"]),
+                if self.sampling_conf["sampling_type"] == "stratified"
+                else None,
+                "samples_not_in_thematic_map": self.sampling.samples_generated - sum(thematic_map_table["num_samples"]),
                 "sampling_map": sampling_map_table,
-                "samples_not_in_sampling_map":
-                    self.sampling.samples_generated - sum(sampling_map_table["num_samples"])
-                    if sampling_map_table else None,
+                "samples_not_in_sampling_map": self.sampling.samples_generated - sum(sampling_map_table["num_samples"])
+                if sampling_map_table
+                else None,
                 "post_stratification": post_stratification_table,
-                "samples_not_in_post_stratification":
-                    self.sampling.samples_generated - sum(post_stratification_table["num_samples"])
-                    if post_stratification_table else None
-            }
+                "samples_not_in_post_stratification": self.sampling.samples_generated
+                - sum(post_stratification_table["num_samples"])
+                if post_stratification_table
+                else None,
+            },
         }
 
     def show(self):
@@ -199,7 +242,7 @@ class SamplingReport(QDialog, FORM_CLASS):
         self.sampling_report.setOpenExternalLinks(True)
         SamplingReport.instance_opened = self
 
-        super(SamplingReport, self).show()
+        super().show()
 
     def reload(self):
         if self.sampling:
@@ -222,8 +265,11 @@ class SamplingReport(QDialog, FORM_CLASS):
         self.sampling_report.setOpenExternalLinks(True)
 
     def get_html(self):
-        sampling_type = {"simple": "Simple random sampling", "stratified": "Stratified random sampling",
-                         "systematic": "Systematic random sampling"}
+        sampling_type = {
+            "simple": "Simple random sampling",
+            "stratified": "Stratified random sampling",
+            "systematic": "Systematic random sampling",
+        }
 
         html = """
             <head>
@@ -271,8 +317,9 @@ class SamplingReport(QDialog, FORM_CLASS):
                     <th>Thematic Map</th>
                     <td>{thematic_map}</td>
                 </tr>
-            """.format(sampling_layer=self.report["general"]["sampling_layer"],
-                       thematic_map=self.report["general"]["thematic_map"])
+            """.format(
+            sampling_layer=self.report["general"]["sampling_layer"], thematic_map=self.report["general"]["thematic_map"]
+        )
         # sampling map
         if self.report["general"]["sampling_map"]:
             html += """
@@ -302,7 +349,9 @@ class SamplingReport(QDialog, FORM_CLASS):
                     <th>Total of Samples</th>
                     <td>{total_of_samples}</td>
                 </tr>
-            """.format(total_of_samples=self.report["general"]["total_of_samples"],)
+            """.format(
+            total_of_samples=self.report["general"]["total_of_samples"],
+        )
 
         if self.report["general"]["sampling_type"] == "systematic":
             html += """
@@ -318,9 +367,11 @@ class SamplingReport(QDialog, FORM_CLASS):
                     <th>Max XY Offset</th>
                     <td>{max_xy_offset}</td>
                 </tr>
-            """.format(points_spacing=self.report["general"]["points_spacing"],
-                       initial_inset=self.report["general"]["initial_inset"],
-                       max_xy_offset=self.report["general"]["max_xy_offset"])
+            """.format(
+                points_spacing=self.report["general"]["points_spacing"],
+                initial_inset=self.report["general"]["initial_inset"],
+                max_xy_offset=self.report["general"]["max_xy_offset"],
+            )
 
         if self.report["general"]["sampling_type"] in ["simple", "systematic"]:
             html += """
@@ -332,9 +383,14 @@ class SamplingReport(QDialog, FORM_CLASS):
                         <th>Post-Stratification Classes</th>
                         <td>{post_stratification_classes}</td>
                     </tr>
-                """.format(post_stratification_map=self.report["general"]["post_stratification_map"],
-                           post_stratification_classes=", ".join([str(x) for x in self.report["general"]["post_stratification_classes"]])
-                           if self.report["general"]["post_stratification_classes"] else None)
+                """.format(
+                post_stratification_map=self.report["general"]["post_stratification_map"],
+                post_stratification_classes=", ".join(
+                    [str(x) for x in self.report["general"]["post_stratification_classes"]]
+                )
+                if self.report["general"]["post_stratification_classes"]
+                else None,
+            )
 
         if self.report["general"]["sampling_type"] in ["simple", "stratified"]:
             html += """
@@ -354,9 +410,14 @@ class SamplingReport(QDialog, FORM_CLASS):
                     <td>{random_seed}</td>
                 </tr>
             </table>
-            """.format(neighbor_aggregation="{}/{}".format(self.report["general"]["neighbor_aggregation"][1],
-                                                            self.report["general"]["neighbor_aggregation"][0]) if self.report["general"]["neighbor_aggregation"] else None,
-                       random_seed=self.report["general"]["random_seed"])
+            """.format(
+            neighbor_aggregation="{}/{}".format(
+                self.report["general"]["neighbor_aggregation"][1], self.report["general"]["neighbor_aggregation"][0]
+            )
+            if self.report["general"]["neighbor_aggregation"]
+            else None,
+            random_seed=self.report["general"]["random_seed"],
+        )
 
         html += """
             <h3>Distribution of samples on the thematic map</h3>
@@ -368,7 +429,9 @@ class SamplingReport(QDialog, FORM_CLASS):
                     <th>Total Pixels</th>
                     <th>Total Area ({area_unit})</th>
                 </tr>
-        """.format(area_unit=QgsUnitTypes.toAbbreviatedString(QgsUnitTypes.AreaUnit(self.report["general"]["area_unit"])))
+        """.format(
+            area_unit=QgsUnitTypes.toAbbreviatedString(QgsUnitTypes.AreaUnit(self.report["general"]["area_unit"]))
+        )
         for i, pix_val in enumerate(self.report["samples"]["thematic_map"]["pix_val"]):
             html += """
                 <tr>
@@ -378,13 +441,15 @@ class SamplingReport(QDialog, FORM_CLASS):
                     <td>{total_pixels}</td>
                     <td>{total_area}</td>
                 </tr>
-            """.format(pix_val=pix_val,
-                       r=self.report["samples"]["thematic_map"]["color"][i][0],
-                       g=self.report["samples"]["thematic_map"]["color"][i][1],
-                       b=self.report["samples"]["thematic_map"]["color"][i][2],
-                       num_samples=self.report["samples"]["thematic_map"]["num_samples"][i],
-                       total_pixels=self.report["samples"]["thematic_map"]["total_pixels"][i],
-                       total_area=rf(self.report["samples"]["thematic_map"]["total_area"][i]))
+            """.format(
+                pix_val=pix_val,
+                r=self.report["samples"]["thematic_map"]["color"][i][0],
+                g=self.report["samples"]["thematic_map"]["color"][i][1],
+                b=self.report["samples"]["thematic_map"]["color"][i][2],
+                num_samples=self.report["samples"]["thematic_map"]["num_samples"][i],
+                total_pixels=self.report["samples"]["thematic_map"]["total_pixels"][i],
+                total_area=rf(self.report["samples"]["thematic_map"]["total_area"][i]),
+            )
         html += """</table>"""
         if self.report["samples"]["samples_not_in_thematic_map"] > 0:
             html += """
@@ -411,7 +476,9 @@ class SamplingReport(QDialog, FORM_CLASS):
                         <th>Total Pixels</th>
                         <th>Total Area ({area_unit})</th>
                     </tr>
-            """.format(area_unit=QgsUnitTypes.toAbbreviatedString(QgsUnitTypes.AreaUnit(self.report["general"]["area_unit"])))
+            """.format(
+                area_unit=QgsUnitTypes.toAbbreviatedString(QgsUnitTypes.AreaUnit(self.report["general"]["area_unit"]))
+            )
             for i, pix_val in enumerate(self.report["samples"]["sampling_map"]["pix_val"]):
                 html += """
                     <tr>
@@ -421,13 +488,15 @@ class SamplingReport(QDialog, FORM_CLASS):
                         <td>{total_pixels}</td>
                         <td>{total_area}</td>
                     </tr>
-                """.format(pix_val=pix_val,
-                           r=self.report["samples"]["sampling_map"]["color"][i][0],
-                           g=self.report["samples"]["sampling_map"]["color"][i][1],
-                           b=self.report["samples"]["sampling_map"]["color"][i][2],
-                           num_samples=self.report["samples"]["sampling_map"]["num_samples"][i],
-                           total_pixels=self.report["samples"]["sampling_map"]["total_pixels"][i],
-                           total_area=rf(self.report["samples"]["sampling_map"]["total_area"][i]))
+                """.format(
+                    pix_val=pix_val,
+                    r=self.report["samples"]["sampling_map"]["color"][i][0],
+                    g=self.report["samples"]["sampling_map"]["color"][i][1],
+                    b=self.report["samples"]["sampling_map"]["color"][i][2],
+                    num_samples=self.report["samples"]["sampling_map"]["num_samples"][i],
+                    total_pixels=self.report["samples"]["sampling_map"]["total_pixels"][i],
+                    total_area=rf(self.report["samples"]["sampling_map"]["total_area"][i]),
+                )
             html += """</table>"""
             if self.report["samples"]["samples_not_in_sampling_map"] > 0:
                 html += """
@@ -454,7 +523,9 @@ class SamplingReport(QDialog, FORM_CLASS):
                         <th>Total Pixels</th>
                         <th>Total Area ({area_unit})</th>
                     </tr>
-            """.format(area_unit=QgsUnitTypes.toAbbreviatedString(QgsUnitTypes.AreaUnit(self.report["general"]["area_unit"])))
+            """.format(
+                area_unit=QgsUnitTypes.toAbbreviatedString(QgsUnitTypes.AreaUnit(self.report["general"]["area_unit"]))
+            )
             for i, pix_val in enumerate(self.report["samples"]["post_stratification"]["pix_val"]):
                 html += """
                     <tr>
@@ -464,13 +535,15 @@ class SamplingReport(QDialog, FORM_CLASS):
                         <td>{total_pixels}</td>
                         <td>{total_area}</td>
                     </tr>
-                """.format(pix_val=pix_val,
-                           r=self.report["samples"]["post_stratification"]["color"][i][0],
-                           g=self.report["samples"]["post_stratification"]["color"][i][1],
-                           b=self.report["samples"]["post_stratification"]["color"][i][2],
-                           num_samples=self.report["samples"]["post_stratification"]["num_samples"][i],
-                           total_pixels=self.report["samples"]["post_stratification"]["total_pixels"][i],
-                           total_area=rf(self.report["samples"]["post_stratification"]["total_area"][i]))
+                """.format(
+                    pix_val=pix_val,
+                    r=self.report["samples"]["post_stratification"]["color"][i][0],
+                    g=self.report["samples"]["post_stratification"]["color"][i][1],
+                    b=self.report["samples"]["post_stratification"]["color"][i][2],
+                    num_samples=self.report["samples"]["post_stratification"]["num_samples"][i],
+                    total_pixels=self.report["samples"]["post_stratification"]["total_pixels"][i],
+                    total_area=rf(self.report["samples"]["post_stratification"]["total_area"][i]),
+                )
             html += """</table>"""
             if self.report["samples"]["samples_not_in_post_stratification"] > 0:
                 html += """
@@ -493,12 +566,12 @@ class SamplingReport(QDialog, FORM_CLASS):
             desired_num_samples = self.sampling_conf["total_of_samples"]
             actual_num_samples = self.report["samples"]["thematic_map"]["num_samples"]
             if desired_num_samples != sum(actual_num_samples):
-                html += """
+                html += f"""
                     <br/>
                     <div style="background-color: #fffff3; font-size: 80%">
                         <p style="font-size: 80%; color: #3b3b3b">
                         <span style="font-weight: bold;">Warning: Desired/actual sample count mismatch!</span><br>
-                        The number of samples generated does not match the user’s desired number of samples. This is
+                        The number of samples generated does not match the user's desired number of samples. This is
                         generally acceptable, as the actual number may be smaller than the target due to the sampling
                         method and certain restrictions in the sampling conditions. However, if the discrepancy is
                         significantly large, please review the sampling design options.
@@ -512,14 +585,12 @@ class SamplingReport(QDialog, FORM_CLASS):
                             </tr>
                             <tr>
                                 <td>{desired_num_samples}</td>
-                                <td>{actual_num_samples}</td>
-                                <td>{difference}</td>
+                                <td>{sum(actual_num_samples)}</td>
+                                <td>{desired_num_samples - sum(actual_num_samples)}</td>
                             </tr>
                         </table>
                     </div>
-                """.format(desired_num_samples=desired_num_samples,
-                           actual_num_samples=sum(actual_num_samples),
-                           difference=desired_num_samples - sum(actual_num_samples))
+                """
 
         # stratified num samples mismatch
         if self.sampling_conf is not None and self.report["general"]["sampling_type"] == "stratified":
@@ -528,13 +599,14 @@ class SamplingReport(QDialog, FORM_CLASS):
 
             # check if the original number of samples set by the user was reached
             if sum(desired_num_samples_per_stratum) != sum(actual_num_samples_per_stratum):
-                # create a html table with the headers: Pix Val, Color, Desired Num Samples, Actual Num Samples, Difference
+                # create a html table with the headers:
+                # Pix Val, Color, Desired Num Samples, Actual Num Samples, Difference
                 html += """
                     <br/>
                     <div style="background-color: #fffff3; font-size: 80%">
                         <p style="font-size: 80%; color: #3b3b3b">
                         <span style="font-weight: bold;">Warning: Desired/actual sample count mismatch!</span><br>
-                        The number of samples generated does not match the user’s desired number of samples. This is
+                        The number of samples generated does not match the user's desired number of samples. This is
                         generally acceptable, as the actual number may be smaller than the target due to the sampling
                         method and certain restrictions in the sampling conditions. However, if the discrepancy is
                         significantly large, please review the sampling design options.
@@ -559,13 +631,15 @@ class SamplingReport(QDialog, FORM_CLASS):
                             <td>{actual_num_samples}</td>
                             <td>{difference}</td>
                         </tr>
-                    """.format(pix_val=pix_val,
-                               r=self.report["samples"]["thematic_map"]["color"][i][0],
-                               g=self.report["samples"]["thematic_map"]["color"][i][1],
-                               b=self.report["samples"]["thematic_map"]["color"][i][2],
-                               desired_num_samples=desired_num_samples_per_stratum[i],
-                               actual_num_samples=actual_num_samples_per_stratum[i],
-                               difference=desired_num_samples_per_stratum[i] - actual_num_samples_per_stratum[i])
+                    """.format(
+                        pix_val=pix_val,
+                        r=self.report["samples"]["thematic_map"]["color"][i][0],
+                        g=self.report["samples"]["thematic_map"]["color"][i][1],
+                        b=self.report["samples"]["thematic_map"]["color"][i][2],
+                        desired_num_samples=desired_num_samples_per_stratum[i],
+                        actual_num_samples=actual_num_samples_per_stratum[i],
+                        difference=desired_num_samples_per_stratum[i] - actual_num_samples_per_stratum[i],
+                    )
 
                 html += """
                         </table>
@@ -574,8 +648,9 @@ class SamplingReport(QDialog, FORM_CLASS):
 
         # minimum samples in strata
         if self.report["general"]["sampling_type"] == "stratified" or (
-                self.report["general"]["sampling_type"] in ["simple", "systematic"] and self.report["general"]["post_stratification_map"]):
-
+            self.report["general"]["sampling_type"] in ["simple", "systematic"]
+            and self.report["general"]["post_stratification_map"]
+        ):
             if self.report["general"]["sampling_type"] == "stratified":
                 if self.report["samples"]["sampling_map"]:
                     table = self.report["samples"]["sampling_map"]
@@ -587,7 +662,7 @@ class SamplingReport(QDialog, FORM_CLASS):
                 else:
                     table = self.report["samples"]["thematic_map"]
 
-            if min([num_samples for num_samples in table["num_samples"] if num_samples > 0]) < 30:
+            if min(num_samples for num_samples in table["num_samples"] if num_samples > 0) < 30:
                 html += """
                     <br/>
                     <div style="background-color: #fffff3;">
@@ -615,9 +690,11 @@ class SamplingReport(QDialog, FORM_CLASS):
         This avoids any HTML parsing: the html representation and the csv
         export share the same source (self.report), so they stay in sync.
         """
-        sampling_type_label = {"simple": "Simple random sampling",
-                               "stratified": "Stratified random sampling",
-                               "systematic": "Systematic random sampling"}
+        sampling_type_label = {
+            "simple": "Simple random sampling",
+            "stratified": "Stratified random sampling",
+            "systematic": "Systematic random sampling",
+        }
 
         general = self.report["general"]
         samples = self.report["samples"]
@@ -644,32 +721,34 @@ class SamplingReport(QDialog, FORM_CLASS):
         if general["sampling_type"] in ["simple", "systematic"]:
             rows.append(["Post-Stratification Map", general["post_stratification_map"]])
             post_classes = general["post_stratification_classes"]
-            rows.append(["Post-Stratification Classes",
-                         ", ".join([str(x) for x in post_classes]) if post_classes else None])
+            rows.append(
+                ["Post-Stratification Classes", ", ".join([str(x) for x in post_classes]) if post_classes else None]
+            )
         if general["sampling_type"] in ["simple", "stratified"]:
             rows.append(["Min Distance", general["min_distance"]])
         neighbor_aggregation = general["neighbor_aggregation"]
-        rows.append(["Neighbor Aggregation",
-                     "{}/{}".format(neighbor_aggregation[1], neighbor_aggregation[0]) if neighbor_aggregation else None])
+        rows.append(
+            [
+                "Neighbor Aggregation",
+                f"{neighbor_aggregation[1]}/{neighbor_aggregation[0]}" if neighbor_aggregation else None,
+            ]
+        )
         rows.append(["Random Seed", general["random_seed"]])
         rows.append([])
 
-        def _distribution_rows(title, table, samples_not_in_map_key, not_in_map_label,
-                               include_color=True):
+        def _distribution_rows(title, table, samples_not_in_map_key, not_in_map_label, include_color=True):
             rows.append([title])
             header = ["Pix Val"]
             if include_color:
                 header.append("Color (RGBA)")
-            header += ["Num Samples", "Total Pixels", "Total Area ({})".format(area_unit_abbr)]
+            header += ["Num Samples", "Total Pixels", f"Total Area ({area_unit_abbr})"]
             rows.append(header)
             for i, pix_val in enumerate(table["pix_val"]):
                 row = [pix_val]
                 if include_color:
                     rgba = table["color"][i]
-                    row.append("rgba({}, {}, {}, {})".format(rgba[0], rgba[1], rgba[2], rgba[3]))
-                row += [table["num_samples"][i],
-                        table["total_pixels"][i],
-                        rf(table["total_area"][i])]
+                    row.append(f"rgba({rgba[0]}, {rgba[1]}, {rgba[2]}, {rgba[3]})")
+                row += [table["num_samples"][i], table["total_pixels"][i], rf(table["total_area"][i])]
                 rows.append(row)
             not_in_map = samples[samples_not_in_map_key]
             if not_in_map is not None and not_in_map > 0:
@@ -679,25 +758,31 @@ class SamplingReport(QDialog, FORM_CLASS):
             rows.append([])
 
         # --- Distribution of samples on the thematic map ---
-        _distribution_rows("Distribution of samples on the thematic map",
-                           samples["thematic_map"],
-                           "samples_not_in_thematic_map",
-                           "Samples not in the thematic map",
-                           include_color=False)
+        _distribution_rows(
+            "Distribution of samples on the thematic map",
+            samples["thematic_map"],
+            "samples_not_in_thematic_map",
+            "Samples not in the thematic map",
+            include_color=False,
+        )
 
         # --- Distribution of samples on the sampling map ---
         if samples["sampling_map"]:
-            _distribution_rows("Distribution of samples on the sampling map",
-                               samples["sampling_map"],
-                               "samples_not_in_sampling_map",
-                               "Samples not in the sampling map")
+            _distribution_rows(
+                "Distribution of samples on the sampling map",
+                samples["sampling_map"],
+                "samples_not_in_sampling_map",
+                "Samples not in the sampling map",
+            )
 
         # --- Distribution of samples on the post-stratification map ---
         if samples["post_stratification"]:
-            _distribution_rows("Distribution of samples on the post-stratification map",
-                               samples["post_stratification"],
-                               "samples_not_in_post_stratification",
-                               "Samples not in the post-stratification map")
+            _distribution_rows(
+                "Distribution of samples on the post-stratification map",
+                samples["post_stratification"],
+                "samples_not_in_post_stratification",
+                "Samples not in the post-stratification map",
+            )
 
         # --- Desired/actual sample count mismatch warnings ---
         if self.sampling_conf is not None and general["sampling_type"] == "simple":
@@ -716,10 +801,14 @@ class SamplingReport(QDialog, FORM_CLASS):
                 rows.append(["Warning: Desired/actual sample count mismatch (per stratum)"])
                 rows.append(["Pix Val", "Desired Samples", "Actual Samples", "Difference"])
                 for i, pix_val in enumerate(samples["thematic_map"]["pix_val"]):
-                    rows.append([pix_val,
-                                 desired_per_stratum[i],
-                                 actual_per_stratum[i],
-                                 desired_per_stratum[i] - actual_per_stratum[i]])
+                    rows.append(
+                        [
+                            pix_val,
+                            desired_per_stratum[i],
+                            actual_per_stratum[i],
+                            desired_per_stratum[i] - actual_per_stratum[i],
+                        ]
+                    )
                 rows.append([])
 
         return rows
@@ -728,15 +817,20 @@ class SamplingReport(QDialog, FORM_CLASS):
         # build a suggested file path based on the sampling file location,
         # falling back to the thematic map folder if the sampling file lives in tmp
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
         file_path = get_source_from(AcATaMa.dockwidget.QCBox_SamplingFile)
         path, filename = os.path.split(file_path) if file_path else ("", "")
         if file_path and AcATaMa.dockwidget.tmp_dir in path:
             path = os.path.split(get_source_from(AcATaMa.dockwidget.QCBox_ThematicMap))[0]
-        suggested_filename = (os.path.splitext(os.path.join(path, filename))[0] + " - sampling report.csv"
-                              if filename else "acatama sampling report.csv")
+        suggested_filename = (
+            os.path.splitext(os.path.join(path, filename))[0] + " - sampling report.csv"
+            if filename
+            else "acatama sampling report.csv"
+        )
 
-        output_file = get_save_file_name(self, "Export sampling report to csv",
-                                         suggested_filename, "CSV files (*.csv);;All files (*.*)")
+        output_file = get_save_file_name(
+            self, "Export sampling report to csv", suggested_filename, "CSV files (*.csv);;All files (*.*)"
+        )
 
         if not output_file_is_OK(output_file):
             return
@@ -753,20 +847,20 @@ class SamplingReport(QDialog, FORM_CLASS):
                     if item is None:
                         normalized_row.append("None")
                     elif isinstance(item, float) and self.csv_decimal != ".":
-                        normalized_row.append(str(item).replace('.', self.csv_decimal))
+                        normalized_row.append(str(item).replace(".", self.csv_decimal))
                     else:
                         normalized_row.append(item)
                 normalized_rows.append(normalized_row)
-            with open(output_file, 'w', newline='') as csvfile:
+            with open(output_file, "w", newline="") as csvfile:
                 csv_w = csv.writer(csvfile, delimiter=str(self.csv_separator))
                 csv_w.writerows(normalized_rows)
             self.MsgBar.pushMessage(
-                "File saved successfully \"{}\"".format(os.path.basename(output_file)),
-                level=Qgis.MessageLevel.Success, duration=5)
+                f'File saved successfully "{os.path.basename(output_file)}"',
+                level=Qgis.MessageLevel.Success,
+                duration=5,
+            )
         except Exception as err:
-            self.MsgBar.pushMessage(
-                "Failed saving the csv file: {}".format(err),
-                level=Qgis.MessageLevel.Critical, duration=10)
+            self.MsgBar.pushMessage(f"Failed saving the csv file: {err}", level=Qgis.MessageLevel.Critical, duration=10)
 
     def closeEvent(self, event):
         SamplingReport.instance_opened = False

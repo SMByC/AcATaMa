@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  AcATaMa
@@ -18,12 +17,13 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtWidgets import QTableWidgetItem
-from qgis.PyQt.QtGui import QColor
 
-from AcATaMa.utils.system_utils import wait_process, block_signals_to
-from AcATaMa.utils.others_utils import mask, get_pixel_count_by_pixel_values, get_nodata_format
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtWidgets import QTableWidgetItem
+
+from AcATaMa.utils.others_utils import get_nodata_format, get_pixel_count_by_pixel_values, mask
+from AcATaMa.utils.system_utils import block_signals_to, wait_process
 
 
 def check_min_distance(point, index, distance, points):
@@ -48,17 +48,17 @@ def check_min_distance(point, index, distance, points):
 def get_num_samples_by_area_based_proportion(srs_table, total_std_error):
     total_pixel_count = float(sum(mask(srs_table["pixel_count"], srs_table["On"])))
     ratio_pixel_count = [p_c / total_pixel_count for p_c in mask(srs_table["pixel_count"], srs_table["On"])]
-    Si = [(float(ui)*(1-float(ui))) ** 0.5 for ui in mask(srs_table["ui"], srs_table["On"])]
-    total_num_samples = (sum([rpc*si for rpc, si in zip(ratio_pixel_count, Si)])/total_std_error)**2
+    Si = [(float(ui) * (1 - float(ui))) ** 0.5 for ui in mask(srs_table["ui"], srs_table["On"])]
+    total_num_samples = (sum(rpc * si for rpc, si in zip(ratio_pixel_count, Si, strict=False)) / total_std_error) ** 2
 
     num_samples = []
     idx = 0
     for item_enable in srs_table["On"]:
         if item_enable:
-            num_samples.append(str(int(round(ratio_pixel_count[idx] * total_num_samples))))
+            num_samples.append(str(round(ratio_pixel_count[idx] * total_num_samples)))
             idx += 1
         else:
-            num_samples.append(str("0"))
+            num_samples.append("0")
     return num_samples
 
 
@@ -66,7 +66,7 @@ def get_num_samples_by_keeping_total_samples(srs_table, new_num_samples):
     """Redistribute the samples number by area based proportion keeping
     the total of samples, this occurs when a num sample item is changed
     """
-    for idx, (old_ns, new_ns) in enumerate(zip(srs_table["num_samples"], new_num_samples)):
+    for idx, (old_ns, new_ns) in enumerate(zip(srs_table["num_samples"], new_num_samples, strict=False)):
         if old_ns != new_ns:
             sample_idx = idx
             sample_diff = int(old_ns) - int(new_ns)
@@ -82,12 +82,12 @@ def get_num_samples_by_keeping_total_samples(srs_table, new_num_samples):
         idx = 0
         for global_idx, item_enable in enumerate(distribute_on):
             if item_enable:
-                num_samples.append(str(int(round(int(new_num_samples[global_idx]) + ratio_pixel_count[idx] * sample_diff))))
+                num_samples.append(str(round(int(new_num_samples[global_idx]) + ratio_pixel_count[idx] * sample_diff)))
                 idx += 1
             else:
                 num_samples.append(str(new_num_samples[global_idx]))
         # check if one of the new num samples is negative
-        if any([int(ns) < 0 for ns in num_samples]):
+        if any(int(ns) < 0 for ns in num_samples):
             sample_diff += 1
         else:
             break
@@ -101,6 +101,7 @@ def get_num_samples_by_keeping_total_samples(srs_table, new_num_samples):
 @wait_process
 def update_srs_table_content(srs_table):
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
     if AcATaMa.dockwidget is None:
         return
     sampling_design = AcATaMa.dockwidget.sampling_design_window
@@ -135,20 +136,26 @@ def update_srs_table_content(srs_table):
                 for m in range(srs_table["row_count"]):
                     item_table = QTableWidgetItem()
                     item_table.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
-                    item_table.setBackground(QColor(srs_table["values_and_colors_table"]["Red"][m],
-                                                    srs_table["values_and_colors_table"]["Green"][m],
-                                                    srs_table["values_and_colors_table"]["Blue"][m],
-                                                    srs_table["values_and_colors_table"]["Alpha"][m]))
+                    item_table.setBackground(
+                        QColor(
+                            srs_table["values_and_colors_table"]["Red"][m],
+                            srs_table["values_and_colors_table"]["Green"][m],
+                            srs_table["values_and_colors_table"]["Blue"][m],
+                            srs_table["values_and_colors_table"]["Alpha"][m],
+                        )
+                    )
                     sampling_design.QTableW_StraRS.setItem(m, n, item_table)
             if key == "Num Samples":
                 for m in range(srs_table["row_count"]):
                     item_table = QTableWidgetItem(srs_table["num_samples"][m])
                     item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
                     if sampling_design.QCBox_StraRS_Method.currentText().startswith("Area based proportion"):
-                        item_table.setToolTip("Total number of samples for this class, this is generated\n"
-                                              "automatically based on the area proportion by the activated\n"
-                                              "classes, overall expected standard error and its user\n"
-                                              "accuracy expected value.")
+                        item_table.setToolTip(
+                            "Total number of samples for this class, this is generated\n"
+                            "automatically based on the area proportion by the activated\n"
+                            "classes, overall expected standard error and its user\n"
+                            "accuracy expected value."
+                        )
                     if not srs_table["On"][m]:
                         item_table.setForeground(QColor("lightGrey"))
                         item_table.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
@@ -157,10 +164,12 @@ def update_srs_table_content(srs_table):
                 for m in range(srs_table["row_count"]):
                     item_table = QTableWidgetItem(srs_table["ui"][m])
                     item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-                    item_table.setToolTip("User's accuracy confidence for this map class. This is the\n"
-                                          "probability that a pixel classified as class i is actually class i.\n\n"
-                                          "Between 0.6 - 0.8 for unstable classes\n"
-                                          "Between 0.8 - 0.95 for stable classes")
+                    item_table.setToolTip(
+                        "User's accuracy confidence for this map class. This is the\n"
+                        "probability that a pixel classified as class i is actually class i.\n\n"
+                        "Between 0.6 - 0.8 for unstable classes\n"
+                        "Between 0.8 - 0.95 for stable classes"
+                    )
                     if not srs_table["On"][m]:
                         item_table.setForeground(QColor("lightGrey"))
                         item_table.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
@@ -186,7 +195,7 @@ def update_srs_table_content(srs_table):
         sampling_design.QTableW_StraRS.resizeColumnsToContents()
         sampling_design.QTableW_StraRS.resizeRowsToContents()
         # set label total samples
-        total_num_samples = sum([int(x) for x in mask(srs_table["num_samples"], srs_table["On"])])
+        total_num_samples = sum(int(x) for x in mask(srs_table["num_samples"], srs_table["On"]))
         sampling_design.TotalNumSamples.setText(str(total_num_samples))
         # set maximum and reset the value in progress bar status
         sampling_design.QPBar_GenerateSamples_StraRS.setValue(0)
@@ -197,6 +206,7 @@ def update_srs_table_content(srs_table):
 def reload_StraRS_table():
     """Reset the table, reloading the layer style, pixel count and restoring default values"""
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
     if AcATaMa.dockwidget is None:
         return
     sampling_design = AcATaMa.dockwidget.sampling_design_window
@@ -210,13 +220,15 @@ def reload_StraRS_table():
         srs_method = "area based proportion"
 
     # delete style
-    if sampling_design.QCBox_SamplingMap_StraRS.currentText() in sampling_design.srs_tables.keys() and \
-        srs_method in sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()].keys():
+    if (
+        sampling_design.QCBox_SamplingMap_StraRS.currentText() in sampling_design.srs_tables
+        and srs_method in sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()]
+    ):
         del sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()][srs_method]
     # delete pixel count
     if srs_method == "area based proportion":
         from AcATaMa.utils.others_utils import storage_pixel_count_by_pixel_values
-        global storage_pixel_count_by_pixel_values
+
         layer = sampling_design.QCBox_SamplingMap_StraRS.currentLayer()
         band = int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText())
         nodata = get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text())
@@ -228,6 +240,7 @@ def reload_StraRS_table():
 
 def fill_stratified_sampling_table():
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
     if AcATaMa.dockwidget is None:
         return
     sampling_design = AcATaMa.dockwidget.sampling_design_window
@@ -237,7 +250,7 @@ def fill_stratified_sampling_table():
         # check sampling method selected
         if not sampling_design.QCBox_StraRS_Method.currentText():
             raise Exception
-    except:
+    except Exception:
         # clear table
         sampling_design.QTableW_StraRS.setRowCount(0)
         sampling_design.QTableW_StraRS.setColumnCount(0)
@@ -251,18 +264,24 @@ def fill_stratified_sampling_table():
         sampling_design.widget_TotalExpectedSE.setVisible(True)
 
     srs_table = None
-    if sampling_design.QCBox_SamplingMap_StraRS.currentText() in sampling_design.srs_tables.keys() and \
-        srs_method in sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()].keys():
+    if (
+        sampling_design.QCBox_SamplingMap_StraRS.currentText() in sampling_design.srs_tables
+        and srs_method in sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()]
+    ):
         # restore values saved for number of samples configured for selected post-stratification file
         srs_table = sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()][srs_method]
 
     if srs_table is None:
         from AcATaMa.core.map import get_values_and_colors_table
+
         # init a new stratified random sampling table
-        srs_table = {"values_and_colors_table": get_values_and_colors_table(
-            layer=sampling_design.QCBox_SamplingMap_StraRS.currentLayer(),
-            band=int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText()),
-            nodata=get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text()))}
+        srs_table = {
+            "values_and_colors_table": get_values_and_colors_table(
+                layer=sampling_design.QCBox_SamplingMap_StraRS.currentLayer(),
+                band=int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText()),
+                nodata=get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text()),
+            )
+        }
 
         if not srs_table["values_and_colors_table"]:
             # clear table
@@ -271,24 +290,27 @@ def fill_stratified_sampling_table():
             # deselect
             sampling_design.QCBox_StraRS_Method.setCurrentIndex(-1)
             return
-        srs_table["row_count"] = len(list(srs_table["values_and_colors_table"].values())[0])
+        srs_table["row_count"] = len(next(iter(srs_table["values_and_colors_table"].values())))
 
         srs_table["pixel_count"] = list(
-            get_pixel_count_by_pixel_values(sampling_design.QCBox_SamplingMap_StraRS.currentLayer(),
-                                            int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText()),
-                                            srs_table["values_and_colors_table"]["Pixel Value"],
-                                            get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text())).values())
+            get_pixel_count_by_pixel_values(
+                sampling_design.QCBox_SamplingMap_StraRS.currentLayer(),
+                int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText()),
+                srs_table["values_and_colors_table"]["Pixel Value"],
+                get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text()),
+            ).values()
+        )
 
         if srs_method == "fixed values":
             srs_table["header"] = ["Pix Val", "Color", "Num Samples", "On"]
             srs_table["column_count"] = len(srs_table["header"])
-            srs_table["num_samples"] = [str(0)]*srs_table["row_count"]
+            srs_table["num_samples"] = [str(0)] * srs_table["row_count"]
             srs_table["On"] = [True] * srs_table["row_count"]
 
         if srs_method == "area based proportion":
             srs_table["header"] = ["Pix Val", "Color", "Num Samples", "Ui", "On"]
             srs_table["column_count"] = len(srs_table["header"])
-            srs_table["ui"] = [str(0.8)]*srs_table["row_count"]
+            srs_table["ui"] = [str(0.8)] * srs_table["row_count"]
             total_std_error = sampling_design.TotalExpectedSE.value()
             srs_table["On"] = [True] * srs_table["row_count"]
             srs_table["num_samples"] = get_num_samples_by_area_based_proportion(srs_table, total_std_error)
@@ -299,7 +321,7 @@ def fill_stratified_sampling_table():
                     srs_table["num_samples"][idx] = str(minimum_samples_per_stratum)
 
         # save srs table
-        if sampling_design.QCBox_SamplingMap_StraRS.currentText() not in sampling_design.srs_tables.keys():
+        if sampling_design.QCBox_SamplingMap_StraRS.currentText() not in sampling_design.srs_tables:
             sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()] = {}
         sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()][srs_method] = srs_table
 
@@ -309,6 +331,7 @@ def fill_stratified_sampling_table():
 
 def update_stratified_sampling_table(changes_from):
     from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
     if AcATaMa.dockwidget is None:
         return
     sampling_design = AcATaMa.dockwidget.sampling_design_window
@@ -319,8 +342,9 @@ def update_stratified_sampling_table(changes_from):
     srs_table = sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()][srs_method]
 
     if changes_from in ["TotalExpectedSE", "MinimumSamplesPerStratum"]:
-        srs_table["num_samples"] = \
-            get_num_samples_by_area_based_proportion(srs_table, sampling_design.TotalExpectedSE.value())
+        srs_table["num_samples"] = get_num_samples_by_area_based_proportion(
+            srs_table, sampling_design.TotalExpectedSE.value()
+        )
 
     if changes_from == "TableContent":
         num_samples = []
@@ -354,8 +378,9 @@ def update_stratified_sampling_table(changes_from):
                 # only change the number of samples keeping the total samples
                 srs_table["num_samples"] = get_num_samples_by_keeping_total_samples(srs_table, num_samples)
             else:
-                srs_table["num_samples"] = \
-                    get_num_samples_by_area_based_proportion(srs_table, sampling_design.TotalExpectedSE.value())
+                srs_table["num_samples"] = get_num_samples_by_area_based_proportion(
+                    srs_table, sampling_design.TotalExpectedSE.value()
+                )
 
     # adjusts the number of samples based on minimum samples per stratum
     minimum_samples_per_stratum = sampling_design.MinimumSamplesPerStratum.value()

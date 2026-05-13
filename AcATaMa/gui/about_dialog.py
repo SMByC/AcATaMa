@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  AcATaMa
@@ -18,6 +17,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import os
 
 from qgis.PyQt import uic
@@ -25,16 +25,17 @@ from qgis.PyQt.QtWidgets import QDialog
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'about_dialog.ui'))
+FORM_CLASS, _ = uic.loadUiType(os.path.join(plugin_folder, "ui", "about_dialog.ui"))
 
 
 class AboutDialog(QDialog, FORM_CLASS):
     def __init__(self):
         QDialog.__init__(self)
         self.setupUi(self)
-        about_file = os.path.join(plugin_folder, 'gui', 'about.html')
+        about_file = os.path.join(plugin_folder, "gui", "about.html")
         from AcATaMa.gui.acatama_dockwidget import VERSION
-        html_text = open(about_file).read().replace('VERSION', "v{}".format(VERSION))
+
+        with open(about_file) as f:
+            html_text = f.read().replace("VERSION", f"v{VERSION}")
         self.about_html.setHtml(html_text)
         self.about_html.setOpenExternalLinks(True)

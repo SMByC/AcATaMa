@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  AcATaMa
@@ -35,36 +34,36 @@
 
 import argparse
 import os
+
 import yaml
+
 try:
-    from yaml import CLoader as Loader, CDumper as Dumper
+    from yaml import CDumper as Dumper
+    from yaml import CLoader as Loader
 except ImportError:
-    from yaml import Loader, Dumper
+    from yaml import Dumper, Loader
 
 
 def script():
-    """Run as a script with arguments
-    """
-    parser = argparse.ArgumentParser(
-        prog='acatama_yamls_merger',
-        description='Merge AcATaMa yml files')
+    """Run as a script with arguments"""
+    parser = argparse.ArgumentParser(prog="acatama_yamls_merger", description="Merge AcATaMa yml files")
 
-    parser.add_argument('inputs', type=str, nargs='*')
+    parser.add_argument("inputs", type=str, nargs="*")
     args = parser.parse_args()
 
     yaml_files = []
     for _input in args.inputs:
-        if os.path.isfile(_input) and _input.endswith('.yml'):
+        if os.path.isfile(_input) and _input.endswith(".yml"):
             yaml_files.append(os.path.abspath(_input))
 
-    print("\nTEMPLATE FILE: {}".format(os.path.basename(yaml_files[0])))
-    print("\nMERGING YAMLS FILES: {}".format(len(yaml_files)-1))
+    print(f"\nTEMPLATE FILE: {os.path.basename(yaml_files[0])}")
+    print(f"\nMERGING YAMLS FILES: {len(yaml_files) - 1}")
 
     points = []
     points_order = []
     yml_template = None
     for yaml_file_path in yaml_files:
-        with open(yaml_file_path, 'r') as yaml_file:
+        with open(yaml_file_path) as yaml_file:
             yaml_config = yaml.load(yaml_file, Loader=Loader)
 
             if yml_template is None:
@@ -74,16 +73,17 @@ def script():
             points += yaml_config["points"].values()
             points_order += yaml_config["points_order"]
 
-    points_merged = {x: p for x, p in zip(range(len(points)), points)}
+    points_merged = dict(zip(range(len(points)), points, strict=False))
 
     yml_template["points"] = points_merged
     yml_template["points_order"] = points_order
 
-    with open(os.path.splitext(yaml_files[0])[0] + "_merged.yml", 'w') as yaml_file:
+    with open(os.path.splitext(yaml_files[0])[0] + "_merged.yml", "w") as yaml_file:
         yaml.dump(yml_template, yaml_file, Dumper=Dumper)
 
     print("saving: ", os.path.splitext(yaml_files[0])[0] + "_merged.yml")
     print("\nDONE")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     script()

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  AcATaMa
@@ -18,30 +17,41 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import os
 import sys
 
+from qgis.core import Qgis, QgsMapLayerProxyModel, QgsUnitTypes
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox
-from qgis.core import QgsMapLayerProxyModel, Qgis, QgsUnitTypes
 from qgis.utils import iface
 
-from AcATaMa.core.sampling_design import do_simple_random_sampling, do_stratified_random_sampling, do_systematic_sampling
-from AcATaMa.utils.sampling_utils import update_stratified_sampling_table, fill_stratified_sampling_table, \
-    reload_StraRS_table
-from AcATaMa.gui.post_stratification_classes_dialog import PostStratificationClassesDialog
-from AcATaMa.utils.qgis_utils import valid_file_selected_in, browse_dialog_to_load_file, is_integer_data_type
-from AcATaMa.utils.system_utils import block_signals_to
-from AcATaMa.utils.others_utils import set_nodata_format, get_nodata_format, get_pixel_count_by_pixel_values, \
-    get_decimal_places
 from AcATaMa.core.map import get_nodata_value
+from AcATaMa.core.sampling_design import (
+    do_simple_random_sampling,
+    do_stratified_random_sampling,
+    do_systematic_sampling,
+)
 from AcATaMa.gui.determine_num_samples_dialog import DetermineNumberSamplesDialog
+from AcATaMa.gui.post_stratification_classes_dialog import PostStratificationClassesDialog
+from AcATaMa.utils.others_utils import (
+    get_decimal_places,
+    get_nodata_format,
+    get_pixel_count_by_pixel_values,
+    set_nodata_format,
+)
+from AcATaMa.utils.qgis_utils import browse_dialog_to_load_file, is_integer_data_type, valid_file_selected_in
+from AcATaMa.utils.sampling_utils import (
+    fill_stratified_sampling_table,
+    reload_StraRS_table,
+    update_stratified_sampling_table,
+)
+from AcATaMa.utils.system_utils import block_signals_to
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'sampling_design_window.ui'))
+FORM_CLASS, _ = uic.loadUiType(os.path.join(plugin_folder, "ui", "sampling_design_window.ui"))
 
 
 class SamplingDesignWindow(QDialog, FORM_CLASS):
@@ -55,7 +65,9 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         SamplingDesignWindow.inst = self
 
         # flags
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowMinimizeButtonHint | Qt.WindowType.WindowMaximizeButtonHint)
+        self.setWindowFlags(
+            self.windowFlags() | Qt.WindowType.WindowMinimizeButtonHint | Qt.WindowType.WindowMaximizeButtonHint
+        )
 
         # ######### simple random sampling ######### #
         self.widget_SimpRSwithPS.setHidden(True)
@@ -69,27 +81,36 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         self.QCBox_PostStratMap_SimpRS.setCurrentIndex(-1)
         self.QCBox_PostStratMap_SimpRS.setFilters(QgsMapLayerProxyModel.Filter.RasterLayer)
         # call to browse the post-stratification map
-        self.QPBtn_browsePostStratMap_SimpRS.clicked.connect(lambda: browse_dialog_to_load_file(
-            self,
-            self.QCBox_PostStratMap_SimpRS,
-            dialog_title=self.tr("Select the post-stratification map"),
-            file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)"),
-            msg_bar=self.MsgBar))
+        self.QPBtn_browsePostStratMap_SimpRS.clicked.connect(
+            lambda: browse_dialog_to_load_file(
+                self,
+                self.QCBox_PostStratMap_SimpRS,
+                dialog_title=self.tr("Select the post-stratification map"),
+                file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)"),
+                msg_bar=self.MsgBar,
+            )
+        )
         # select and check the post-stratification map
         self.QCBox_PostStratMap_SimpRS.layerChanged.connect(lambda: self.update_post_stratification_map_SimpRS("layer"))
-        self.QCBox_band_PostStratMap_SimpRS.currentIndexChanged.connect(lambda: self.update_post_stratification_map_SimpRS("band"))
-        self.nodata_PostStratMap_SimpRS.textChanged.connect(lambda: self.update_post_stratification_map_SimpRS("nodata"))
+        self.QCBox_band_PostStratMap_SimpRS.currentIndexChanged.connect(
+            lambda: self.update_post_stratification_map_SimpRS("band")
+        )
+        self.nodata_PostStratMap_SimpRS.textChanged.connect(
+            lambda: self.update_post_stratification_map_SimpRS("nodata")
+        )
         self.QPBtn_PostStratMapClasses_SimpRS.setEnabled(False)
         self.QPBtn_PostStratMapClasses_SimpRS.clicked.connect(lambda: self.select_post_stratification_classes("simple"))
         # number of neighbors aggregation
         self.fill_same_class_of_neighbors(self.QCBox_NumberOfNeighbors_SimpRS, self.QCBox_SameClassOfNeighbors_SimpRS)
-        self.QCBox_NumberOfNeighbors_SimpRS.currentIndexChanged.connect(lambda: self.fill_same_class_of_neighbors(
-            self.QCBox_NumberOfNeighbors_SimpRS, self.QCBox_SameClassOfNeighbors_SimpRS))
+        self.QCBox_NumberOfNeighbors_SimpRS.currentIndexChanged.connect(
+            lambda: self.fill_same_class_of_neighbors(
+                self.QCBox_NumberOfNeighbors_SimpRS, self.QCBox_SameClassOfNeighbors_SimpRS
+            )
+        )
         # generation options
         self.QPBtn_GenerateSamples_SimpRS.clicked.connect(do_simple_random_sampling)
         # update progress bar limits
-        self.numberOfSamples_SimpRS.valueChanged.connect(
-            lambda: self.QPBar_GenerateSamples_SimpRS.setValue(0))
+        self.numberOfSamples_SimpRS.valueChanged.connect(lambda: self.QPBar_GenerateSamples_SimpRS.setValue(0))
         self.numberOfSamples_SimpRS.valueChanged.connect(self.QPBar_GenerateSamples_SimpRS.setMaximum)
 
         # ######### stratified random sampling ######### #
@@ -99,12 +120,15 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         self.QCBox_SamplingMap_StraRS.setCurrentIndex(-1)
         self.QCBox_SamplingMap_StraRS.setFilters(QgsMapLayerProxyModel.Filter.RasterLayer)
         # call to browse the post-stratification raster
-        self.QPBtn_browseSamplingMap_StraRS.clicked.connect(lambda: browse_dialog_to_load_file(
-            self,
-            self.QCBox_SamplingMap_StraRS,
-            dialog_title=self.tr("Select the post-stratification map"),
-            file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)"),
-            msg_bar=self.MsgBar))
+        self.QPBtn_browseSamplingMap_StraRS.clicked.connect(
+            lambda: browse_dialog_to_load_file(
+                self,
+                self.QCBox_SamplingMap_StraRS,
+                dialog_title=self.tr("Select the post-stratification map"),
+                file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)"),
+                msg_bar=self.MsgBar,
+            )
+        )
         # select and check the post-stratification map
         self.QCBox_SamplingMap_StraRS.layerChanged.connect(self.update_sampling_map_StraRS)
         self.QCBox_band_SamplingMap_StraRS.currentIndexChanged.connect(self.reset_StraRS_method)
@@ -118,12 +142,16 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         # for each item changed in table, save and update it
         self.TotalExpectedSE.valueChanged.connect(lambda: update_stratified_sampling_table("TotalExpectedSE"))
         self.QTableW_StraRS.itemChanged.connect(lambda: update_stratified_sampling_table("TableContent"))
-        self.MinimumSamplesPerStratum.valueChanged.connect(lambda: update_stratified_sampling_table(
-            "MinimumSamplesPerStratum"))
+        self.MinimumSamplesPerStratum.valueChanged.connect(
+            lambda: update_stratified_sampling_table("MinimumSamplesPerStratum")
+        )
         # number of neighbors aggregation
         self.fill_same_class_of_neighbors(self.QCBox_NumberOfNeighbors_StraRS, self.QCBox_SameClassOfNeighbors_StraRS)
-        self.QCBox_NumberOfNeighbors_StraRS.currentIndexChanged.connect(lambda: self.fill_same_class_of_neighbors(
-            self.QCBox_NumberOfNeighbors_StraRS, self.QCBox_SameClassOfNeighbors_StraRS))
+        self.QCBox_NumberOfNeighbors_StraRS.currentIndexChanged.connect(
+            lambda: self.fill_same_class_of_neighbors(
+                self.QCBox_NumberOfNeighbors_StraRS, self.QCBox_SameClassOfNeighbors_StraRS
+            )
+        )
         # generation options
         self.QPBtn_GenerateSamples_StraRS.clicked.connect(do_stratified_random_sampling)
 
@@ -138,17 +166,20 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         self.determine_number_samples_dialog_SystS.description.setText(
             "Determining the point spacing value by estimating the sample size, considering the valid map data and map "
             "dimensions. Sample size is estimated using the following equation (Stehman and Foody (2019), and "
-            "Cochran (1977)):")
+            "Cochran (1977)):"
+        )
         # add a tooltip to the number of samples label
         self.determine_number_samples_dialog_SystS.NumberOfSamples.setToolTip(
-            "Due to certain systematic sampling conditions, \nthe number of samples is not guaranteed in the results")
+            "Due to certain systematic sampling conditions, \nthe number of samples is not guaranteed in the results"
+        )
         self.determine_number_samples_dialog_SystS.adjustSize()
         self.QPBtn_DeterNumSamples_SystS.clicked.connect(self.determine_number_samples_SystS)
         # generation options
         self.QPBtn_GenerateSamples_SystS.clicked.connect(do_systematic_sampling)
         self.PointSpacing_SystS.valueChanged[float].connect(self.update_systematic_sampling_progressbar)
         self.QCBox_InitialInsetMode_SystS.currentIndexChanged[int].connect(
-            lambda index: self.InitialInsetFixed_SystS.setVisible(True if index == 1 else False))
+            lambda index: self.InitialInsetFixed_SystS.setVisible(index == 1)
+        )
         self.InitialInsetFixed_SystS.setHidden(True)
         # show/hide confidence level widget based on max offset value (only relevant when offset > 0)
         self.MaxXYoffset_SystS.valueChanged.connect(lambda value: self.widget_CL_PerPixelCoverage.setVisible(value > 0))
@@ -159,21 +190,31 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         self.QCBox_PostStratMap_SystS.setCurrentIndex(-1)
         self.QCBox_PostStratMap_SystS.setFilters(QgsMapLayerProxyModel.Filter.RasterLayer)
         # post-stratification sampling
-        self.QPBtn_browsePostStratMap_SystS.clicked.connect(lambda: browse_dialog_to_load_file(
-            self,
-            self.QCBox_PostStratMap_SystS,
-            dialog_title=self.tr("Select the post-stratification map"),
-            file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)"),
-            msg_bar=self.MsgBar))
+        self.QPBtn_browsePostStratMap_SystS.clicked.connect(
+            lambda: browse_dialog_to_load_file(
+                self,
+                self.QCBox_PostStratMap_SystS,
+                dialog_title=self.tr("Select the post-stratification map"),
+                file_filters=self.tr("Raster files (*.tif *.img);;All files (*.*)"),
+                msg_bar=self.MsgBar,
+            )
+        )
         self.QCBox_PostStratMap_SystS.layerChanged.connect(lambda: self.update_post_stratification_map_SystS("layer"))
-        self.QCBox_band_PostStratMap_SystS.currentIndexChanged.connect(lambda: self.update_post_stratification_map_SystS("band"))
+        self.QCBox_band_PostStratMap_SystS.currentIndexChanged.connect(
+            lambda: self.update_post_stratification_map_SystS("band")
+        )
         self.nodata_PostStratMap_SystS.textChanged.connect(lambda: self.update_post_stratification_map_SystS("nodata"))
         self.QPBtn_PostStratMapClasses_SystS.setEnabled(False)
-        self.QPBtn_PostStratMapClasses_SystS.clicked.connect(lambda: self.select_post_stratification_classes("systematic"))
+        self.QPBtn_PostStratMapClasses_SystS.clicked.connect(
+            lambda: self.select_post_stratification_classes("systematic")
+        )
         # number of neighbors aggregation
         self.fill_same_class_of_neighbors(self.QCBox_NumberOfNeighbors_SystS, self.QCBox_SameClassOfNeighbors_SystS)
-        self.QCBox_NumberOfNeighbors_SystS.currentIndexChanged.connect(lambda: self.fill_same_class_of_neighbors(
-            self.QCBox_NumberOfNeighbors_SystS, self.QCBox_SameClassOfNeighbors_SystS))
+        self.QCBox_NumberOfNeighbors_SystS.currentIndexChanged.connect(
+            lambda: self.fill_same_class_of_neighbors(
+                self.QCBox_NumberOfNeighbors_SystS, self.QCBox_SameClassOfNeighbors_SystS
+            )
+        )
 
         # dialog buttons box
         self.closeButton.rejected.connect(self.closing)
@@ -190,16 +231,20 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         # Set the properties of the QdoubleSpinBox based on the QgsUnitTypes of the thematic map
         # https://qgis.org/api/classQgsUnitTypes.html
         # SimpRS
-        self.minDistance_SimpRS.setSuffix(" {}".format(str_unit))
+        self.minDistance_SimpRS.setSuffix(f" {str_unit}")
         self.minDistance_SimpRS.setToolTip("Minimum distance\n(units based on thematic map selected)")
-        self.minDistance_SimpRS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceUnit.DistanceDegrees else 10e6)
+        self.minDistance_SimpRS.setRange(
+            0, 360 if layer_dist_unit == QgsUnitTypes.DistanceUnit.DistanceDegrees else 10e6
+        )
         self.minDistance_SimpRS.setDecimals(decimal_places)
         self.minDistance_SimpRS.setSingleStep(10**-decimal_places)
         self.minDistance_SimpRS.setValue(0)
         # StraRS
-        self.minDistance_StraRS.setSuffix(" {}".format(str_unit))
+        self.minDistance_StraRS.setSuffix(f" {str_unit}")
         self.minDistance_StraRS.setToolTip("Minimum distance\n(units based on thematic map selected)")
-        self.minDistance_StraRS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceUnit.DistanceDegrees else 10e6)
+        self.minDistance_StraRS.setRange(
+            0, 360 if layer_dist_unit == QgsUnitTypes.DistanceUnit.DistanceDegrees else 10e6
+        )
         self.minDistance_StraRS.setDecimals(decimal_places)
         self.minDistance_StraRS.setSingleStep(10**-decimal_places)
         self.minDistance_StraRS.setValue(0)
@@ -211,15 +256,15 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         self.QCBox_PostStratMap_SimpRS.setLayer(self.thematic_map_layer)
         self.QCBox_PostStratMap_SystS.setLayer(self.thematic_map_layer)
 
-
     def show(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
         AcATaMa.dockwidget.QGBox_ThematicMap.setEnabled(False)
         AcATaMa.dockwidget.widget_sampling_file.setEnabled(False)
         SamplingDesignWindow.is_opened = True
         AcATaMa.dockwidget.QPBtn_OpenSamplingDesignWindow.setText("Sampling design is opened, click to show")
 
-        super(SamplingDesignWindow, self).show()
+        super().show()
 
     @pyqtSlot(str)
     def set_systematic_sampling_unit(self, systematic_sampling_unit):
@@ -242,28 +287,33 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
             # set decimals, single step and range
             self.PointSpacing_SystS.setDecimals(decimal_places)
             self.PointSpacing_SystS.setSingleStep(10**-decimal_places)
-            self.PointSpacing_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceUnit.DistanceDegrees else 10e6)
+            self.PointSpacing_SystS.setRange(
+                0, 360 if layer_dist_unit == QgsUnitTypes.DistanceUnit.DistanceDegrees else 10e6
+            )
             self.InitialInsetFixed_SystS.setDecimals(decimal_places)
             self.InitialInsetFixed_SystS.setSingleStep(10**-decimal_places)
-            self.InitialInsetFixed_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceUnit.DistanceDegrees else 10e6)
+            self.InitialInsetFixed_SystS.setRange(
+                0, 360 if layer_dist_unit == QgsUnitTypes.DistanceUnit.DistanceDegrees else 10e6
+            )
             self.MaxXYoffset_SystS.setDecimals(decimal_places)
             self.MaxXYoffset_SystS.setSingleStep(10**-decimal_places)
-            self.MaxXYoffset_SystS.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceUnit.DistanceDegrees else 10e6)
+            self.MaxXYoffset_SystS.setRange(
+                0, 360 if layer_dist_unit == QgsUnitTypes.DistanceUnit.DistanceDegrees else 10e6
+            )
 
             # define the distance units based on the thematic map
-            self.PointSpacing_SystS.setSuffix(" {}".format(str_unit))
-            self.InitialInsetFixed_SystS.setSuffix(" {}".format(str_unit))
-            self.MaxXYoffset_SystS.setSuffix(" {}".format(str_unit))
+            self.PointSpacing_SystS.setSuffix(f" {str_unit}")
+            self.InitialInsetFixed_SystS.setSuffix(f" {str_unit}")
+            self.MaxXYoffset_SystS.setSuffix(f" {str_unit}")
 
             # set tooltips
-            self.PointSpacing_SystS.setToolTip(
-                "Space between grid points\n(units based on thematic map selected)")
-            self.InitialInsetFixed_SystS.setToolTip(
-                "Initial inset distance\n(units based on thematic map selected)")
+            self.PointSpacing_SystS.setToolTip("Space between grid points\n(units based on thematic map selected)")
+            self.InitialInsetFixed_SystS.setToolTip("Initial inset distance\n(units based on thematic map selected)")
             self.MaxXYoffset_SystS.setToolTip(
                 "Maximum XY distance from the point of the aligned grid\n"
                 "to generate the random offset as a square area\n"
-                "(units based on thematic map selected)")
+                "(units based on thematic map selected)"
+            )
 
         if systematic_sampling_unit == "Pixels":
             # converting some systematic sampling values from distance to pixel units
@@ -293,12 +343,17 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
             self.MaxXYoffset_SystS.setSuffix(" pixels")
 
             # set tooltips
-            self.PointSpacing_SystS.setToolTip("Space between grid points in pixel units\n(pixels based on thematic map selected)")
-            self.InitialInsetFixed_SystS.setToolTip("Initial inset distance in pixel units\n(pixels based on thematic map selected)")
+            self.PointSpacing_SystS.setToolTip(
+                "Space between grid points in pixel units\n(pixels based on thematic map selected)"
+            )
+            self.InitialInsetFixed_SystS.setToolTip(
+                "Initial inset distance in pixel units\n(pixels based on thematic map selected)"
+            )
             self.MaxXYoffset_SystS.setToolTip(
                 "Maximum XY distance from the point of the aligned grid\n"
                 "to generate the random offset as a square area in pixel units\n"
-                "(pixels based on thematic map selected)")
+                "(pixels based on thematic map selected)"
+            )
 
     @pyqtSlot()
     def determine_number_samples_SimpRS(self):
@@ -310,6 +365,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
     def determine_number_samples_SystS(self):
         if self.determine_number_samples_dialog_SystS.exec():
             from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
             systematic_sampling_unit = self.QCBox_Systematic_Sampling_Unit.currentText()
 
             # total number of pixels
@@ -320,15 +376,18 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
             map_nodata = get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text())
             if map_nodata is not None:
                 band = int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
-                total_nodata_pixels = get_pixel_count_by_pixel_values(self.thematic_map_layer, band, None, None)[map_nodata]
+                total_nodata_pixels = get_pixel_count_by_pixel_values(self.thematic_map_layer, band, None, None)[
+                    map_nodata
+                ]
                 total_valid_pixels = total_pixels - total_nodata_pixels
             else:
                 total_valid_pixels = total_pixels
             # compute the point spacing of the grid based on the number of samples and the total valid pixels
             number_of_samples = int(self.determine_number_samples_dialog_SystS.NumberOfSamples.text())
-            point_spacing_by_pixel = (total_valid_pixels ** 0.5) / (number_of_samples ** 0.5 - 1)
-            point_spacing = point_spacing_by_pixel * (self.thematic_map_layer.rasterUnitsPerPixelX()
-                                                      if systematic_sampling_unit == "Distance" else 1)
+            point_spacing_by_pixel = (total_valid_pixels**0.5) / (number_of_samples**0.5 - 1)
+            point_spacing = point_spacing_by_pixel * (
+                self.thematic_map_layer.rasterUnitsPerPixelX() if systematic_sampling_unit == "Distance" else 1
+            )
 
             self.PointSpacing_SystS.setValue(point_spacing)
 
@@ -354,20 +413,22 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
                 with block_signals_to(self.QCBox_band_PostStratMap_SimpRS):
                     self.QCBox_band_PostStratMap_SimpRS.clear()
                     self.QCBox_band_PostStratMap_SimpRS.addItems(
-                        [str(x) for x in range(1, post_stratification_map_layer.bandCount() + 1)])
+                        [str(x) for x in range(1, post_stratification_map_layer.bandCount() + 1)]
+                    )
             # fill nodata value
             with block_signals_to(self.nodata_PostStratMap_SimpRS):
-                self.nodata_PostStratMap_SimpRS.setText(set_nodata_format(get_nodata_value(post_stratification_map_layer)))
+                self.nodata_PostStratMap_SimpRS.setText(
+                    set_nodata_format(get_nodata_value(post_stratification_map_layer))
+                )
 
         post_stratification_map_band = int(self.QCBox_band_PostStratMap_SimpRS.currentText())
 
         # set the nodata value
         if item_changed == "band":
             with block_signals_to(self.nodata_PostStratMap_SimpRS):
-                self.nodata_PostStratMap_SimpRS.setText(set_nodata_format(get_nodata_value(post_stratification_map_layer,
-                                                                                           post_stratification_map_band)))
-
-        post_stratification_map_nodata = get_nodata_format(self.nodata_PostStratMap_SimpRS.text())
+                self.nodata_PostStratMap_SimpRS.setText(
+                    set_nodata_format(get_nodata_value(post_stratification_map_layer, post_stratification_map_band))
+                )
 
         # check if post-stratification map data type is integer or byte
         if item_changed in ["layer", "band"]:
@@ -376,8 +437,12 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
                 self.QCBox_band_PostStratMap_SimpRS.clear()
                 self.nodata_PostStratMap_SimpRS.setText("")
                 self.QPBtn_PostStratMapClasses_SimpRS.setEnabled(False)
-                iface.messageBar().pushMessage("AcATaMa", "Error, post-stratification map must be byte or integer as data type.",
-                                               level=Qgis.MessageLevel.Warning, duration=10)
+                iface.messageBar().pushMessage(
+                    "AcATaMa",
+                    "Error, post-stratification map must be byte or integer as data type.",
+                    level=Qgis.MessageLevel.Warning,
+                    duration=10,
+                )
                 return
 
         # enable pixel value selection
@@ -401,9 +466,12 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
             self.QCBox_band_SamplingMap_StraRS.clear()
             self.nodata_SamplingMap_StraRS.setText("")
             self.QGBox_Sampling_Method.setEnabled(False)
-            iface.messageBar().pushMessage("AcATaMa",
-                                           "Error, stratification map must be byte or integer as data type.",
-                                           level=Qgis.MessageLevel.Warning, duration=10)
+            iface.messageBar().pushMessage(
+                "AcATaMa",
+                "Error, stratification map must be byte or integer as data type.",
+                level=Qgis.MessageLevel.Warning,
+                duration=10,
+            )
             return
         # set band count
         self.QCBox_band_SamplingMap_StraRS.clear()
@@ -412,6 +480,7 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         # set the same nodata value if select the thematic map
         if sampling_map == self.thematic_map_layer:
             from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
             self.nodata_SamplingMap_StraRS.setText(set_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text()))
             return
         self.nodata_SamplingMap_StraRS.setText(set_nodata_format(get_nodata_value(sampling_map)))
@@ -433,20 +502,22 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
                 with block_signals_to(self.QCBox_band_PostStratMap_SystS):
                     self.QCBox_band_PostStratMap_SystS.clear()
                     self.QCBox_band_PostStratMap_SystS.addItems(
-                        [str(x) for x in range(1, post_stratification_map_layer.bandCount() + 1)])
+                        [str(x) for x in range(1, post_stratification_map_layer.bandCount() + 1)]
+                    )
             # fill nodata value
             with block_signals_to(self.nodata_PostStratMap_SystS):
-                self.nodata_PostStratMap_SystS.setText(set_nodata_format(get_nodata_value(post_stratification_map_layer)))
+                self.nodata_PostStratMap_SystS.setText(
+                    set_nodata_format(get_nodata_value(post_stratification_map_layer))
+                )
 
         post_stratification_map_band = int(self.QCBox_band_PostStratMap_SystS.currentText())
 
         # set the nodata value
         if item_changed == "band":
             with block_signals_to(self.nodata_PostStratMap_SystS):
-                self.nodata_PostStratMap_SystS.setText(set_nodata_format(get_nodata_value(post_stratification_map_layer,
-                                                                                           post_stratification_map_band)))
-
-        post_stratification_map_nodata = get_nodata_format(self.nodata_PostStratMap_SystS.text())
+                self.nodata_PostStratMap_SystS.setText(
+                    set_nodata_format(get_nodata_value(post_stratification_map_layer, post_stratification_map_band))
+                )
 
         # check if post-stratification map data type is integer or byte
         if item_changed in ["layer", "band"]:
@@ -455,8 +526,12 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
                 self.QCBox_band_PostStratMap_SystS.clear()
                 self.nodata_PostStratMap_SystS.setText("")
                 self.QPBtn_PostStratMapClasses_SystS.setEnabled(False)
-                iface.messageBar().pushMessage("AcATaMa", "Error, post-stratification map must be byte or integer as data type.",
-                                               level=Qgis.MessageLevel.Warning, duration=10)
+                iface.messageBar().pushMessage(
+                    "AcATaMa",
+                    "Error, post-stratification map must be byte or integer as data type.",
+                    level=Qgis.MessageLevel.Warning,
+                    duration=10,
+                )
                 return
 
         # enable pixel value selection
@@ -476,10 +551,12 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
             post_stratification_map_nodata = get_nodata_format(self.nodata_PostStratMap_SystS.text())
             QPBtn_PostStratMapClasses = self.QPBtn_PostStratMapClasses_SystS
 
-        classes_selection_dialog = PostStratificationClassesDialog(post_stratification_map_layer,
-                                                                    post_stratification_map_band,
-                                                                    post_stratification_map_nodata,
-                                                                    QPBtn_PostStratMapClasses.text())
+        classes_selection_dialog = PostStratificationClassesDialog(
+            post_stratification_map_layer,
+            post_stratification_map_band,
+            post_stratification_map_nodata,
+            QPBtn_PostStratMapClasses.text(),
+        )
 
         # get classes picked by user
         classes_selection_dialog.exec()
@@ -503,16 +580,18 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
     @pyqtSlot(float)
     def update_systematic_sampling_progressbar(self, point_spacing):
         # TODO: Tests fail with this, do not update progress bar if pytest is running
-        if 'pytest' in sys.modules:
+        if "pytest" in sys.modules:
             return
 
         if not self.thematic_map_layer or not self.thematic_map_layer.isValid():
             return
 
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
         systematic_sampling_unit = self.QCBox_Systematic_Sampling_Unit.currentText()
-        point_spacing_by_pixel = point_spacing / (self.thematic_map_layer.rasterUnitsPerPixelX()
-                                                  if systematic_sampling_unit == "Distance" else 1)
+        point_spacing_by_pixel = point_spacing / (
+            self.thematic_map_layer.rasterUnitsPerPixelX() if systematic_sampling_unit == "Distance" else 1
+        )
         # total number of pixels
         map_width = self.thematic_map_layer.width()
         map_height = self.thematic_map_layer.height()
@@ -527,11 +606,11 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
             total_valid_pixels = total_pixels
 
         try:
-            max_samples = ((total_valid_pixels ** 0.5) / point_spacing_by_pixel + 1) ** 2
+            max_samples = ((total_valid_pixels**0.5) / point_spacing_by_pixel + 1) ** 2
         except ZeroDivisionError:
             return
         if max_samples < 2147483647:
-            self.QPBar_GenerateSamples_SystS.setMaximum(int(round(max_samples)))
+            self.QPBar_GenerateSamples_SystS.setMaximum(round(max_samples))
 
     @pyqtSlot()
     def clear(self):
@@ -568,9 +647,10 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         """
         Do this before close the response design window
         """
-        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         from AcATaMa.core.analysis import AccuracyAssessmentWindow
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
         from AcATaMa.gui.response_design_window import ResponseDesignWindow
+
         AcATaMa.dockwidget.QPBtn_OpenSamplingDesignWindow.setText("Sampling design window")
         AcATaMa.dockwidget.widget_sampling_file.setEnabled(True)
         if not ResponseDesignWindow.is_opened and not AccuracyAssessmentWindow.is_opened:
@@ -580,4 +660,4 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
 
     def reject(self, is_ok_to_close=False):
         if is_ok_to_close:
-            super(SamplingDesignWindow, self).reject()
+            super().reject()

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  AcATaMa
@@ -18,15 +17,15 @@
  *                                                                         *
  ***************************************************************************/
 """
-import numpy as np
+
 import re
 import xml.etree.ElementTree as ET
 
+import numpy as np
 from osgeo import gdal, gdal_array
-
-from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtWidgets import QProgressDialog, QApplication
 from qgis.core import QgsUnitTypes
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QApplication, QProgressDialog
 
 from AcATaMa.utils.qgis_utils import get_source_from
 from AcATaMa.utils.system_utils import wait_process
@@ -37,13 +36,13 @@ def get_plugin_version(version_string):
         version_string = str(version_string)
 
     # handle non-numeric version strings like "dev"
-    if not re.sub(r'\D', '', version_string):
+    if not re.sub(r"\D", "", version_string):
         return 999999
 
-    version = ''.join(['{:0>2}'.format(re.sub(r'\D', '', x)) for x in version_string.split('.')])
+    version = "".join(["{:0>2}".format(re.sub(r"\D", "", x)) for x in version_string.split(".")])
 
     if len(version) == 4:
-        version += '00'
+        version += "00"
 
     return int(version)
 
@@ -56,12 +55,14 @@ def mask(input_list, boolean_mask):
         boolean_mask (list): The boolean mask list
 
     Examples:
-        >>> mask(['A','B','C','D'], [1,0,1,0])
+        >>> mask(["A", "B", "C", "D"], [1, 0, 1, 0])
         ['A', 'C']
     """
-    return [i for i, b in zip(input_list, boolean_mask) if b]
+    return [i for i, b in zip(input_list, boolean_mask, strict=False) if b]
+
 
 # --------------------------------------------------------------------------
+
 
 def get_unique_values(layer, band, chunk_size=1000):
     """Get unique values in a raster band using chunked GDAL reading"""
@@ -110,10 +111,10 @@ def get_unique_pixel_values(layer, band, nodata=None):
     xml_style = ET.fromstring(xml_style_str)
 
     # for singleband_pseudocolor
-    items = xml_style.findall('pipe/rasterrenderer[@band="{}"]/rastershader/colorrampshader/item'.format(band))
+    items = xml_style.findall(f'pipe/rasterrenderer[@band="{band}"]/rastershader/colorrampshader/item')
     if not items:
         # for unique values
-        items = xml_style.findall('pipe/rasterrenderer[@band="{}"]/colorPalette/paletteEntry'.format(band))
+        items = xml_style.findall(f'pipe/rasterrenderer[@band="{band}"]/colorPalette/paletteEntry')
 
     unique_values = []
     for item in items:
@@ -145,7 +146,6 @@ def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=None)
 
     # Try parallel processing with dask
     try:
-        import dask
         return get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values, nodata)
     except Exception:
         pass
@@ -163,6 +163,7 @@ def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=None)
 # --------------------------------------------------------------------------
 # QGIS native processing
 
+
 @wait_process
 def get_pixel_count_by_pixel_values_qgis_native(layer, band, pixel_values=None, nodata=None):
     """Get the total pixel count for each pixel values using QGIS native processing algorithm.
@@ -174,9 +175,13 @@ def get_pixel_count_by_pixel_values_qgis_native(layer, band, pixel_values=None, 
     from qgis.core import QgsProcessingFeedback
 
     # progress dialog with determinate progress (0-100%)
-    progress = QProgressDialog('AcATaMa is counting the number of pixels for each thematic value.\n'
-                               'Depending on the size of the image, it would take a few minutes.',
-                               None, 0, 100)
+    progress = QProgressDialog(
+        "AcATaMa is counting the number of pixels for each thematic value.\n"
+        "Depending on the size of the image, it would take a few minutes.",
+        None,
+        0,
+        100,
+    )
     progress.setWindowTitle("AcATaMa - Counting unique values...")
     progress.setWindowModality(Qt.WindowModality.WindowModal)
     progress.setMinimumDuration(0)
@@ -202,22 +207,22 @@ def get_pixel_count_by_pixel_values_qgis_native(layer, band, pixel_values=None, 
             pixel_values = [v for v in pixel_values if v != nodata]
 
         # Initialize all symbology values with 0 count
-        pairing_values_and_counts = {pv: 0 for pv in pixel_values}
+        pairing_values_and_counts = dict.fromkeys(pixel_values, 0)
 
         # Run the QGIS native algorithm with feedback for progress updates
-        result = processing.run("native:rasterlayeruniquevaluesreport", {
-            'INPUT': layer,
-            'BAND': band,
-            'OUTPUT_TABLE': 'TEMPORARY_OUTPUT'
-        }, feedback=feedback)
+        result = processing.run(
+            "native:rasterlayeruniquevaluesreport",
+            {"INPUT": layer, "BAND": band, "OUTPUT_TABLE": "TEMPORARY_OUTPUT"},
+            feedback=feedback,
+        )
 
         # Extract counts from the output table and update the dictionary
-        output_layer = result['OUTPUT_TABLE']
+        output_layer = result["OUTPUT_TABLE"]
 
         for feature in output_layer.getFeatures():
             # The algorithm returns 'value', 'count', and 'm2' (area) fields
-            value = feature['value']
-            count = feature['count']
+            value = feature["value"]
+            count = feature["count"]
 
             # Convert value to int if it's a whole number
             if value == int(value):
@@ -242,10 +247,11 @@ def get_pixel_count_by_pixel_values_qgis_native(layer, band, pixel_values=None, 
 # --------------------------------------------------------------------------
 # parallel processing
 
-def chunks(l, n):
-    """generate the sub-list of chunks of n-sizes from list l"""
-    for i in range(0, len(l), n):
-        yield l[i:i + n]
+
+def chunks(lst, n):
+    """generate the sub-list of chunks of n-sizes from list lst"""
+    for i in range(0, len(lst), n):
+        yield lst[i : i + n]
 
 
 def pixel_count_in_chunk(img_path, band, xoff, yoff, xsize, ysize):
@@ -254,7 +260,7 @@ def pixel_count_in_chunk(img_path, band, xoff, yoff, xsize, ysize):
     chunk_narray = gdal_file.GetRasterBand(band).ReadAsArray(xoff, yoff, xsize, ysize)
     del gdal_file
     unique_values, counts = np.unique(chunk_narray, return_counts=True)
-    return dict(zip(unique_values.tolist(), counts.tolist()))
+    return dict(zip(unique_values.tolist(), counts.tolist(), strict=False))
 
 
 @wait_process
@@ -263,9 +269,13 @@ def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None, nod
     import dask
 
     # progress dialog
-    progress = QProgressDialog('AcATaMa is counting the number of pixels for each thematic value.\n'
-                               'Depending on the size of the image, it would take a few minutes.',
-                               None, 0, 100)
+    progress = QProgressDialog(
+        "AcATaMa is counting the number of pixels for each thematic value.\n"
+        "Depending on the size of the image, it would take a few minutes.",
+        None,
+        0,
+        100,
+    )
     progress.setWindowTitle("AcATaMa - Counting unique values...")
     progress.setWindowModality(Qt.WindowModality.WindowModal)
     progress.setMinimumDuration(0)
@@ -303,7 +313,7 @@ def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None, nod
     batch_size = max(1, total_chunks // 20)  # ~20 progress updates
 
     # Initialize counts with 0 for all pixel values from symbology
-    pairing_values_and_counts = {pv: 0 for pv in pixel_values}
+    pairing_values_and_counts = dict.fromkeys(pixel_values, 0)
 
     for batch_start in range(0, total_chunks, batch_size):
         batch_end = min(batch_start + batch_size, total_chunks)
@@ -342,7 +352,8 @@ def get_pixel_count_by_pixel_values_sequential(layer, band, pixel_values=None, n
     # put nodata at the beginning, with the idea to include it for stopping
     # the counting when reaching the total pixels, delete it at the end
     if nodata is not None:
-        if nodata in pixel_values: pixel_values.remove(nodata)
+        if nodata in pixel_values:
+            pixel_values.remove(nodata)
         pixel_values.insert(0, nodata)
 
     dataset = gdal_array.LoadFile(get_source_from(layer))
@@ -352,9 +363,13 @@ def get_pixel_count_by_pixel_values_sequential(layer, band, pixel_values=None, n
 
     max_pixels = dataset.shape[-1] * dataset.shape[-2]
 
-    progress = QProgressDialog('AcATaMa is counting the number of pixels for each thematic value.\n'
-                               'Depending on the size of the image, it would take a few minutes.',
-                               None, 0, 100)
+    progress = QProgressDialog(
+        "AcATaMa is counting the number of pixels for each thematic value.\n"
+        "Depending on the size of the image, it would take a few minutes.",
+        None,
+        0,
+        100,
+    )
     progress.setWindowTitle("AcATaMa - Counting pixels by values...")
     progress.setWindowModality(Qt.WindowModality.WindowModal)
     progress.setValue(0)
@@ -380,13 +395,14 @@ def get_pixel_count_by_pixel_values_sequential(layer, band, pixel_values=None, n
         pixel_counts.pop(0)
 
     progress.close()
-    pairing_values_and_counts = dict(zip(pixel_values, pixel_counts))
+    pairing_values_and_counts = dict(zip(pixel_values, pixel_counts, strict=False))
     storage_pixel_count_by_pixel_values[(layer, band, nodata)] = pairing_values_and_counts
     return pairing_values_and_counts
 
 
 # --------------------------------------------------------------------------
 # set nodata format for the text line boxes
+
 
 def set_nodata_format(value):
     if isinstance(value, str) and (not value.strip() or (value.lower() == "nan")):
@@ -398,6 +414,7 @@ def set_nodata_format(value):
         return str(int(value))
     return str(value)
 
+
 def get_nodata_format(value):
     # return nodata value as None or integer
     if isinstance(value, str):
@@ -406,8 +423,10 @@ def get_nodata_format(value):
         return None
     return int(float(value))
 
+
 # --------------------------------------------------------------------------
 # define an epsilon value based on the CRS
+
 
 def get_epsilon(for_crs):
     """
@@ -416,22 +435,24 @@ def get_epsilon(for_crs):
     unit = for_crs.mapUnits()
 
     epsilon_values = {
-        QgsUnitTypes.DistanceUnit.DistanceMeters: 1e-6,       # Meters (UTM, projected systems)
-        QgsUnitTypes.DistanceUnit.DistanceKilometers: 1e-9,   # Kilometers
-        QgsUnitTypes.DistanceUnit.DistanceFeet: 1e-5,         # Feet (imperial units)
-        QgsUnitTypes.DistanceUnit.DistanceYards: 1e-5,        # Yards
-        QgsUnitTypes.DistanceUnit.DistanceMiles: 1e-8,        # Miles
+        QgsUnitTypes.DistanceUnit.DistanceMeters: 1e-6,  # Meters (UTM, projected systems)
+        QgsUnitTypes.DistanceUnit.DistanceKilometers: 1e-9,  # Kilometers
+        QgsUnitTypes.DistanceUnit.DistanceFeet: 1e-5,  # Feet (imperial units)
+        QgsUnitTypes.DistanceUnit.DistanceYards: 1e-5,  # Yards
+        QgsUnitTypes.DistanceUnit.DistanceMiles: 1e-8,  # Miles
         QgsUnitTypes.DistanceUnit.DistanceNauticalMiles: 1e-8,  # Nautical miles
         QgsUnitTypes.DistanceUnit.DistanceCentimeters: 1e-4,  # Centimeters
         QgsUnitTypes.DistanceUnit.DistanceMillimeters: 1e-3,  # Millimeters
-        QgsUnitTypes.DistanceUnit.DistanceDegrees: 1e-10,     # Degrees (Geographic CRS like EPSG:4326)
+        QgsUnitTypes.DistanceUnit.DistanceDegrees: 1e-10,  # Degrees (Geographic CRS like EPSG:4326)
     }
 
     # Default to meters epsilon if unit not found
     return epsilon_values.get(unit, 1e-6)
 
+
 # --------------------------------------------------------------------------
 # set decimal precision based on the CRS
+
 
 def get_decimal_places(for_crs):
     """
@@ -440,15 +461,15 @@ def get_decimal_places(for_crs):
     unit = for_crs.mapUnits()
 
     decimal_places = {
-        QgsUnitTypes.DistanceUnit.DistanceMeters: 1,         # Meters (e.g., 10.1 m)
-        QgsUnitTypes.DistanceUnit.DistanceKilometers: 4,     # Kilometers (e.g., 0.0001 km = 0.1 m)
-        QgsUnitTypes.DistanceUnit.DistanceFeet: 1,           # Feet (e.g., 10.1 ft)
-        QgsUnitTypes.DistanceUnit.DistanceYards: 1,          # Yards (e.g., 10.1 yd)
-        QgsUnitTypes.DistanceUnit.DistanceMiles: 4,          # Miles (e.g., 0.0001 mi ≈ 0.16 m)
+        QgsUnitTypes.DistanceUnit.DistanceMeters: 1,  # Meters (e.g., 10.1 m)
+        QgsUnitTypes.DistanceUnit.DistanceKilometers: 4,  # Kilometers (e.g., 0.0001 km = 0.1 m)
+        QgsUnitTypes.DistanceUnit.DistanceFeet: 1,  # Feet (e.g., 10.1 ft)
+        QgsUnitTypes.DistanceUnit.DistanceYards: 1,  # Yards (e.g., 10.1 yd)
+        QgsUnitTypes.DistanceUnit.DistanceMiles: 4,  # Miles (e.g., 0.0001 mi ≈ 0.16 m)
         QgsUnitTypes.DistanceUnit.DistanceNauticalMiles: 4,  # Nautical miles
-        QgsUnitTypes.DistanceUnit.DistanceCentimeters: 0,    # Centimeters (integer precision is fine)
-        QgsUnitTypes.DistanceUnit.DistanceMillimeters: 0,    # Millimeters (integer precision is fine)
-        QgsUnitTypes.DistanceUnit.DistanceDegrees: 6,        # Degrees (Geographic CRS, e.g., 0.000001° ≈ 0.11 m at equator)
+        QgsUnitTypes.DistanceUnit.DistanceCentimeters: 0,  # Centimeters (integer precision is fine)
+        QgsUnitTypes.DistanceUnit.DistanceMillimeters: 0,  # Millimeters (integer precision is fine)
+        QgsUnitTypes.DistanceUnit.DistanceDegrees: 6,  # Degrees (Geographic CRS, e.g., 0.000001° ≈ 0.11 m at equator)
     }
 
     # Default to 1 decimal place if unit is unknown

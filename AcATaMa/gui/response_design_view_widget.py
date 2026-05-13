@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  AcATaMa
@@ -18,18 +17,19 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import os
 
-from qgis.PyQt import uic
-from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtWidgets import QWidget, QGridLayout
-from qgis.PyQt.QtCore import QSettings, pyqtSlot, QTimer, Qt, QEvent
-from qgis.PyQt.sip import isdeleted
-from qgis.core import QgsGeometry, QgsMapLayerProxyModel, QgsWkbTypes, QgsPoint
+from qgis.core import QgsGeometry, QgsMapLayerProxyModel, QgsPoint, QgsWkbTypes
 from qgis.gui import QgsMapCanvas, QgsMapToolPan, QgsRubberBand, QgsVertexMarker
+from qgis.PyQt import uic
+from qgis.PyQt.QtCore import QEvent, QSettings, Qt, QTimer, pyqtSlot
+from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtWidgets import QGridLayout, QWidget
+from qgis.PyQt.sip import isdeleted
 from qgis.utils import iface
 
-from AcATaMa.utils.qgis_utils import browse_dialog_to_load_file, StyleEditorDialog
+from AcATaMa.utils.qgis_utils import StyleEditorDialog, browse_dialog_to_load_file
 from AcATaMa.utils.system_utils import block_signals_to
 
 
@@ -50,11 +50,18 @@ class PanAndZoomMapTool(QgsMapToolPan):
         QTimer.singleShot(10, self.update_canvas)
 
     def keyReleaseEvent(self, event):
-        if event.key() in [Qt.Key.Key_Up, Qt.Key.Key_Down, Qt.Key.Key_Right, Qt.Key.Key_Left, Qt.Key.Key_PageUp, Qt.Key.Key_PageDown]:
+        if event.key() in [
+            Qt.Key.Key_Up,
+            Qt.Key.Key_Down,
+            Qt.Key.Key_Right,
+            Qt.Key.Key_Left,
+            Qt.Key.Key_PageUp,
+            Qt.Key.Key_PageDown,
+        ]:
             QTimer.singleShot(10, self.update_canvas)
 
 
-class Marker(object):
+class Marker:
     def __init__(self, canvas):
         self.marker = None
         self.canvas = canvas
@@ -137,15 +144,21 @@ class RenderWidget(QWidget):
             self.canvas.setLayers([self.parent_view.sampling_layer, layer])
             # set init extent from other view if any is activated else set layer extent
             from AcATaMa.gui.response_design_window import ResponseDesignWindow
-            others_view = [(view_widget.render_widget.canvas.extent(), view_widget.current_scale_factor) for view_widget
-                           in ResponseDesignWindow.view_widgets if not isdeleted(view_widget.render_widget.canvas) and not view_widget.render_widget.canvas.extent().isEmpty()]
+
+            others_view = [
+                (view_widget.render_widget.canvas.extent(), view_widget.current_scale_factor)
+                for view_widget in ResponseDesignWindow.view_widgets
+                if not isdeleted(view_widget.render_widget.canvas)
+                and not view_widget.render_widget.canvas.extent().isEmpty()
+            ]
             if others_view:
                 extent, scale = others_view[0]
                 extent.scale(1 / scale)
                 self.set_extents_and_scalefactor(extent)
             elif ResponseDesignWindow.current_sample:
                 ResponseDesignWindow.current_sample.fit_to(
-                    self.parent_view, ResponseDesignWindow.inst.radiusFitToSample.value())
+                    self.parent_view, ResponseDesignWindow.inst.radiusFitToSample.value()
+                )
 
             self.canvas.refresh()
             self.layer = layer
@@ -173,8 +186,7 @@ class RenderWidget(QWidget):
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'response_design_view_widget.ui'))
+FORM_CLASS, _ = uic.loadUiType(os.path.join(plugin_folder, "ui", "response_design_view_widget.ui"))
 
 
 class LabelingViewWidget(QWidget, FORM_CLASS):
@@ -193,6 +205,7 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
 
     def setup_view_widget(self, sampling_layer):
         from AcATaMa.gui.response_design_window import ResponseDesignWindow
+
         self.sampling_layer = sampling_layer
         self.render_widget.parent_view = self
         # set properties to QgsMapLayerComboBox
@@ -203,12 +216,15 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
         # handle connect layer selection with render canvas
         self.QCBox_RenderFile.layerChanged.connect(self.set_render_layer)
         # call to browse the render file
-        self.QCBox_browseRenderFile.clicked.connect(lambda: browse_dialog_to_load_file(
-            self,
-            self.QCBox_RenderFile,
-            dialog_title=self.tr("Select the file for this view"),
-            file_filters=self.tr("Raster or vector files (*.tif *.img *.gpkg *.shp);;All files (*.*)"),
-            msg_bar=ResponseDesignWindow.inst.MsgBar))
+        self.QCBox_browseRenderFile.clicked.connect(
+            lambda: browse_dialog_to_load_file(
+                self,
+                self.QCBox_RenderFile,
+                dialog_title=self.tr("Select the file for this view"),
+                file_filters=self.tr("Raster or vector files (*.tif *.img *.gpkg *.shp);;All files (*.*)"),
+                msg_bar=ResponseDesignWindow.inst.MsgBar,
+            )
+        )
         # zoom scale factor
         self.scaleFactor.valueChanged.connect(self.scalefactor_changed)
         # edit layer properties
@@ -244,6 +260,7 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
 
         # update square rubber band for current and sampling unit markers
         from AcATaMa.gui.response_design_window import ResponseDesignWindow
+
         if ResponseDesignWindow.inst is not None:
             ResponseDesignWindow.inst.show_the_current_pixel()
             ResponseDesignWindow.inst.show_the_sampling_unit()
@@ -260,9 +277,10 @@ class LabelingViewWidget(QWidget, FORM_CLASS):
     def canvas_changed(self):
         if self.is_active:
             from AcATaMa.gui.response_design_window import ResponseDesignWindow
+
             view_extent = self.render_widget.canvas.extent()
             try:
-                view_extent.scale(1/self.current_scale_factor)
+                view_extent.scale(1 / self.current_scale_factor)
             except ZeroDivisionError:
                 self.current_scale_factor = self.scaleFactor.minimum()
                 view_extent.scale(1 / self.current_scale_factor)

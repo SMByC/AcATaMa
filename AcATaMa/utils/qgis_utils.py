@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  AcATaMa
@@ -18,13 +17,14 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import os
 
-from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox, QFileDialog
+from qgis.core import Qgis, QgsMapLayer, QgsProject, QgsProviderRegistry, QgsRasterLayer, QgsStyle, QgsVectorLayer
+from qgis.gui import QgsMapLayerComboBox, QgsRendererPropertiesDialog, QgsRendererRasterPropertiesWidget
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
-from qgis.gui import QgsRendererPropertiesDialog, QgsRendererRasterPropertiesWidget, QgsMapLayerComboBox
-from qgis.core import QgsProject, QgsProviderRegistry, QgsRasterLayer, QgsVectorLayer, Qgis, QgsStyle, QgsMapLayer
+from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox, QFileDialog
 from qgis.utils import iface
 
 
@@ -60,8 +60,12 @@ def valid_file_selected_in(combo_box, combobox_name=False):
         return True
     else:
         if combobox_name:
-            iface.messageBar().pushMessage("AcATaMa", "Error, please browse/select a valid file in "
-                                           + combobox_name, level=Qgis.MessageLevel.Warning, duration=10)
+            iface.messageBar().pushMessage(
+                "AcATaMa",
+                "Error, please browse/select a valid file in " + combobox_name,
+                level=Qgis.MessageLevel.Warning,
+                duration=10,
+            )
         combo_box.setCurrentIndex(-1)
         return False
 
@@ -116,9 +120,12 @@ def detect_provider(source):
         if "EE" in QgsProviderRegistry.instance().providerList():
             return "EE", QgsRasterLayer
         else:
-            iface.messageBar().pushMessage("AcATaMa",
+            iface.messageBar().pushMessage(
+                "AcATaMa",
                 "Google Earth Engine plugin is required to load this layer, install and configure it.",
-                level=Qgis.MessageLevel.Warning, duration=20)
+                level=Qgis.MessageLevel.Warning,
+                duration=20,
+            )
             return None, None
 
     # OGC services
@@ -134,11 +141,13 @@ def detect_provider(source):
         return "wcs", QgsRasterLayer
 
     # Databases
-    if s.startswith("postgresql://") or "provider=postgres" in s or (
-            "dbname=" in s and ("table=" in s or "schema=" in s)):
+    if (
+        s.startswith("postgresql://")
+        or "provider=postgres" in s
+        or ("dbname=" in s and ("table=" in s or "schema=" in s))
+    ):
         return "postgres", QgsVectorLayer
-    if "spatialite" in s or "provider=spatialite" in s or (
-            ".sqlite" in s and "table=" in s):
+    if "spatialite" in s or "provider=spatialite" in s or (".sqlite" in s and "table=" in s):
         return "spatialite", QgsVectorLayer
 
     # ArcGIS REST services
@@ -167,7 +176,11 @@ def load_layer(source, name=None, add_to_legend=True):
     name = name or (os.path.splitext(os.path.basename(source))[0] if os.path.isfile(source) else "Remote Layer")
 
     provider_key, layer_class = detect_provider(source)
-    qgslayer = (layer_class(source, name, provider_key) if provider_key else layer_class(source, name)) if layer_class else None
+    qgslayer = (
+        (layer_class(source, name, provider_key) if provider_key else layer_class(source, name))
+        if layer_class
+        else None
+    )
 
     if qgslayer and qgslayer.isValid():
         QgsProject.instance().addMapLayer(qgslayer, add_to_legend)
@@ -178,11 +191,12 @@ def load_layer(source, name=None, add_to_legend=True):
 
 def browse_dialog_to_load_file(parent, combo_box, dialog_title, file_filters, msg_bar=None):
     file_path, _ = QFileDialog.getOpenFileName(parent, dialog_title, "", file_filters)
-    if file_path != '' and os.path.isfile(file_path):
+    if file_path != "" and os.path.isfile(file_path):
         qgslayer = load_and_select_layer_in(file_path, combo_box)
         if not qgslayer:
-            (msg_bar or iface.messageBar()).pushMessage(f"Could not load the layer: {file_path}",
-                                                        level=Qgis.MessageLevel.Warning, duration=10)
+            (msg_bar or iface.messageBar()).pushMessage(
+                f"Could not load the layer: {file_path}", level=Qgis.MessageLevel.Warning, duration=10
+            )
 
 
 def unload_layer(source):
@@ -193,8 +207,7 @@ def unload_layer(source):
 
 
 def get_symbology_table(raster_layer, band):
-    """Get the symbology table with pixel value, label and Qcolor of raster layer
-    """
+    """Get the symbology table with pixel value, label and Qcolor of raster layer"""
     from AcATaMa.core.map import get_xml_style
 
     # check if the thematic map has a valid symbology else ask to apply an automatic classification
@@ -202,7 +215,7 @@ def get_symbology_table(raster_layer, band):
 
     renderer = raster_layer.renderer()
 
-    if renderer.type() == 'singlebandpseudocolor':
+    if renderer.type() == "singlebandpseudocolor":
         color_ramp = renderer.shader().rasterShaderFunction()
         color_ramp_list = color_ramp.colorRampItemList()
         symbology_table = []
@@ -210,7 +223,7 @@ def get_symbology_table(raster_layer, band):
             symbology_table.append([int(color_ramp_item.value), color_ramp_item.label, color_ramp_item.color])
         return symbology_table
 
-    if renderer.type() == 'paletted':
+    if renderer.type() == "paletted":
         symbology_table = []
         for raster_class in renderer.classes():
             symbology_table.append([int(raster_class.value), raster_class.label, raster_class.color])
@@ -219,8 +232,7 @@ def get_symbology_table(raster_layer, band):
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'response_design_style_editor.ui'))
+FORM_CLASS, _ = uic.loadUiType(os.path.join(plugin_folder, "ui", "response_design_style_editor.ui"))
 
 
 class StyleEditorDialog(QDialog, FORM_CLASS):
@@ -229,7 +241,7 @@ class StyleEditorDialog(QDialog, FORM_CLASS):
         self.setupUi(self)
         self.layer = layer
 
-        self.setWindowTitle("{} - style editor".format(self.layer.name()))
+        self.setWindowTitle(f"{self.layer.name()} - style editor")
 
         if self.layer.type() == QgsMapLayer.LayerType.VectorLayer:
             self.StyleEditorWidget = QgsRendererPropertiesDialog(self.layer, QgsStyle(), True, parent)

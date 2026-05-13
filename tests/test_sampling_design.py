@@ -1,6 +1,7 @@
+import random
+
 import fiona
 import pytest
-import random
 from shapely.geometry import shape
 
 from AcATaMa.core.map import Map
@@ -15,12 +16,16 @@ def test_simple_post_stratified_random_sampling(plugin, restore_config_file, tmp
     sampling_design = plugin.dockwidget.sampling_design_window
 
     # load simple post stratify random sampling config
-    thematic_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
-                       band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
-                       nodata=get_nodata_format(plugin.dockwidget.nodata_ThematicMap.text()))
-    post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SimpRS,
-                                  band=int(sampling_design.QCBox_band_PostStratMap_SimpRS.currentText()),
-                                  nodata=get_nodata_format(sampling_design.nodata_PostStratMap_SimpRS.text()))
+    thematic_map = Map(
+        file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
+        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
+        nodata=get_nodata_format(plugin.dockwidget.nodata_ThematicMap.text()),
+    )
+    post_stratification_map = Map(
+        file_selected_combo_box=sampling_design.QCBox_PostStratMap_SimpRS,
+        band=int(sampling_design.QCBox_band_PostStratMap_SimpRS.currentText()),
+        nodata=get_nodata_format(sampling_design.nodata_PostStratMap_SimpRS.text()),
+    )
     classes_selected = [int(p) for p in sampling_design.QPBtn_PostStratMapClasses_SimpRS.text().split(",")]
     total_of_samples = int(sampling_design.numberOfSamples_SimpRS.value())
     min_distance = float(sampling_design.minDistance_SimpRS.value())
@@ -28,10 +33,11 @@ def test_simple_post_stratified_random_sampling(plugin, restore_config_file, tmp
     same_class_of_neighbors = int(sampling_design.QCBox_SameClassOfNeighbors_SimpRS.currentText())
     neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
     random_seed = int(sampling_design.random_seed_by_user_SimpRS.text())
-    output_file = tmpdir.join('test_simple_post_stratified_random_sampling.gpkg')
+    output_file = tmpdir.join("test_simple_post_stratified_random_sampling.gpkg")
 
-    sampling = Sampling("simple", thematic_map, post_stratification_map=post_stratification_map,
-                        output_file=str(output_file))
+    sampling = Sampling(
+        "simple", thematic_map, post_stratification_map=post_stratification_map, output_file=str(output_file)
+    )
     # create a mummy QgsTask object
     task = type("QgsTask", (object,), {"setProgress": lambda x: None, "isCanceled": lambda: False})
     # config arguments
@@ -40,15 +46,17 @@ def test_simple_post_stratified_random_sampling(plugin, restore_config_file, tmp
         "min_distance": min_distance,
         "classes_selected": classes_selected,
         "neighbor_aggregation": neighbor_aggregation,
-        "random_seed": random_seed
+        "random_seed": random_seed,
     }
     # run the sampling
     sampling.generate_sampling_points(task, sampling_conf)
 
-    with fiona.open(pytest.tests_data_dir / "simple_post_stratified_random_sampling.gpkg") as source, \
-            fiona.open(str(output_file)) as target:
-        for s, t in zip(source, target):
-            assert shape(s['geometry']).equals(shape(t['geometry']))
+    with (
+        fiona.open(pytest.tests_data_dir / "simple_post_stratified_random_sampling.gpkg") as source,
+        fiona.open(str(output_file)) as target,
+    ):
+        for s, t in zip(source, target, strict=False):
+            assert shape(s["geometry"]).equals(shape(t["geometry"]))
 
 
 def test_stratified_random_sampling(plugin, restore_config_file, tmpdir):
@@ -58,12 +66,16 @@ def test_stratified_random_sampling(plugin, restore_config_file, tmpdir):
     sampling_design = plugin.dockwidget.sampling_design_window
 
     # load stratify random sampling area based proportion config
-    thematic_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
-                       band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
-                       nodata=get_nodata_format(plugin.dockwidget.nodata_ThematicMap.text()))
-    sampling_map = Map(file_selected_combo_box=sampling_design.QCBox_SamplingMap_StraRS,
-                                  band=int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText()),
-                                  nodata=get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text()))
+    thematic_map = Map(
+        file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
+        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
+        nodata=get_nodata_format(plugin.dockwidget.nodata_ThematicMap.text()),
+    )
+    sampling_map = Map(
+        file_selected_combo_box=sampling_design.QCBox_SamplingMap_StraRS,
+        band=int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText()),
+        nodata=get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text()),
+    )
 
     classes_for_sampling = []
     total_of_samples = []
@@ -81,13 +93,18 @@ def test_stratified_random_sampling(plugin, restore_config_file, tmpdir):
     for row in range(sampling_design.QTableW_StraRS.rowCount()):
         srs_config["ui"].append(float(sampling_design.QTableW_StraRS.item(row, 3).text()))
 
-
     min_distance = float(sampling_design.minDistance_StraRS.value())
     random_seed = int(sampling_design.random_seed_by_user_StraRS.text())
-    output_file = tmpdir.join('test_stratified_random_sampling.gpkg')
+    output_file = tmpdir.join("test_stratified_random_sampling.gpkg")
 
-    sampling = Sampling("stratified", thematic_map, sampling_map=sampling_map,
-                        sampling_method=sampling_method, srs_config=srs_config, output_file=str(output_file))
+    sampling = Sampling(
+        "stratified",
+        thematic_map,
+        sampling_map=sampling_map,
+        sampling_method=sampling_method,
+        srs_config=srs_config,
+        output_file=str(output_file),
+    )
     # create a mummy QgsTask object
     task = type("QgsTask", (object,), {"setProgress": lambda x: None, "isCanceled": lambda: False})
     # config arguments
@@ -96,15 +113,17 @@ def test_stratified_random_sampling(plugin, restore_config_file, tmpdir):
         "min_distance": min_distance,
         "classes_selected": classes_for_sampling,
         "neighbor_aggregation": neighbor_aggregation,
-        "random_seed": random_seed
+        "random_seed": random_seed,
     }
     # run the sampling
     sampling.generate_sampling_points(task, sampling_conf)
 
-    with fiona.open(pytest.tests_data_dir / "stratified_random_sampling.gpkg") as source, \
-            fiona.open(str(output_file)) as target:
-        for s, t in zip(source, target):
-            assert shape(s['geometry']).equals(shape(t['geometry']))
+    with (
+        fiona.open(pytest.tests_data_dir / "stratified_random_sampling.gpkg") as source,
+        fiona.open(str(output_file)) as target,
+    ):
+        for s, t in zip(source, target, strict=False):
+            assert shape(s["geometry"]).equals(shape(t["geometry"]))
 
 
 def test_systematic_by_distance_post_stratified_random_sampling(plugin, restore_config_file, tmpdir):
@@ -114,12 +133,16 @@ def test_systematic_by_distance_post_stratified_random_sampling(plugin, restore_
     sampling_design = plugin.dockwidget.sampling_design_window
 
     # load simple post stratify random sampling config
-    thematic_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
-                       band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
-                       nodata=get_nodata_format(plugin.dockwidget.nodata_ThematicMap.text()))
-    post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SystS,
-                                  band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()),
-                                  nodata=get_nodata_format(sampling_design.nodata_PostStratMap_SystS.text()))
+    thematic_map = Map(
+        file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
+        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
+        nodata=get_nodata_format(plugin.dockwidget.nodata_ThematicMap.text()),
+    )
+    post_stratification_map = Map(
+        file_selected_combo_box=sampling_design.QCBox_PostStratMap_SystS,
+        band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()),
+        nodata=get_nodata_format(sampling_design.nodata_PostStratMap_SystS.text()),
+    )
     points_spacing = float(sampling_design.PointSpacing_SystS.value())
     initial_inset = float(sampling_design.InitialInsetFixed_SystS.value())
     max_xy_offset = float(sampling_design.MaxXYoffset_SystS.value())
@@ -129,10 +152,11 @@ def test_systematic_by_distance_post_stratified_random_sampling(plugin, restore_
     same_class_of_neighbors = int(sampling_design.QCBox_SameClassOfNeighbors_SystS.currentText())
     neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
     random_seed = int(sampling_design.random_seed_by_user_SystS.text())
-    output_file = tmpdir.join('test_systematic_post_stratified_random_sampling.gpkg')
+    output_file = tmpdir.join("test_systematic_post_stratified_random_sampling.gpkg")
 
-    sampling = Sampling("systematic", thematic_map, post_stratification_map=post_stratification_map,
-                        output_file=str(output_file))
+    sampling = Sampling(
+        "systematic", thematic_map, post_stratification_map=post_stratification_map, output_file=str(output_file)
+    )
     # create a mummy QgsTask object
     task = type("QgsTask", (object,), {"setProgress": lambda x: None, "isCanceled": lambda: False})
     # config arguments
@@ -144,15 +168,17 @@ def test_systematic_by_distance_post_stratified_random_sampling(plugin, restore_
         "classes_selected": classes_selected,
         "neighbor_aggregation": neighbor_aggregation,
         "random_seed": random_seed,
-        "confidence_level": 0.95
+        "confidence_level": 0.95,
     }
     # run the sampling
     sampling.generate_systematic_sampling_points_by_distance(task, sampling_conf)
 
-    with fiona.open(pytest.tests_data_dir / "systematic_sampling.gpkg") as source, \
-            fiona.open(str(output_file)) as target:
-        for s, t in zip(source, target):
-            assert shape(s['geometry']).equals(shape(t['geometry']))
+    with (
+        fiona.open(pytest.tests_data_dir / "systematic_sampling.gpkg") as source,
+        fiona.open(str(output_file)) as target,
+    ):
+        for s, t in zip(source, target, strict=False):
+            assert shape(s["geometry"]).equals(shape(t["geometry"]))
 
 
 def test_systematic_by_distance_post_stratified_with_initial_inset_random(plugin, restore_config_file, tmpdir):
@@ -162,12 +188,16 @@ def test_systematic_by_distance_post_stratified_with_initial_inset_random(plugin
     sampling_design = plugin.dockwidget.sampling_design_window
 
     # load simple post stratify random sampling config
-    thematic_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
-                       band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
-                       nodata=get_nodata_format(plugin.dockwidget.nodata_ThematicMap.text()))
-    post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SystS,
-                                  band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()),
-                                  nodata=get_nodata_format(sampling_design.nodata_PostStratMap_SystS.text()))
+    thematic_map = Map(
+        file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
+        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
+        nodata=get_nodata_format(plugin.dockwidget.nodata_ThematicMap.text()),
+    )
+    post_stratification_map = Map(
+        file_selected_combo_box=sampling_design.QCBox_PostStratMap_SystS,
+        band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()),
+        nodata=get_nodata_format(sampling_design.nodata_PostStratMap_SystS.text()),
+    )
     points_spacing = float(sampling_design.PointSpacing_SystS.value())
     max_xy_offset = float(sampling_design.MaxXYoffset_SystS.value())
 
@@ -176,14 +206,15 @@ def test_systematic_by_distance_post_stratified_with_initial_inset_random(plugin
     same_class_of_neighbors = int(sampling_design.QCBox_SameClassOfNeighbors_SystS.currentText())
     neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
     random_seed = int(sampling_design.random_seed_by_user_SystS.text())
-    output_file = tmpdir.join('test_systematic_post_stratified_with_initial_inset_random.gpkg')
+    output_file = tmpdir.join("test_systematic_post_stratified_with_initial_inset_random.gpkg")
 
     # set initial inset
     random.seed(random_seed)
     initial_inset = random.uniform(0, points_spacing)
 
-    sampling = Sampling("systematic", thematic_map, post_stratification_map=post_stratification_map,
-                        output_file=str(output_file))
+    sampling = Sampling(
+        "systematic", thematic_map, post_stratification_map=post_stratification_map, output_file=str(output_file)
+    )
     # create a mummy QgsTask object
     task = type("QgsTask", (object,), {"setProgress": lambda x: None, "isCanceled": lambda: False})
     # config arguments
@@ -195,15 +226,17 @@ def test_systematic_by_distance_post_stratified_with_initial_inset_random(plugin
         "classes_selected": classes_selected,
         "neighbor_aggregation": neighbor_aggregation,
         "random_seed": random_seed,
-        "confidence_level": 0.95
+        "confidence_level": 0.95,
     }
     # run the sampling
     sampling.generate_systematic_sampling_points_by_distance(task, sampling_conf)
 
-    with fiona.open(pytest.tests_data_dir / "systematic sampling random inset.gpkg") as source, \
-            fiona.open(str(output_file)) as target:
-        for s, t in zip(source, target):
-            assert shape(s['geometry']).equals(shape(t['geometry']))
+    with (
+        fiona.open(pytest.tests_data_dir / "systematic sampling random inset.gpkg") as source,
+        fiona.open(str(output_file)) as target,
+    ):
+        for s, t in zip(source, target, strict=False):
+            assert shape(s["geometry"]).equals(shape(t["geometry"]))
 
 
 def test_systematic_by_pixels_no_offset(plugin, restore_config_file, tmpdir):
@@ -213,12 +246,16 @@ def test_systematic_by_pixels_no_offset(plugin, restore_config_file, tmpdir):
     sampling_design = plugin.dockwidget.sampling_design_window
 
     # load simple post stratify random sampling config
-    thematic_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
-                       band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
-                       nodata=get_nodata_format(plugin.dockwidget.nodata_ThematicMap.text()))
-    post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SystS,
-                                  band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()),
-                                  nodata=get_nodata_format(sampling_design.nodata_PostStratMap_SystS.text()))
+    thematic_map = Map(
+        file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
+        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
+        nodata=get_nodata_format(plugin.dockwidget.nodata_ThematicMap.text()),
+    )
+    post_stratification_map = Map(
+        file_selected_combo_box=sampling_design.QCBox_PostStratMap_SystS,
+        band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()),
+        nodata=get_nodata_format(sampling_design.nodata_PostStratMap_SystS.text()),
+    )
     points_spacing = float(sampling_design.PointSpacing_SystS.value())
     max_xy_offset = float(sampling_design.MaxXYoffset_SystS.value())
 
@@ -227,7 +264,7 @@ def test_systematic_by_pixels_no_offset(plugin, restore_config_file, tmpdir):
     same_class_of_neighbors = int(sampling_design.QCBox_SameClassOfNeighbors_SystS.currentText())
     neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
     random_seed = sampling_design.random_seed_by_user_SystS.text()
-    output_file = tmpdir.join('test_systematic_post_stratified_no_offset.gpkg')
+    output_file = tmpdir.join("test_systematic_post_stratified_no_offset.gpkg")
 
     # define the initial inset
     if sampling_design.QCBox_InitialInsetMode_SystS.currentText() == "Random":
@@ -236,8 +273,9 @@ def test_systematic_by_pixels_no_offset(plugin, restore_config_file, tmpdir):
     else:
         initial_inset = float(sampling_design.InitialInsetFixed_SystS.value())
 
-    sampling = Sampling("systematic", thematic_map, post_stratification_map=post_stratification_map,
-                        output_file=str(output_file))
+    sampling = Sampling(
+        "systematic", thematic_map, post_stratification_map=post_stratification_map, output_file=str(output_file)
+    )
     # create a mummy QgsTask object
     task = type("QgsTask", (object,), {"setProgress": lambda x: None, "isCanceled": lambda: False})
     # config arguments
@@ -249,14 +287,16 @@ def test_systematic_by_pixels_no_offset(plugin, restore_config_file, tmpdir):
         "classes_selected": classes_selected,
         "neighbor_aggregation": neighbor_aggregation,
         "random_seed": random_seed,
-        "confidence_level": 0.95
+        "confidence_level": 0.95,
     }
     # run the sampling
     sampling.generate_systematic_sampling_points_by_pixels(task, sampling_conf)
-    with fiona.open(pytest.tests_data_dir / "systematic_by_pixels_no_offset.gpkg") as source, \
-            fiona.open(str(output_file)) as target:
-        for s, t in zip(source, target):
-            assert shape(s['geometry']).equals(shape(t['geometry']))
+    with (
+        fiona.open(pytest.tests_data_dir / "systematic_by_pixels_no_offset.gpkg") as source,
+        fiona.open(str(output_file)) as target,
+    ):
+        for s, t in zip(source, target, strict=False):
+            assert shape(s["geometry"]).equals(shape(t["geometry"]))
 
 
 def test_systematic_by_pixels_with_offset(plugin, restore_config_file, tmpdir):
@@ -266,12 +306,16 @@ def test_systematic_by_pixels_with_offset(plugin, restore_config_file, tmpdir):
     sampling_design = plugin.dockwidget.sampling_design_window
 
     # load simple post stratify random sampling config
-    thematic_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
-                       band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
-                       nodata=get_nodata_format(plugin.dockwidget.nodata_ThematicMap.text()))
-    post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SystS,
-                                  band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()),
-                                  nodata=get_nodata_format(sampling_design.nodata_PostStratMap_SystS.text()))
+    thematic_map = Map(
+        file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
+        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
+        nodata=get_nodata_format(plugin.dockwidget.nodata_ThematicMap.text()),
+    )
+    post_stratification_map = Map(
+        file_selected_combo_box=sampling_design.QCBox_PostStratMap_SystS,
+        band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()),
+        nodata=get_nodata_format(sampling_design.nodata_PostStratMap_SystS.text()),
+    )
     points_spacing = float(sampling_design.PointSpacing_SystS.value())
     max_xy_offset = float(sampling_design.MaxXYoffset_SystS.value())
 
@@ -280,7 +324,7 @@ def test_systematic_by_pixels_with_offset(plugin, restore_config_file, tmpdir):
     same_class_of_neighbors = int(sampling_design.QCBox_SameClassOfNeighbors_SystS.currentText())
     neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
     random_seed = sampling_design.random_seed_by_user_SystS.text()
-    output_file = tmpdir.join('test_systematic_post_stratified_with_offset.gpkg')
+    output_file = tmpdir.join("test_systematic_post_stratified_with_offset.gpkg")
 
     # define the initial inset
     if sampling_design.QCBox_InitialInsetMode_SystS.currentText() == "Random":
@@ -289,8 +333,9 @@ def test_systematic_by_pixels_with_offset(plugin, restore_config_file, tmpdir):
     else:
         initial_inset = float(sampling_design.InitialInsetFixed_SystS.value())
 
-    sampling = Sampling("systematic", thematic_map, post_stratification_map=post_stratification_map,
-                        output_file=str(output_file))
+    sampling = Sampling(
+        "systematic", thematic_map, post_stratification_map=post_stratification_map, output_file=str(output_file)
+    )
     # create a mummy QgsTask object
     task = type("QgsTask", (object,), {"setProgress": lambda x: None, "isCanceled": lambda: False})
     # config arguments
@@ -302,14 +347,16 @@ def test_systematic_by_pixels_with_offset(plugin, restore_config_file, tmpdir):
         "classes_selected": classes_selected,
         "neighbor_aggregation": neighbor_aggregation,
         "random_seed": random_seed,
-        "confidence_level": 0.95
+        "confidence_level": 0.95,
     }
     # run the sampling
     sampling.generate_systematic_sampling_points_by_pixels(task, sampling_conf)
-    with fiona.open(pytest.tests_data_dir / "systematic_by_pixels_with_offset.gpkg") as source, \
-            fiona.open(str(output_file)) as target:
-        for s, t in zip(source, target):
-            assert shape(s['geometry']).equals(shape(t['geometry']))
+    with (
+        fiona.open(pytest.tests_data_dir / "systematic_by_pixels_with_offset.gpkg") as source,
+        fiona.open(str(output_file)) as target,
+    ):
+        for s, t in zip(source, target, strict=False):
+            assert shape(s["geometry"]).equals(shape(t["geometry"]))
 
 
 def test_systematic_right_bottom_borders_with_offset(plugin, restore_config_file, tmpdir):
@@ -319,12 +366,16 @@ def test_systematic_right_bottom_borders_with_offset(plugin, restore_config_file
     sampling_design = plugin.dockwidget.sampling_design_window
 
     # load config for systematic sampling with right/bottom borders and offset
-    thematic_map = Map(file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
-                       band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
-                       nodata=get_nodata_format(plugin.dockwidget.nodata_ThematicMap.text()))
-    post_stratification_map = Map(file_selected_combo_box=sampling_design.QCBox_PostStratMap_SystS,
-                                  band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()),
-                                  nodata=get_nodata_format(sampling_design.nodata_PostStratMap_SystS.text()))
+    thematic_map = Map(
+        file_selected_combo_box=plugin.dockwidget.QCBox_ThematicMap,
+        band=int(plugin.dockwidget.QCBox_band_ThematicMap.currentText()),
+        nodata=get_nodata_format(plugin.dockwidget.nodata_ThematicMap.text()),
+    )
+    post_stratification_map = Map(
+        file_selected_combo_box=sampling_design.QCBox_PostStratMap_SystS,
+        band=int(sampling_design.QCBox_band_PostStratMap_SystS.currentText()),
+        nodata=get_nodata_format(sampling_design.nodata_PostStratMap_SystS.text()),
+    )
     points_spacing = float(sampling_design.PointSpacing_SystS.value())
     max_xy_offset = float(sampling_design.MaxXYoffset_SystS.value())
     classes_selected = []
@@ -332,7 +383,7 @@ def test_systematic_right_bottom_borders_with_offset(plugin, restore_config_file
     same_class_of_neighbors = int(sampling_design.QCBox_SameClassOfNeighbors_SystS.currentText())
     neighbor_aggregation = (number_of_neighbors, same_class_of_neighbors)
     random_seed = sampling_design.random_seed_by_user_SystS.text()
-    output_file = tmpdir.join('test_systematic_right_bottom_borders_with_offset.gpkg')
+    output_file = tmpdir.join("test_systematic_right_bottom_borders_with_offset.gpkg")
 
     # define the initial inset
     if sampling_design.QCBox_InitialInsetMode_SystS.currentText() == "Random":
@@ -341,8 +392,9 @@ def test_systematic_right_bottom_borders_with_offset(plugin, restore_config_file
     else:
         initial_inset = float(sampling_design.InitialInsetFixed_SystS.value())
 
-    sampling = Sampling("systematic", thematic_map, post_stratification_map=post_stratification_map,
-                        output_file=str(output_file))
+    sampling = Sampling(
+        "systematic", thematic_map, post_stratification_map=post_stratification_map, output_file=str(output_file)
+    )
     # create a mummy QgsTask object
     task = type("QgsTask", (object,), {"setProgress": lambda x: None, "isCanceled": lambda: False})
     # config arguments
@@ -354,11 +406,13 @@ def test_systematic_right_bottom_borders_with_offset(plugin, restore_config_file
         "classes_selected": classes_selected,
         "neighbor_aggregation": neighbor_aggregation,
         "random_seed": random_seed,
-        "confidence_level": 0.95
+        "confidence_level": 0.95,
     }
     # run the sampling
     sampling.generate_systematic_sampling_points_by_pixels(task, sampling_conf)
-    with fiona.open(pytest.tests_data_dir / "systematic_right_bottom_borders_with_offset.gpkg") as source, \
-            fiona.open(str(output_file)) as target:
-        for s, t in zip(source, target):
-            assert shape(s['geometry']).equals(shape(t['geometry']))
+    with (
+        fiona.open(pytest.tests_data_dir / "systematic_right_bottom_borders_with_offset.gpkg") as source,
+        fiona.open(str(output_file)) as target,
+    ):
+        for s, t in zip(source, target, strict=False):
+            assert shape(s["geometry"]).equals(shape(t["geometry"]))

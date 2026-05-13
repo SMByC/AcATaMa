@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  AcATaMa
@@ -18,11 +17,12 @@
  *                                                                         *
  ***************************************************************************/
 """
-import numpy as np
-from random import randrange
-import xml.etree.ElementTree as ET
 
-from qgis.core import QgsRaster, QgsPointXY, QgsPalettedRasterRenderer
+import xml.etree.ElementTree as ET
+from random import randrange
+
+import numpy as np
+from qgis.core import QgsPalettedRasterRenderer, QgsPointXY, QgsRaster
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QMessageBox
 
@@ -37,8 +37,11 @@ def auto_symbology_classification_render(layer, band):
     # fill categories
     categories = []
     for unique_value in unique_values:
-        categories.append(QgsPalettedRasterRenderer.Class(
-            unique_value, QColor(randrange(0, 256), randrange(0, 256), randrange(0, 256)), str(unique_value)))
+        categories.append(
+            QgsPalettedRasterRenderer.Class(
+                unique_value, QColor(randrange(0, 256), randrange(0, 256), randrange(0, 256)), str(unique_value)
+            )
+        )
 
     renderer = QgsPalettedRasterRenderer(layer.dataProvider(), band, categories)
     layer.setRenderer(renderer)
@@ -59,23 +62,32 @@ def get_xml_style(layer, band):
     xml_style = ET.fromstring(xml_style_str)
 
     # for singleband_pseudocolor
-    xml_style_items = xml_style.findall(
-        'pipe/rasterrenderer[@band="{}"]/rastershader/colorrampshader/item'.format(band))
+    xml_style_items = xml_style.findall(f'pipe/rasterrenderer[@band="{band}"]/rastershader/colorrampshader/item')
     if not xml_style_items:
         # for unique values
-        xml_style_items = xml_style.findall('pipe/rasterrenderer[@band="{}"]/colorPalette/paletteEntry'.format(band))
+        xml_style_items = xml_style.findall(f'pipe/rasterrenderer[@band="{band}"]/colorPalette/paletteEntry')
 
-    check_int_values = [int(float(xml_item.get("value"))) == float(xml_item.get("value")) for xml_item in
-                        xml_style_items]
+    check_int_values = [
+        int(float(xml_item.get("value"))) == float(xml_item.get("value")) for xml_item in xml_style_items
+    ]
 
     if not xml_style_items or False in check_int_values:
-        msg = "The selected layer \"{layer}\"{band} doesn't have an appropriate symbology for AcATaMa, " \
-              "it must be set with unique/exact colors-values. " \
-              "<a href='https://smbyc.github.io/AcATaMa/#types-of-thematic-rasters-accepted-in-acatama'>" \
-              "See more</a>.<br/><br/>" \
-              "Allow AcATaMa apply an automatic classification symbology to this layer{band}?" \
-            .format(layer=layer.name(), band=" in the band {}".format(band) if layer.bandCount() > 1 else "")
-        reply = QMessageBox.question(None, 'Reading the symbology layer style...', msg, QMessageBox.StandardButton.Apply, QMessageBox.StandardButton.Cancel)
+        msg = (
+            'The selected layer "{layer}"{band} doesn\'t have an appropriate symbology for AcATaMa, '
+            "it must be set with unique/exact colors-values. "
+            "<a href='https://smbyc.github.io/AcATaMa/#types-of-thematic-rasters-accepted-in-acatama'>"
+            "See more</a>.<br/><br/>"
+            "Allow AcATaMa apply an automatic classification symbology to this layer{band}?".format(
+                layer=layer.name(), band=f" in the band {band}" if layer.bandCount() > 1 else ""
+            )
+        )
+        reply = QMessageBox.question(
+            None,
+            "Reading the symbology layer style...",
+            msg,
+            QMessageBox.StandardButton.Apply,
+            QMessageBox.StandardButton.Cancel,
+        )
         if reply == QMessageBox.StandardButton.Apply:
             auto_symbology_classification_render(layer, band)
             return get_xml_style(layer, band)
@@ -97,8 +109,8 @@ def get_values_and_colors_table(layer, band=1, nodata=None):
 
         values_and_colors_table["Pixel Value"].append(int(item.get("value")))
 
-        item_color = item.get("color").lstrip('#')
-        item_color = tuple(int(item_color[i:i+2], 16) for i in (0, 2, 4))
+        item_color = item.get("color").lstrip("#")
+        item_color = tuple(int(item_color[i : i + 2], 16) for i in (0, 2, 4))
 
         values_and_colors_table["Red"].append(item_color[0])
         values_and_colors_table["Green"].append(item_color[1])
@@ -108,9 +120,10 @@ def get_values_and_colors_table(layer, band=1, nodata=None):
     return values_and_colors_table
 
 
-class Map(object):
+class Map:
     def __init__(self, file_selected_combo_box, band=1, nodata=None):
         from AcATaMa.utils.qgis_utils import get_source_from
+
         self.file_path = get_source_from(file_selected_combo_box)
         self.qgs_layer = file_selected_combo_box.currentLayer()
         self.band = band
@@ -120,10 +133,18 @@ class Map(object):
         return self.qgs_layer.extent()
 
     def get_pixel_value_from_xy(self, x, y):
-        return self.qgs_layer.dataProvider().identify(QgsPointXY(x, y), QgsRaster.IdentifyFormat.IdentifyFormatValue).results()[self.band]
+        return (
+            self.qgs_layer.dataProvider()
+            .identify(QgsPointXY(x, y), QgsRaster.IdentifyFormat.IdentifyFormatValue)
+            .results()[self.band]
+        )
 
     def get_pixel_value_from_pnt(self, point):
-        return self.qgs_layer.dataProvider().identify(point, QgsRaster.IdentifyFormat.IdentifyFormatValue).results()[self.band]
+        return (
+            self.qgs_layer.dataProvider()
+            .identify(point, QgsRaster.IdentifyFormat.IdentifyFormatValue)
+            .results()[self.band]
+        )
 
     def get_total_pixels_by_value(self, pixel_value):
         pixel_counts_by_value = get_pixel_count_by_pixel_values(self.qgs_layer, self.band, None, self.nodata)
@@ -131,7 +152,12 @@ class Map(object):
             return pixel_counts_by_value[pixel_value]
 
     def get_pixel_centroid(self, x, y):
-        if x < self.extent().xMinimum() or x > self.extent().xMaximum() or y < self.extent().yMinimum() or y > self.extent().yMaximum():
+        if (
+            x < self.extent().xMinimum()
+            or x > self.extent().xMaximum()
+            or y < self.extent().yMinimum()
+            or y > self.extent().yMaximum()
+        ):
             return None, None
 
         pixel_width = self.qgs_layer.rasterUnitsPerPixelX()

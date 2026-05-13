@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  AcATaMa
@@ -18,41 +17,67 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import os
 import tempfile
 import uuid
+from typing import ClassVar
 
-from qgis.PyQt import uic
-from qgis.PyQt.QtCore import Qt, pyqtSlot, QEventLoop, QTimer, QEvent
-from qgis.PyQt.QtWidgets import QTableWidgetItem, QSplitter, QColorDialog, QDialog, QDialogButtonBox, QPushButton, \
-    QMessageBox, QWidget, QLabel, QShortcut, QDockWidget
-from qgis.PyQt.QtGui import QColor, QIcon
-from qgis.PyQt.sip import isdeleted
+from qgis.core import (
+    Qgis,
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform,
+    QgsGeometry,
+    QgsPointXY,
+    QgsProject,
+    QgsRectangle,
+    QgsUnitTypes,
+    QgsWkbTypes,
+)
 from qgis.gui import QgsRubberBand
+from qgis.PyQt import uic
+from qgis.PyQt.QtCore import QEvent, QEventLoop, Qt, QTimer, pyqtSlot
+from qgis.PyQt.QtGui import QColor, QIcon
+from qgis.PyQt.QtWidgets import (
+    QColorDialog,
+    QDialog,
+    QDialogButtonBox,
+    QDockWidget,
+    QLabel,
+    QMessageBox,
+    QPushButton,
+    QShortcut,
+    QSplitter,
+    QTableWidgetItem,
+    QWidget,
+)
+from qgis.PyQt.sip import isdeleted
 from qgis.utils import iface
-from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, Qgis, QgsProject, QgsUnitTypes, \
-    QgsRectangle, QgsPointXY, QgsGeometry, QgsWkbTypes
 
-from AcATaMa.core.response_design import ResponseDesign
-from AcATaMa.utils.qgis_utils import valid_file_selected_in, get_source_from, load_and_select_layer_in, get_symbology_table
 from AcATaMa.core.map import get_values_and_colors_table
-from AcATaMa.utils.system_utils import open_file, error_handler
+from AcATaMa.core.response_design import ResponseDesign
 from AcATaMa.gui.response_design_view_widget import LabelingViewWidget
-from AcATaMa.utils.others_utils import get_nodata_format, get_decimal_places
+from AcATaMa.utils.others_utils import get_decimal_places, get_nodata_format
+from AcATaMa.utils.qgis_utils import (
+    get_source_from,
+    get_symbology_table,
+    load_and_select_layer_in,
+    valid_file_selected_in,
+)
+from AcATaMa.utils.system_utils import error_handler, open_file
 
 # plugin path
 plugin_folder = os.path.dirname(os.path.dirname(__file__))
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'response_design_window.ui'))
+FORM_CLASS, _ = uic.loadUiType(os.path.join(plugin_folder, "ui", "response_design_window.ui"))
 
 
 class ResponseDesignWindow(QDialog, FORM_CLASS):
     is_opened = False
-    view_widgets = []
+    view_widgets: ClassVar[list] = []
     current_sample = None
     inst = None
     # Store all active shortcuts for cleanup
-    active_shortcuts = {}
+    active_shortcuts: ClassVar[dict] = {}
 
     def __init__(self, sampling_layer, columns, rows):
         QDialog.__init__(self)
@@ -61,7 +86,9 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         ResponseDesignWindow.inst = self
 
         # flags
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowMinimizeButtonHint | Qt.WindowType.WindowMaximizeButtonHint)
+        self.setWindowFlags(
+            self.windowFlags() | Qt.WindowType.WindowMinimizeButtonHint | Qt.WindowType.WindowMaximizeButtonHint
+        )
 
         # get response design done from sampling layer or init new instance
         if sampling_layer in ResponseDesign.instances:
@@ -97,11 +124,13 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         layer_dist_unit = self.sampling_layer.crs().mapUnits()
         str_unit = QgsUnitTypes.toString(layer_dist_unit)
         abbr_unit = QgsUnitTypes.toAbbreviatedString(layer_dist_unit)
-        self.radiusFitToSample.setSuffix(" {}".format(abbr_unit))
+        self.radiusFitToSample.setSuffix(f" {abbr_unit}")
         self.radiusFitToSample.setToolTip(
-            "Set the default zoom radius for samples\n"
-            "(units in {} based on sampling file selected)".format(str_unit))
-        self.radiusFitToSample.setRange(0, 360 if layer_dist_unit == QgsUnitTypes.DistanceUnit.DistanceDegrees else 10e6)
+            f"Set the default zoom radius for samples\n(units in {str_unit} based on sampling file selected)"
+        )
+        self.radiusFitToSample.setRange(
+            0, 360 if layer_dist_unit == QgsUnitTypes.DistanceUnit.DistanceDegrees else 10e6
+        )
         decimal_places = get_decimal_places(for_crs=self.sampling_layer.crs())
         self.radiusFitToSample.setDecimals(decimal_places)
         self.radiusFitToSample.setSingleStep(10**-decimal_places)
@@ -149,9 +178,9 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         # inside the grid with columns x rows divide by splitters
         h_splitters = []
         view_widgets = []
-        for row in range(self.response_design.grid_rows):
+        for _ in range(self.response_design.grid_rows):
             splitter = QSplitter(Qt.Orientation.Horizontal)
-            for column in range(self.response_design.grid_columns):
+            for _ in range(self.response_design.grid_columns):
                 new_view_widget = LabelingViewWidget()
                 splitter.addWidget(new_view_widget)
                 h_splitters.append(splitter)
@@ -165,10 +194,11 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         ResponseDesignWindow.view_widgets = view_widgets
         # setup view widget
         [view_widget.setup_view_widget(sampling_layer) for view_widget in ResponseDesignWindow.view_widgets]
-        for idx, view_widget in enumerate(ResponseDesignWindow.view_widgets): view_widget.id = idx
+        for idx, view_widget in enumerate(ResponseDesignWindow.view_widgets):
+            view_widget.id = idx
         # set the label names for each view
         for num_view, view_widget in enumerate(ResponseDesignWindow.view_widgets):
-            view_widget.QLabel_ViewName.setPlaceholderText("View {}".format(num_view + 1))
+            view_widget.QLabel_ViewName.setPlaceholderText(f"View {num_view + 1}")
         # restore view widgets status
         for config_id, view_config in self.response_design.view_widgets_config.items():
             for view_widget in ResponseDesignWindow.view_widgets:
@@ -179,10 +209,14 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
                     view_widget.QLabel_ViewName.setText(layer_name)
                     view_widget.scaleFactor.setValue(view_config["scale_factor"])
                     # select the layer for this view widget if exists and is loaded in Qgis
-                    qgslayer = load_and_select_layer_in(source_file, view_widget.QCBox_RenderFile, layer_name=layer_name)
+                    qgslayer = load_and_select_layer_in(
+                        source_file, view_widget.QCBox_RenderFile, layer_name=layer_name
+                    )
                     if source_file and not qgslayer:
-                        view_name = "'{}'".format(view_config["view_name"]) if view_config["view_name"] else view_widget.id + 1
-                        msg = "Could not load the layer '{}' in the view {}: {}".format(layer_name, view_name, source_file)
+                        view_name = (
+                            "'{}'".format(view_config["view_name"]) if view_config["view_name"] else view_widget.id + 1
+                        )
+                        msg = f"Could not load the layer '{layer_name}' in the view {view_name}: {source_file}"
                         self.MsgBar.pushMessage(msg, level=Qgis.MessageLevel.Warning, duration=0)
                         continue
                     view_widget.set_render_layer(qgslayer)
@@ -193,14 +227,18 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         try:
             from CCD_Plugin.CCD_Plugin import CCD_Plugin
             from CCD_Plugin.gui.CCD_Plugin_dockwidget import CCD_PluginDockWidget
-            from CCD_Plugin.utils.config import get_plugin_config, restore_plugin_config
+            from CCD_Plugin.utils.config import restore_plugin_config
+
             self.ccd_plugin_available = True
         except ImportError:
-            label = QLabel("\nError: Continuous Change Detection (CCD) plugin is not available in your Qgis instance.\n"
-                           "To integrate the CCD inside AcATaMa, go to the plugin managing in Qgis and search\n"
-                           "CCD-Plugin, install it and restart the response design window.\n\n"
-                           "CCD helps to analyze the trends and breakpoints of change of the samples over multi-year\n"
-                           "time series using Landsat and Sentinel.\n", self)
+            label = QLabel(
+                "\nError: Continuous Change Detection (CCD) plugin is not available in your Qgis instance.\n"
+                "To integrate the CCD inside AcATaMa, go to the plugin managing in Qgis and search\n"
+                "CCD-Plugin, install it and restart the response design window.\n\n"
+                "CCD helps to analyze the trends and breakpoints of change of the samples over multi-year\n"
+                "time series using Landsat and Sentinel.\n",
+                self,
+            )
             label.setAlignment(Qt.AlignmentFlag.AlignCenter)
             ccd_widget_layout.addWidget(label)
             ccd_widget_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -227,7 +265,9 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             self.ccd_plugin.widget.MainWidget.layout().setContentsMargins(0, 0, 0, 3)
             self.ccd_plugin.widget.MainWidget.layout().setSpacing(3)
             # other adjustments
-            self.ccd_plugin.widget.auto_generate_plot.setToolTip("Automatically generate plot when a new sample/marker is set")
+            self.ccd_plugin.widget.auto_generate_plot.setToolTip(
+                "Automatically generate plot when a new sample/marker is set"
+            )
             # init tmp dir for all process and intermediate files
             if self.ccd_plugin.tmp_dir:
                 self.ccd_plugin.removes_temporary_files()
@@ -250,6 +290,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
 
     def show(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
         ResponseDesignWindow.is_opened = True
         # adjust some objects in the dockwidget while response design window is opened
         AcATaMa.dockwidget.QGBox_ThematicMap.setDisabled(True)
@@ -258,7 +299,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         AcATaMa.dockwidget.QPBtn_saveSamplingLabeled.setDisabled(True)
         AcATaMa.dockwidget.QPBtn_OpenResponseDesignWindow.setText("Response design is opened, click to show")
 
-        super(ResponseDesignWindow, self).show()
+        super().show()
         self.show_and_go_to_current_sample()
 
     def set_current_sample(self):
@@ -290,7 +331,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             # go to sample
             self.current_sample_idx = self.response_design.points.index(sample_point)
             self.set_current_sample()
-        except:
+        except Exception:
             self.GoTo_ID.setStyleSheet("color: red")
 
     @pyqtSlot(bool)
@@ -300,6 +341,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             self.set_current_sample_in_ccd()
         elif self.ccd_plugin_available:
             from CCD_Plugin.gui.CCD_Plugin_dockwidget import PickerCoordsOnMap
+
             PickerCoordsOnMap.delete_markers()
             self.ccd_plugin.widget.setup_map_tool(False)
 
@@ -318,6 +360,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
 
         if self.QPBtn_CCDPlugin.isChecked() and self.ccd_plugin.widget.auto_generate_plot.isChecked():
             from CCD_Plugin.gui.CCD_Plugin_dockwidget import PickerCoordsOnMap
+
             PickerCoordsOnMap.delete_markers()
             self.ccd_plugin.widget.new_plot()
 
@@ -336,13 +379,18 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         point = xform.transform(self.current_sample.QgsPnt)
 
         # make file and save
-        description = "Labeled as: <font color='{color}'><b> {label_name}</b></font><br/>" \
-                      "Samp. file: <em> {samp_file} </em><br/>AcATaMa Qgis-plugin".format(
-            color=self.response_design.buttons_config[self.current_sample.label_id][
-                "color"] if self.current_sample.label_id else "gray",
-            label_name=self.response_design.buttons_config[self.current_sample.label_id][
-                "name"] if self.current_sample.label_id else "not labeled",
-            samp_file=self.sampling_layer.name())
+        description = (
+            "Labeled as: <font color='{color}'><b> {label_name}</b></font><br/>"
+            "Samp. file: <em> {samp_file} </em><br/>AcATaMa Qgis-plugin".format(
+                color=self.response_design.buttons_config[self.current_sample.label_id]["color"]
+                if self.current_sample.label_id
+                else "gray",
+                label_name=self.response_design.buttons_config[self.current_sample.label_id]["name"]
+                if self.current_sample.label_id
+                else "not labeled",
+                samp_file=self.sampling_layer.name(),
+            )
+        )
         kml_raw = """<?xml version="1.0" encoding="UTF-8"?>
             <kml xmlns="http://www.opengis.net/kml/2.2">
               <Placemark>
@@ -352,12 +400,19 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
                   <coordinates>{lon},{lat}</coordinates>
                 </Point>
               </Placemark>
-            </kml>""".format(name="Sampling Point ID {}".format(self.current_sample.sample_id),
-                             desc=description, lon=point.x(), lat=point.y())
+            </kml>""".format(
+            name=f"Sampling Point ID {self.current_sample.sample_id}",
+            desc=description,
+            lon=point.x(),
+            lat=point.y(),
+        )
         # create temp file
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-        kml_file = os.path.join(AcATaMa.dockwidget.tmp_dir, "point_id_{}_{}.kml".format(self.current_sample.sample_id,
-                                                                                        uuid.uuid4().hex[0:7]))
+
+        kml_file = os.path.join(
+            AcATaMa.dockwidget.tmp_dir,
+            f"point_id_{self.current_sample.sample_id}_{uuid.uuid4().hex[0:7]}.kml",
+        )
         with open(kml_file, "w") as f:
             f.writelines(kml_raw)
         open_file(kml_file)
@@ -383,7 +438,10 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
 
     def update_labeling_button_activation(self):
         # restore labeling button checked status based on the label of the current sample
-        if self.current_sample.label_id is None or self.current_sample.label_id not in self.response_design.buttons_config:
+        if (
+            self.current_sample.label_id is None
+            or self.current_sample.label_id not in self.response_design.buttons_config
+        ):
             for i in range(self.Grid_LabelingButtons.count()):
                 self.Grid_LabelingButtons.itemAtPosition(i, 0).widget().setChecked(False)
             return
@@ -392,27 +450,34 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         for i in range(self.Grid_LabelingButtons.count()):
             if self.Grid_LabelingButtons.itemAtPosition(i, 0):
                 self.Grid_LabelingButtons.itemAtPosition(i, 0).widget().setChecked(
-                    label_name == self.Grid_LabelingButtons.itemAtPosition(i, 0).widget().text())
+                    label_name == self.Grid_LabelingButtons.itemAtPosition(i, 0).widget().text()
+                )
 
     def update_sample_status(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
         if self.current_sample.is_labeled:
             if self.current_sample.label_id in self.response_design.buttons_config:
                 label_name = self.response_design.buttons_config[self.current_sample.label_id]["name"]
                 self.statusCurrentSample.setText(label_name)
                 self.statusCurrentSample.setStyleSheet(
-                    'QLabel {color: ' + self.response_design.buttons_config[self.current_sample.label_id]["color"] + ';}')
+                    "QLabel {color: "
+                    + self.response_design.buttons_config[self.current_sample.label_id]["color"]
+                    + ";}"
+                )
                 # clear all message bar
                 self.MsgBar.clearWidgets()
             else:
-                self.statusCurrentSample.setText("Invalid button {}".format(self.current_sample.label_id))
-                self.statusCurrentSample.setStyleSheet('QLabel {color: red;}')
+                self.statusCurrentSample.setText(f"Invalid button {self.current_sample.label_id}")
+                self.statusCurrentSample.setStyleSheet("QLabel {color: red;}")
                 self.MsgBar.pushMessage(
-                    "This sample was labeled with invalid/deleted item, fix the labeling buttons "
-                    "or relabel the sample", level=Qgis.MessageLevel.Critical, duration=20)
+                    "This sample was labeled with invalid/deleted item, fix the labeling buttons or relabel the sample",
+                    level=Qgis.MessageLevel.Critical,
+                    duration=20,
+                )
         else:
             self.statusCurrentSample.setText("not labeled")
-            self.statusCurrentSample.setStyleSheet('QLabel {color: gray;}')
+            self.statusCurrentSample.setStyleSheet("QLabel {color: gray;}")
         # update labeling status bar
         self.QPBar_LabelingStatus.setMaximum(self.response_design.num_points)
         self.QPBar_LabelingStatus.setValue(self.response_design.total_labeled)
@@ -426,8 +491,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         thematic_pixel = self.current_sample.get_thematic_pixel_edges()
         if thematic_pixel and self.current_sample.label_id:
             fill_color = QColor(self.response_design.buttons_config[self.current_sample.label_id]["color"])
-            highlight_pixel_tile = \
-                Tile(*thematic_pixel, QColor("black"), fill_color=fill_color)
+            highlight_pixel_tile = Tile(*thematic_pixel, QColor("black"), fill_color=fill_color)
             highlight_pixel_tile.show()
         # wait
         loop = QEventLoop()
@@ -447,7 +511,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             color = QColorDialog.getColor(self.response_design.sampling_unit_color, self)
         if color.isValid():
             self.response_design.sampling_unit_color = color
-            self.SamplingUnit_Color.setStyleSheet("QToolButton{{background-color:{};}}".format(color.name()))
+            self.SamplingUnit_Color.setStyleSheet(f"QToolButton{{background-color:{color.name()};}}")
             self.show_the_sampling_unit()
 
     @pyqtSlot()
@@ -480,7 +544,11 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
                 self.current_sample.fit_to(view_widget, self.radiusFitToSample.value())
                 # create the marker
                 view_widget.render_widget.marker.show(self.current_sample)
-                if highlight and not isdeleted(view_widget.render_widget.canvas) and view_widget.render_widget.canvas.renderFlag():
+                if (
+                    highlight
+                    and not isdeleted(view_widget.render_widget.canvas)
+                    and view_widget.render_widget.canvas.renderFlag()
+                ):
                     # highlight to marker
                     view_widget.render_widget.marker.highlight()
 
@@ -499,11 +567,14 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
     @pyqtSlot()
     def next_sample_not_labeled(self):
         tmp_sample_idx = self.current_sample_idx + 1
-        while tmp_sample_idx < len(self.response_design.points) and \
-                self.response_design.points[tmp_sample_idx].is_labeled:
+        while (
+            tmp_sample_idx < len(self.response_design.points) and self.response_design.points[tmp_sample_idx].is_labeled
+        ):
             tmp_sample_idx += 1
-        if tmp_sample_idx < len(self.response_design.points) and \
-                not self.response_design.points[tmp_sample_idx].is_labeled:
+        if (
+            tmp_sample_idx < len(self.response_design.points)
+            and not self.response_design.points[tmp_sample_idx].is_labeled
+        ):
             self.current_sample_idx = tmp_sample_idx
             self.set_current_sample()
 
@@ -517,8 +588,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
     @pyqtSlot()
     def previous_sample_not_labeled(self):
         tmp_sample_idx = self.current_sample_idx - 1
-        while self.response_design.points[tmp_sample_idx].is_labeled \
-                and tmp_sample_idx >= 0:
+        while self.response_design.points[tmp_sample_idx].is_labeled and tmp_sample_idx >= 0:
             tmp_sample_idx -= 1
         if not self.response_design.points[tmp_sample_idx].is_labeled and tmp_sample_idx >= 0:
             self.current_sample_idx = tmp_sample_idx
@@ -571,10 +641,13 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
     def open_labeling_setup_dialog(self):
         # show a warning dialog about the problem of editing the labeling buttons when some samples are labeled
         if self.response_design.total_labeled > 0:
-            msg = ("Some samples are already labeled, so editing the labeling buttons could affect the labeled samples.<br><br>"
-                   "<b>Risky edits:</b> Changing thematic classes, removing, or moving buttons<br><br>"
-                   "<b>Safe edits:</b> Renaming, changing colors or shortcuts, and adding new buttons.")
-            QMessageBox.warning(self, 'Edit the labeling buttons with caution!', msg, QMessageBox.StandardButton.Ok)
+            msg = (
+                "Some samples are already labeled, so editing the labeling buttons"
+                " could affect the labeled samples.<br><br>"
+                "<b>Risky edits:</b> Changing thematic classes, removing, or moving buttons<br><br>"
+                "<b>Safe edits:</b> Renaming, changing colors or shortcuts, and adding new buttons."
+            )
+            QMessageBox.warning(self, "Edit the labeling buttons with caution!", msg, QMessageBox.StandardButton.Ok)
         # open the labeling setup dialog
         self.labeling_btns_config.create_table()
         if self.labeling_btns_config.exec():
@@ -603,11 +676,15 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
 
         def create_button(item_num, item_name, item_color, item_thematic_class, item_shortcut=None):
             # save button config
-            buttons[int(item_num)] = {"name": item_name, "color": item_color,
-                                      "thematic_class": item_thematic_class, "shortcut": item_shortcut}
+            buttons[int(item_num)] = {
+                "name": item_name,
+                "color": item_color,
+                "thematic_class": item_thematic_class,
+                "shortcut": item_shortcut,
+            }
             # create button
             QPButton = QPushButton(item_name)
-            QPButton.setStyleSheet('QPushButton {color: ' + item_color + '}')
+            QPButton.setStyleSheet("QPushButton {color: " + item_color + "}")
             QPButton.clicked.connect(lambda state, label_id=item_num: self.label_sample(label_id))
             QPButton.setAutoDefault(False)
             QPButton.setCheckable(True)
@@ -644,21 +721,27 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         # from buttons_config
         if buttons_config:
             for row in sorted(buttons_config.keys()):
-                create_button(row, buttons_config[row]["name"], buttons_config[row]["color"],
-                              buttons_config[row]["thematic_class"], buttons_config[row].get("shortcut", None))
+                create_button(
+                    row,
+                    buttons_config[row]["name"],
+                    buttons_config[row]["color"],
+                    buttons_config[row]["thematic_class"],
+                    buttons_config[row].get("shortcut", None),
+                )
                 # define if this labeling was made with thematic classes
                 if buttons_config[row]["thematic_class"] is not None and buttons_config[row]["thematic_class"] != "":
                     self.response_design.with_thematic_classes = True
 
         # reload analysis status in accuracy assessment
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
         AcATaMa.dockwidget.update_analysis_config()
         # reload the current sample status
         self.update_sample_status()
 
     def cleanup_shortcuts(self):
         """Clean up all active labeling button shortcuts"""
-        for shortcut_id, shortcut in self.active_shortcuts.items():
+        for _, shortcut in self.active_shortcuts.items():
             if shortcut:
                 shortcut.deleteLater()
         self.active_shortcuts.clear()
@@ -672,18 +755,22 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         Do this before close the response design window
         """
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
         # save some config of response design window for this sampling file
         self.response_design.fit_to_sample = self.radiusFitToSample.value()
         # save view widgets status
         view_widgets_config = {}
         for view_widget in ResponseDesignWindow.view_widgets:
             # {N: {"view_name", "layer_name", "render_file_path", "scale_factor"}, ...}
-            view_widgets_config[view_widget.id] = \
-                {"view_name": view_widget.QLabel_ViewName.text(),
-                 "layer_name": view_widget.QCBox_RenderFile.currentLayer().name() if view_widget.QCBox_RenderFile.currentLayer() else None,
-                 "render_file_path": get_source_from(view_widget.QCBox_RenderFile),
-                 # "view_size": (view_widget.size().width(), view_widget.size().height()),
-                 "scale_factor": view_widget.current_scale_factor}
+            view_widgets_config[view_widget.id] = {
+                "view_name": view_widget.QLabel_ViewName.text(),
+                "layer_name": view_widget.QCBox_RenderFile.currentLayer().name()
+                if view_widget.QCBox_RenderFile.currentLayer()
+                else None,
+                "render_file_path": get_source_from(view_widget.QCBox_RenderFile),
+                # "view_size": (view_widget.size().width(), view_widget.size().height()),
+                "scale_factor": view_widget.current_scale_factor,
+            }
 
         self.response_design.view_widgets_config = view_widgets_config
         self.response_design.dialog_size = (self.size().width(), self.size().height())
@@ -692,6 +779,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         # close the ccd widget
         if self.ccd_plugin_available:
             from CCD_Plugin.utils.config import get_plugin_config
+
             self.response_design.ccd_plugin_config = get_plugin_config(self.ccd_plugin.id)
             self.response_design.ccd_plugin_opened = self.QPBtn_CCDPlugin.isChecked()
             self.ccd_plugin.removes_temporary_files()
@@ -703,8 +791,9 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
 
         ResponseDesignWindow.is_opened = False
         # restore the states for some objects in the dockwidget
-        from AcATaMa.gui.sampling_design_window import SamplingDesignWindow
         from AcATaMa.core.analysis import AccuracyAssessmentWindow
+        from AcATaMa.gui.sampling_design_window import SamplingDesignWindow
+
         if not SamplingDesignWindow.is_opened and not AccuracyAssessmentWindow.is_opened:
             AcATaMa.dockwidget.QGBox_ThematicMap.setEnabled(True)
         if not AccuracyAssessmentWindow.is_opened:
@@ -716,11 +805,10 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
 
     def reject(self, is_ok_to_close=False):
         if is_ok_to_close:
-            super(ResponseDesignWindow, self).reject()
+            super().reject()
 
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'labeling_buttons_config.ui'))
+FORM_CLASS, _ = uic.loadUiType(os.path.join(plugin_folder, "ui", "labeling_buttons_config.ui"))
 
 
 class LabelingButtonsConfig(QDialog, FORM_CLASS):
@@ -729,7 +817,7 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
         self.setupUi(self)
         self.buttons_config = buttons_config if buttons_config is not None else {}
         # init with empty table
-        self.table_buttons = dict(zip(range(1, 1001), [""] * 1000))
+        self.table_buttons = dict(zip(range(1, 1001), [""] * 1000, strict=False))
         self.create_table()
         #
         self.tableBtnsConfig.itemClicked.connect(self.table_item_clicked)
@@ -760,10 +848,10 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
                     else:
                         item_table = QTableWidgetItem(str(item))
                     item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-                    item_table.setToolTip("Label button (ID: {})".format(key))
+                    item_table.setToolTip(f"Label button (ID: {key})")
                     self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "Color":
-                for m, item in enumerate(self.table_buttons.values()):
+                for m, _ in enumerate(self.table_buttons.values()):
                     item_table = QTableWidgetItem()
                     if m + 1 in self.buttons_config:
                         item_table.setBackground(QColor(self.buttons_config[m + 1]["color"]))
@@ -772,7 +860,7 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
                     item_table.setToolTip("Click to set/change the color of this label button")
                     self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "Thematic Class":
-                for m, item in enumerate(self.table_buttons.values()):
+                for m, _ in enumerate(self.table_buttons.values()):
                     if valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicMap):
                         if m + 1 in self.buttons_config and self.buttons_config[m + 1]["thematic_class"] is not None:
                             item_table = QTableWidgetItem(self.buttons_config[m + 1]["thematic_class"])
@@ -782,8 +870,10 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
                     else:
                         item_table = QTableWidgetItem("none")
                         item_table.setForeground(QColor("lightGrey"))
-                        item_table.setToolTip("No thematic map selected, if you want enable the\n"
-                                              "thematic classes, select first a valid thematic map file")
+                        item_table.setToolTip(
+                            "No thematic map selected, if you want enable the\n"
+                            "thematic classes, select first a valid thematic map file"
+                        )
                         item_h = QTableWidgetItem(h)
                         item_h.setForeground(QColor("lightGrey"))
                         self.tableBtnsConfig.setHorizontalHeaderItem(2, item_h)
@@ -792,8 +882,12 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
                     item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
                     self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "Shortcut":
-                for m, item in enumerate(self.table_buttons.values()):
-                    if m + 1 in self.buttons_config and "shortcut" in self.buttons_config[m + 1] and self.buttons_config[m + 1]["shortcut"]:
+                for m, _ in enumerate(self.table_buttons.values()):
+                    if (
+                        m + 1 in self.buttons_config
+                        and "shortcut" in self.buttons_config[m + 1]
+                        and self.buttons_config[m + 1]["shortcut"]
+                    ):
                         item_table = QTableWidgetItem(self.buttons_config[m + 1]["shortcut"])
                     else:
                         item_table = QTableWidgetItem("")
@@ -802,9 +896,9 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
                     item_table.setToolTip("Click to set/change the keyboard shortcut for this button")
                     self.tableBtnsConfig.setItem(m, n, item_table)
             if h == "":
-                for m, item in enumerate(self.table_buttons.values()):
+                for m, _ in enumerate(self.table_buttons.values()):
                     item_table = QTableWidgetItem()
-                    path = ':/plugins/AcATaMa/icons/trash.svg'
+                    path = ":/plugins/AcATaMa/icons/trash.svg"
                     icon = QIcon(path)
                     item_table.setIcon(icon)
                     item_table.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
@@ -857,57 +951,73 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
         if tableItem.column() == 4:
             self.tableBtnsConfig.item(tableItem.row(), 0).setText("")
             self.tableBtnsConfig.item(tableItem.row(), 1).setBackground(QColor(255, 255, 255, 0))
-            if not self.tableBtnsConfig.item(tableItem.row(), 2).text() == "none":
+            if self.tableBtnsConfig.item(tableItem.row(), 2).text() != "none":
                 self.tableBtnsConfig.item(tableItem.row(), 2).setText("")
             self.tableBtnsConfig.item(tableItem.row(), 3).setText("")
 
     @pyqtSlot()
     def check_before_accept(self):
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
         # check if all buttons are associated to thematic classes if it is working with thematic classes
         if valid_file_selected_in(AcATaMa.dockwidget.QCBox_ThematicMap, "thematic map"):
-            items_with_classes = [self.tableBtnsConfig.item(row, 2).text() != "" for row in
-                                  range(self.tableBtnsConfig.rowCount()) if self.tableBtnsConfig.item(row, 0).text() != ""]
+            items_with_classes = [
+                self.tableBtnsConfig.item(row, 2).text() != ""
+                for row in range(self.tableBtnsConfig.rowCount())
+                if self.tableBtnsConfig.item(row, 0).text() != ""
+            ]
             if False in items_with_classes:
-                msg = "Invalid configuration:\n\nA) If you are labeling with thematic classes, then " \
-                      "you must configure the thematic class value for all buttons. \n\nB) Or if you are " \
-                      "labeling the sampling without pairing with thematic classes, then deselect the " \
-                      "thematic map."
-                QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.StandardButton.Ok)
+                msg = (
+                    "Invalid configuration:\n\nA) If you are labeling with thematic classes, then "
+                    "you must configure the thematic class value for all buttons. \n\nB) Or if you are "
+                    "labeling the sampling without pairing with thematic classes, then deselect the "
+                    "thematic map."
+                )
+                QMessageBox.warning(self, "Error with the labeling buttons", msg, QMessageBox.StandardButton.Ok)
                 return
         # check if all button configured have a valid name
-        items_with_valid_names = [self.tableBtnsConfig.item(row, 0).text() != "" for row in
-                                  range(self.tableBtnsConfig.rowCount()) if
-                                  self.tableBtnsConfig.item(row, 1).background().color().name() not in ["#ffffff", '#000000'] or
-                                  self.tableBtnsConfig.item(row, 2).text() not in ["none", ""]]
+        items_with_valid_names = [
+            self.tableBtnsConfig.item(row, 0).text() != ""
+            for row in range(self.tableBtnsConfig.rowCount())
+            if self.tableBtnsConfig.item(row, 1).background().color().name() not in ["#ffffff", "#000000"]
+            or self.tableBtnsConfig.item(row, 2).text() not in ["none", ""]
+        ]
         if False in items_with_valid_names:
             msg = "Invalid configuration:\n\nTo create the buttons for labeling, they must have a valid name."
-            QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.StandardButton.Ok)
+            QMessageBox.warning(self, "Error with the labeling buttons", msg, QMessageBox.StandardButton.Ok)
             return
         # check if button name exist (not allow duplicate labels with the same names)
-        items_with_valid_names = [self.tableBtnsConfig.item(row, 0).text() for row in
-                                  range(self.tableBtnsConfig.rowCount()) if
-                                  self.tableBtnsConfig.item(row, 0).text() != ""]
+        items_with_valid_names = [
+            self.tableBtnsConfig.item(row, 0).text()
+            for row in range(self.tableBtnsConfig.rowCount())
+            if self.tableBtnsConfig.item(row, 0).text() != ""
+        ]
         if len(items_with_valid_names) != len(set(items_with_valid_names)):
             msg = "Invalid configuration:\n\nTo create the buttons for labeling, the labeling names must be unique."
-            QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.StandardButton.Ok)
+            QMessageBox.warning(self, "Error with the labeling buttons", msg, QMessageBox.StandardButton.Ok)
             return
         # check if exists a duplicate thematic class
-        items_with_valid_names = [self.tableBtnsConfig.item(row, 2).text() for row in
-                                    range(self.tableBtnsConfig.rowCount()) if
-                                    self.tableBtnsConfig.item(row, 2).text() not in ["", "none"]]
+        items_with_valid_names = [
+            self.tableBtnsConfig.item(row, 2).text()
+            for row in range(self.tableBtnsConfig.rowCount())
+            if self.tableBtnsConfig.item(row, 2).text() not in ["", "none"]
+        ]
         if len(items_with_valid_names) != len(set(items_with_valid_names)):
-            msg = "Invalid configuration:\n\nTo create the buttons for labeling, the thematic class values must be unique."
-            QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.StandardButton.Ok)
+            msg = (
+                "Invalid configuration:\n\nTo create the buttons for labeling,"
+                " the thematic class values must be unique."
+            )
+            QMessageBox.warning(self, "Error with the labeling buttons", msg, QMessageBox.StandardButton.Ok)
             return
         # check if exists a duplicate shortcut
-        shortcuts_with_valid_names = [self.tableBtnsConfig.item(row, 3).text() for row in
-                                     range(self.tableBtnsConfig.rowCount()) if
-                                     self.tableBtnsConfig.item(row, 3).text() != "" and
-                                     self.tableBtnsConfig.item(row, 0).text() != ""]
+        shortcuts_with_valid_names = [
+            self.tableBtnsConfig.item(row, 3).text()
+            for row in range(self.tableBtnsConfig.rowCount())
+            if self.tableBtnsConfig.item(row, 3).text() != "" and self.tableBtnsConfig.item(row, 0).text() != ""
+        ]
         if len(shortcuts_with_valid_names) != len(set(shortcuts_with_valid_names)):
             msg = "Invalid configuration:\n\nTo create the buttons for labeling, the keyboard shortcuts must be unique."
-            QMessageBox.warning(self, 'Error with the labeling buttons', msg, QMessageBox.StandardButton.Ok)
+            QMessageBox.warning(self, "Error with the labeling buttons", msg, QMessageBox.StandardButton.Ok)
             return
         # pass all checks
         self.accept()
@@ -915,23 +1025,35 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
     @pyqtSlot()
     def apply_auto_fill_from_thematic_map(self):
         # check if the table tableBtnsConfig is not empty
-        if not all([self.tableBtnsConfig.item(row, 0).text() == "" and
-                    self.tableBtnsConfig.item(row, 2).text() == "" for row in range(self.tableBtnsConfig.rowCount())]):
+        if not all(
+            self.tableBtnsConfig.item(row, 0).text() == "" and self.tableBtnsConfig.item(row, 2).text() == ""
+            for row in range(self.tableBtnsConfig.rowCount())
+        ):
             # first prompt
-            quit_msg = ("This action will set up the labeling buttons based on the current thematic map symbology. "
-                        "This will replace the currently configured one. Do you want to continue?")
-            reply = QMessageBox.question(None, 'Apply auto fill from thematic map',
-                                         quit_msg, QMessageBox.StandardButton.Apply | QMessageBox.StandardButton.Cancel, QMessageBox.StandardButton.Cancel)
+            quit_msg = (
+                "This action will set up the labeling buttons based on the current thematic map symbology. "
+                "This will replace the currently configured one. Do you want to continue?"
+            )
+            reply = QMessageBox.question(
+                None,
+                "Apply auto fill from thematic map",
+                quit_msg,
+                QMessageBox.StandardButton.Apply | QMessageBox.StandardButton.Cancel,
+                QMessageBox.StandardButton.Cancel,
+            )
             if reply != QMessageBox.StandardButton.Apply:
                 return
 
         from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
         # clean the table
         self.create_table()
 
         # get the symbology table; pixel values, labels and colors from thematic map
-        symbology_table = get_symbology_table(AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer(),
-                                              band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()))
+        symbology_table = get_symbology_table(
+            AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer(),
+            band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
+        )
         nodata_value = get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text())
 
         # create the buttons
@@ -948,8 +1070,7 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
             self.tableBtnsConfig.item(item_idx, 2).setText(str(value))
 
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'labeling_shortcut_dialog.ui'))
+FORM_CLASS, _ = uic.loadUiType(os.path.join(plugin_folder, "ui", "labeling_shortcut_dialog.ui"))
 
 
 class ShortcutDialog(QDialog, FORM_CLASS):
@@ -1011,21 +1132,39 @@ class ShortcutDialog(QDialog, FORM_CLASS):
     def get_key_name(self, key):
         """Convert Qt key to readable name."""
         special_keys = {
-            Qt.Key.Key_F1: "F1", Qt.Key.Key_F2: "F2", Qt.Key.Key_F3: "F3", Qt.Key.Key_F4: "F4",
-            Qt.Key.Key_F5: "F5", Qt.Key.Key_F6: "F6", Qt.Key.Key_F7: "F7", Qt.Key.Key_F8: "F8",
-            Qt.Key.Key_F9: "F9", Qt.Key.Key_F10: "F10", Qt.Key.Key_F11: "F11", Qt.Key.Key_F12: "F12",
-            Qt.Key.Key_Left: "Left", Qt.Key.Key_Right: "Right", Qt.Key.Key_Up: "Up", Qt.Key.Key_Down: "Down",
-            Qt.Key.Key_Home: "Home", Qt.Key.Key_End: "End", Qt.Key.Key_PageUp: "PageUp", Qt.Key.Key_PageDown: "PageDown",
-            Qt.Key.Key_Insert: "Insert", Qt.Key.Key_Delete: "Delete", Qt.Key.Key_Backspace: "Backspace",
-            Qt.Key.Key_Tab: "Tab", Qt.Key.Key_Return: "Return", Qt.Key.Key_Enter: "Enter", Qt.Key.Key_Escape: "Escape",
+            Qt.Key.Key_F1: "F1",
+            Qt.Key.Key_F2: "F2",
+            Qt.Key.Key_F3: "F3",
+            Qt.Key.Key_F4: "F4",
+            Qt.Key.Key_F5: "F5",
+            Qt.Key.Key_F6: "F6",
+            Qt.Key.Key_F7: "F7",
+            Qt.Key.Key_F8: "F8",
+            Qt.Key.Key_F9: "F9",
+            Qt.Key.Key_F10: "F10",
+            Qt.Key.Key_F11: "F11",
+            Qt.Key.Key_F12: "F12",
+            Qt.Key.Key_Left: "Left",
+            Qt.Key.Key_Right: "Right",
+            Qt.Key.Key_Up: "Up",
+            Qt.Key.Key_Down: "Down",
+            Qt.Key.Key_Home: "Home",
+            Qt.Key.Key_End: "End",
+            Qt.Key.Key_PageUp: "PageUp",
+            Qt.Key.Key_PageDown: "PageDown",
+            Qt.Key.Key_Insert: "Insert",
+            Qt.Key.Key_Delete: "Delete",
+            Qt.Key.Key_Backspace: "Backspace",
+            Qt.Key.Key_Tab: "Tab",
+            Qt.Key.Key_Return: "Return",
+            Qt.Key.Key_Enter: "Enter",
+            Qt.Key.Key_Escape: "Escape",
             Qt.Key.Key_Space: "Space",
         }
 
         if key in special_keys:
             return special_keys[key]
-        elif Qt.Key.Key_A <= key <= Qt.Key.Key_Z:
-            return chr(key)
-        elif Qt.Key.Key_0 <= key <= Qt.Key.Key_9:
+        elif Qt.Key.Key_A <= key <= Qt.Key.Key_Z or Qt.Key.Key_0 <= key <= Qt.Key.Key_9:
             return chr(key)
         else:
             return None
@@ -1041,8 +1180,8 @@ class ShortcutDialog(QDialog, FORM_CLASS):
         """Get the final shortcut text."""
         return self.shortcut_text
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    plugin_folder, 'ui', 'labeling_thematic_map_classes.ui'))
+
+FORM_CLASS, _ = uic.loadUiType(os.path.join(plugin_folder, "ui", "labeling_thematic_map_classes.ui"))
 
 
 class ThematicMapClasses(QDialog, FORM_CLASS):
@@ -1058,17 +1197,20 @@ class ThematicMapClasses(QDialog, FORM_CLASS):
 
         header = ["Pix Val", "Color", "Select"]
         # get color table from raster
-        thematic_table = {"values_and_colors_table": get_values_and_colors_table(
-            AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer(),
-            band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
-            nodata=get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text()))}
+        thematic_table = {
+            "values_and_colors_table": get_values_and_colors_table(
+                AcATaMa.dockwidget.QCBox_ThematicMap.currentLayer(),
+                band=int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText()),
+                nodata=get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text()),
+            )
+        }
 
         if not thematic_table["values_and_colors_table"]:
             # clear table
             self.tableOfClasses.setRowCount(0)
             self.tableOfClasses.setColumnCount(0)
             return
-        thematic_table["row_count"] = len(list(thematic_table["values_and_colors_table"].values())[0])
+        thematic_table["row_count"] = len(next(iter(thematic_table["values_and_colors_table"].values())))
         # init table
         self.tableOfClasses.setRowCount(thematic_table["row_count"])
         self.tableOfClasses.setColumnCount(3)
@@ -1089,10 +1231,14 @@ class ThematicMapClasses(QDialog, FORM_CLASS):
                 for m in range(thematic_table["row_count"]):
                     item_table = QTableWidgetItem()
                     item_table.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
-                    item_table.setBackground(QColor(thematic_table["values_and_colors_table"]["Red"][m],
-                                                    thematic_table["values_and_colors_table"]["Green"][m],
-                                                    thematic_table["values_and_colors_table"]["Blue"][m],
-                                                    thematic_table["values_and_colors_table"]["Alpha"][m]))
+                    item_table.setBackground(
+                        QColor(
+                            thematic_table["values_and_colors_table"]["Red"][m],
+                            thematic_table["values_and_colors_table"]["Green"][m],
+                            thematic_table["values_and_colors_table"]["Blue"][m],
+                            thematic_table["values_and_colors_table"]["Alpha"][m],
+                        )
+                    )
                     self.tableOfClasses.setItem(m, n, item_table)
             if h == "Select":
                 for m in range(thematic_table["row_count"]):
@@ -1118,7 +1264,7 @@ class ThematicMapClasses(QDialog, FORM_CLASS):
         self.accept()
 
 
-class Tile(object):
+class Tile:
     def __init__(self, xmin, xmax, ymin, ymax, tile_color, fill_color=None):
         self.rbs_in_response_design_window = []
         self.extent = QgsRectangle(xmin, ymin, xmax, ymax)
@@ -1132,8 +1278,12 @@ class Tile(object):
             del self
             return
         rubber_band = QgsRubberBand(canvas)
-        points = [QgsPointXY(self.xmin, self.ymax), QgsPointXY(self.xmax, self.ymax),
-                  QgsPointXY(self.xmax, self.ymin), QgsPointXY(self.xmin, self.ymin)]
+        points = [
+            QgsPointXY(self.xmin, self.ymax),
+            QgsPointXY(self.xmax, self.ymax),
+            QgsPointXY(self.xmax, self.ymin),
+            QgsPointXY(self.xmin, self.ymin),
+        ]
         rubber_band.setToGeometry(QgsGeometry.fromPolygonXY([points]), None)
         rubber_band.setColor(self.tile_color)
         rubber_band.setFillColor(self.fill_color if self.fill_color else QColor(0, 0, 0, 0))
@@ -1149,4 +1299,8 @@ class Tile(object):
                 self.create(view_widget.render_widget.canvas)
 
     def hide(self):
-        [rubber_band.reset(QgsWkbTypes.GeometryType.PolygonGeometry) for rubber_band in self.rbs_in_response_design_window if not isdeleted(rubber_band)]
+        [
+            rubber_band.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
+            for rubber_band in self.rbs_in_response_design_window
+            if not isdeleted(rubber_band)
+        ]
