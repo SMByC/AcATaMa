@@ -223,7 +223,7 @@ def get_html(accu_asse):
             f"""
                 <td>{sum(t)}</td>
                 """
-            for t in zip(*accu_asse.error_matrix, strict=False)
+            for t in zip(*accu_asse.error_matrix, strict=True)
         ]
     )
     html += f"""
@@ -242,7 +242,7 @@ def get_html(accu_asse):
         <td class="empty"></td>
           <th>Producer's accuracy</th>
         """
-    for idx_col, col in enumerate(zip(*accuracy_table, strict=False)):
+    for idx_col, col in enumerate(zip(*accuracy_table, strict=True)):
         html += """
             <td>{p_accuracy}</td>
             """.format(p_accuracy=rf(col[idx_col] / sum(col)) if sum(col) > 0 else "-")
@@ -333,9 +333,9 @@ def get_html(accu_asse):
         # accuracy
         try:
             if accu_asse.estimator in ["Simple/systematic estimator"]:
-                accuracy = accuracy_table[idx_row][idx_row] / sum(list(zip(*accuracy_table, strict=False))[idx_row])
+                accuracy = accuracy_table[idx_row][idx_row] / sum(list(zip(*accuracy_table, strict=True))[idx_row])
             if accu_asse.estimator in ["Stratified estimator", "Simple/systematic post-stratified estimator"]:
-                col_sums = list(zip(*error_matrix_area_prop, strict=False))
+                col_sums = list(zip(*error_matrix_area_prop, strict=True))
                 accuracy = error_matrix_area_prop[idx_row][idx_row] / sum(col_sums[idx_row])
         except ZeroDivisionError:
             accuracy = np.nan
@@ -344,7 +344,7 @@ def get_html(accu_asse):
         try:
             if accu_asse.estimator in ["Simple/systematic estimator"]:
                 producer_standard_error = (
-                    accuracy * (1 - accuracy) / (sum(list(zip(*accu_asse.error_matrix, strict=False))[idx_row]) - 1)
+                    accuracy * (1 - accuracy) / (sum(list(zip(*accu_asse.error_matrix, strict=True))[idx_row]) - 1)
                 ) ** 0.5
             if accu_asse.estimator in ["Stratified estimator", "Simple/systematic post-stratified estimator"]:
                 u_accuracy = accuracy_table[idx_row][idx_row] / sum(accuracy_table[idx_row])
@@ -357,7 +357,7 @@ def get_html(accu_asse):
                                 [sum(r) for r in accu_asse.error_matrix],
                                 accu_asse.error_matrix,
                                 [accu_asse.thematic_pixels_count[v] for v in accu_asse.values],
-                                strict=False,
+                                strict=True,
                             )
                         )
                         ** 2
@@ -369,14 +369,14 @@ def get_html(accu_asse):
                         * n**2
                         * row[idx_row]
                         / total_row
-                        * (1 - row[idx_row] / sum(list(zip(*accu_asse.error_matrix, strict=False))[idx_row]))
+                        * (1 - row[idx_row] / sum(list(zip(*accu_asse.error_matrix, strict=True))[idx_row]))
                         / (total_row - 1)
                         for idx, total_row, row, n in zip(
                             range(len(accu_asse.error_matrix)),
                             [sum(r) for r in accu_asse.error_matrix],
                             accu_asse.error_matrix,
                             [accu_asse.thematic_pixels_count[v] for v in accu_asse.values],
-                            strict=False,
+                            strict=True,
                         )
                     )
                 ) ** 0.5
@@ -457,7 +457,7 @@ def get_html(accu_asse):
         html += "</tr>"
 
         producer_accuracy_matrix = copy.deepcopy(error_matrix_area_prop)
-        for idx_col, col in enumerate(zip(*error_matrix_area_prop, strict=False)):
+        for idx_col, col in enumerate(zip(*error_matrix_area_prop, strict=True)):
             for idx_row, value in enumerate(col):
                 producer_accuracy_matrix[idx_row][idx_col] = value / sum(col) if sum(col) > 0 else 0
 
@@ -541,7 +541,7 @@ def get_html(accu_asse):
                 f"""
                     <td>{rf(sum(t))}</td>
                     """
-                for t in zip(*error_matrix_area_prop, strict=False)
+                for t in zip(*error_matrix_area_prop, strict=True)
             ]
         )
         html += """
@@ -600,7 +600,7 @@ def get_html(accu_asse):
                 f"""
                         <td>{rf(sum(t) ** 0.5)}</td>
                         """
-                for t in zip(*quadratic_error_matrix, strict=False)
+                for t in zip(*quadratic_error_matrix, strict=True)
             ]
         )
         html += """
@@ -639,20 +639,20 @@ def get_html(accu_asse):
     if accu_asse.estimator == "Simple/systematic post-stratified estimator":
         ui_table = [
             [(1 - i / total_row) ** 2 * i / (total_row - 1) if total_row not in [0, 1] else np.nan for i in row]
-            for total_row, row in zip([sum(r) for r in accu_asse.error_matrix], accu_asse.error_matrix, strict=False)
+            for total_row, row in zip([sum(r) for r in accu_asse.error_matrix], accu_asse.error_matrix, strict=True)
         ]
         wi = [accu_asse.thematic_pixels_count[value] / total_pixels_classes for value in accu_asse.values]
         variance = [
             ((1 - total_samples / total_pixels_classes) / total_samples)
-            * sum(w * s for w, s in zip(wi, ui_col, strict=False))
-            + (1 / (total_samples**2)) * sum((1 - w) * s for w, s in zip(wi, ui_col, strict=False))
-            for ui_col in zip(*ui_table, strict=False)
+            * sum(w * s for w, s in zip(wi, ui_col, strict=True))
+            + (1 / (total_samples**2)) * sum((1 - w) * s for w, s in zip(wi, ui_col, strict=True))
+            for ui_col in zip(*ui_table, strict=True)
         ]
         _error = [sum_total_class_area * v**0.5 for v in variance]
 
     for idx_row, value in enumerate(accu_asse.values):
         if accu_asse.estimator == "Simple/systematic estimator":
-            p_k = sum(list(zip(*accu_asse.error_matrix, strict=False))[idx_row]) / total_samples
+            p_k = sum(list(zip(*accu_asse.error_matrix, strict=True))[idx_row]) / total_samples
             area = p_k * sum_total_class_area
             v_p_k = (
                 ((p_k) * (1 - p_k) / total_samples)
@@ -661,11 +661,11 @@ def get_html(accu_asse):
             )
             error = (v_p_k**0.5) * sum_total_class_area
         if accu_asse.estimator == "Simple/systematic post-stratified estimator":
-            area = sum(list(zip(*error_matrix_area_prop, strict=False))[idx_row]) * sum_total_class_area
+            area = sum(list(zip(*error_matrix_area_prop, strict=True))[idx_row]) * sum_total_class_area
             error = _error[idx_row]
         if accu_asse.estimator == "Stratified estimator":
-            area = sum(list(zip(*error_matrix_area_prop, strict=False))[idx_row]) * sum_total_class_area
-            error = (sum(list(zip(*quadratic_error_matrix, strict=False))[idx_row]) ** 0.5) * sum_total_class_area
+            area = sum(list(zip(*error_matrix_area_prop, strict=True))[idx_row]) * sum_total_class_area
+            error = (sum(list(zip(*quadratic_error_matrix, strict=True))[idx_row]) ** 0.5) * sum_total_class_area
 
         html += "<tr>"
         html += "<th >{} ({})</th>".format(value, accu_asse.labels.get(str(value), "-"))
@@ -813,7 +813,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
 
     csv_rows.append(
         ["", "total"]
-        + [sum(t) for t in zip(*accu_asse.error_matrix, strict=False)]
+        + [sum(t) for t in zip(*accu_asse.error_matrix, strict=True)]
         + [total_samples]
         + [""]
         + [rf(sum_total_class_area)]
@@ -822,7 +822,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         ["", "Producer's accuracy"]
         + [
             rf(col[idx_col] / sum(col)) if sum(col) > 0 else "-"
-            for idx_col, col in enumerate(zip(*accuracy_table, strict=False))
+            for idx_col, col in enumerate(zip(*accuracy_table, strict=True))
         ]
         + ["", rf(overall_accuracy)]
     )
@@ -869,9 +869,9 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         # accuracy
         try:
             if accu_asse.estimator in ["Simple/systematic estimator"]:
-                accuracy = accuracy_table[idx_row][idx_row] / sum(list(zip(*accuracy_table, strict=False))[idx_row])
+                accuracy = accuracy_table[idx_row][idx_row] / sum(list(zip(*accuracy_table, strict=True))[idx_row])
             if accu_asse.estimator in ["Stratified estimator", "Simple/systematic post-stratified estimator"]:
-                col_sums = list(zip(*error_matrix_area_prop, strict=False))
+                col_sums = list(zip(*error_matrix_area_prop, strict=True))
                 accuracy = error_matrix_area_prop[idx_row][idx_row] / sum(col_sums[idx_row])
         except ZeroDivisionError:
             accuracy = np.nan
@@ -880,7 +880,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         try:
             if accu_asse.estimator in ["Simple/systematic estimator"]:
                 producer_standard_error = (
-                    accuracy * (1 - accuracy) / (sum(list(zip(*accu_asse.error_matrix, strict=False))[idx_row]) - 1)
+                    accuracy * (1 - accuracy) / (sum(list(zip(*accu_asse.error_matrix, strict=True))[idx_row]) - 1)
                 ) ** 0.5
             if accu_asse.estimator in ["Stratified estimator", "Simple/systematic post-stratified estimator"]:
                 u_accuracy = accuracy_table[idx_row][idx_row] / sum(accuracy_table[idx_row])
@@ -893,7 +893,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
                                 [sum(r) for r in accu_asse.error_matrix],
                                 accu_asse.error_matrix,
                                 [accu_asse.thematic_pixels_count[v] for v in accu_asse.values],
-                                strict=False,
+                                strict=True,
                             )
                         )
                         ** 2
@@ -905,14 +905,14 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
                         * n**2
                         * row[idx_row]
                         / total_row
-                        * (1 - row[idx_row] / sum(list(zip(*accu_asse.error_matrix, strict=False))[idx_row]))
+                        * (1 - row[idx_row] / sum(list(zip(*accu_asse.error_matrix, strict=True))[idx_row]))
                         / (total_row - 1)
                         for idx, total_row, row, n in zip(
                             range(len(accu_asse.error_matrix)),
                             [sum(r) for r in accu_asse.error_matrix],
                             accu_asse.error_matrix,
                             [accu_asse.thematic_pixels_count[v] for v in accu_asse.values],
-                            strict=False,
+                            strict=True,
                         )
                     )
                 ) ** 0.5
@@ -956,7 +956,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         csv_rows.append(["", "", *labels])
 
         producer_accuracy_matrix = copy.deepcopy(error_matrix_area_prop)
-        for idx_col, col in enumerate(zip(*error_matrix_area_prop, strict=False)):
+        for idx_col, col in enumerate(zip(*error_matrix_area_prop, strict=True)):
             for idx_row, value in enumerate(col):
                 producer_accuracy_matrix[idx_row][idx_col] = value / sum(col) if sum(col) > 0 else 0
 
@@ -991,7 +991,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
             r.append(rf(sum(error_matrix_area_prop[idx_row])) if sum(error_matrix_area_prop[idx_row]) > 0 else "-")
             csv_rows.append(r)
 
-        csv_rows.append(["", "total"] + [rf(sum(t)) for t in zip(*error_matrix_area_prop, strict=False)])
+        csv_rows.append(["", "total"] + [rf(sum(t)) for t in zip(*error_matrix_area_prop, strict=True)])
 
     ###########################################################################
     # #### 4) Quadratic error matrix of estimated area proportion
@@ -1013,7 +1013,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
             r += [rf(t) if t > 0 else "-" for t in quadratic_error_matrix[idx_row]]
             csv_rows.append(r)
 
-        csv_rows.append(["", "total"] + [rf(sum(t) ** 0.5) for t in zip(*quadratic_error_matrix, strict=False)])
+        csv_rows.append(["", "total"] + [rf(sum(t) ** 0.5) for t in zip(*quadratic_error_matrix, strict=True)])
 
     ###########################################################################
     # #### 3/5) Class area adjusted
@@ -1040,20 +1040,20 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
     if accu_asse.estimator == "Simple/systematic post-stratified estimator":
         ui_table = [
             [(1 - i / total_row) ** 2 * i / (total_row - 1) if total_row not in [0, 1] else np.nan for i in row]
-            for total_row, row in zip([sum(r) for r in accu_asse.error_matrix], accu_asse.error_matrix, strict=False)
+            for total_row, row in zip([sum(r) for r in accu_asse.error_matrix], accu_asse.error_matrix, strict=True)
         ]
         wi = [accu_asse.thematic_pixels_count[value] / total_pixels_classes for value in accu_asse.values]
         variance = [
             ((1 - total_samples / total_pixels_classes) / total_samples)
-            * sum(w * s for w, s in zip(wi, ui_col, strict=False))
-            + (1 / (total_samples**2)) * sum((1 - w) * s for w, s in zip(wi, ui_col, strict=False))
-            for ui_col in zip(*ui_table, strict=False)
+            * sum(w * s for w, s in zip(wi, ui_col, strict=True))
+            + (1 / (total_samples**2)) * sum((1 - w) * s for w, s in zip(wi, ui_col, strict=True))
+            for ui_col in zip(*ui_table, strict=True)
         ]
         _error = [sum_total_class_area * v**0.5 for v in variance]
 
     for idx_row, value in enumerate(accu_asse.values):
         if accu_asse.estimator == "Simple/systematic estimator":
-            p_k = sum(list(zip(*accu_asse.error_matrix, strict=False))[idx_row]) / total_samples
+            p_k = sum(list(zip(*accu_asse.error_matrix, strict=True))[idx_row]) / total_samples
             area = p_k * sum_total_class_area
             v_p_k = (
                 ((p_k) * (1 - p_k) / total_samples)
@@ -1062,11 +1062,11 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
             )
             error = (v_p_k**0.5) * sum_total_class_area
         if accu_asse.estimator == "Simple/systematic post-stratified estimator":
-            area = sum(list(zip(*error_matrix_area_prop, strict=False))[idx_row]) * sum_total_class_area
+            area = sum(list(zip(*error_matrix_area_prop, strict=True))[idx_row]) * sum_total_class_area
             error = _error[idx_row]
         if accu_asse.estimator == "Stratified estimator":
-            area = sum(list(zip(*error_matrix_area_prop, strict=False))[idx_row]) * sum_total_class_area
-            error = (sum(list(zip(*quadratic_error_matrix, strict=False))[idx_row]) ** 0.5) * sum_total_class_area
+            area = sum(list(zip(*error_matrix_area_prop, strict=True))[idx_row]) * sum_total_class_area
+            error = (sum(list(zip(*quadratic_error_matrix, strict=True))[idx_row]) ** 0.5) * sum_total_class_area
 
         r = []
         r.append("{} ({})".format(value, accu_asse.labels.get(str(value), "-")))

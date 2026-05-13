@@ -49,7 +49,7 @@ def get_num_samples_by_area_based_proportion(srs_table, total_std_error):
     total_pixel_count = float(sum(mask(srs_table["pixel_count"], srs_table["On"])))
     ratio_pixel_count = [p_c / total_pixel_count for p_c in mask(srs_table["pixel_count"], srs_table["On"])]
     Si = [(float(ui) * (1 - float(ui))) ** 0.5 for ui in mask(srs_table["ui"], srs_table["On"])]
-    total_num_samples = (sum(rpc * si for rpc, si in zip(ratio_pixel_count, Si, strict=False)) / total_std_error) ** 2
+    total_num_samples = (sum(rpc * si for rpc, si in zip(ratio_pixel_count, Si, strict=True)) / total_std_error) ** 2
 
     num_samples = []
     idx = 0
@@ -66,7 +66,7 @@ def get_num_samples_by_keeping_total_samples(srs_table, new_num_samples):
     """Redistribute the samples number by area based proportion keeping
     the total of samples, this occurs when a num sample item is changed
     """
-    for idx, (old_ns, new_ns) in enumerate(zip(srs_table["num_samples"], new_num_samples, strict=False)):
+    for idx, (old_ns, new_ns) in enumerate(zip(srs_table["num_samples"], new_num_samples, strict=True)):
         if old_ns != new_ns:
             sample_idx = idx
             sample_diff = int(old_ns) - int(new_ns)

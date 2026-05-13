@@ -817,7 +817,7 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
         self.setupUi(self)
         self.buttons_config = buttons_config if buttons_config is not None else {}
         # init with empty table
-        self.table_buttons = dict(zip(range(1, 1001), [""] * 1000, strict=False))
+        self.table_buttons = dict(zip(range(1, 1001), [""] * 1000, strict=True))
         self.create_table()
         #
         self.tableBtnsConfig.itemClicked.connect(self.table_item_clicked)

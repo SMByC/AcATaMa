@@ -112,7 +112,7 @@ class Analysis:
         #     | L4 |    |    |    |    |
         #
         error_matrix = [[0 for column in values] for row in values]
-        for thematic_map_in_sample, validation_in_sample in zip(thematic_map, validation, strict=False):
+        for thematic_map_in_sample, validation_in_sample in zip(thematic_map, validation, strict=True):
             error_matrix[indices[thematic_map_in_sample]][indices[validation_in_sample]] += 1
 
         # calculate the total number of pixels in the thematic map

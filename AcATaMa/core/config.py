@@ -522,7 +522,7 @@ def restore(yml_file_path):
                     int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText()),
                     get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text()),
                 )
-            ] = dict(zip(srs_table["values_and_colors_table"]["Pixel Value"], srs_table["pixel_count"], strict=False))
+            ] = dict(zip(srs_table["values_and_colors_table"]["Pixel Value"], srs_table["pixel_count"], strict=True))
 
         # TODO:
         # restore the values color table of the QCBox_SamplingMap_StraRS saved

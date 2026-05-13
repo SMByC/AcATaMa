@@ -58,7 +58,7 @@ def mask(input_list, boolean_mask):
         >>> mask(["A", "B", "C", "D"], [1, 0, 1, 0])
         ['A', 'C']
     """
-    return [i for i, b in zip(input_list, boolean_mask, strict=False) if b]
+    return [i for i, b in zip(input_list, boolean_mask, strict=True) if b]
 
 
 # --------------------------------------------------------------------------
@@ -260,7 +260,7 @@ def pixel_count_in_chunk(img_path, band, xoff, yoff, xsize, ysize):
     chunk_narray = gdal_file.GetRasterBand(band).ReadAsArray(xoff, yoff, xsize, ysize)
     del gdal_file
     unique_values, counts = np.unique(chunk_narray, return_counts=True)
-    return dict(zip(unique_values.tolist(), counts.tolist(), strict=False))
+    return dict(zip(unique_values.tolist(), counts.tolist(), strict=True))
 
 
 @wait_process
@@ -395,7 +395,7 @@ def get_pixel_count_by_pixel_values_sequential(layer, band, pixel_values=None, n
         pixel_counts.pop(0)
 
     progress.close()
-    pairing_values_and_counts = dict(zip(pixel_values, pixel_counts, strict=False))
+    pairing_values_and_counts = dict(zip(pixel_values, pixel_counts, strict=True))
     storage_pixel_count_by_pixel_values[(layer, band, nodata)] = pairing_values_and_counts
     return pairing_values_and_counts
 
