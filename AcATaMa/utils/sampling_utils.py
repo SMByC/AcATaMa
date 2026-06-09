@@ -49,13 +49,15 @@ def get_num_samples_by_area_based_proportion(srs_table, total_std_error):
     total_pixel_count = float(sum(mask(srs_table["pixel_count"], srs_table["On"])))
     ratio_pixel_count = [p_c / total_pixel_count for p_c in mask(srs_table["pixel_count"], srs_table["On"])]
     Si = [(float(ui) * (1 - float(ui))) ** 0.5 for ui in mask(srs_table["ui"], srs_table["On"])]
-    total_num_samples = (sum(rpc * si for rpc, si in zip(ratio_pixel_count, Si, strict=True)) / total_std_error) ** 2
+    weighted_std_sum = sum(rpc * si for rpc, si in zip(ratio_pixel_count, Si, strict=True))
+    total_num_samples = (weighted_std_sum / total_std_error) ** 2
 
     num_samples = []
     idx = 0
     for item_enable in srs_table["On"]:
         if item_enable:
-            num_samples.append(str(round(ratio_pixel_count[idx] * total_num_samples)))
+            allocation_weight = ratio_pixel_count[idx] * Si[idx] / weighted_std_sum if weighted_std_sum > 0 else 0
+            num_samples.append(str(round(allocation_weight * total_num_samples)))
             idx += 1
         else:
             num_samples.append("0")
