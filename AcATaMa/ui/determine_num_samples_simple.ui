@@ -27,15 +27,30 @@
      </property>
     </widget>
    </item>
-   <item>
-    <widget class="QLabel" name="label_6">
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;img height=&quot;42&quot;  src=&quot;:/plugins/AcATaMa/icons/eq_num_samples.png&quot;/&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
+    <item alignment="Qt::AlignHCenter">
+     <widget class="QLabel" name="label_6">
+      <property name="minimumSize">
+       <size>
+        <width>133</width>
+        <height>50</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>133</width>
+        <height>50</height>
+       </size>
+      </property>
+      <property name="pixmap">
+       <pixmap>:/plugins/AcATaMa/icons/eq_num_samples.png</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
    </item>
    <item>
     <widget class="QWidget" name="widget" native="true">

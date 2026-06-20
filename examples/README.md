@@ -3,7 +3,7 @@
 This directory provides simple, ready-to-use AcATaMa configurations that demonstrate different sampling approaches, labeling methods, and settings for a 2019-2020 forest change map in Tinigua National Natural Park (Colombia). Each `.yaml` file represents a complete plugin state that can be loaded directly into AcATaMa, allowing you to explore the plugin's features.
 
 ## Requirements
-- QGIS >= 3.30 with the **AcATaMa** plugin installed
+- QGIS >= 3.36 with the **AcATaMa** plugin installed
 - **Google Earth Engine** plugin (recommended)
 - **CCD-Plugin** for QGIS (recommended) to access additional change-detection utilities while exploring the samples
 

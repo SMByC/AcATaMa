@@ -107,8 +107,8 @@ class SamplingReport(QDialog, FORM_CLASS):
         # we can no longer recompute from the raster, but we can still
         # convert the stored area values between units with a factor)
         self.area_unit.clear()
-        for area_unit in sorted(QgsUnitTypes.AreaUnit, key=lambda x: x.value):
-            if area_unit == QgsUnitTypes.AreaUnit.AreaUnknownUnit:
+        for area_unit in sorted(Qgis.AreaUnit, key=lambda x: x.value):
+            if area_unit == Qgis.AreaUnit.Unknown:
                 continue
             self.area_unit.addItem(
                 f"{QgsUnitTypes.toString(area_unit)} ({QgsUnitTypes.toAbbreviatedString(area_unit)})"
@@ -136,7 +136,7 @@ class SamplingReport(QDialog, FORM_CLASS):
         thematic_map_table = get_samples_distribution_table(
             self.sampling.thematic_map,
             self.sampling.points.values(),
-            QgsUnitTypes.AreaUnit(self.area_unit.currentIndex()),
+            Qgis.AreaUnit(self.area_unit.currentIndex()),
         )
 
         systematic_unit = AcATaMa.dockwidget.sampling_design_window.PointSpacing_SystS.suffix().strip()
@@ -169,7 +169,7 @@ class SamplingReport(QDialog, FORM_CLASS):
             post_stratification_table = get_samples_distribution_table(
                 self.sampling.post_stratification_map,
                 self.sampling.points.values(),
-                QgsUnitTypes.AreaUnit(self.area_unit.currentIndex()),
+                Qgis.AreaUnit(self.area_unit.currentIndex()),
             )
         else:
             post_stratification_table = None
@@ -182,7 +182,7 @@ class SamplingReport(QDialog, FORM_CLASS):
             sampling_map_table = get_samples_distribution_table(
                 self.sampling.sampling_map,
                 self.sampling.points.values(),
-                QgsUnitTypes.AreaUnit(self.area_unit.currentIndex()),
+                Qgis.AreaUnit(self.area_unit.currentIndex()),
             )
         else:
             sampling_map = None
@@ -252,9 +252,9 @@ class SamplingReport(QDialog, FORM_CLASS):
             # report restored from yaml: the map layers are not available,
             # so convert the already-computed total_area values using the
             # unit factor, then update the report's stored area_unit
-            old_area_unit = QgsUnitTypes.AreaUnit(self.report["general"]["area_unit"])
+            old_area_unit = Qgis.AreaUnit(self.report["general"]["area_unit"])
             new_area_unit_index = self.area_unit.currentIndex()
-            new_area_unit = QgsUnitTypes.AreaUnit(new_area_unit_index)
+            new_area_unit = Qgis.AreaUnit(new_area_unit_index)
             factor = QgsUnitTypes.fromUnitToUnitFactor(old_area_unit, new_area_unit)
             for table_key in ("thematic_map", "sampling_map", "post_stratification"):
                 table = self.report["samples"].get(table_key)
@@ -430,7 +430,7 @@ class SamplingReport(QDialog, FORM_CLASS):
                     <th>Total Area ({area_unit})</th>
                 </tr>
         """.format(
-            area_unit=QgsUnitTypes.toAbbreviatedString(QgsUnitTypes.AreaUnit(self.report["general"]["area_unit"]))
+            area_unit=QgsUnitTypes.toAbbreviatedString(Qgis.AreaUnit(self.report["general"]["area_unit"]))
         )
         for i, pix_val in enumerate(self.report["samples"]["thematic_map"]["pix_val"]):
             html += """
@@ -477,7 +477,7 @@ class SamplingReport(QDialog, FORM_CLASS):
                         <th>Total Area ({area_unit})</th>
                     </tr>
             """.format(
-                area_unit=QgsUnitTypes.toAbbreviatedString(QgsUnitTypes.AreaUnit(self.report["general"]["area_unit"]))
+                area_unit=QgsUnitTypes.toAbbreviatedString(Qgis.AreaUnit(self.report["general"]["area_unit"]))
             )
             for i, pix_val in enumerate(self.report["samples"]["sampling_map"]["pix_val"]):
                 html += """
@@ -524,7 +524,7 @@ class SamplingReport(QDialog, FORM_CLASS):
                         <th>Total Area ({area_unit})</th>
                     </tr>
             """.format(
-                area_unit=QgsUnitTypes.toAbbreviatedString(QgsUnitTypes.AreaUnit(self.report["general"]["area_unit"]))
+                area_unit=QgsUnitTypes.toAbbreviatedString(Qgis.AreaUnit(self.report["general"]["area_unit"]))
             )
             for i, pix_val in enumerate(self.report["samples"]["post_stratification"]["pix_val"]):
                 html += """
@@ -698,7 +698,7 @@ class SamplingReport(QDialog, FORM_CLASS):
 
         general = self.report["general"]
         samples = self.report["samples"]
-        area_unit_abbr = QgsUnitTypes.toAbbreviatedString(QgsUnitTypes.AreaUnit(general["area_unit"]))
+        area_unit_abbr = QgsUnitTypes.toAbbreviatedString(Qgis.AreaUnit(general["area_unit"]))
 
         rows = []
         rows.append(["Sampling Report"])

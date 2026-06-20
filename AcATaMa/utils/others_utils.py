@@ -23,7 +23,7 @@ import xml.etree.ElementTree as ET
 
 import numpy as np
 from osgeo import gdal, gdal_array
-from qgis.core import QgsUnitTypes
+from qgis.core import Qgis
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QApplication, QProgressDialog
 
@@ -435,15 +435,15 @@ def get_epsilon(for_crs):
     unit = for_crs.mapUnits()
 
     epsilon_values = {
-        QgsUnitTypes.DistanceUnit.DistanceMeters: 1e-6,  # Meters (UTM, projected systems)
-        QgsUnitTypes.DistanceUnit.DistanceKilometers: 1e-9,  # Kilometers
-        QgsUnitTypes.DistanceUnit.DistanceFeet: 1e-5,  # Feet (imperial units)
-        QgsUnitTypes.DistanceUnit.DistanceYards: 1e-5,  # Yards
-        QgsUnitTypes.DistanceUnit.DistanceMiles: 1e-8,  # Miles
-        QgsUnitTypes.DistanceUnit.DistanceNauticalMiles: 1e-8,  # Nautical miles
-        QgsUnitTypes.DistanceUnit.DistanceCentimeters: 1e-4,  # Centimeters
-        QgsUnitTypes.DistanceUnit.DistanceMillimeters: 1e-3,  # Millimeters
-        QgsUnitTypes.DistanceUnit.DistanceDegrees: 1e-10,  # Degrees (Geographic CRS like EPSG:4326)
+        Qgis.DistanceUnit.Meters: 1e-6,  # Meters (UTM, projected systems)
+        Qgis.DistanceUnit.Kilometers: 1e-9,  # Kilometers
+        Qgis.DistanceUnit.Feet: 1e-5,  # Feet (imperial units)
+        Qgis.DistanceUnit.Yards: 1e-5,  # Yards
+        Qgis.DistanceUnit.Miles: 1e-8,  # Miles
+        Qgis.DistanceUnit.NauticalMiles: 1e-8,  # Nautical miles
+        Qgis.DistanceUnit.Centimeters: 1e-4,  # Centimeters
+        Qgis.DistanceUnit.Millimeters: 1e-3,  # Millimeters
+        Qgis.DistanceUnit.Degrees: 1e-10,  # Degrees (Geographic CRS like EPSG:4326)
     }
 
     # Default to meters epsilon if unit not found
@@ -461,15 +461,15 @@ def get_decimal_places(for_crs):
     unit = for_crs.mapUnits()
 
     decimal_places = {
-        QgsUnitTypes.DistanceUnit.DistanceMeters: 1,  # Meters (e.g., 10.1 m)
-        QgsUnitTypes.DistanceUnit.DistanceKilometers: 4,  # Kilometers (e.g., 0.0001 km = 0.1 m)
-        QgsUnitTypes.DistanceUnit.DistanceFeet: 1,  # Feet (e.g., 10.1 ft)
-        QgsUnitTypes.DistanceUnit.DistanceYards: 1,  # Yards (e.g., 10.1 yd)
-        QgsUnitTypes.DistanceUnit.DistanceMiles: 4,  # Miles (e.g., 0.0001 mi ≈ 0.16 m)
-        QgsUnitTypes.DistanceUnit.DistanceNauticalMiles: 4,  # Nautical miles
-        QgsUnitTypes.DistanceUnit.DistanceCentimeters: 0,  # Centimeters (integer precision is fine)
-        QgsUnitTypes.DistanceUnit.DistanceMillimeters: 0,  # Millimeters (integer precision is fine)
-        QgsUnitTypes.DistanceUnit.DistanceDegrees: 6,  # Degrees (Geographic CRS, e.g., 0.000001° ≈ 0.11 m at equator)
+        Qgis.DistanceUnit.Meters: 1,  # Meters (e.g., 10.1 m)
+        Qgis.DistanceUnit.Kilometers: 4,  # Kilometers (e.g., 0.0001 km = 0.1 m)
+        Qgis.DistanceUnit.Feet: 1,  # Feet (e.g., 10.1 ft)
+        Qgis.DistanceUnit.Yards: 1,  # Yards (e.g., 10.1 yd)
+        Qgis.DistanceUnit.Miles: 4,  # Miles (e.g., 0.0001 mi ≈ 0.16 m)
+        Qgis.DistanceUnit.NauticalMiles: 4,  # Nautical miles
+        Qgis.DistanceUnit.Centimeters: 0,  # Centimeters (integer precision is fine)
+        Qgis.DistanceUnit.Millimeters: 0,  # Millimeters (integer precision is fine)
+        Qgis.DistanceUnit.Degrees: 6,  # Degrees (Geographic CRS, e.g., 0.000001° ≈ 0.11 m at equator)
     }
 
     # Default to 1 decimal place if unit is unknown

@@ -20,7 +20,7 @@
 
 import os
 
-from qgis.core import QgsGeometry, QgsMapLayerProxyModel, QgsPoint, QgsWkbTypes
+from qgis.core import Qgis, QgsGeometry, QgsMapLayerProxyModel, QgsPoint
 from qgis.gui import QgsMapCanvas, QgsMapToolPan, QgsRubberBand, QgsVertexMarker
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import QEvent, QSettings, Qt, QTimer, pyqtSlot
@@ -101,9 +101,9 @@ class Marker:
         horiz_line = QgsGeometry.fromPolyline([left_point, right_point])
         vert_line = QgsGeometry.fromPolyline([top_point, bottom_point])
 
-        cross_rb = QgsRubberBand(self.canvas, QgsWkbTypes.GeometryType.LineGeometry)
+        cross_rb = QgsRubberBand(self.canvas, Qgis.GeometryType.Line)
         cross_rb.setColor(QColor(255, 0, 0))
-        cross_rb.reset(QgsWkbTypes.GeometryType.LineGeometry)
+        cross_rb.reset(Qgis.GeometryType.Line)
         cross_rb.addGeometry(horiz_line, None)
         cross_rb.addGeometry(vert_line, None)
 

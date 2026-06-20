@@ -747,11 +747,11 @@ def restore(yml_file_path):
 
         analysis = Analysis(response_design)
         aa_cfg = yaml_config["analysis"]["accuracy_assessment"]
-        if aa_cfg["area_unit"] in [e.value for e in QgsUnitTypes.AreaUnit]:
-            analysis.area_unit = QgsUnitTypes.AreaUnit(aa_cfg["area_unit"])
+        if aa_cfg["area_unit"] in [e.value for e in Qgis.AreaUnit]:
+            analysis.area_unit = Qgis.AreaUnit(aa_cfg["area_unit"])
         else:  # old format
             area_unit, success = QgsUnitTypes.stringToAreaUnit(aa_cfg["area_unit"])
-            analysis.area_unit = area_unit if success else QgsUnitTypes.AreaUnit.AreaSquareMeters
+            analysis.area_unit = area_unit if success else Qgis.AreaUnit.SquareMeters
         analysis.z_score = aa_cfg["z_score"]
         analysis.csv_separator = aa_cfg["csv_separator"]
         analysis.csv_decimal = aa_cfg["csv_decimal"]

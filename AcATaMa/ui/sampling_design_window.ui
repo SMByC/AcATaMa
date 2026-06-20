@@ -50,11 +50,26 @@
         <widget class="QWidget" name="widget_2" native="true">
          <layout class="QHBoxLayout" name="horizontalLayout_8">
           <item>
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;img height=&quot;90&quot;  src=&quot;:/plugins/AcATaMa/icons/simple_sampling.svg&quot;/&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-           </widget>
+            <widget class="QLabel" name="label">
+             <property name="minimumSize">
+              <size>
+               <width>108</width>
+               <height>90</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>108</width>
+               <height>90</height>
+              </size>
+             </property>
+             <property name="pixmap">
+              <pixmap>:/plugins/AcATaMa/icons/simple_sampling.svg</pixmap>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
+             </property>
+            </widget>
           </item>
           <item>
            <widget class="QLabel" name="label_8">
@@ -657,11 +672,26 @@ It set automatically from image if the layer has the nodata value set.</string>
         <widget class="QWidget" name="widget_18" native="true">
          <layout class="QHBoxLayout" name="horizontalLayout_10">
           <item>
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;img height=&quot;90&quot;  src=&quot;:/plugins/AcATaMa/icons/stratified_sampling.svg&quot;/&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-           </widget>
+            <widget class="QLabel" name="label_3">
+             <property name="minimumSize">
+              <size>
+               <width>108</width>
+               <height>90</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>108</width>
+               <height>90</height>
+              </size>
+             </property>
+             <property name="pixmap">
+              <pixmap>:/plugins/AcATaMa/icons/stratified_sampling.svg</pixmap>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
+             </property>
+            </widget>
           </item>
           <item>
            <widget class="QLabel" name="label_11">
@@ -1329,11 +1359,26 @@ It set automatically from image if the layer has the nodata value set.</string>
         <widget class="QWidget" name="widget_3" native="true">
          <layout class="QHBoxLayout" name="horizontalLayout_9">
           <item>
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;img height=&quot;90&quot;  src=&quot;:/plugins/AcATaMa/icons/systematic_sampling.svg&quot;/&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-           </widget>
+            <widget class="QLabel" name="label_2">
+             <property name="minimumSize">
+              <size>
+               <width>108</width>
+               <height>90</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>108</width>
+               <height>90</height>
+              </size>
+             </property>
+             <property name="pixmap">
+              <pixmap>:/plugins/AcATaMa/icons/systematic_sampling.svg</pixmap>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
+             </property>
+            </widget>
           </item>
           <item>
            <widget class="QLabel" name="label_25">

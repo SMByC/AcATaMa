@@ -62,9 +62,9 @@ class Analysis:
 
         # define the base area unit based on the thematic map distance unit
         self.dist_unit = self.thematic_map.qgs_layer.crs().mapUnits()
-        if self.dist_unit == QgsUnitTypes.DistanceUnit.DistanceUnknownUnit:
+        if self.dist_unit == Qgis.DistanceUnit.Unknown:
             # thematic map with unknown map unit
-            self.dist_unit = QgsUnitTypes.DistanceUnit.DistanceMeters
+            self.dist_unit = Qgis.DistanceUnit.Meters
         self.base_area_unit = QgsUnitTypes.distanceToAreaUnit(self.dist_unit)
 
     @wait_process
@@ -181,8 +181,8 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
 
         # fill the area units
         self.area_unit.clear()
-        for area_unit in sorted(QgsUnitTypes.AreaUnit, key=lambda x: x.value):
-            if area_unit == QgsUnitTypes.AreaUnit.AreaUnknownUnit:
+        for area_unit in sorted(Qgis.AreaUnit, key=lambda x: x.value):
+            if area_unit == Qgis.AreaUnit.Unknown:
                 continue
             self.area_unit.addItem(
                 f"{QgsUnitTypes.toString(area_unit)} ({QgsUnitTypes.toAbbreviatedString(area_unit)})"
@@ -194,7 +194,7 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
             self.analysis.area_unit = QgsUnitTypes.distanceToAreaUnit(self.analysis.dist_unit)
             self.area_unit.setCurrentIndex(self.analysis.area_unit)
             # thematic map with unknown map unit
-            if self.analysis.thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnit.DistanceUnknownUnit:
+            if self.analysis.thematic_map.qgs_layer.crs().mapUnits() == Qgis.DistanceUnit.Unknown:
                 self.MsgBar.pushMessage(
                     f'The thematic map "{self.analysis.thematic_map.qgs_layer.name()}" does not have a valid map unit, '
                     f'considering "{QgsUnitTypes.toString(self.analysis.dist_unit)}" as the base unit!',
@@ -240,7 +240,7 @@ class AccuracyAssessmentWindow(QDialog, FORM_CLASS):
 
         # set adjust variables from window
         self.analysis.z_score = self.z_score.value()
-        self.analysis.area_unit = QgsUnitTypes.AreaUnit(self.area_unit.currentIndex())
+        self.analysis.area_unit = Qgis.AreaUnit(self.area_unit.currentIndex())
         # first compute the accuracy assessment
         self.analysis.compute()
         # set content results in HTML

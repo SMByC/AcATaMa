@@ -23,7 +23,7 @@ import csv
 import os
 
 import numpy as np
-from qgis.core import QgsUnitTypes
+from qgis.core import Qgis
 
 from AcATaMa.utils.qgis_utils import get_source_from
 from AcATaMa.utils.system_utils import error_handler
@@ -108,7 +108,7 @@ def get_html(accu_asse):
     )
 
     # warning block if the thematic has a geographic units
-    if accu_asse.base_area_unit == QgsUnitTypes.AreaUnit.AreaSquareDegrees:
+    if accu_asse.base_area_unit == Qgis.AreaUnit.SquareDegrees:
         html += (
             "<p style='color:black;background-color:#ffc53a;white-space:pre;padding:4px'><strong>Warning!</strong><br/>"
             "The thematic map has a geographic coordinate system, therefore all area values are not accurate.<br/>"

@@ -35,7 +35,6 @@ from qgis.core import (
     QgsTask,
     QgsUnitTypes,
     QgsVectorFileWriter,
-    QgsWkbTypes,
 )
 from qgis.PyQt.QtCore import QVariant
 
@@ -237,7 +236,7 @@ def simple_random_sampling_finished(exception, result=None):
         )
     # check the thematic map unit to calculate the minimum distances
     if sampling_conf["min_distance"] > 0:
-        if sampling.thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnit.DistanceUnknownUnit:
+        if sampling.thematic_map.qgs_layer.crs().mapUnits() == Qgis.DistanceUnit.Unknown:
             sampling_report.MsgBar.pushMessage(
                 f'The thematic map "{sampling.thematic_map.qgs_layer.name()}" does not have a valid map unit, '
                 f'AcATaMa is using "{QgsUnitTypes.toString(sampling_layer_generated.crs().mapUnits())}"'
@@ -457,7 +456,7 @@ def stratified_random_sampling_finished(exception, result=None):
         )
     # check the thematic map unit to calculate the minimum distances
     if sampling_conf["min_distance"] > 0:
-        if sampling.thematic_map.qgs_layer.crs().mapUnits() == QgsUnitTypes.DistanceUnit.DistanceUnknownUnit:
+        if sampling.thematic_map.qgs_layer.crs().mapUnits() == Qgis.DistanceUnit.Unknown:
             sampling_report.MsgBar.pushMessage(
                 f'The thematic map "{sampling.thematic_map.qgs_layer.name()}" does not have a valid map unit, '
                 f'AcATaMa is using "{QgsUnitTypes.toString(sampling_layer_generated.crs().mapUnits())}"'
@@ -745,7 +744,7 @@ class Sampling:
         writer = QgsVectorFileWriter.create(
             self.output_file,
             fields,
-            QgsWkbTypes.Type.Point,
+            Qgis.WkbType.Point,
             thematic_CRS,
             QgsProject.instance().transformContext(),
             save_options,
@@ -833,7 +832,7 @@ class Sampling:
         writer = QgsVectorFileWriter.create(
             self.output_file,
             fields,
-            QgsWkbTypes.Type.Point,
+            Qgis.WkbType.Point,
             thematic_CRS,
             QgsProject.instance().transformContext(),
             save_options,
@@ -1005,7 +1004,7 @@ class Sampling:
         writer = QgsVectorFileWriter.create(
             self.output_file,
             fields,
-            QgsWkbTypes.Type.Point,
+            Qgis.WkbType.Point,
             thematic_CRS,
             QgsProject.instance().transformContext(),
             save_options,

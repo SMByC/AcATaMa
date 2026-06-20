@@ -47,6 +47,7 @@ def classFactory(iface):  # pylint: disable=invalid-name
     pre_init_plugin()
 
     #
+    from . import resources_rc  # noqa: F401
     from .acatama import AcATaMa
 
     return AcATaMa(iface)

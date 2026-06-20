@@ -22,7 +22,7 @@ import xml.etree.ElementTree as ET
 from random import randrange
 
 import numpy as np
-from qgis.core import QgsPalettedRasterRenderer, QgsPointXY, QgsRaster
+from qgis.core import Qgis, QgsPalettedRasterRenderer, QgsPointXY
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QMessageBox
 
@@ -135,14 +135,14 @@ class Map:
     def get_pixel_value_from_xy(self, x, y):
         return (
             self.qgs_layer.dataProvider()
-            .identify(QgsPointXY(x, y), QgsRaster.IdentifyFormat.IdentifyFormatValue)
+            .identify(QgsPointXY(x, y), Qgis.RasterIdentifyFormat.Value)
             .results()[self.band]
         )
 
     def get_pixel_value_from_pnt(self, point):
         return (
             self.qgs_layer.dataProvider()
-            .identify(point, QgsRaster.IdentifyFormat.IdentifyFormatValue)
+            .identify(point, Qgis.RasterIdentifyFormat.Value)
             .results()[self.band]
         )
 

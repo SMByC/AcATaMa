@@ -32,7 +32,6 @@ from qgis.core import (
     QgsProject,
     QgsRectangle,
     QgsUnitTypes,
-    QgsWkbTypes,
 )
 from qgis.gui import QgsRubberBand
 from qgis.PyQt import uic
@@ -129,7 +128,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
             f"Set the default zoom radius for samples\n(units in {str_unit} based on sampling file selected)"
         )
         self.radiusFitToSample.setRange(
-            0, 360 if layer_dist_unit == QgsUnitTypes.DistanceUnit.DistanceDegrees else 10e6
+            0, 360 if layer_dist_unit == Qgis.DistanceUnit.Degrees else 10e6
         )
         decimal_places = get_decimal_places(for_crs=self.sampling_layer.crs())
         self.radiusFitToSample.setDecimals(decimal_places)
@@ -898,8 +897,7 @@ class LabelingButtonsConfig(QDialog, FORM_CLASS):
             if h == "":
                 for m, _ in enumerate(self.table_buttons.values()):
                     item_table = QTableWidgetItem()
-                    path = ":/plugins/AcATaMa/icons/trash.svg"
-                    icon = QIcon(path)
+                    icon = QIcon(":/plugins/AcATaMa/icons/trash.svg")
                     item_table.setIcon(icon)
                     item_table.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled)
                     item_table.setTextAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
@@ -1300,7 +1298,7 @@ class Tile:
 
     def hide(self):
         [
-            rubber_band.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
+            rubber_band.reset(Qgis.GeometryType.Polygon)
             for rubber_band in self.rbs_in_response_design_window
             if not isdeleted(rubber_band)
         ]

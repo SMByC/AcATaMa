@@ -20,7 +20,7 @@
 
 import os
 
-from qgis.core import Qgis, QgsMapLayer, QgsProject, QgsProviderRegistry, QgsRasterLayer, QgsStyle, QgsVectorLayer
+from qgis.core import Qgis, QgsProject, QgsProviderRegistry, QgsRasterLayer, QgsStyle, QgsVectorLayer
 from qgis.gui import QgsMapLayerComboBox, QgsRendererPropertiesDialog, QgsRendererRasterPropertiesWidget
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
@@ -243,10 +243,10 @@ class StyleEditorDialog(QDialog, FORM_CLASS):
 
         self.setWindowTitle(f"{self.layer.name()} - style editor")
 
-        if self.layer.type() == QgsMapLayer.LayerType.VectorLayer:
+        if self.layer.type() == Qgis.LayerType.Vector:
             self.StyleEditorWidget = QgsRendererPropertiesDialog(self.layer, QgsStyle(), True, parent)
 
-        if self.layer.type() == QgsMapLayer.LayerType.RasterLayer:
+        if self.layer.type() == Qgis.LayerType.Raster:
             self.StyleEditorWidget = QgsRendererRasterPropertiesWidget(self.layer, canvas, parent)
 
         self.scrollArea.setWidget(self.StyleEditorWidget)
