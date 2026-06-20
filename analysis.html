@@ -348,7 +348,7 @@
                   
   <section id="analysis">
 <h1>Analysis<a class="headerlink" href="#analysis" title="Link to this heading">#</a></h1>
-<p>The analysis component of thematic map accuracy assessment focuses on quantifying classification accuracy and estimating mapped class areas while accounting for uncertainty <span id="id1">[<a class="reference internal" href="references.html#id45" title="S. V. Stehman and R. L. Czaplewski. Design and analysis for thematic map accuracy assessment: fundamental principles. Remote Sensing of Environment, 64:331–344, 1998. doi:10.1016/S0034-4257(98)00010-8.">Stehman and Czaplewski, 1998</a>]</span>.</p>
+<p>The analysis component of thematic map accuracy assessment focuses on quantifying classification accuracy and estimating mapped class areas while accounting for uncertainty <span class="bibtex-citation" id="id1">[<a class="reference internal" href="references.html#id45" title="S. V. Stehman and R. L. Czaplewski. Design and analysis for thematic map accuracy assessment: fundamental principles. Remote Sensing of Environment, 64:331–344, 1998. doi:10.1016/S0034-4257(98)00010-8.">Stehman and Czaplewski, 1998</a>]</span>.</p>
 <a class="reference internal image-reference" href="_images/accuracy_assessment.webp"><img alt="_images/accuracy_assessment.webp" class="align-center" src="_images/accuracy_assessment.webp" style="width: 85%;" />
 </a>
 <section id="error-matrix">
@@ -395,14 +395,14 @@
 <h3>About Kappa<a class="headerlink" href="#about-kappa" title="Link to this heading">#</a></h3>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>AcATaMa does not include the Kappa coefficient in the results, because in general we don’t recommend using it. The kappa coefficient is widely used as a measure of thematic accuracy in remote sensing. However, <span id="id2">Foody [<a class="reference internal" href="references.html#id2" title="G. M. Foody. Explaining the unsuitability of the kappa coefficient in the assessment and comparison of the accuracy of thematic maps obtained by image classification. Remote Sensing of Environment, 239:111630, 2020.">2020</a>]</span> and <span id="id3">Pontius Jr and Millones [<a class="reference internal" href="references.html#id3" title="R. G. Pontius Jr and M. Millones. Death to kappa: birth of quantity disagreement and allocation disagreement for accuracy assessment. International Journal of Remote Sensing, 32(15):4407–4429, 2011.">2011</a>]</span> have shown that the Kappa coefficient is not a good measure of accuracy. <span id="id4">Pontius Jr and Millones [<a class="reference internal" href="references.html#id3" title="R. G. Pontius Jr and M. Millones. Death to kappa: birth of quantity disagreement and allocation disagreement for accuracy assessment. International Journal of Remote Sensing, 32(15):4407–4429, 2011.">2011</a>]</span> argued that Kappa indices are redundant, useless, and/or flawed and should be abandoned because they do not provide any information helping in the purpose of accuracy assessment and map comparison. <span id="id5">Foody [<a class="reference internal" href="references.html#id2" title="G. M. Foody. Explaining the unsuitability of the kappa coefficient in the assessment and comparison of the accuracy of thematic maps obtained by image classification. Remote Sensing of Environment, 239:111630, 2020.">2020</a>]</span> said that while Kappa is a useful measure of agreement, it is not a good measure of accuracy.</p>
+<p>AcATaMa does not include the Kappa coefficient in the results, because in general we don’t recommend using it. The kappa coefficient is widely used as a measure of thematic accuracy in remote sensing. However, <span class="bibtex-citation" id="id2">Foody [<a class="reference internal" href="references.html#id2" title="G. M. Foody. Explaining the unsuitability of the kappa coefficient in the assessment and comparison of the accuracy of thematic maps obtained by image classification. Remote Sensing of Environment, 239:111630, 2020.">2020</a>]</span> and <span class="bibtex-citation" id="id3">Pontius Jr and Millones [<a class="reference internal" href="references.html#id3" title="R. G. Pontius Jr and M. Millones. Death to kappa: birth of quantity disagreement and allocation disagreement for accuracy assessment. International Journal of Remote Sensing, 32(15):4407–4429, 2011.">2011</a>]</span> have shown that the Kappa coefficient is not a good measure of accuracy. <span class="bibtex-citation" id="id4">Pontius Jr and Millones [<a class="reference internal" href="references.html#id3" title="R. G. Pontius Jr and M. Millones. Death to kappa: birth of quantity disagreement and allocation disagreement for accuracy assessment. International Journal of Remote Sensing, 32(15):4407–4429, 2011.">2011</a>]</span> argued that Kappa indices are redundant, useless, and/or flawed and should be abandoned because they do not provide any information helping in the purpose of accuracy assessment and map comparison. <span class="bibtex-citation" id="id5">Foody [<a class="reference internal" href="references.html#id2" title="G. M. Foody. Explaining the unsuitability of the kappa coefficient in the assessment and comparison of the accuracy of thematic maps obtained by image classification. Remote Sensing of Environment, 239:111630, 2020.">2020</a>]</span> said that while Kappa is a useful measure of agreement, it is not a good measure of accuracy.</p>
 </div>
 </section>
 </section>
 <section id="area-estimation">
 <h2>Area Estimation<a class="headerlink" href="#area-estimation" title="Link to this heading">#</a></h2>
 <p>The area estimation component of accuracy assessment adjusts the mapped class areas based on accuracy assessment results, ensuring <strong>unbiased and statistically more precise estimates</strong>.</p>
-<p>According to <span id="id6">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span>, relying solely on sample counts can introduce significant bias, particularly in land change analyses where errors in classification disproportionately affect small or rare classes. By incorporating adjustments using strata areas in the estimations derived from the error matrix, area estimates are corrected to better reflect true land cover proportions.</p>
+<p>According to <span class="bibtex-citation" id="id6">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span>, relying solely on sample counts can introduce significant bias, particularly in land change analyses where errors in classification disproportionately affect small or rare classes. By incorporating adjustments using strata areas in the estimations derived from the error matrix, area estimates are corrected to better reflect true land cover proportions.</p>
 <section id="class-area-adjusted">
 <h3>Class Area Adjusted<a class="headerlink" href="#class-area-adjusted" title="Link to this heading">#</a></h3>
 <p>The accuracy assessment serves to derive the uncertainty of the map area estimates. Whereas the map provides a single area estimate for each class without confidence interval, the accuracy estimates:</p>
@@ -410,7 +410,7 @@
 <li><p>Adjust this estimate</p></li>
 <li><p>Provide confidence intervals as estimates of uncertainty</p></li>
 </ul>
-<p>The adjusted area estimates can be considerably higher or lower than the map estimates <span id="id7">[<a class="reference internal" href="references.html#id6" title="FAO. Collect earth: land use and land cover assessment through augmented visual interpretation. 2016.">FAO, 2016</a>]</span>.</p>
+<p>The adjusted area estimates can be considerably higher or lower than the map estimates <span class="bibtex-citation" id="id7">[<a class="reference internal" href="references.html#id6" title="FAO. Collect earth: land use and land cover assessment through augmented visual interpretation. 2016.">FAO, 2016</a>]</span>.</p>
 </section>
 <section id="confidence-intervals">
 <h3>Confidence Intervals<a class="headerlink" href="#confidence-intervals" title="Link to this heading">#</a></h3>
@@ -439,47 +439,47 @@
 <tbody>
 <tr class="row-even"><td><p><strong>Simple Random (SRS)</strong></p></td>
 <td><p>Accuracy</p></td>
-<td><p><span id="id8">Stehman and Foody [<a class="reference internal" href="references.html#id46" title="S. V. Stehman and G. M. Foody. Accuracy assessment. In T. A. Warner, D. M. Nellis, and G. M. Foody, editors, The SAGE Handbook of Remote Sensing, pages 297–309. SAGE Publications, 2009. doi:10.4135/9780857021052.n21.">2009</a>]</span>: Table 21.3</p></td>
+<td><p><span class="bibtex-citation" id="id8">Stehman and Foody [<a class="reference internal" href="references.html#id46" title="S. V. Stehman and G. M. Foody. Accuracy assessment. In T. A. Warner, D. M. Nellis, and G. M. Foody, editors, The SAGE Handbook of Remote Sensing, pages 297–309. SAGE Publications, 2009. doi:10.4135/9780857021052.n21.">2009</a>]</span>: Table 21.3</p></td>
 </tr>
 <tr class="row-odd"><td><p></p></td>
 <td><p>Estimating area and confidence intervals</p></td>
-<td><p><span id="id9">Stehman [<a class="reference internal" href="references.html#id43" title="S. V. Stehman. Estimating area from an accuracy assessment error matrix. Remote Sensing of Environment, 132:202–211, 2013.">2013</a>]</span>: Eq. 13 and 44</p></td>
+<td><p><span class="bibtex-citation" id="id9">Stehman [<a class="reference internal" href="references.html#id43" title="S. V. Stehman. Estimating area from an accuracy assessment error matrix. Remote Sensing of Environment, 132:202–211, 2013.">2013</a>]</span>: Eq. 13 and 44</p></td>
 </tr>
 <tr class="row-even"><td><p></p></td>
 <td><p>Sample size</p></td>
-<td><p><span id="id10">Cochran [<a class="reference internal" href="references.html#id9" title="W. G. Cochran. Sampling Techniques. John Wiley &amp; Sons, 3rd edition, 1977.">1977</a>]</span>: Eq. 4.2</p></td>
+<td><p><span class="bibtex-citation" id="id10">Cochran [<a class="reference internal" href="references.html#id9" title="W. G. Cochran. Sampling Techniques. John Wiley &amp; Sons, 3rd edition, 1977.">1977</a>]</span>: Eq. 4.2</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Stratified Random (STR)</strong></p></td>
 <td><p>Accuracy</p></td>
-<td><p><span id="id11">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id36" title="P. Olofsson, G. M. Foody, S. V. Stehman, and C. E. Woodcock. Making better use of accuracy data in land change studies: estimating accuracy and area and quantifying uncertainty using stratified estimation. Remote Sensing of Environment, 129:122–131, 2013. doi:10.1016/j.rse.2012.10.031.">2013</a>]</span>: Eq. 1, 2 and 3</p></td>
+<td><p><span class="bibtex-citation" id="id11">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id36" title="P. Olofsson, G. M. Foody, S. V. Stehman, and C. E. Woodcock. Making better use of accuracy data in land change studies: estimating accuracy and area and quantifying uncertainty using stratified estimation. Remote Sensing of Environment, 129:122–131, 2013. doi:10.1016/j.rse.2012.10.031.">2013</a>]</span>: Eq. 1, 2 and 3</p></td>
 </tr>
 <tr class="row-even"><td><p></p></td>
 <td><p>Estimating area and confidence intervals</p></td>
-<td><p><span id="id12">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id36" title="P. Olofsson, G. M. Foody, S. V. Stehman, and C. E. Woodcock. Making better use of accuracy data in land change studies: estimating accuracy and area and quantifying uncertainty using stratified estimation. Remote Sensing of Environment, 129:122–131, 2013. doi:10.1016/j.rse.2012.10.031.">2013</a>]</span>: Eq. 10 and 11</p></td>
+<td><p><span class="bibtex-citation" id="id12">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id36" title="P. Olofsson, G. M. Foody, S. V. Stehman, and C. E. Woodcock. Making better use of accuracy data in land change studies: estimating accuracy and area and quantifying uncertainty using stratified estimation. Remote Sensing of Environment, 129:122–131, 2013. doi:10.1016/j.rse.2012.10.031.">2013</a>]</span>: Eq. 10 and 11</p></td>
 </tr>
 <tr class="row-odd"><td><p></p></td>
 <td><p>Sample size per strata</p></td>
-<td><p><span id="id13">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span>: Eq. 13</p></td>
+<td><p><span class="bibtex-citation" id="id13">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span>: Eq. 13</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Systematic (SYS)</strong></p></td>
 <td><p>Accuracy</p></td>
-<td><p><span id="id14">Stehman and Foody [<a class="reference internal" href="references.html#id46" title="S. V. Stehman and G. M. Foody. Accuracy assessment. In T. A. Warner, D. M. Nellis, and G. M. Foody, editors, The SAGE Handbook of Remote Sensing, pages 297–309. SAGE Publications, 2009. doi:10.4135/9780857021052.n21.">2009</a>]</span>: Table 21.3</p></td>
+<td><p><span class="bibtex-citation" id="id14">Stehman and Foody [<a class="reference internal" href="references.html#id46" title="S. V. Stehman and G. M. Foody. Accuracy assessment. In T. A. Warner, D. M. Nellis, and G. M. Foody, editors, The SAGE Handbook of Remote Sensing, pages 297–309. SAGE Publications, 2009. doi:10.4135/9780857021052.n21.">2009</a>]</span>: Table 21.3</p></td>
 </tr>
 <tr class="row-odd"><td><p></p></td>
 <td><p>Estimating area and confidence intervals</p></td>
-<td><p><span id="id15">Stehman [<a class="reference internal" href="references.html#id42" title="S. V. Stehman. Impact of sample size allocation when using stratified random sampling to estimate accuracy and area of land-cover change. Remote Sensing Letters, 3:111–120, 2012.">2012</a>]</span>: Eq. 3</p></td>
+<td><p><span class="bibtex-citation" id="id15">Stehman [<a class="reference internal" href="references.html#id42" title="S. V. Stehman. Impact of sample size allocation when using stratified random sampling to estimate accuracy and area of land-cover change. Remote Sensing Letters, 3:111–120, 2012.">2012</a>]</span>: Eq. 3</p></td>
 </tr>
 <tr class="row-even"><td><p></p></td>
 <td><p>Sample size</p></td>
-<td><p><span id="id16">Cochran [<a class="reference internal" href="references.html#id9" title="W. G. Cochran. Sampling Techniques. John Wiley &amp; Sons, 3rd edition, 1977.">1977</a>]</span>: Eq. 4.2</p></td>
+<td><p><span class="bibtex-citation" id="id16">Cochran [<a class="reference internal" href="references.html#id9" title="W. G. Cochran. Sampling Techniques. John Wiley &amp; Sons, 3rd edition, 1977.">1977</a>]</span>: Eq. 4.2</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Post-Stratified</strong></p></td>
 <td><p>Estimating area and confidence intervals</p></td>
-<td><p><span id="id17">Stehman [<a class="reference internal" href="references.html#id43" title="S. V. Stehman. Estimating area from an accuracy assessment error matrix. Remote Sensing of Environment, 132:202–211, 2013.">2013</a>]</span>: Eq. 48</p></td>
+<td><p><span class="bibtex-citation" id="id17">Stehman [<a class="reference internal" href="references.html#id43" title="S. V. Stehman. Estimating area from an accuracy assessment error matrix. Remote Sensing of Environment, 132:202–211, 2013.">2013</a>]</span>: Eq. 48</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Uncertainty</strong></p></td>
 <td><p>All designs</p></td>
-<td><p><span id="id18">McMurray <em>et al.</em> [<a class="reference internal" href="references.html#id31" title="A. McMurray, T. Pearson, and F. Casarim. Guidance on Applying the Monte Carlo Approach to Uncertainty Analyses in Forestry and Greenhouse Gas Accounting. Winrock International, 2017.">2017</a>]</span>: Page 17</p></td>
+<td><p><span class="bibtex-citation" id="id18">McMurray <em>et al.</em> [<a class="reference internal" href="references.html#id31" title="A. McMurray, T. Pearson, and F. Casarim. Guidance on Applying the Monte Carlo Approach to Uncertainty Analyses in Forestry and Greenhouse Gas Accounting. Winrock International, 2017.">2017</a>]</span>: Page 17</p></td>
 </tr>
 </tbody>
 </table>
