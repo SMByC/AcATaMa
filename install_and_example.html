@@ -320,7 +320,10 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#external-python-libraries">External Python libraries</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
 </ul>
             </nav>
@@ -346,6 +349,11 @@
 <blockquote>
 <div><p><strong>Warning:</strong> The latest versions of AcATaMa require QGIS 3.36 or newer due to use of newer QGIS API enum forms and QGIS 4 compatibility changes. Please update QGIS to at least the current LTR version (recommended) or the latest version.</p>
 </div></blockquote>
+<section id="external-python-libraries">
+<h3>External Python libraries<a class="headerlink" href="#external-python-libraries" title="Link to this heading">#</a></h3>
+<p>AcATaMa uses Dask for parallel raster pixel counting. These Python libraries are distributed as a separate <code class="docutils literal notranslate"><span class="pre">extlibs.zip</span></code> release asset instead of being bundled in the plugin package.</p>
+<p>When the plugin starts and Dask is not available, AcATaMa downloads <code class="docutils literal notranslate"><span class="pre">extlibs.zip</span></code> from the matching GitHub release and extracts it into the QGIS profile plugin folder. If the computer is offline, download <code class="docutils literal notranslate"><span class="pre">extlibs.zip</span></code> manually from the same release as the installed plugin and extract its contents into <code class="docutils literal notranslate"><span class="pre">QGIS3/profiles/default/python/plugins/AcATaMa/extlibs</span></code>.</p>
+</section>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
@@ -457,7 +465,10 @@
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#external-python-libraries">External Python libraries</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
 </ul>
   </nav></div>
