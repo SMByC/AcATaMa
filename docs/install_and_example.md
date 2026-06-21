@@ -10,6 +10,12 @@ AcATaMa is available from the official QGIS Plugin Repository. To install it:
 
 > **Warning:** The latest versions of AcATaMa require QGIS 3.36 or newer due to use of newer QGIS API enum forms and QGIS 4 compatibility changes. Please update QGIS to at least the current LTR version (recommended) or the latest version.
 
+### External Python libraries
+
+AcATaMa uses Dask for parallel raster pixel counting. These Python libraries are distributed as a separate `extlibs.zip` release asset instead of being bundled in the plugin package.
+
+When the plugin starts and Dask is not available, AcATaMa downloads `extlibs.zip` from the matching GitHub release and extracts it into the QGIS profile plugin folder. If the computer is offline, download `extlibs.zip` manually from the same release as the installed plugin and extract its contents into `QGIS3/profiles/default/python/plugins/AcATaMa/extlibs`.
+
 ## Examples
 
 ```{note}

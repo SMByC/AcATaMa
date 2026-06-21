@@ -1,3 +1,6 @@
 *.gpkg filter=lfs diff=lfs merge=lfs -text
 *.tif filter=lfs diff=lfs merge=lfs -text
 *.qml filter=lfs diff=lfs merge=lfs -text
+AcATaMa/extlibs/ export-ignore
+AcATaMa/resources.qrc export-ignore
+AcATaMa/resources_rc.py export-ignore

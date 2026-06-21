@@ -31,32 +31,47 @@ jobs:
         id: get_tag
         run: |
           LATEST_TAG=$(git tag --sort=-creatordate | head -1)
-          echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          if [[ ! "$LATEST_TAG" =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
+            echo "Invalid release tag: $LATEST_TAG" >&2
+            exit 1
+          fi
+          printf 'tag=%s\n' "$LATEST_TAG" >> "$GITHUB_OUTPUT"
           echo "Latest tag: $LATEST_TAG"
 
-      - name: Install dask and dependencies into extlibs
+      - name: Build extlibs archive
         run: |
+          rm -rf extlibs_tmp extlibs.zip
           pip install \
-            --target=AcATaMa/extlibs \
+            --target=extlibs_tmp \
             --no-deps \
-            dask==2024.7.1 \
-            toolz \
-            cloudpickle \
-            fsspec \
-            packaging \
-            partd \
-            locket
+            -r requirements-extlibs.txt
 
           # Clean up unnecessary files
-          cd AcATaMa/extlibs
-          find . -type d \( -name "__pycache__" -o -name "*.dist-info" -o -name "*.egg-info" -o -name "tests" -o -name "test" -o -name "bin" \) -exec rm -rf {} + 2>/dev/null || true
-          find . -type f \( -name "*.pyc" -o -name "*.pyo" -o -name "*.so" -o -name "*.dll" -o -name "*.dylib" \) -delete 2>/dev/null || true
+          cd extlibs_tmp
+          python - <<'PY'
+          from pathlib import Path
+          import shutil
+
+          root = Path(".")
+          for path in sorted(root.rglob("*"), reverse=True):
+              if path.is_dir() and (path.name in {"__pycache__", "tests", "test", "bin"} or path.name.endswith((".dist-info", ".egg-info"))):
+                  shutil.rmtree(path, ignore_errors=True)
+          for path in root.rglob("*"):
+              if path.is_file() and path.suffix in {".pyc", ".pyo", ".so", ".dll", ".dylib"}:
+                  path.unlink(missing_ok=True)
+          PY
+          PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="$PWD" python -c "import dask; assert callable(dask.compute); assert callable(dask.delayed)"
+          zip -9r ../extlibs.zip .
 
       - name: Build package
-        run: qgis-plugin-ci package ${{ steps.get_tag.outputs.tag }} --asset-path AcATaMa/extlibs
+        env:
+          PACKAGE_TAG: ${{ steps.get_tag.outputs.tag }}
+        run: qgis-plugin-ci package "$PACKAGE_TAG"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: AcATaMa-${{ steps.get_tag.outputs.tag }}
-          path: AcATaMa.${{ steps.get_tag.outputs.tag }}.zip
+          path: |
+            AcATaMa.${{ steps.get_tag.outputs.tag }}.zip
+            extlibs.zip

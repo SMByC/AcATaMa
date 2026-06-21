@@ -57,6 +57,7 @@ AcATaMa is a QGIS plugin. To set up your development environment:
    - **macOS**: `~/Library/Application Support/QGIS/QGIS3/profiles/default/python/plugins/`
 2. Restart QGIS and enable the plugin via `Plugins` → `Manage and Install Plugins…`
 3. (Optional) Install the [plugin reloader](https://plugins.qgis.org/plugins/plugin_reloader) for easier plugin development.
+4. For source checkouts using `version=dev`, install development dependencies with `uv sync --extra test` or place external libraries in `AcATaMa/extlibs`; development metadata does not auto-download release assets.
 
 #### Running Tests
 
@@ -71,6 +72,10 @@ Then run the test suite:
 ```bash
 uv run pytest tests/
 ```
+
+#### External Library Package
+
+Release builds publish `extlibs.zip` separately from the AcATaMa plugin zip. The archive is built from `requirements-extlibs.txt` and must contain dependency packages at the archive root so they extract directly into `AcATaMa/extlibs`.
 
 ### Contributing Documentation
 

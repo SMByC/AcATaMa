@@ -2,5 +2,7 @@
 *.zip
 *.db
 AcATaMa/extlibs/
+extlibs_tmp/
+extlibs/
 .venv
 *.aux.xml

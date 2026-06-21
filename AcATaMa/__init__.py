@@ -19,21 +19,14 @@
  This script initializes the plugin, making it known to QGIS.
 """
 
-import os
-import site
+from .utils import extlibs
 
 
 def pre_init_plugin():
-    extra_libs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "extlibs"))
-    if os.path.isdir(extra_libs_path):
-        # add to python path
-        site.addsitedir(extra_libs_path)
-        # register with pkg_resources if available (not bundled in Python 3.12+)
-        try:
-            import pkg_resources
-            pkg_resources.working_set.add_entry(extra_libs_path)
-        except:
-            pass
+    try:
+        extlibs.ensure_extlibs()
+    except extlibs.ExtlibsError as error:
+        extlibs.show_install_error(error)
 
 
 # noinspection PyPep8Naming

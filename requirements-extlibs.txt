@@ -1,0 +1,9 @@
+dask==2024.7.1
+click==8.3.1
+cloudpickle==3.1.2
+fsspec==2026.6.0
+locket==1.0.0
+packaging==26.2
+partd==1.4.2
+PyYAML==6.0.3
+toolz==1.1.0

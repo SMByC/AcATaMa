@@ -30,39 +30,69 @@ jobs:
       - name: Install qgis-plugin-ci
         run: pip install qgis-plugin-ci
 
-      - name: Install dask and dependencies into extlibs
+      - name: Build extlibs archive
         run: |
+          rm -rf extlibs_tmp extlibs.zip
           pip install \
-            --target=AcATaMa/extlibs \
+            --target=extlibs_tmp \
             --no-deps \
-            dask==2024.7.1 \
-            toolz \
-            cloudpickle \
-            fsspec \
-            packaging \
-            partd \
-            locket
+            -r requirements-extlibs.txt
 
           # Clean up unnecessary files
-          cd AcATaMa/extlibs
-          find . -type d \( -name "__pycache__" -o -name "*.dist-info" -o -name "*.egg-info" -o -name "tests" -o -name "test" -o -name "bin" \) -exec rm -rf {} + 2>/dev/null || true
-          find . -type f \( -name "*.pyc" -o -name "*.pyo" -o -name "*.so" -o -name "*.dll" -o -name "*.dylib" \) -delete 2>/dev/null || true
+          cd extlibs_tmp
+          python - <<'PY'
+          from pathlib import Path
+          import shutil
+
+          root = Path(".")
+          for path in sorted(root.rglob("*"), reverse=True):
+              if path.is_dir() and (path.name in {"__pycache__", "tests", "test", "bin"} or path.name.endswith((".dist-info", ".egg-info"))):
+                  shutil.rmtree(path, ignore_errors=True)
+          for path in root.rglob("*"):
+              if path.is_file() and path.suffix in {".pyc", ".pyo", ".so", ".dll", ".dylib"}:
+                  path.unlink(missing_ok=True)
+          PY
+          PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="$PWD" python -c "import dask; assert callable(dask.compute); assert callable(dask.delayed)"
+          zip -9r ../extlibs.zip .
 
       - name: Create GitHub Release
-        run: gh release create ${{ github.ref_name }} --title "${{ github.ref_name }}" --notes "Automated release"
+        run: |
+          if [[ ! "$RELEASE_TAG" =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
+            echo "Invalid release tag: $RELEASE_TAG" >&2
+            exit 1
+          fi
+          gh release create "$RELEASE_TAG" --title "$RELEASE_TAG" --notes "Automated release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ github.ref_name }}
 
       - name: Package and release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OSGEO_USERNAME: ${{ secrets.OSGEO_USERNAME }}
           OSGEO_PASSWORD: ${{ secrets.OSGEO_PASSWORD }}
+          RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          ARGS="--github-token $GITHUB_TOKEN --asset-path AcATaMa/extlibs"
-
-          if [ -n "$OSGEO_USERNAME" ] && [ -n "$OSGEO_PASSWORD" ]; then
-            ARGS="$ARGS --osgeo-username $OSGEO_USERNAME --osgeo-password $OSGEO_PASSWORD"
+          if [[ ! "$RELEASE_TAG" =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
+            echo "Invalid release tag: $RELEASE_TAG" >&2
+            exit 1
           fi
 
-          qgis-plugin-ci release ${{ github.ref_name }} $ARGS
+          ARGS=(--github-token "$GITHUB_TOKEN")
+
+          if [ -n "$OSGEO_USERNAME" ] && [ -n "$OSGEO_PASSWORD" ]; then
+            ARGS+=(--osgeo-username "$OSGEO_USERNAME" --osgeo-password "$OSGEO_PASSWORD")
+          fi
+
+          qgis-plugin-ci release "$RELEASE_TAG" "${ARGS[@]}"
+
+      - name: Upload extlibs release asset
+        run: |
+          if [[ ! "$RELEASE_TAG" =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
+            echo "Invalid release tag: $RELEASE_TAG" >&2
+            exit 1
+          fi
+          gh release upload "$RELEASE_TAG" extlibs.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ github.ref_name }}

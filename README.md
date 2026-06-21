@@ -33,6 +33,12 @@ AcATaMa is available from the official QGIS Plugin Repository. To install it:
 
 > **Note:** AcATaMa is compatible with both QGIS 3 (3.36+) and QGIS 4.
 
+### External Python libraries
+
+The AcATaMa plugin package does not bundle its external Python libraries. When Dask is not already available, AcATaMa downloads `extlibs.zip` from the matching GitHub release and installs it into the QGIS profile plugin directory.
+
+For offline installations, download `extlibs.zip` from the same AcATaMa release as the plugin and extract its contents into the plugin `extlibs` directory, for example `QGIS3/profiles/default/python/plugins/AcATaMa/extlibs`.
+
 ## About Us
 
 AcATaMa was developed by the Forest and Carbon Monitoring System (SMByC) at the Institute of Hydrology, Meteorology and Environmental Studies (IDEAM) in Colombia. SMByC is responsible for measuring and ensuring the accuracy of official national forest figures.

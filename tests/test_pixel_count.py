@@ -4,6 +4,7 @@ import pytest
 from osgeo import gdal
 
 from AcATaMa.core.map import auto_symbology_classification_render
+from AcATaMa.utils import others_utils
 from AcATaMa.utils.others_utils import (
     get_nodata_format,
     get_pixel_count_by_pixel_values,
@@ -12,6 +13,59 @@ from AcATaMa.utils.others_utils import (
     get_pixel_count_by_pixel_values_sequential,
 )
 from AcATaMa.utils.qgis_utils import load_layer
+
+
+def test_pixel_count_without_dask_uses_qgis_native(monkeypatch):
+    # Given: Dask is unavailable and QGIS native counting can produce a result
+    layer = object()
+    expected_pixel_count = {1: 2}
+    others_utils.storage_pixel_count_by_pixel_values.clear()
+    monkeypatch.setattr(others_utils, "dask_is_available", lambda: False)
+    monkeypatch.setattr(
+        others_utils,
+        "get_pixel_count_by_pixel_values_parallel",
+        lambda _layer, _band, _pixel_values, _nodata: pytest.fail("Dask path must be skipped"),
+    )
+    monkeypatch.setattr(
+        others_utils,
+        "get_pixel_count_by_pixel_values_qgis_native",
+        lambda _layer, _band, _pixel_values, _nodata: expected_pixel_count,
+    )
+    monkeypatch.setattr(
+        others_utils,
+        "get_pixel_count_by_pixel_values_sequential",
+        lambda _layer, _band, _pixel_values, _nodata: pytest.fail("Sequential path must not be needed"),
+    )
+
+    # When: pixel counts are requested through the dispatcher
+    pixel_count = others_utils.get_pixel_count_by_pixel_values(layer, band=1)
+
+    # Then: the QGIS native result is returned without touching Dask
+    assert pixel_count == expected_pixel_count
+
+
+def test_pixel_count_without_dask_falls_back_to_sequential_when_native_fails(monkeypatch):
+    # Given: Dask is unavailable and QGIS native counting returns no result
+    layer = object()
+    expected_pixel_count = {1: 2}
+    others_utils.storage_pixel_count_by_pixel_values.clear()
+    monkeypatch.setattr(others_utils, "dask_is_available", lambda: False)
+    monkeypatch.setattr(
+        others_utils,
+        "get_pixel_count_by_pixel_values_qgis_native",
+        lambda _layer, _band, _pixel_values, _nodata: None,
+    )
+    monkeypatch.setattr(
+        others_utils,
+        "get_pixel_count_by_pixel_values_sequential",
+        lambda _layer, _band, _pixel_values, _nodata: expected_pixel_count,
+    )
+
+    # When: pixel counts are requested through the dispatcher
+    pixel_count = others_utils.get_pixel_count_by_pixel_values(layer, band=1)
+
+    # Then: the sequential result is returned
+    assert pixel_count == expected_pixel_count
 
 
 def test_pixel_count_without_nodata_sequential(plugin, restore_config_file):
