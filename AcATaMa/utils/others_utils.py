@@ -18,6 +18,7 @@
  ***************************************************************************/
 """
 
+import importlib.util
 import re
 import xml.etree.ElementTree as ET
 
@@ -144,20 +145,23 @@ def get_pixel_count_by_pixel_values(layer, band, pixel_values=None, nodata=None)
     if (layer, band, nodata) in storage_pixel_count_by_pixel_values:
         return storage_pixel_count_by_pixel_values[(layer, band, nodata)]
 
-    # Try parallel processing with dask
-    try:
-        return get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values, nodata)
-    except Exception:
-        pass
+    # Try parallel processing with dask when available
+    if dask_is_available():
+        pixel_count = get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values, nodata)
+        if pixel_count is not None:
+            return pixel_count
 
     # Try QGIS native method
-    try:
-        return get_pixel_count_by_pixel_values_qgis_native(layer, band, pixel_values, nodata)
-    except Exception:
-        pass
+    pixel_count = get_pixel_count_by_pixel_values_qgis_native(layer, band, pixel_values, nodata)
+    if pixel_count is not None:
+        return pixel_count
 
     # Fallback to sequential processing
     return get_pixel_count_by_pixel_values_sequential(layer, band, pixel_values, nodata)
+
+
+def dask_is_available():
+    return importlib.util.find_spec("dask") is not None
 
 
 # --------------------------------------------------------------------------
@@ -266,7 +270,7 @@ def pixel_count_in_chunk(img_path, band, xoff, yoff, xsize, ysize):
 @wait_process
 def get_pixel_count_by_pixel_values_parallel(layer, band, pixel_values=None, nodata=None):
     """Get the total pixel count for each pixel values using parallel processing with dask."""
-    import dask
+    dask = importlib.import_module("dask")
 
     # progress dialog
     progress = QProgressDialog(
