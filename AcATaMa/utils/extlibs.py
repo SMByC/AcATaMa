@@ -118,8 +118,10 @@ def safe_extract(archive_path: Path, destination: Path) -> None:
 
 
 def download_extlibs(url: str, archive_path: Path) -> None:
+    if not url.startswith("https://"):
+        raise DownloadError(f"Refusing non-HTTPS download of AcATaMa external libraries: {url}")
     try:
-        urllib.request.urlretrieve(url, archive_path)
+        urllib.request.urlretrieve(url, archive_path)  # nosec B310 - scheme restricted to https above
     except (urllib.error.ContentTooShortError, urllib.error.URLError, OSError) as error:
         raise DownloadError(f"Cannot download AcATaMa external libraries from {url}") from error
 

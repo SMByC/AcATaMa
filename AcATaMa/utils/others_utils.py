@@ -20,7 +20,7 @@
 
 import importlib.util
 import re
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET  # nosec B405 - parses only QGIS-generated style XML, not untrusted input
 
 import numpy as np
 from osgeo import gdal, gdal_array
@@ -109,7 +109,7 @@ def get_unique_pixel_values(layer, band, nodata=None):
     current_style = layer.styleManager().currentStyle()
     layer_style = layer.styleManager().style(current_style)
     xml_style_str = layer_style.xmlData()
-    xml_style = ET.fromstring(xml_style_str)
+    xml_style = ET.fromstring(xml_style_str)  # nosec B314 - XML serialized in-process by QGIS, not external input
 
     # for singleband_pseudocolor
     items = xml_style.findall(f'pipe/rasterrenderer[@band="{band}"]/rastershader/colorrampshader/item')

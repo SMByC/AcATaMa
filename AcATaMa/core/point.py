@@ -49,8 +49,9 @@ class RandomPoint(Point):
         Args:
             extent (QgsRectangle): extent boundaries for generate random points inside it
         """
-        rx = extent.xMinimum() + (extent.xMaximum() - extent.xMinimum()) * random.random()
-        ry = extent.yMinimum() + (extent.yMaximum() - extent.yMinimum()) * random.random()
+        # statistical sampling positions, not a cryptographic use
+        rx = extent.xMinimum() + (extent.xMaximum() - extent.xMinimum()) * random.random()  # nosec B311
+        ry = extent.yMinimum() + (extent.yMaximum() - extent.yMinimum()) * random.random()  # nosec B311
         return cls(rx, ry)
 
     def in_valid_data(self, thematic_map):
@@ -127,7 +128,7 @@ class RandomPoint(Point):
         for x, y in ((_x, _y) for _x in x_list for _y in y_list):
             try:
                 neighbors.append(int(thematic_map.get_pixel_value_from_xy(x, y)))
-            except Exception:
+            except Exception:  # nosec B112 - neighbors outside the raster or in nodata are expected and skipped
                 continue
 
         return neighbors.count(pixel_class_value) > min_with_same_class

@@ -22,7 +22,7 @@ import functools
 import os
 import pathlib
 import re
-import subprocess
+import subprocess  # nosec B404 - used only to open files with the OS default application
 import sys
 import traceback
 from collections import OrderedDict
@@ -109,13 +109,13 @@ def open_file(filename):
 
     if sys.platform == "linux" or sys.platform == "linux2":
         # Linux
-        subprocess.call(["xdg-open", filename])
+        subprocess.call(["xdg-open", filename])  # nosec B603 B607 - fixed command from PATH, no shell, local file
     elif sys.platform == "darwin":
         # OS X
-        subprocess.call(["open", filename])
+        subprocess.call(["open", filename])  # nosec B603 B607 - fixed command from PATH, no shell, local file
     elif sys.platform == "win32":
         # Windows
-        os.startfile(filename)
+        os.startfile(filename)  # nosec B606 - opens a local file with its default application, no shell
 
 
 def output_file_is_OK(output_file):
@@ -279,5 +279,6 @@ def load_yaml(stream, loader_cls=SafeLoader):
         return loader.get_single_data()
     finally:
         loader.dispose()
+
 
 # --------------------------------------------------------------------------

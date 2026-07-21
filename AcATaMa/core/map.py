@@ -18,7 +18,7 @@
  ***************************************************************************/
 """
 
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET  # nosec B405 - parses only QGIS-generated style XML, not untrusted input
 from random import randrange
 
 import numpy as np
@@ -37,11 +37,8 @@ def auto_symbology_classification_render(layer, band):
     # fill categories
     categories = []
     for unique_value in unique_values:
-        categories.append(
-            QgsPalettedRasterRenderer.Class(
-                unique_value, QColor(randrange(0, 256), randrange(0, 256), randrange(0, 256)), str(unique_value)
-            )
-        )
+        color = QColor(randrange(0, 256), randrange(0, 256), randrange(0, 256))  # nosec B311 - display colors
+        categories.append(QgsPalettedRasterRenderer.Class(unique_value, color, str(unique_value)))
 
     renderer = QgsPalettedRasterRenderer(layer.dataProvider(), band, categories)
     layer.setRenderer(renderer)
@@ -59,7 +56,7 @@ def get_xml_style(layer, band):
     current_style = layer.styleManager().currentStyle()
     layer_style = layer.styleManager().style(current_style)
     xml_style_str = layer_style.xmlData()
-    xml_style = ET.fromstring(xml_style_str)
+    xml_style = ET.fromstring(xml_style_str)  # nosec B314 - XML serialized in-process by QGIS, not external input
 
     # for singleband_pseudocolor
     xml_style_items = xml_style.findall(f'pipe/rasterrenderer[@band="{band}"]/rastershader/colorrampshader/item')
@@ -140,11 +137,7 @@ class Map:
         )
 
     def get_pixel_value_from_pnt(self, point):
-        return (
-            self.qgs_layer.dataProvider()
-            .identify(point, Qgis.RasterIdentifyFormat.Value)
-            .results()[self.band]
-        )
+        return self.qgs_layer.dataProvider().identify(point, Qgis.RasterIdentifyFormat.Value).results()[self.band]
 
     def get_total_pixels_by_value(self, pixel_value):
         pixel_counts_by_value = get_pixel_count_by_pixel_values(self.qgs_layer, self.band, None, self.nodata)

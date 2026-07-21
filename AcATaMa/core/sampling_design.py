@@ -132,7 +132,7 @@ def do_simple_random_sampling():
         random_seed = sampling_design.random_seed_by_user_SimpRS.text()
         try:
             random_seed = int(random_seed)
-        except Exception:
+        except Exception:  # nosec B110 - non-numeric seed text is kept as string seed, valid for random.seed
             pass
     else:
         random_seed = None
@@ -345,7 +345,7 @@ def do_stratified_random_sampling():
         random_seed = sampling_design.random_seed_by_user_StraRS.text()
         try:
             random_seed = int(random_seed)
-        except Exception:
+        except Exception:  # nosec B110 - non-numeric seed text is kept as string seed, valid for random.seed
             pass
     else:
         random_seed = None
@@ -553,7 +553,7 @@ def do_systematic_sampling():
         random_seed = sampling_design.random_seed_by_user_SystS.text()
         try:
             random_seed = int(random_seed)
-        except Exception:
+        except Exception:  # nosec B110 - non-numeric seed text is kept as string seed, valid for random.seed
             pass
     else:
         random_seed = None
@@ -561,7 +561,7 @@ def do_systematic_sampling():
     # define the initial inset
     if sampling_design.QCBox_InitialInsetMode_SystS.currentText() == "Random":
         random.seed(random_seed)
-        initial_inset = random.uniform(0, points_spacing)
+        initial_inset = random.uniform(0, points_spacing)  # nosec B311 - statistical sampling
     else:
         initial_inset = float(sampling_design.InitialInsetFixed_SystS.value())
 
@@ -921,8 +921,8 @@ class Sampling:
                     tries += 1
 
                     # generate a random point inside the offset area
-                    _x = random.uniform(x - self.max_xy_offset, x + self.max_xy_offset)
-                    _y = random.uniform(y - self.max_xy_offset, y + self.max_xy_offset)
+                    _x = random.uniform(x - self.max_xy_offset, x + self.max_xy_offset)  # nosec B311
+                    _y = random.uniform(y - self.max_xy_offset, y + self.max_xy_offset)  # nosec B311
                     random_sampling_point = RandomPoint(_x, _y)
                     # get the pixel centroid of the random point
                     _x_centroid, _y_centroid = self.thematic_map.get_pixel_centroid(_x, _y)
@@ -1111,7 +1111,7 @@ class Sampling:
 
                     tries += 1
 
-                    _x, _y = random.choice(pixels_in_offset_grid)
+                    _x, _y = random.choice(pixels_in_offset_grid)  # nosec B311 - statistical sampling
 
                     random_sampling_point = RandomPoint(_x, _y)
 
