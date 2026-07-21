@@ -16,6 +16,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           lfs: true
+          fetch-depth: 0
 
       - name: Set up Git LFS
         run: |
@@ -55,16 +56,57 @@ jobs:
           PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="$PWD" python -c "import dask; assert callable(dask.compute); assert callable(dask.delayed)"
           zip -9r ../extlibs.zip .
 
+      - name: Generate release notes
+        id: release_notes
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          if [[ ! "$RELEASE_TAG" =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
+            echo "Invalid release tag: $RELEASE_TAG" >&2
+            exit 1
+          fi
+
+          NOTES_FILE="$RUNNER_TEMP/release-notes.md"
+          # Previous release = highest version-format tag reachable from the tagged
+          # commit's parent; skips non-release tags such as 26.1.zenodo
+          PREVIOUS_TAG=$(git tag --merged "${RELEASE_TAG}^" --sort=-v:refname | grep -E -m1 '^[0-9]+(\.[0-9]+)*$' || true)
+
+          if [ -n "$PREVIOUS_TAG" ]; then
+            {
+              echo "## Changes since $PREVIOUS_TAG"
+              echo
+              git log --date-order \
+                --format="- %s ([%h](https://github.com/${REPOSITORY}/commit/%H))" \
+                "${PREVIOUS_TAG}..${RELEASE_TAG}"
+              echo
+              echo "**Full changelog:** https://github.com/${REPOSITORY}/compare/${PREVIOUS_TAG}...${RELEASE_TAG}"
+            } > "$NOTES_FILE"
+          else
+            {
+              echo "## Changes"
+              echo
+              git log --date-order \
+                --format="- %s ([%h](https://github.com/${REPOSITORY}/commit/%H))" \
+                "$RELEASE_TAG"
+            } > "$NOTES_FILE"
+          fi
+
+          echo "notes_file=$NOTES_FILE" >> "$GITHUB_OUTPUT"
+
       - name: Create GitHub Release
         run: |
           if [[ ! "$RELEASE_TAG" =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
             echo "Invalid release tag: $RELEASE_TAG" >&2
             exit 1
           fi
-          gh release create "$RELEASE_TAG" --title "$RELEASE_TAG" --notes "Automated release"
+          gh release create "$RELEASE_TAG" --title "$RELEASE_TAG" --notes-file "$NOTES_FILE" --verify-tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_TAG: ${{ github.ref_name }}
+          NOTES_FILE: ${{ steps.release_notes.outputs.notes_file }}
 
       - name: Package and release
         env:
