@@ -1,0 +1,33 @@
+<RCC>
+    <qresource prefix="/plugins/AcATaMa/icons">
+        <file>about.svg</file>
+        <file>acatama.svg</file>
+        <file>autofill.svg</file>
+        <file>ccd_plugin.svg</file>
+        <file>clear.svg</file>
+        <file>determine_num_samples.svg</file>
+        <file>eq_num_samples.png</file>
+        <file>go.svg</file>
+        <file>go_to_sample.svg</file>
+        <file>layer_properties.svg</file>
+        <file>merge.svg</file>
+        <file>next.svg</file>
+        <file>next_nc.svg</file>
+        <file>open.svg</file>
+        <file>open_in_ge.svg</file>
+        <file>previous.svg</file>
+        <file>previous_nc.svg</file>
+        <file>reload.svg</file>
+        <file>render_view_config.svg</file>
+        <file>sampling.svg</file>
+        <file>save.svg</file>
+        <file>save_as.svg</file>
+        <file>setup.svg</file>
+        <file>simple_sampling.svg</file>
+        <file>stratified_sampling.svg</file>
+        <file>systematic_sampling.svg</file>
+        <file>trash.svg</file>
+        <file>zoom-in.svg</file>
+        <file>zoom-out.svg</file>
+    </qresource>
+</RCC>
