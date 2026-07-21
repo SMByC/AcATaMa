@@ -57,7 +57,7 @@ reportMissingParameterType = false
 [tool.ruff]
 target-version = "py312"
 line-length = 120
-extend-exclude = ["extlibs", "resources_rc.py"]
+extend-exclude = ["extlibs", "resources.py", "resources_rc.py"]
 
 [tool.ruff.lint]
 preview = true

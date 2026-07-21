@@ -1,8 +1,14 @@
 **/__pycache__/
 *.zip
 *.db
+resources_rc.py
 AcATaMa/extlibs/
 extlibs_tmp/
 extlibs/
 .venv
 *.aux.xml
+
+# AI
+codemap.md
+AGENTS.md
+.slim

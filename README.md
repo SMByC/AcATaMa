@@ -39,6 +39,18 @@ The AcATaMa plugin package does not bundle its external Python libraries. When D
 
 For offline installations, download `extlibs.zip` from the same AcATaMa release as the plugin and extract its contents into the plugin `extlibs` directory, for example `QGIS3/profiles/default/python/plugins/AcATaMa/extlibs`.
 
+## Packaging
+
+Package directly with qgis-plugin-ci. The tracked `AcATaMa/resources.py` module
+provides QGIS 3.36+ and QGIS 4 / Qt6-compatible resources, while
+`AcATaMa/resources.qrc` remains the icon source:
+
+```bash
+qgis-plugin-ci package -c 26.7
+```
+
+The `-c` option allows uncommitted changes during packaging.
+
 ## About Us
 
 AcATaMa was developed by the Forest and Carbon Monitoring System (SMByC) at the Institute of Hydrology, Meteorology and Environmental Studies (IDEAM) in Colombia. SMByC is responsible for measuring and ensuring the accuracy of official national forest figures.
