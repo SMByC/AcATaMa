@@ -14,12 +14,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# uv pip sync pyproject.toml --extra docs
+# uv sync --extra docs
 docs = [
   "jupyter-book<2",
   "jupytext",
 ]
-# uv pip sync pyproject.toml --extra test
+# uv sync --extra test
 test = [
   "pytest",
   "pytest-metadata",

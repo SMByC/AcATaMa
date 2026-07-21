@@ -43,13 +43,22 @@ For offline installations, download `extlibs.zip` from the same AcATaMa release 
 
 Package directly with qgis-plugin-ci. The tracked `AcATaMa/resources.py` module
 provides QGIS 3.36+ and QGIS 4 / Qt6-compatible resources, while
-`AcATaMa/resources.qrc` remains the icon source:
+`AcATaMa/icons/resources.qrc` remains the icon source. The qrc file lives
+inside the icons folder on purpose: qgis-plugin-ci only compiles qrc files at
+the top level of the plugin folder, and its compiled `resources_rc.py` is
+PyQt5-only, which is rejected by the QGIS plugin repository Qt6 checks.
 
 ```bash
 qgis-plugin-ci package -c 26.7
 ```
 
 The `-c` option allows uncommitted changes during packaging.
+
+After changing icons, regenerate the resources module with:
+
+```bash
+make -C AcATaMa/icons resources
+```
 
 ## About Us
 
