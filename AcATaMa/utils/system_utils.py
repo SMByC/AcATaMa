@@ -266,4 +266,18 @@ LegacyLoader.add_constructor("tag:yaml.org,2002:python/object/apply:collections.
 LegacyLoader.add_constructor("tag:yaml.org,2002:map", construct_yaml_map)
 LegacyLoader.add_constructor("tag:yaml.org,2002:omap", construct_yaml_omap)
 
+
+def load_yaml(stream, loader_cls=SafeLoader):
+    """Load a YAML document using only the registered safe constructors.
+
+    This mirrors PyYAML's loader lifecycle without using its convenience loader
+    API, preferring the C-accelerated safe loader when available. The loader is
+    always disposed, including when construction raises an error.
+    """
+    loader = loader_cls(stream)
+    try:
+        return loader.get_single_data()
+    finally:
+        loader.dispose()
+
 # --------------------------------------------------------------------------

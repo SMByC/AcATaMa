@@ -25,9 +25,8 @@ import yaml
 
 try:
     from yaml import CSafeDumper as SafeDumper
-    from yaml import CSafeLoader as SafeLoader
 except ImportError:
-    from yaml import SafeDumper, SafeLoader
+    from yaml import SafeDumper
 
 from qgis.core import Qgis, QgsUnitTypes
 from qgis.PyQt.QtGui import QColor
@@ -39,7 +38,7 @@ from AcATaMa.gui.response_design_window import ResponseDesignWindow
 from AcATaMa.utils.others_utils import get_nodata_format, get_plugin_version, set_nodata_format
 from AcATaMa.utils.qgis_utils import get_source_from, load_and_select_layer_in, select_item_in
 from AcATaMa.utils.sampling_utils import fill_stratified_sampling_table
-from AcATaMa.utils.system_utils import LegacyLoader, block_signals_to, wait_process
+from AcATaMa.utils.system_utils import LegacyLoader, block_signals_to, load_yaml, wait_process
 
 CONFIG_FILE_VERSION = None
 
@@ -297,11 +296,11 @@ def restore(yml_file_path):
     # load the yaml file
     try:
         with open(yml_file_path, encoding="utf-8") as yaml_file:
-            yaml_config = yaml.load(yaml_file, Loader=SafeLoader)
+            yaml_config = load_yaml(yaml_file)
     except yaml.constructor.ConstructorError:
         # Support legacy YAML files that store ordered mappings and tuples
         with open(yml_file_path, encoding="utf-8") as yaml_file:
-            yaml_config = yaml.load(yaml_file, Loader=LegacyLoader)
+            yaml_config = load_yaml(yaml_file, LegacyLoader)
     except Exception as err:
         iface.messageBar().pushMessage(
             "AcATaMa",
