@@ -6,7 +6,7 @@
 <a href="https://www.gnu.org/licenses/gpl-3.0"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License"></a>
 <br>
 <b>Documentation:</b> <a href="https://smbyc.github.io/AcATaMa">https://smbyc.github.io/AcATaMa</a><br>
-<!--<b>Paper:</b> <a href="">soon</a>-->
+<b>Paper:</b> <a href="https://doi.org/10.1016/j.acags.2026.100389">https://doi.org/10.1016/j.acags.2026.100389</a><br>
 </p>
 
 AcATaMa (Accuracy Assessment of Thematic Maps) is an open-source QGIS plugin designed to provide comprehensive support for accuracy assessment and sample-based area estimation of raster thematic maps. The primary goal of AcATaMa is to equip users with the necessary tools to comply with international guidance and best practices for sampling design, estimation of land category areas and changes, and map accuracy assessment.
@@ -60,6 +60,28 @@ After changing icons, regenerate the resources module with:
 make -C AcATaMa/icons resources
 ```
 
+## Citation
+
+Please cite it as:
+
+> Llano, X. C., Vergara, L. K., Arias, J. A., & Galindo, G. (2026). AcATaMa: A QGIS plugin for accuracy assessment and area estimation. Applied Computing and Geosciences, 31, Article 100389. https://doi.org/10.1016/j.acags.2026.100389
+
+BibTeX:
+
+```bibtex
+@article{LLANO2026100389,
+title = {AcATaMa: A QGIS plugin for accuracy assessment and area estimation},
+journal = {Applied Computing and Geosciences},
+volume = {31},
+pages = {100389},
+year = {2026},
+issn = {2590-1974},
+doi = {10.1016/j.acags.2026.100389},
+url = {https://www.sciencedirect.com/science/article/pii/S259019742600073X},
+author = {X.C. Llano and L.K. Vergara and J.A. Arias and G. Galindo},
+}
+```
+
 ## About Us
 
 AcATaMa was developed by the Forest and Carbon Monitoring System (SMByC) at the Institute of Hydrology, Meteorology and Environmental Studies (IDEAM) in Colombia. SMByC is responsible for measuring and ensuring the accuracy of official national forest figures.
@@ -68,10 +90,6 @@ AcATaMa was developed by the Forest and Carbon Monitoring System (SMByC) at the 
 - [SMByC-PDI team](https://github.com/SMByC) - Development support and testing
 
 This project was fully funded by the SMByC-IDEAM, Colombia.
-
-## How to Cite
-
-Llano, X. (version_year), SMByC-IDEAM. AcATaMa - QGIS plugin for Accuracy Assessment of Thematic Maps, version XX.XX. Available in https://github.com/SMByC/AcATaMa
 
 ## Contributing
 
