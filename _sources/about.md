@@ -12,12 +12,23 @@ This work was funded by the Forest and Carbon Monitoring System (SMByC) at the I
 
 If you use AcATaMa in your research, please cite it as:
 
-> Llano, X. (version_year), SMByC-IDEAM. AcATaMa - QGIS plugin for Accuracy Assessment of Thematic Maps, version XX.XX.
-Available in https://github.com/SMByC/AcATaMa
+> Llano, X. C., Vergara, L. K., Arias, J. A., & Galindo, G. (2026). AcATaMa: A QGIS plugin for accuracy assessment and area estimation. Applied Computing and Geosciences, 31, Article 100389. https://doi.org/10.1016/j.acags.2026.100389
 
-<!--
-> Llano, X., Galindo G., Vergara L. K., Arias J.A. (2026). AcATaMa: A QGIS Plugin for Accuracy Assessment and Area Estimation. Forest and Carbon Monitoring System (SMByC), IDEAM - Colombia. https://github.com/SMByC/AcATaMa
--->
+BibTeX:
+
+```bibtex
+@article{LLANO2026100389,
+title = {AcATaMa: A QGIS plugin for accuracy assessment and area estimation},
+journal = {Applied Computing and Geosciences},
+volume = {31},
+pages = {100389},
+year = {2026},
+issn = {2590-1974},
+doi = {10.1016/j.acags.2026.100389},
+url = {https://www.sciencedirect.com/science/article/pii/S259019742600073X},
+author = {X.C. Llano and L.K. Vergara and J.A. Arias and G. Galindo},
+}
+```
 
 ## Contact
 
