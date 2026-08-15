@@ -221,16 +221,17 @@
                 </a>
             </li>
         </ul>
-        <ul class="nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Background</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
-<ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="install_and_example.html">Installation and Examples</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Thematic Map</a></li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Components</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="install_and_example.html">Installation and Examples</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">The Workflow</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Thematic Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_design.html">Sampling Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="response_design.html">Response Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html">Analysis</a></li>
@@ -384,9 +385,15 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="thematic-map">
+  <section class="tex2jax_ignore mathjax_ignore" id="thematic-map">
 <h1>Thematic Map<a class="headerlink" href="#thematic-map" title="Link to this heading">#</a></h1>
 <p>The thematic map is the raster layer for which you want to assess accuracy through the accuracy assessment protocol. It must be a layer with categorical values <strong>with byte or integer as data type</strong> with a specific pixel-value/color associated.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>AcATaMa currently supports <strong>raster</strong> thematic maps only. Extending the spatial
+assessment unit from the pixel to area-weighted, polygon-based units is a planned development
+direction.</p>
+</div>
 <a class="reference internal image-reference" href="_images/thematic_map.png"><img alt="_images/thematic_map.png" class="align-center" src="_images/thematic_map.png" style="width: 70%;" />
 </a>
 <section id="color-table-requirements">

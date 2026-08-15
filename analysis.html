@@ -60,6 +60,8 @@
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'analysis';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="icon" href="_static/acatama.svg"/>
@@ -221,16 +223,17 @@
                 </a>
             </li>
         </ul>
-        <ul class="nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Background</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="install_and_example.html">Installation and Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="thematic_map.html">Thematic Map</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Components</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">The Workflow</span></p>
 <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="thematic_map.html">Thematic Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_design.html">Sampling Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="response_design.html">Response Design</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Analysis</a></li>
@@ -372,7 +375,7 @@
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-matrix">Error Matrix</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#accuracy-measures">Accuracy Measures</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#map-quality-accuracy-measures">Map Quality: Accuracy Measures</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#overall-accuracy">Overall Accuracy</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#user-s-accuracy">User’s Accuracy</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#producer-s-accuracy">Producer’s Accuracy</a></li>
@@ -385,6 +388,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#coefficient-of-variation-and-uncertainty">Coefficient of Variation and Uncertainty</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exporting-results">Exporting Results</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#equations-and-estimators">Equations and Estimators</a></li>
 </ul>
             </nav>
@@ -397,9 +401,12 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="analysis">
+  <section class="tex2jax_ignore mathjax_ignore" id="analysis">
 <h1>Analysis<a class="headerlink" href="#analysis" title="Link to this heading">#</a></h1>
-<p>The analysis component of thematic map accuracy assessment focuses on quantifying classification accuracy and estimating mapped class areas while accounting for uncertainty <span class="bibtex-citation" id="id1">[<a class="reference internal" href="references.html#id45" title="S. V. Stehman and R. L. Czaplewski. Design and analysis for thematic map accuracy assessment: fundamental principles. Remote Sensing of Environment, 64:331–344, 1998. doi:10.1016/S0034-4257(98)00010-8.">Stehman and Czaplewski, 1998</a>]</span>.</p>
+<p>The analysis component of thematic map accuracy assessment focuses on quantifying classification accuracy and estimating mapped class areas while accounting for uncertainty <span class="bibtex-citation" id="id1">[<a class="reference internal" href="references.html#id46" title="S. V. Stehman and R. L. Czaplewski. Design and analysis for thematic map accuracy assessment: fundamental principles. Remote Sensing of Environment, 64:331–344, 1998. doi:10.1016/S0034-4257(98)00010-8.">Stehman and Czaplewski, 1998</a>]</span>.</p>
+<p>This is where both results of the assessment are produced from the same labeled sample: the
+<strong>accuracy measures</strong> that describe map quality, and the <strong>area-adjusted estimates</strong> with their
+confidence intervals. See <a class="reference internal" href="introduction.html"><span class="std std-doc">Introduction</span></a> for why each matters.</p>
 <a class="reference internal image-reference" href="_images/accuracy_assessment.webp"><img alt="_images/accuracy_assessment.webp" class="align-center" src="_images/accuracy_assessment.webp" style="width: 85%;" />
 </a>
 <section id="error-matrix">
@@ -418,8 +425,8 @@
 <li><p><strong>Column totals</strong>: Proportion of area according to the reference classification</p></li>
 </ul>
 </section>
-<section id="accuracy-measures">
-<h2>Accuracy Measures<a class="headerlink" href="#accuracy-measures" title="Link to this heading">#</a></h2>
+<section id="map-quality-accuracy-measures">
+<h2>Map Quality: Accuracy Measures<a class="headerlink" href="#map-quality-accuracy-measures" title="Link to this heading">#</a></h2>
 <section id="overall-accuracy">
 <h3>Overall Accuracy<a class="headerlink" href="#overall-accuracy" title="Link to this heading">#</a></h3>
 <p>The global accuracy has a direct interpretation in terms of area, since it represents the proportion of area correctly classified.</p>
@@ -430,12 +437,12 @@
 </section>
 <section id="user-s-accuracy">
 <h3>User’s Accuracy<a class="headerlink" href="#user-s-accuracy" title="Link to this heading">#</a></h3>
-<p>The number of correctly classified sampling units (nii) in a class divided by the total number of sampling units of that same class in the map (nk+).</p>
+<p>The number of correctly classified sampling units (<span class="math notranslate nohighlight">\(n_{ii}\)</span>) in a class divided by the total number of sampling units of that same class in the map (<span class="math notranslate nohighlight">\(n_{i+}\)</span>).</p>
 <p>User’s accuracy is associated with the measurement of <strong>commission errors</strong>, which are defined as the inclusion of a map area in a land cover class in which that area should not be included.</p>
 </section>
 <section id="producer-s-accuracy">
 <h3>Producer’s Accuracy<a class="headerlink" href="#producer-s-accuracy" title="Link to this heading">#</a></h3>
-<p>The number of correctly classified sampling units (njj) in a class divided by the total number of sampling units in the reference data n+j for that class.</p>
+<p>The number of correctly classified sampling units (<span class="math notranslate nohighlight">\(n_{jj}\)</span>) in a class divided by the total number of sampling units in the reference data (<span class="math notranslate nohighlight">\(n_{+j}\)</span>) for that class.</p>
 <p>Producer’s accuracy is associated with <strong>omission errors</strong>, which occur when an area is excluded on the map from the land cover class to which it should belong.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
@@ -452,8 +459,9 @@
 </section>
 <section id="area-estimation">
 <h2>Area Estimation<a class="headerlink" href="#area-estimation" title="Link to this heading">#</a></h2>
-<p>The area estimation component of accuracy assessment adjusts the mapped class areas based on accuracy assessment results, ensuring <strong>unbiased and statistically more precise estimates</strong>.</p>
-<p>According to <span class="bibtex-citation" id="id6">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span>, relying solely on sample counts can introduce significant bias, particularly in land change analyses where errors in classification disproportionately affect small or rare classes. By incorporating adjustments using strata areas in the estimations derived from the error matrix, area estimates are corrected to better reflect true land cover proportions.</p>
+<p>The area estimation component of accuracy assessment adjusts the mapped class areas based on accuracy assessment results, ensuring <strong>unbiased and statistically more precise estimates</strong>. The statistical reasoning behind this correction is explained in
+<a class="reference internal" href="introduction.html#estimating-area"><span class="std std-ref">Estimating Area</span></a>.</p>
+<p>According to <span class="bibtex-citation" id="id6">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id38" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span>, relying solely on sample counts can introduce significant bias, particularly in land change analyses where errors in classification disproportionately affect small or rare classes. By incorporating adjustments using strata areas in the estimations derived from the error matrix, area estimates are corrected to better reflect true land cover proportions.</p>
 <section id="class-area-adjusted">
 <h3>Class Area Adjusted<a class="headerlink" href="#class-area-adjusted" title="Link to this heading">#</a></h3>
 <p>The accuracy assessment serves to derive the uncertainty of the map area estimates. Whereas the map provides a single area estimate for each class without confidence interval, the accuracy estimates:</p>
@@ -461,7 +469,7 @@
 <li><p>Adjust this estimate</p></li>
 <li><p>Provide confidence intervals as estimates of uncertainty</p></li>
 </ul>
-<p>The adjusted area estimates can be considerably higher or lower than the map estimates <span class="bibtex-citation" id="id7">[<a class="reference internal" href="references.html#id6" title="FAO. Collect earth: land use and land cover assessment through augmented visual interpretation. 2016.">FAO, 2016</a>]</span>.</p>
+<p>The adjusted area estimates can be considerably higher or lower than the map estimates <span class="bibtex-citation" id="id7">[<a class="reference internal" href="references.html#id6" title="Food and Agriculture Organization of the United Nations (FAO). Map accuracy assessment and area estimation: a practical guide. Technical Report National Forest Monitoring Assessment Working Paper No. 46/E, Food and Agriculture Organization of the United Nations, Rome, Italy, 2016. doi:10.4060/i5601e.">Food and Agriculture Organization of the United Nations (FAO), 2016</a>]</span>.</p>
 </section>
 <section id="confidence-intervals">
 <h3>Confidence Intervals<a class="headerlink" href="#confidence-intervals" title="Link to this heading">#</a></h3>
@@ -477,63 +485,25 @@
 <p>Uncertainty encompasses the potential errors and variability inherent in the sampling design, classification accuracy, and reference data used for accuracy assessment. Quantifying this uncertainty is crucial as it measures the reliability and precision of the area estimates.</p>
 </section>
 </section>
+<section id="exporting-results">
+<h2>Exporting Results<a class="headerlink" href="#exporting-results" title="Link to this heading">#</a></h2>
+<p>AcATaMa allows users to export all results present in the analysis window as plain-text tables,
+enabling users to manage their data and conduct further analysis of the accuracy assessment
+results.</p>
+</section>
 <section id="equations-and-estimators">
 <h2>Equations and Estimators<a class="headerlink" href="#equations-and-estimators" title="Link to this heading">#</a></h2>
-<p>Based on the importance of accuracy and area estimation adjustments and recommendations, AcATaMa provides a comprehensive set of analysis results calculated according to the selected sampling design:</p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>Sampling Design</p></th>
-<th class="head"><p>Component</p></th>
-<th class="head"><p>Source</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><strong>Simple Random (SRS)</strong></p></td>
-<td><p>Accuracy</p></td>
-<td><p><span class="bibtex-citation" id="id8">Stehman and Foody [<a class="reference internal" href="references.html#id46" title="S. V. Stehman and G. M. Foody. Accuracy assessment. In T. A. Warner, D. M. Nellis, and G. M. Foody, editors, The SAGE Handbook of Remote Sensing, pages 297–309. SAGE Publications, 2009. doi:10.4135/9780857021052.n21.">2009</a>]</span>: Table 21.3</p></td>
-</tr>
-<tr class="row-odd"><td><p></p></td>
-<td><p>Estimating area and confidence intervals</p></td>
-<td><p><span class="bibtex-citation" id="id9">Stehman [<a class="reference internal" href="references.html#id43" title="S. V. Stehman. Estimating area from an accuracy assessment error matrix. Remote Sensing of Environment, 132:202–211, 2013.">2013</a>]</span>: Eq. 13 and 44</p></td>
-</tr>
-<tr class="row-even"><td><p></p></td>
-<td><p>Sample size</p></td>
-<td><p><span class="bibtex-citation" id="id10">Cochran [<a class="reference internal" href="references.html#id9" title="W. G. Cochran. Sampling Techniques. John Wiley &amp; Sons, 3rd edition, 1977.">1977</a>]</span>: Eq. 4.2</p></td>
-</tr>
-<tr class="row-odd"><td><p><strong>Stratified Random (STR)</strong></p></td>
-<td><p>Accuracy</p></td>
-<td><p><span class="bibtex-citation" id="id11">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id36" title="P. Olofsson, G. M. Foody, S. V. Stehman, and C. E. Woodcock. Making better use of accuracy data in land change studies: estimating accuracy and area and quantifying uncertainty using stratified estimation. Remote Sensing of Environment, 129:122–131, 2013. doi:10.1016/j.rse.2012.10.031.">2013</a>]</span>: Eq. 1, 2 and 3</p></td>
-</tr>
-<tr class="row-even"><td><p></p></td>
-<td><p>Estimating area and confidence intervals</p></td>
-<td><p><span class="bibtex-citation" id="id12">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id36" title="P. Olofsson, G. M. Foody, S. V. Stehman, and C. E. Woodcock. Making better use of accuracy data in land change studies: estimating accuracy and area and quantifying uncertainty using stratified estimation. Remote Sensing of Environment, 129:122–131, 2013. doi:10.1016/j.rse.2012.10.031.">2013</a>]</span>: Eq. 10 and 11</p></td>
-</tr>
-<tr class="row-odd"><td><p></p></td>
-<td><p>Sample size per strata</p></td>
-<td><p><span class="bibtex-citation" id="id13">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span>: Eq. 13</p></td>
-</tr>
-<tr class="row-even"><td><p><strong>Systematic (SYS)</strong></p></td>
-<td><p>Accuracy</p></td>
-<td><p><span class="bibtex-citation" id="id14">Stehman and Foody [<a class="reference internal" href="references.html#id46" title="S. V. Stehman and G. M. Foody. Accuracy assessment. In T. A. Warner, D. M. Nellis, and G. M. Foody, editors, The SAGE Handbook of Remote Sensing, pages 297–309. SAGE Publications, 2009. doi:10.4135/9780857021052.n21.">2009</a>]</span>: Table 21.3</p></td>
-</tr>
-<tr class="row-odd"><td><p></p></td>
-<td><p>Estimating area and confidence intervals</p></td>
-<td><p><span class="bibtex-citation" id="id15">Stehman [<a class="reference internal" href="references.html#id42" title="S. V. Stehman. Impact of sample size allocation when using stratified random sampling to estimate accuracy and area of land-cover change. Remote Sensing Letters, 3:111–120, 2012.">2012</a>]</span>: Eq. 3</p></td>
-</tr>
-<tr class="row-even"><td><p></p></td>
-<td><p>Sample size</p></td>
-<td><p><span class="bibtex-citation" id="id16">Cochran [<a class="reference internal" href="references.html#id9" title="W. G. Cochran. Sampling Techniques. John Wiley &amp; Sons, 3rd edition, 1977.">1977</a>]</span>: Eq. 4.2</p></td>
-</tr>
-<tr class="row-odd"><td><p><strong>Post-Stratified</strong></p></td>
-<td><p>Estimating area and confidence intervals</p></td>
-<td><p><span class="bibtex-citation" id="id17">Stehman [<a class="reference internal" href="references.html#id43" title="S. V. Stehman. Estimating area from an accuracy assessment error matrix. Remote Sensing of Environment, 132:202–211, 2013.">2013</a>]</span>: Eq. 48</p></td>
-</tr>
-<tr class="row-even"><td><p><strong>Uncertainty</strong></p></td>
-<td><p>All designs</p></td>
-<td><p><span class="bibtex-citation" id="id18">McMurray <em>et al.</em> [<a class="reference internal" href="references.html#id31" title="A. McMurray, T. Pearson, and F. Casarim. Guidance on Applying the Monte Carlo Approach to Uncertainty Analyses in Forestry and Greenhouse Gas Accounting. Winrock International, 2017.">2017</a>]</span>: Page 17</p></td>
-</tr>
-</tbody>
-</table>
+<p>Based on the importance of accuracy and area estimation adjustments and recommendations
+<span class="bibtex-citation" id="id8">[<a class="reference internal" href="references.html#id38" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">Olofsson <em>et al.</em>, 2014</a>, <a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, S. V. Stehman, and C. E. Woodcock. Making better use of accuracy data in land change studies: estimating accuracy and area and quantifying uncertainty using stratified estimation. Remote Sensing of Environment, 129:122–131, 2013. doi:10.1016/j.rse.2012.10.031.">Olofsson <em>et al.</em>, 2013</a>, <a class="reference internal" href="references.html#id21" title="Global Forest Observations Initiative. Integration of remote-sensing and ground-based observations for estimation of emissions and removals of greenhouse gases in forests: methods and guidance document. 2020. URL: https://www.reddcompass.org/mgd/.">Global Forest Observations Initiative, 2020</a>, <a class="reference internal" href="references.html#id17" title="Y. Finegold and A. Ortmann. Map Accuracy Assessment and Area Estimation: A Practical Guide. FAO, 2016.">Finegold and Ortmann, 2016</a>, <a class="reference internal" href="references.html#id48" title="S. V. Stehman and G. M. Foody. Key issues in rigorous accuracy assessment of land cover products. Remote Sensing of Environment, 231:111199, 2019. doi:10.1016/j.rse.2019.05.018.">Stehman and Foody, 2019</a>]</span>, AcATaMa provides a
+comprehensive set of analysis results — the error matrix, the quadratic error matrix of the
+estimated area proportions, the accuracy measures, the adjusted class area values, confidence
+intervals, and the coefficient of variation — all calculated according to the selected sampling
+design.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>The complete set of equations, measures, and estimators, with the reference for each one, is
+documented in
+<strong><a class="reference internal" href="introduction.html#equations-measures-and-estimators"><span class="std std-ref">Equations, Measures and Estimators</span></a></strong>.</p>
 </div>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
@@ -609,7 +579,7 @@
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-matrix">Error Matrix</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#accuracy-measures">Accuracy Measures</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#map-quality-accuracy-measures">Map Quality: Accuracy Measures</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#overall-accuracy">Overall Accuracy</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#user-s-accuracy">User’s Accuracy</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#producer-s-accuracy">Producer’s Accuracy</a></li>
@@ -622,6 +592,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#coefficient-of-variation-and-uncertainty">Coefficient of Variation and Uncertainty</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exporting-results">Exporting Results</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#equations-and-estimators">Equations and Estimators</a></li>
 </ul>
   </nav></div>

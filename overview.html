@@ -60,7 +60,8 @@
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'overview';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="icon" href="_static/acatama.svg"/>
@@ -223,16 +224,17 @@
                 </a>
             </li>
         </ul>
-        <ul class="nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Background</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="install_and_example.html">Installation and Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="thematic_map.html">Thematic Map</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Components</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">The Workflow</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="thematic_map.html">Thematic Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_design.html">Sampling Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="response_design.html">Response Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html">Analysis</a></li>
@@ -379,7 +381,12 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis">3. Analysis</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modular-usage">Modular Usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modular-usage">Modular Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-design-on-its-own">Sampling design on its own</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#response-design-on-its-own">Response design on its own</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#applications">Applications</a></li>
 </ul>
             </nav>
         </div>
@@ -391,39 +398,112 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="acatama">
+  <section class="tex2jax_ignore mathjax_ignore" id="acatama">
 <h1>AcATaMa<a class="headerlink" href="#acatama" title="Link to this heading">#</a></h1>
-<p>Thematic maps are essential tools for understanding and managing land-cover and land-use change. However, their effectiveness depends on map accuracy, which is critical to environmental monitoring, resource management, and policy making. The accuracy assessment of raster thematic maps involves a rigorous process of sampling, response design, and analysis to ensure that maps accurately reflect true conditions on the ground.</p>
-<p>AcATaMa is a QGIS plugin designed to provide comprehensive support for accuracy assessment and sample-based area estimation of raster thematic maps. The plugin enables users to comply with international standards and best practices in accuracy assessment, integrating three fundamental components: <strong>sampling design</strong> (supporting simple random, stratified random, and systematic sampling), <strong>response design</strong> (providing a multi-window interface for reference data interpretation), and <strong>analysis</strong> (generating error matrices, accuracy metrics, and area-adjusted estimates with uncertainty quantification).</p>
+<p>Thematic maps are indispensable for environmental monitoring, resource management, and
+policy-making, yet their value depends critically on rigorous accuracy assessment.</p>
+<p><strong>AcATaMa</strong> (Accuracy Assessment of Thematic Maps) is a free, open-source QGIS plugin that
+delivers an integrated workflow for thematic map accuracy assessment and sample-based area
+estimation, enabling users to follow international good practice guidelines within a single,
+accessible environment.</p>
+<p>One set of sample points, labeled once using reference data, gives <strong>two complementary
+results</strong>:</p>
+<ul class="simple">
+<li><p><strong>Map quality</strong> — overall, user’s and producer’s accuracy, reported per class, so you know
+where the map can be trusted and where it cannot.</p></li>
+<li><p><strong>Area estimates</strong> — area-adjusted class areas with confidence intervals and uncertainty,
+which correct the bias that affects areas obtained by counting map pixels.</p></li>
+</ul>
+<p>The plugin integrates three core components: <strong>sampling design</strong> (simple random, stratified
+random, and systematic), <strong>response design</strong> (a multi-window interface for simultaneous review
+of multiple reference data sources), and <strong>analysis</strong> (error matrices, accuracy metrics, and
+area-adjusted estimates). By unifying them, AcATaMa provides a complete, end-to-end
+accuracy-assessment and area-estimation workflow within a desktop GIS environment.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="introduction.html"><span class="std std-doc">Introduction</span></a> explains why both results matter and the statistical reasoning
+behind them.</p>
+</div>
 <section id="the-three-components">
 <h2>The Three Components<a class="headerlink" href="#the-three-components" title="Link to this heading">#</a></h2>
-<p>The accuracy assessment of thematic maps consists of three key components: <strong>sampling design</strong>, <strong>response design</strong>, and <strong>analysis</strong>. AcATaMa integrates these components through a structured, sequential workflow.</p>
-<a class="reference internal image-reference" href="_images/process_overview.webp"><img alt="_images/process_overview.webp" class="align-center" src="_images/process_overview.webp" style="height: 600px;" />
+<p>The accuracy assessment of thematic maps consists of three key components: <strong>sampling design</strong>,
+<strong>response design</strong>, and <strong>analysis</strong>. AcATaMa integrates these components through a structured,
+sequential workflow.</p>
+<a class="reference internal image-reference" href="_images/process_overview.webp"><img alt="The three fundamental components of accuracy assessment implemented in AcATaMa" class="align-center" src="_images/process_overview.webp" style="height: 600px;" />
 </a>
 <section id="sampling-design">
 <h3>1. Sampling Design<a class="headerlink" href="#sampling-design" title="Link to this heading">#</a></h3>
-<p>The sampling design determines how sample units are selected to ensure representativeness and statistical validity <span class="bibtex-citation" id="id1">[<a class="reference internal" href="references.html#id45" title="S. V. Stehman and R. L. Czaplewski. Design and analysis for thematic map accuracy assessment: fundamental principles. Remote Sensing of Environment, 64:331–344, 1998. doi:10.1016/S0034-4257(98)00010-8.">Stehman and Czaplewski, 1998</a>]</span>. A well-structured sampling design is essential for producing unbiased accuracy estimates and reliable area estimates.</p>
+<p>The sampling design determines how sample units (points) are selected to ensure
+representativeness and statistical validity <span class="bibtex-citation" id="id1">[<a class="reference internal" href="references.html#id46" title="S. V. Stehman and R. L. Czaplewski. Design and analysis for thematic map accuracy assessment: fundamental principles. Remote Sensing of Environment, 64:331–344, 1998. doi:10.1016/S0034-4257(98)00010-8.">Stehman and Czaplewski, 1998</a>]</span>. AcATaMa supports simple random,
+stratified random, and systematic designs, with sample-size calculation, allocation control, and
+post-stratification.</p>
 </section>
 <section id="response-design">
 <h3>2. Response Design<a class="headerlink" href="#response-design" title="Link to this heading">#</a></h3>
-<p>The response design involves defining the procedures for obtaining and interpreting reference classifications, ensuring that the comparison between map and reference data is reliable <span class="bibtex-citation" id="id2">[<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">Olofsson <em>et al.</em>, 2014</a>]</span>. It encompasses the protocols and methodologies used to determine the reference or “true” classification of sampled units.</p>
+<p>The response design involves defining the procedures for obtaining and interpreting reference
+classifications, ensuring that the comparison between map and reference data is reliable
+<span class="bibtex-citation" id="id2">[<a class="reference internal" href="references.html#id38" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">Olofsson <em>et al.</em>, 2014</a>]</span>. A multi-window interface lets several reference-data sources be reviewed
+side by side while each sample is labeled.</p>
 </section>
 <section id="analysis">
 <h3>3. Analysis<a class="headerlink" href="#analysis" title="Link to this heading">#</a></h3>
-<p>Analysis involves quantifying accuracy through error matrices and statistical metrics and estimating class areas with confidence intervals, ensuring scientifically rigorous conclusions <span class="bibtex-citation" id="id3">[<a class="reference internal" href="references.html#id45" title="S. V. Stehman and R. L. Czaplewski. Design and analysis for thematic map accuracy assessment: fundamental principles. Remote Sensing of Environment, 64:331–344, 1998. doi:10.1016/S0034-4257(98)00010-8.">Stehman and Czaplewski, 1998</a>, <a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">Olofsson <em>et al.</em>, 2014</a>]</span>.</p>
+<p>Analysis involves quantifying accuracy through error matrices and statistical metrics and
+estimating class areas with confidence intervals, ensuring scientifically rigorous conclusions
+<span class="bibtex-citation" id="id3">[<a class="reference internal" href="references.html#id46" title="S. V. Stehman and R. L. Czaplewski. Design and analysis for thematic map accuracy assessment: fundamental principles. Remote Sensing of Environment, 64:331–344, 1998. doi:10.1016/S0034-4257(98)00010-8.">Stehman and Czaplewski, 1998</a>, <a class="reference internal" href="references.html#id38" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">Olofsson <em>et al.</em>, 2014</a>]</span>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Each component is explained in detail in the following pages.</p>
+<p>Each component is explained in detail in the following pages. The scientific rationale and the
+full set of estimators implemented for each sampling design are documented in
+<a class="reference internal" href="introduction.html"><span class="std std-doc">Introduction</span></a>.</p>
 </div>
 </section>
 </section>
 <section id="modular-usage">
 <h2>Modular Usage<a class="headerlink" href="#modular-usage" title="Link to this heading">#</a></h2>
-<p>Although AcATaMa is designed to follow a sequential three-step workflow for accuracy assessment, the sampling and response design modules can also be used independently for other purposes:</p>
+<p>Although AcATaMa is designed to follow a sequential three-step workflow for accuracy assessment,
+the sampling design and response design modules can each be used on their own for other purposes.</p>
+<section id="sampling-design-on-its-own">
+<h3>Sampling design on its own<a class="headerlink" href="#sampling-design-on-its-own" title="Link to this heading">#</a></h3>
+<p>This module needs only a raster to define the area and, optionally, the strata — no labeling step
+is required afterwards. That makes it useful whenever you need a statistically defensible set of
+locations:</p>
 <ul class="simple">
-<li><p><strong>Sampling design</strong>: Can be used alone to generate random samples for establishing field plots</p></li>
-<li><p><strong>Response design</strong>: Can be used alone to assign reference labels to point layers using multi-source remote sensing and ancillary geospatial data</p></li>
+<li><p><strong>Field campaigns and ground surveys</strong> — generate randomized plot locations, with a minimum
+distance constraint to prevent clustering and a fixed seed so the selection can be reproduced
+and audited later.</p></li>
+<li><p><strong>Training and validation data for classification</strong> — draw a stratified sample over an existing
+class map so rare classes receive enough points, then export the layer for use in any
+machine-learning or classification workflow.</p></li>
+<li><p><strong>Recurring monitoring grids</strong> — build a systematic grid, by distance or by pixel and with a
+random offset, for inventories that must be repeated on a consistent spatial framework.</p></li>
+<li><p><strong>Planning sampling effort</strong> — use the sample-size calculator to find how many samples a target
+standard error requires, before committing field or interpretation resources.</p></li>
 </ul>
+</section>
+<section id="response-design-on-its-own">
+<h3>Response design on its own<a class="headerlink" href="#response-design-on-its-own" title="Link to this heading">#</a></h3>
+<p>This module works on any point layer selected as the sampling file, whether or not AcATaMa
+generated it, which turns it into a general-purpose visual interpretation environment:</p>
+<ul class="simple">
+<li><p><strong>Labeling points from other sources</strong> — assign reference classes to points collected by GPS,
+produced on another platform, or supplied by a third party.</p></li>
+<li><p><strong>Photo-interpretation campaigns</strong> — review several reference sources side by side in the
+multi-window layout (for example Landsat and Sentinel composites, high-resolution mosaics, and
+Google Earth) and label each point using customizable buttons and keyboard shortcuts.</p></li>
+<li><p><strong>Time-series interpretation</strong> — inspect trends and breakpoints at each point through the
+integrated CCD plugin, to establish not only what changed but when.</p></li>
+</ul>
+</section>
+</section>
+<section id="applications">
+<h2>Applications<a class="headerlink" href="#applications" title="Link to this heading">#</a></h2>
+<p>AcATaMa applies to any workflow that requires statistically rigorous map-accuracy assessment and
+sample-based area estimation, in both research and operational settings. It is used for multiple
+purposes across different topics, such as land use and land cover change, forest and plantations
+monitoring, evaluation of classification methods, urban analysis, biodiversity and ecosystems,
+climatology and climate change, agricultural and crop mapping, watershed and water resources,
+social analysis, hazard and risk assessment, and coastal and marine studies, reflecting its
+adaptability across disciplines.</p>
 </section>
 <div class="toctree-wrapper compound">
 </div>
@@ -500,7 +580,12 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis">3. Analysis</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modular-usage">Modular Usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modular-usage">Modular Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-design-on-its-own">Sampling design on its own</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#response-design-on-its-own">Response design on its own</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#applications">Applications</a></li>
 </ul>
   </nav></div>
 

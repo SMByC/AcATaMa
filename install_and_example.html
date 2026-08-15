@@ -221,16 +221,17 @@
                 </a>
             </li>
         </ul>
-        <ul class="nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Background</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Installation and Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="thematic_map.html">Thematic Map</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Components</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">The Workflow</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="thematic_map.html">Thematic Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_design.html">Sampling Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="response_design.html">Response Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html">Analysis</a></li>
@@ -376,6 +377,7 @@
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#real-world-case-study">Real-World Case Study</a></li>
 </ul>
             </nav>
         </div>
@@ -387,7 +389,7 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="installation-and-examples">
+  <section class="tex2jax_ignore mathjax_ignore" id="installation-and-examples">
 <h1>Installation and Examples<a class="headerlink" href="#installation-and-examples" title="Link to this heading">#</a></h1>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
@@ -397,9 +399,6 @@
 <li><p>In the search bar, type <code class="docutils literal notranslate"><span class="pre">AcATaMa</span></code> and click <code class="docutils literal notranslate"><span class="pre">Install</span> <span class="pre">Plugin</span></code>.</p></li>
 <li><p>Once installed, activate the plugin via the <code class="docutils literal notranslate"><span class="pre">Plugins</span></code> menu or <code class="docutils literal notranslate"><span class="pre">Plugins</span> <span class="pre">toolbar</span></code>.</p></li>
 </ol>
-<blockquote>
-<div><p><strong>Warning:</strong> The latest versions of AcATaMa require QGIS 3.36 or newer due to use of newer QGIS API enum forms and QGIS 4 compatibility changes. Please update QGIS to at least the current LTR version (recommended) or the latest version.</p>
-</div></blockquote>
 <section id="external-python-libraries">
 <h3>External Python libraries<a class="headerlink" href="#external-python-libraries" title="Link to this heading">#</a></h3>
 <p>AcATaMa uses Dask for parallel raster pixel counting. These Python libraries are distributed as a separate <code class="docutils literal notranslate"><span class="pre">extlibs.zip</span></code> release asset instead of being bundled in the plugin package.</p>
@@ -446,6 +445,24 @@
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>All files in this example are for demonstration purposes only and do not represent official/real data.</p>
+</div>
+</section>
+<section id="real-world-case-study">
+<h2>Real-World Case Study<a class="headerlink" href="#real-world-case-study" title="Link to this heading">#</a></h2>
+<p>A complete, peer-reviewed application of the full AcATaMa workflow assessed the accuracy of
+<strong>Colombia’s National Forest Change Map for 2018–2019</strong> <span class="bibtex-citation" id="id1">[<a class="reference internal" href="references.html#id56" title="X. C. Llano, L. K. Vergara, J. A. Arias, and G. Galindo. AcATaMa: a QGIS plugin for accuracy assessment and area estimation. Applied Computing and Geosciences, 31:100389, 2026. doi:10.1016/j.acags.2026.100389.">Llano <em>et al.</em>, 2026</a>]</span> — a 30 × 30 m national
+raster product with four classes (stable forest, non-stable forest, deforestation, and no
+information).</p>
+<p>It used a stratified random design with a total sample size of <em>n</em> = 10,010, a fixed allocation
+of 1,000 samples to the rare deforestation stratum, a target overall standard error of 0.003,
+and a fixed seed for reproducibility. The overall accuracy was 94.9 %, and the result shows the
+practical value of sample-based area estimation: the map classified 158,900 ha as deforestation,
+whereas the accuracy-adjusted estimate was 142,588 ± 25,002 ha — a reduction of roughly 10.3 %
+attributable to the correction of classification errors.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>The full case study is available in open access at
+<a class="reference external" href="https://doi.org/10.1016/j.acags.2026.100389">https://doi.org/10.1016/j.acags.2026.100389</a></p>
 </div>
 </section>
 </section>
@@ -521,6 +538,7 @@
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#real-world-case-study">Real-World Case Study</a></li>
 </ul>
   </nav></div>
 

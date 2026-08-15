@@ -2,6 +2,10 @@
 
 The analysis component of thematic map accuracy assessment focuses on quantifying classification accuracy and estimating mapped class areas while accounting for uncertainty {cite}`Stehman1998`.
 
+This is where both results of the assessment are produced from the same labeled sample: the
+**accuracy measures** that describe map quality, and the **area-adjusted estimates** with their
+confidence intervals. See [Introduction](introduction.md) for why each matters.
+
 ```{image} img/accuracy_assessment.webp
 :width: 85%
 :align: center
@@ -23,7 +27,7 @@ This matrix is essential for the analysis of the area and variance estimators. T
 - **Row totals**: Proportion of area of each class according to the map classification
 - **Column totals**: Proportion of area according to the reference classification
 
-## Accuracy Measures
+## Map Quality: Accuracy Measures
 
 ### Overall Accuracy
 
@@ -35,13 +39,13 @@ Overall accuracy hides important information specific to each class. The limitat
 
 ### User's Accuracy
 
-The number of correctly classified sampling units (nii) in a class divided by the total number of sampling units of that same class in the map (nk+).
+The number of correctly classified sampling units ($n_{ii}$) in a class divided by the total number of sampling units of that same class in the map ($n_{i+}$).
 
 User's accuracy is associated with the measurement of **commission errors**, which are defined as the inclusion of a map area in a land cover class in which that area should not be included.
 
 ### Producer's Accuracy
 
-The number of correctly classified sampling units (njj) in a class divided by the total number of sampling units in the reference data n+j for that class.
+The number of correctly classified sampling units ($n_{jj}$) in a class divided by the total number of sampling units in the reference data ($n_{+j}$) for that class.
 
 Producer's accuracy is associated with **omission errors**, which occur when an area is excluded on the map from the land cover class to which it should belong.
 
@@ -57,7 +61,8 @@ AcATaMa does not include the Kappa coefficient in the results, because in genera
 
 ## Area Estimation
 
-The area estimation component of accuracy assessment adjusts the mapped class areas based on accuracy assessment results, ensuring **unbiased and statistically more precise estimates**.
+The area estimation component of accuracy assessment adjusts the mapped class areas based on accuracy assessment results, ensuring **unbiased and statistically more precise estimates**. The statistical reasoning behind this correction is explained in
+[Estimating Area](introduction.md#estimating-area).
 
 According to {cite:t}`Olofsson2014`, relying solely on sample counts can introduce significant bias, particularly in land change analyses where errors in classification disproportionately affect small or rare classes. By incorporating adjustments using strata areas in the estimations derived from the error matrix, area estimates are corrected to better reflect true land cover proportions.
 
@@ -83,23 +88,26 @@ The coefficient of variation is a standardized measure of the dispersion of the 
 
 Uncertainty encompasses the potential errors and variability inherent in the sampling design, classification accuracy, and reference data used for accuracy assessment. Quantifying this uncertainty is crucial as it measures the reliability and precision of the area estimates.
 
+## Exporting Results
+
+AcATaMa allows users to export all results present in the analysis window as plain-text tables,
+enabling users to manage their data and conduct further analysis of the accuracy assessment
+results.
+
 ## Equations and Estimators
 
-Based on the importance of accuracy and area estimation adjustments and recommendations, AcATaMa provides a comprehensive set of analysis results calculated according to the selected sampling design:
+Based on the importance of accuracy and area estimation adjustments and recommendations
+{cite}`Finegold2016,Olofsson2013,Olofsson2014,Stehman2019,Global2020`, AcATaMa provides a
+comprehensive set of analysis results — the error matrix, the quadratic error matrix of the
+estimated area proportions, the accuracy measures, the adjusted class area values, confidence
+intervals, and the coefficient of variation — all calculated according to the selected sampling
+design.
 
-| Sampling Design | Component | Source |
-|-----------------|-----------|--------|
-| **Simple Random (SRS)** | Accuracy | {cite:t}`Stehman2009`: Table 21.3 |
-| | Estimating area and confidence intervals | {cite:t}`Stehman2013`: Eq. 13 and 44 |
-| | Sample size | {cite:t}`Cochran1977`: Eq. 4.2 |
-| **Stratified Random (STR)** | Accuracy | {cite:t}`Olofsson2013`: Eq. 1, 2 and 3 |
-| | Estimating area and confidence intervals | {cite:t}`Olofsson2013`: Eq. 10 and 11 |
-| | Sample size per strata | {cite:t}`Olofsson2014`: Eq. 13 |
-| **Systematic (SYS)** | Accuracy | {cite:t}`Stehman2009`: Table 21.3 |
-| | Estimating area and confidence intervals | {cite:t}`Stehman2012`: Eq. 3 |
-| | Sample size | {cite:t}`Cochran1977`: Eq. 4.2 |
-| **Post-Stratified** | Estimating area and confidence intervals | {cite:t}`Stehman2013`: Eq. 48 |
-| **Uncertainty** | All designs | {cite:t}`McMurray2017`: Page 17 |
+```{seealso}
+The complete set of equations, measures, and estimators, with the reference for each one, is
+documented in
+**[Equations, Measures and Estimators](introduction.md#equations-measures-and-estimators)**.
+```
 
 ```{important}
 AcATaMa has been rigorously tested using multiple real-world examples across various use cases to ensure the reliability of its results. This involved manually calculating several test cases from scratch and systematically comparing them with AcATaMa's outputs to validate its computational accuracy.

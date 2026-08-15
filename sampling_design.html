@@ -60,7 +60,8 @@
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'sampling_design';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="icon" href="_static/acatama.svg"/>
@@ -222,16 +223,17 @@
                 </a>
             </li>
         </ul>
-        <ul class="nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Background</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="install_and_example.html">Installation and Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="thematic_map.html">Thematic Map</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Components</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">The Workflow</span></p>
 <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="thematic_map.html">Thematic Map</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Sampling Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="response_design.html">Response Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html">Analysis</a></li>
@@ -372,12 +374,15 @@
             </div>
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-random-sampling-srs">Simple Random Sampling (SRS)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratified-random-sampling-str">Stratified Random Sampling (STR)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#systematic-sampling-sys">Systematic Sampling (SYS)</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aligned-systematic-sampling">Aligned Systematic Sampling</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#unaligned-systematic-sampling">Unaligned Systematic Sampling</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#confidence-level-for-random-offset">Confidence Level for Random Offset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-designs">Sampling Designs</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-random-sampling-srs">Simple Random Sampling (SRS)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stratified-random-sampling-str">Stratified Random Sampling (STR)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#systematic-sampling-sys">Systematic Sampling (SYS)</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#aligned-systematic-sampling">Aligned Systematic Sampling</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#unaligned-systematic-sampling">Unaligned Systematic Sampling</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#confidence-level-for-random-offset">Confidence Level for Random Offset</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-features">Additional Features</a><ul class="nav section-nav flex-column">
@@ -411,15 +416,30 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="sampling-design">
+  <section class="tex2jax_ignore mathjax_ignore" id="sampling-design">
 <h1>Sampling Design<a class="headerlink" href="#sampling-design" title="Link to this heading">#</a></h1>
 <p>Assessing the accuracy of thematic maps requires sampling, as verifying every location on the ground is neither practical nor cost-effective. An effective sampling design depends on characterizing the distribution of map classes, determining the appropriate sample size and allocation, and selecting a suitable sampling scheme.</p>
-<p>Since sampling design directly affects both cost and statistical reliability, it is one of the most critical components of thematic map accuracy assessment, ensuring that reference data are selected using statistically valid and representative procedures <span class="bibtex-citation" id="id1">[<a class="reference internal" href="references.html#id45" title="S. V. Stehman and R. L. Czaplewski. Design and analysis for thematic map accuracy assessment: fundamental principles. Remote Sensing of Environment, 64:331–344, 1998. doi:10.1016/S0034-4257(98)00010-8.">Stehman and Czaplewski, 1998</a>]</span>. A well-structured sampling design is essential for producing unbiased accuracy estimates and reliable area estimates.</p>
-<p>According to <span class="bibtex-citation" id="id2">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span>, <strong>probability sampling is recommended</strong> because every unit in the population has a known, non-zero chance of selection, thereby allowing for design-based, statistically rigorous inferences.</p>
+<p>Since sampling design directly affects both cost and statistical reliability, it is one of the most critical components of thematic map accuracy assessment, ensuring that reference data are selected using statistically valid and representative procedures <span class="bibtex-citation" id="id1">[<a class="reference internal" href="references.html#id46" title="S. V. Stehman and R. L. Czaplewski. Design and analysis for thematic map accuracy assessment: fundamental principles. Remote Sensing of Environment, 64:331–344, 1998. doi:10.1016/S0034-4257(98)00010-8.">Stehman and Czaplewski, 1998</a>]</span>. A well-structured sampling design is essential for producing unbiased accuracy estimates and reliable area estimates.</p>
+<p>According to <span class="bibtex-citation" id="id2">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id38" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span>, <strong>probability sampling is recommended</strong> because every unit in the population has a known, non-zero chance of selection, thereby allowing for design-based, statistically rigorous inferences.</p>
 <a class="reference internal image-reference" href="_images/sampling_design.webp"><img alt="_images/sampling_design.webp" class="align-center" src="_images/sampling_design.webp" style="width: 85%;" />
 </a>
+<p align="center"><em>Sampling design interface in AcATaMa. The window enables users to select sampling
+designs (simple random, stratified random, or systematic), define post-stratification strategies,
+set minimum distance constraints, configure neighbor aggregation parameters, and establish
+random seed values for reproducibility.</em></p>
+<section id="sampling-designs">
+<h2>Sampling Designs<a class="headerlink" href="#sampling-designs" title="Link to this heading">#</a></h2>
+<p>AcATaMa allows users to select from a variety of sampling designs to meet specific needs and to
+ensure that the sample is representative of the population being studied.</p>
+<p>The sampling units generated in AcATaMa are <strong>points</strong>: each pair of X and Y coordinates is
+selected randomly (SRS and STR) or placed at a fixed interval with a random offset (SYS).</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>The estimators applied for each design — and the sample-size formulas — are documented in
+<a class="reference internal" href="introduction.html#equations-measures-and-estimators"><span class="std std-ref">Equations, Measures and Estimators</span></a>.</p>
+</div>
 <section id="simple-random-sampling-srs">
-<h2>Simple Random Sampling (SRS)<a class="headerlink" href="#simple-random-sampling-srs" title="Link to this heading">#</a></h2>
+<h3>Simple Random Sampling (SRS)<a class="headerlink" href="#simple-random-sampling-srs" title="Link to this heading">#</a></h3>
 <a class="reference internal image-reference" href="_images/simple_sampling.svg"><img alt="_images/simple_sampling.svg" class="align-center" src="_images/simple_sampling.svg" style="width: 25%;" />
 </a>
 <p>Simple random sampling provides <strong>equal probability to all units</strong>. It is appropriate if the sample size is large enough to ensure that all classes are adequately represented and could be useful to serve the needs of a wide group of users.</p>
@@ -436,18 +456,18 @@
 </ul>
 </section>
 <section id="stratified-random-sampling-str">
-<h2>Stratified Random Sampling (STR)<a class="headerlink" href="#stratified-random-sampling-str" title="Link to this heading">#</a></h2>
+<h3>Stratified Random Sampling (STR)<a class="headerlink" href="#stratified-random-sampling-str" title="Link to this heading">#</a></h3>
 <a class="reference internal image-reference" href="_images/stratified_sampling.svg"><img alt="_images/stratified_sampling.svg" class="align-center" src="_images/stratified_sampling.svg" style="width: 25%;" />
 </a>
 <p>Stratified random sampling <strong>increases precision via allocation across different map classes or strata</strong>. It is useful for reporting results when strata are of interest and the precision of accuracy and area estimates need to be improved. As a result, it is one of the most commonly used designs.</p>
-<p>This design is recommended by <span class="bibtex-citation" id="id3">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span> as a good practice option for ensuring that rare classes are well represented.</p>
+<p>This design is recommended by <span class="bibtex-citation" id="id3">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id38" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span> as a good practice option for ensuring that rare classes are well represented.</p>
 <p>For STR, the sample size for each stratum is calculated based on:</p>
 <ol class="arabic simple">
 <li><p>Class area proportions</p></li>
 <li><p>A target standard error for overall accuracy</p></li>
 <li><p>Anticipated user’s accuracies by stratum</p></li>
 </ol>
-<p>If necessary, the user can manually adjust the number of samples for one or more classes, e.g., to implement the allocation proposed by <span class="bibtex-citation" id="id4">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span> or other allocation strategies.</p>
+<p>If necessary, the user can manually adjust the number of samples for one or more classes, e.g., to implement the allocation proposed by <span class="bibtex-citation" id="id4">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id38" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span> or other allocation strategies.</p>
 <p><strong>Advantages:</strong></p>
 <ul class="simple">
 <li><p>Allows to increase the sample size of the less common classes</p></li>
@@ -463,7 +483,7 @@
 </ul>
 </section>
 <section id="systematic-sampling-sys">
-<h2>Systematic Sampling (SYS)<a class="headerlink" href="#systematic-sampling-sys" title="Link to this heading">#</a></h2>
+<h3>Systematic Sampling (SYS)<a class="headerlink" href="#systematic-sampling-sys" title="Link to this heading">#</a></h3>
 <a class="reference internal image-reference" href="_images/systematic_sampling_info.svg"><img alt="_images/systematic_sampling_info.svg" class="align-center" src="_images/systematic_sampling_info.svg" style="width: 25%;" />
 </a>
 <p>Systematic sampling <strong>promotes even spatial distribution</strong> by selecting samples at regular intervals across a grid, either by distance or pixel units. Sampling begins from a fixed or random point, starting in the top-left corner, and applies a random offset to the initial grid position.</p>
@@ -480,14 +500,14 @@
 <li><p><strong>Initial inset</strong>: The distance from the top-left corner of the study area to the first point unit</p></li>
 <li><p><strong>Max offset</strong>: Maximum distance along the X and Y axes from the point of the aligned systematic grid</p></li>
 <li><p><strong>Random offset area</strong>: The area surrounding each point where a random offset is applied</p></li>
-<li><p><strong>Confidence level (max coverage)</strong>: The upper bound on the probability that each pixel in the offset area will be tested during the random selection process (see <a class="reference internal" href="#confidence-level-for-random-offset"><span class="xref myst">Confidence Level for Random Offset</span></a> below)</p></li>
+<li><p><strong>Confidence level (max coverage)</strong>: The upper bound on the probability that each pixel in the offset area will be tested during the random selection process (see <a class="reference internal" href="#confidence-level-for-random-offset">Confidence Level for Random Offset</a> below)</p></li>
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>To ensure the offset area covers the entire thematic map (giving every pixel an equal probability of being selected), set the maximum offset value to half of the point spacing.</p>
 </div>
 <section id="aligned-systematic-sampling">
-<h3>Aligned Systematic Sampling<a class="headerlink" href="#aligned-systematic-sampling" title="Link to this heading">#</a></h3>
+<h4>Aligned Systematic Sampling<a class="headerlink" href="#aligned-systematic-sampling" title="Link to this heading">#</a></h4>
 <a class="reference internal image-reference" href="_images/aligned_systematic_sampling.webp"><img alt="_images/aligned_systematic_sampling.webp" class="align-left" src="_images/aligned_systematic_sampling.webp" style="width: 25%;" />
 </a>
 <p><em>(When the max XY offset value is zero)</em></p>
@@ -506,7 +526,7 @@
 </ul>
 </section>
 <section id="unaligned-systematic-sampling">
-<h3>Unaligned Systematic Sampling<a class="headerlink" href="#unaligned-systematic-sampling" title="Link to this heading">#</a></h3>
+<h4>Unaligned Systematic Sampling<a class="headerlink" href="#unaligned-systematic-sampling" title="Link to this heading">#</a></h4>
 <a class="reference internal image-reference" href="_images/unaligned_systematic_sampling.webp"><img alt="_images/unaligned_systematic_sampling.webp" class="align-left" src="_images/unaligned_systematic_sampling.webp" style="width: 25%;" />
 </a>
 <p><em>(When the max XY offset value is NOT zero)</em></p>
@@ -523,7 +543,7 @@
 </ul>
 </section>
 <section id="confidence-level-for-random-offset">
-<h3>Confidence Level for Random Offset<a class="headerlink" href="#confidence-level-for-random-offset" title="Link to this heading">#</a></h3>
+<h4>Confidence Level for Random Offset<a class="headerlink" href="#confidence-level-for-random-offset" title="Link to this heading">#</a></h4>
 <p>When using unaligned systematic sampling (max XY offset &gt; 0), the algorithm randomly selects pixels within each offset area. The <strong>confidence level (<span class="math notranslate nohighlight">\(CL\)</span>)</strong> parameter controls the maximum number of random attempts (<span class="math notranslate nohighlight">\(K\)</span>) to find a valid pixel, setting an upper bound on the probability that each pixel in the offset area will be tested.</p>
 <p>The probability that a fixed pixel is tested at least once in <span class="math notranslate nohighlight">\(K\)</span> independent attempts is:</p>
 <div class="math notranslate nohighlight">
@@ -544,6 +564,7 @@
 </div>
 </section>
 </section>
+</section>
 <section id="additional-features">
 <h2>Additional Features<a class="headerlink" href="#additional-features" title="Link to this heading">#</a></h2>
 <section id="reproducibility">
@@ -551,7 +572,7 @@
 <p>The plugin ensures randomness by automatically generating a random seed for all sampling methods. However, if users require reproducible sampling results, they can set a <strong>fixed seed</strong>. Setting a known seed value ensures replicability given identical inputs and configurations.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>Setting a known seed ensures that the assessment can be reproduced and validated by other parties, which is critical for scientific studies and decision-making.</p>
+<p>Setting a known seed ensures that the assessment can be reproduced and validated by other parties, which is critical for scientific studies and decision-making, and it also supports the <strong>IPCC principle of transparency</strong> for national reports.</p>
 </div>
 </section>
 <section id="minimum-distance-constraint">
@@ -565,10 +586,10 @@
 </section>
 <section id="post-stratification">
 <h3>Post-Stratification<a class="headerlink" href="#post-stratification" title="Link to this heading">#</a></h3>
-<p>AcATaMa supports post-stratification for simple random sampling (SRS) and systematic sampling (SYS), so weights can be adjusted after the sample is drawn to account for class imbalance and improve the reliability of accuracy/area estimates.</p>
+<p>AcATaMa supports post-stratification for simple random sampling (SRS) and systematic sampling (SYS), enabling users to adjust estimation weights after sampling to correct class imbalances, ultimately improving the reliability of accuracy estimates <span class="bibtex-citation" id="id5">[<a class="reference internal" href="references.html#id58" title="R. E. McRoberts, T. Gobakken, and E. Næsset. Post-stratified estimation of forest area and growing stock volume using LiDAR-based stratifications. Remote Sensing of Environment, 125:157–166, 2012. doi:10.1016/j.rse.2012.07.002.">McRoberts <em>et al.</em>, 2012</a>]</span>.</p>
 <section id="what-post-stratification-means">
 <h4>What post-stratification means<a class="headerlink" href="#what-post-stratification-means" title="Link to this heading">#</a></h4>
-<p>Post-stratification groups the already selected SRS/SYS reference sample into “post-strata” (e.g., map classes) and then adjusts the estimation weights using known totals for those map classes. In AcATaMa’s analysis, based on the confusion-matrix sample counts it creates the estimated area proportions using the post-stratified estimator (tables 3 and 4) described in <span class="bibtex-citation" id="id5">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span>.</p>
+<p>Post-stratification groups the already selected SRS/SYS reference sample into “post-strata” (e.g., map classes) and then adjusts the estimation weights using known totals for those map classes. In AcATaMa’s analysis, based on the confusion-matrix sample counts it creates the estimated area proportions using the post-stratified estimator of <span class="bibtex-citation" id="id6">Stehman [<a class="reference internal" href="references.html#id44" title="S. V. Stehman. Estimating area from an accuracy assessment error matrix. Remote Sensing of Environment, 132:202–211, 2013.">2013</a>]</span> (Eq. 48); see <a class="reference internal" href="introduction.html#equations-measures-and-estimators"><span class="std std-ref">Equations, Measures and Estimators</span></a>.</p>
 </section>
 <section id="when-to-use-it">
 <h4>When to use it<a class="headerlink" href="#when-to-use-it" title="Link to this heading">#</a></h4>
@@ -584,7 +605,7 @@
 <h4>Overall Expected Standard Error - S(Ô)<a class="headerlink" href="#overall-expected-standard-error-s-o" title="Link to this heading">#</a></h4>
 <a class="reference internal image-reference" href="_images/overall_std_error.webp"><img alt="_images/overall_std_error.webp" class="align-center" src="_images/overall_std_error.webp" style="width: 35%;" />
 </a>
-<p>The standard error of the estimated overall accuracy that you would like to achieve. For stratified sampling, <span class="bibtex-citation" id="id6">Cochran [<a class="reference internal" href="references.html#id9" title="W. G. Cochran. Sampling Techniques. John Wiley &amp; Sons, 3rd edition, 1977.">1977</a>]</span> provides the sample size formula:</p>
+<p>The standard error of the estimated overall accuracy that you would like to achieve. For stratified sampling, <span class="bibtex-citation" id="id7">Cochran [<a class="reference internal" href="references.html#id10" title="W. G. Cochran. Sampling Techniques. John Wiley &amp; Sons, 3rd edition, 1977.">1977</a>]</span> provides the sample size formula:</p>
 <a class="reference internal image-reference" href="_images/ecuation_sample_size.webp"><img alt="_images/ecuation_sample_size.webp" class="align-center" src="_images/ecuation_sample_size.webp" style="width: 70%;" />
 </a>
 <p>Where:</p>
@@ -606,7 +627,7 @@
 <li><p><strong>0.6 - 0.8</strong>: for unstable classes</p></li>
 <li><p><strong>0.8 - 0.95</strong>: for stable classes</p></li>
 </ul>
-<p>Example values based on <span class="bibtex-citation" id="id7">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span> for forest change assessment:</p>
+<p>Example values based on <span class="bibtex-citation" id="id8">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id38" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span> for forest change assessment:</p>
 <ul class="simple">
 <li><p>0.6 - 0.7: forest gain (very unstable class)</p></li>
 <li><p>0.7 - 0.8: deforestation (unstable class)</p></li>
@@ -619,7 +640,7 @@
 <h3>Minimum Sample Size per Stratum<a class="headerlink" href="#minimum-sample-size-per-stratum" title="Link to this heading">#</a></h3>
 <a class="reference internal image-reference" href="_images/minimum_sampling_per_stratum.webp"><img alt="_images/minimum_sampling_per_stratum.webp" class="align-center" src="_images/minimum_sampling_per_stratum.webp" style="width: 35%;" />
 </a>
-<p>Using stratified or post-stratified sampling, a minimum sample size of <strong>30</strong> <span class="bibtex-citation" id="id8">[<a class="reference internal" href="references.html#id4" title="J. L. Van Genderen, B. F. Lock, and P. A. Vass. Remote sensing: statistical testing of thematic map accuracy. Remote Sensing of Environment, 7(1):3–14, 1978.">Van Genderen <em>et al.</em>, 1978</a>]</span> or <strong>50</strong> <span class="bibtex-citation" id="id9">[<a class="reference internal" href="references.html#id47" title="S. V. Stehman and G. M. Foody. Key issues in rigorous accuracy assessment of land cover products. Remote Sensing of Environment, 231:111199, 2019. doi:10.1016/j.rse.2019.05.018.">Stehman and Foody, 2019</a>, <a class="reference internal" href="references.html#id5" title="A. M. Hay. Sampling designs to test land-use map accuracy. Photogrammetric Engineering and Remote Sensing, 45(4):529–533, 1979.">Hay, 1979</a>]</span> per evaluated stratum is generally recommended to ensure statistical significance.</p>
+<p>Using stratified or post-stratified sampling, a minimum sample size of <strong>30</strong> <span class="bibtex-citation" id="id9">[<a class="reference internal" href="references.html#id4" title="J. L. Van Genderen, B. F. Lock, and P. A. Vass. Remote sensing: statistical testing of thematic map accuracy. Remote Sensing of Environment, 7(1):3–14, 1978.">Van Genderen <em>et al.</em>, 1978</a>]</span> or <strong>50</strong> <span class="bibtex-citation" id="id10">[<a class="reference internal" href="references.html#id48" title="S. V. Stehman and G. M. Foody. Key issues in rigorous accuracy assessment of land cover products. Remote Sensing of Environment, 231:111199, 2019. doi:10.1016/j.rse.2019.05.018.">Stehman and Foody, 2019</a>, <a class="reference internal" href="references.html#id5" title="A. M. Hay. Sampling designs to test land-use map accuracy. Photogrammetric Engineering and Remote Sensing, 45(4):529–533, 1979.">Hay, 1979</a>]</span> per evaluated stratum is generally recommended to ensure statistical significance.</p>
 </section>
 </section>
 </section>
@@ -690,12 +711,15 @@
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-random-sampling-srs">Simple Random Sampling (SRS)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratified-random-sampling-str">Stratified Random Sampling (STR)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#systematic-sampling-sys">Systematic Sampling (SYS)</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aligned-systematic-sampling">Aligned Systematic Sampling</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#unaligned-systematic-sampling">Unaligned Systematic Sampling</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#confidence-level-for-random-offset">Confidence Level for Random Offset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-designs">Sampling Designs</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-random-sampling-srs">Simple Random Sampling (SRS)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stratified-random-sampling-str">Stratified Random Sampling (STR)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#systematic-sampling-sys">Systematic Sampling (SYS)</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#aligned-systematic-sampling">Aligned Systematic Sampling</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#unaligned-systematic-sampling">Unaligned Systematic Sampling</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#confidence-level-for-random-offset">Confidence Level for Random Offset</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-features">Additional Features</a><ul class="nav section-nav flex-column">

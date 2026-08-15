@@ -221,16 +221,17 @@
                 </a>
             </li>
         </ul>
-        <ul class="nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Background</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="install_and_example.html">Installation and Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="thematic_map.html">Thematic Map</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Components</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">The Workflow</span></p>
 <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="thematic_map.html">Thematic Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_design.html">Sampling Design</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Response Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html">Analysis</a></li>
@@ -402,9 +403,9 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="response-design">
+  <section class="tex2jax_ignore mathjax_ignore" id="response-design">
 <h1>Response Design<a class="headerlink" href="#response-design" title="Link to this heading">#</a></h1>
-<p>The response design encompasses the protocols and methodologies used to determine the reference or “true” classification of sampled units in an accuracy assessment <span class="bibtex-citation" id="id1">[<a class="reference internal" href="references.html#id45" title="S. V. Stehman and R. L. Czaplewski. Design and analysis for thematic map accuracy assessment: fundamental principles. Remote Sensing of Environment, 64:331–344, 1998. doi:10.1016/S0034-4257(98)00010-8.">Stehman and Czaplewski, 1998</a>]</span>. It ensures that the comparison between map and reference data is accurate and reliable, directly impacting the validity of accuracy estimates.</p>
+<p>The response design encompasses the protocols and methodologies used to determine the reference or “true” classification of sampled units in an accuracy assessment <span class="bibtex-citation" id="id1">[<a class="reference internal" href="references.html#id46" title="S. V. Stehman and R. L. Czaplewski. Design and analysis for thematic map accuracy assessment: fundamental principles. Remote Sensing of Environment, 64:331–344, 1998. doi:10.1016/S0034-4257(98)00010-8.">Stehman and Czaplewski, 1998</a>]</span>. It ensures that the comparison between map and reference data is accurate and reliable, directly impacting the validity of accuracy estimates.</p>
 <p>One of the key innovations of AcATaMa is its integrated and efficient implementation of all essential response-design components within a single, user-friendly interface. The Response Design window offers a well-organized, intuitive workspace for:</p>
 <ul class="simple">
 <li><p>Configuring the sampling unit and spatial support</p></li>
@@ -414,9 +415,13 @@
 </ul>
 <a class="reference internal image-reference" href="_images/response_design.webp"><img alt="_images/response_design.webp" class="align-center" src="_images/response_design.webp" style="width: 100%;" />
 </a>
+<p align="center"><em>Response design interface in AcATaMa. The multi-window layout supports the
+simultaneous visualization of multiple reference data sources, configuration of spatial support
+units, customized labeling buttons and shortcuts, sample navigation controls, and integration
+with the Continuous Change Detection plugin for time-series analysis.</em></p>
 <section id="response-design-interface">
 <h2>Response Design Interface<a class="headerlink" href="#response-design-interface" title="Link to this heading">#</a></h2>
-<p>According to <span class="bibtex-citation" id="id2">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span>, an effective response design must include well-defined procedures for:</p>
+<p>According to <span class="bibtex-citation" id="id2">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id38" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span>, an effective response design must include well-defined procedures for:</p>
 <ul class="simple">
 <li><p>Selecting reference data sources</p></li>
 <li><p>Applying labeling protocols</p></li>
@@ -442,7 +447,7 @@
 </section>
 <section id="block-based-sampling">
 <h3>Block-Based Sampling<a class="headerlink" href="#block-based-sampling" title="Link to this heading">#</a></h3>
-<p>When using blocks of pixels (e.g., sampling unit size = 1 means a 3×3 pixel block) as the sampling unit, the surrounding area is considered, which can <span class="bibtex-citation" id="id3">[<a class="reference internal" href="references.html#id49" title="S. V. Stehman and J. D. Wickham. Pixels, blocks of pixels, and polygons: choosing a spatial unit for thematic accuracy assessment. Remote Sensing of Environment, 115(12):3044–3055, 2011.">Stehman and Wickham, 2011</a>]</span>:</p>
+<p>When using blocks of pixels (e.g., sampling unit size = 1 means a 3×3 pixel block) as the sampling unit, the surrounding area is considered, which can <span class="bibtex-citation" id="id3">[<a class="reference internal" href="references.html#id50" title="S. V. Stehman and J. D. Wickham. Pixels, blocks of pixels, and polygons: choosing a spatial unit for thematic accuracy assessment. Remote Sensing of Environment, 115(12):3044–3055, 2011.">Stehman and Wickham, 2011</a>]</span>:</p>
 <ul class="simple">
 <li><p>Reduce sensitivity to geo-referencing errors</p></li>
 <li><p>Smooth out small-scale misalignments</p></li>
@@ -520,10 +525,19 @@
 </section>
 <section id="best-practices">
 <h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading">#</a></h2>
-<p>A robust response design enhances the credibility of accuracy assessments and provides a strong foundation for estimating thematic map reliability <span class="bibtex-citation" id="id4">[<a class="reference internal" href="references.html#id45" title="S. V. Stehman and R. L. Czaplewski. Design and analysis for thematic map accuracy assessment: fundamental principles. Remote Sensing of Environment, 64:331–344, 1998. doi:10.1016/S0034-4257(98)00010-8.">Stehman and Czaplewski, 1998</a>, <a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">Olofsson <em>et al.</em>, 2014</a>]</span>.</p>
+<p>A robust response design enhances the credibility of accuracy assessments and provides a strong foundation for estimating thematic map reliability <span class="bibtex-citation" id="id4">[<a class="reference internal" href="references.html#id46" title="S. V. Stehman and R. L. Czaplewski. Design and analysis for thematic map accuracy assessment: fundamental principles. Remote Sensing of Environment, 64:331–344, 1998. doi:10.1016/S0034-4257(98)00010-8.">Stehman and Czaplewski, 1998</a>, <a class="reference internal" href="references.html#id38" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">Olofsson <em>et al.</em>, 2014</a>]</span>. The reference labels assigned here become the ground truth against which the map is judged, so the consistency of the labeling process directly bounds the quality of every accuracy metric and area estimate that follows. Two considerations deserve particular attention when planning a labeling campaign: how to keep interpretation consistent, and which sources of error the assessment does and does not account for.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>AcATaMa simplifies, organizes, and optimizes the process of assigning reference labels to sampled units, ensuring consistent interpretation across interpreters. To mitigate and minimize interpretation bias, consider having multiple independent interpreters review each sample, with disagreements resolved by consensus for the final label.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>AcATaMa is designed to estimate <strong>sampling error</strong>; additional sources of error may occur, such
+as interpreter bias. The response design relies on visual interpretation, which can introduce
+interpreter variability even when consensus protocols are applied. In the Colombia national
+forest change assessment <span class="bibtex-citation" id="id5">[<a class="reference internal" href="references.html#id56" title="X. C. Llano, L. K. Vergara, J. A. Arias, and G. Galindo. AcATaMa: a QGIS plugin for accuracy assessment and area estimation. Applied Computing and Geosciences, 31:100389, 2026. doi:10.1016/j.acags.2026.100389.">Llano <em>et al.</em>, 2026</a>]</span>, for example, the sample was independently reviewed
+and labeled by three interpreters, and disagreements were resolved by consensus to assign the
+final label.</p>
 </div>
 </section>
 </section>

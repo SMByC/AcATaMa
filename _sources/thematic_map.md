@@ -2,6 +2,12 @@
 
 The thematic map is the raster layer for which you want to assess accuracy through the accuracy assessment protocol. It must be a layer with categorical values **with byte or integer as data type** with a specific pixel-value/color associated.
 
+```{note}
+AcATaMa currently supports **raster** thematic maps only. Extending the spatial
+assessment unit from the pixel to area-weighted, polygon-based units is a planned development
+direction.
+```
+
 ```{image} img/thematic_map.png
 :width: 70%
 :align: center

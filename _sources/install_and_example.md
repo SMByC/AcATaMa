@@ -8,8 +8,6 @@ AcATaMa is available from the official QGIS Plugin Repository. To install it:
 2. In the search bar, type `AcATaMa` and click `Install Plugin`.
 3. Once installed, activate the plugin via the `Plugins` menu or `Plugins toolbar`.
 
-> **Warning:** The latest versions of AcATaMa require QGIS 3.36 or newer due to use of newer QGIS API enum forms and QGIS 4 compatibility changes. Please update QGIS to at least the current LTR version (recommended) or the latest version.
-
 ### External Python libraries
 
 AcATaMa uses Dask for parallel raster pixel counting. These Python libraries are distributed as a separate `extlibs.zip` release asset instead of being bundled in the plugin package.
@@ -52,4 +50,23 @@ Finally, the results that are obtained when the sampling points are completed. T
 
 ```{important}
 All files in this example are for demonstration purposes only and do not represent official/real data.
+```
+
+## Real-World Case Study
+
+A complete, peer-reviewed application of the full AcATaMa workflow assessed the accuracy of
+**Colombia's National Forest Change Map for 2018–2019** {cite}`Llano2026` — a 30 × 30 m national
+raster product with four classes (stable forest, non-stable forest, deforestation, and no
+information).
+
+It used a stratified random design with a total sample size of *n* = 10,010, a fixed allocation
+of 1,000 samples to the rare deforestation stratum, a target overall standard error of 0.003,
+and a fixed seed for reproducibility. The overall accuracy was 94.9 %, and the result shows the
+practical value of sample-based area estimation: the map classified 158,900 ha as deforestation,
+whereas the accuracy-adjusted estimate was 142,588 ± 25,002 ha — a reduction of roughly 10.3 %
+attributable to the correction of classification errors.
+
+```{seealso}
+The full case study is available in open access at
+<https://doi.org/10.1016/j.acags.2026.100389>
 ```

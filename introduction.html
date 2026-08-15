@@ -60,6 +60,8 @@
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'introduction';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="icon" href="_static/acatama.svg"/>
@@ -221,16 +223,17 @@
                 </a>
             </li>
         </ul>
-        <ul class="current nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Background</span></p>
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Introduction</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="install_and_example.html">Installation and Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="thematic_map.html">Thematic Map</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Components</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">The Workflow</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="thematic_map.html">Thematic Map</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_design.html">Sampling Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="response_design.html">Response Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html">Analysis</a></li>
@@ -371,8 +374,13 @@
             </div>
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-acatama">Why AcATaMa?</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theoretical-foundation">Theoretical Foundation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#assessing-map-quality">Assessing Map Quality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estimating-area">Estimating Area</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-a-dedicated-tool">Why a Dedicated Tool</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theoretical-foundation">Theoretical Foundation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#equations-measures-and-estimators">Equations, Measures and Estimators</a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -384,33 +392,267 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="introduction">
+  <section class="tex2jax_ignore mathjax_ignore" id="introduction">
 <h1>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h1>
-<p>Since maps are models or generalizations of reality, they inherently contain errors due to factors such as map projections, construction techniques, and data symbolization. The primary goal of quantitative accuracy assessment is to quantify the error (or correctness) of mapped labels or attributes by comparing them with true reference data, providing critical insights into the reliability of classification results. In addition, accuracy assessment supports the estimation of area-adjusted class proportions and their confidence intervals as measures of uncertainty. These statistically adjusted estimates are often more accurate than areas derived directly from the map <span class="bibtex-citation" id="id1">[<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">Olofsson <em>et al.</em>, 2014</a>, <a class="reference internal" href="references.html#id36" title="P. Olofsson, G. M. Foody, S. V. Stehman, and C. E. Woodcock. Making better use of accuracy data in land change studies: estimating accuracy and area and quantifying uncertainty using stratified estimation. Remote Sensing of Environment, 129:122–131, 2013. doi:10.1016/j.rse.2012.10.031.">Olofsson <em>et al.</em>, 2013</a>, <a class="reference internal" href="references.html#id6" title="FAO. Collect earth: land use and land cover assessment through augmented visual interpretation. 2016.">FAO, 2016</a>, <a class="reference internal" href="references.html#id18" title="G. M. Foody. Valuing map validation: the need for rigorous land cover map accuracy assessment in economic valuations of ecosystem services. Ecological Economics, 111:23–28, 2015.">Foody, 2015</a>, <a class="reference internal" href="references.html#id20" title="Global Forest Observations Initiative. Integration of remote sensing and ground-based observations for estimation of emissions and removals of greenhouse gases in forests. 2020. URL: https://www.reddcompass.org/mgd/resources/GFOI-MGD-3.1-en.pdf.">Global Forest Observations Initiative, 2020</a>]</span>.</p>
-<p>A rigorous assessment of map accuracy is necessary to either derive scientifically valid data or ensure the reliability of data for decision-making <span class="bibtex-citation" id="id2">[<a class="reference internal" href="references.html#id45" title="S. V. Stehman and R. L. Czaplewski. Design and analysis for thematic map accuracy assessment: fundamental principles. Remote Sensing of Environment, 64:331–344, 1998. doi:10.1016/S0034-4257(98)00010-8.">Stehman and Czaplewski, 1998</a>, <a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">Olofsson <em>et al.</em>, 2014</a>, <a class="reference internal" href="references.html#id50" title="A. H. Strahler, L. Boschetti, G. M. Foody, M. A. Friedl, M. C. Hansen, M. Herold, P. Mayaux, J. T. Morisette, S. V. Stehman, and C. E. Woodcock. Global land cover validation: recommendations for evaluation and accuracy assessment of global land cover maps. Technical Report GOFC-GOLD Report No. 25, GOFC-GOLD, 2006.">Strahler <em>et al.</em>, 2006</a>]</span>:</p>
+<p>Maps are essential tools for environmental monitoring, resource management, and sustainable
+development planning. As global resources become increasingly scarce due to population growth
+and environmental pressures, their role has widened further, into urban planning, emergency
+response, and habitat conservation. They serve as critical instruments for communication,
+navigation, and decision support, providing a symbolic representation of reality
+<span class="bibtex-citation" id="id1">[<a class="reference internal" href="references.html#id9" title="J. L. Awange and J. B. Kyalo Kiema. Maps in environmental monitoring. In Environmental Geoinformatics, pages 253–267. Springer, 2013. doi:10.1007/978-3-642-34085-7_19.">Awange and Kyalo Kiema, 2013</a>]</span>. By supplying precise and timely spatial information, maps enable us to
+measure, analyze, and understand the extent and distribution of resources, empowering
+decision-makers to take informed actions <span class="bibtex-citation" id="id2">[<a class="reference internal" href="references.html#id11" title="R. G. Congalton and K. Green. Assessing the Accuracy of Remotely Sensed Data: Principles and Practices. CRC Press, 3rd edition, 2019. doi:10.1201/9780429052729.">Congalton and Green, 2019</a>]</span>.</p>
+<p>Since maps are models or generalizations of reality, they inherently contain errors due to
+factors such as map projections, construction techniques, and data symbolization
+<span class="bibtex-citation" id="id3">[<a class="reference internal" href="references.html#id27" title="D. R. Lightfoot and D. R. Butler. Recognition and assessment of error in geographic information systems. Photogrammetric Engineering and Remote Sensing, 53:1423–1430, 1987.">Lightfoot and Butler, 1987</a>, <a class="reference internal" href="references.html#id29" title="D. H. Maling. Measurements from Maps: Principles and Methods of Cartometry. Elsevier, 2013.">Maling, 2013</a>]</span>. That single fact has <strong>two distinct consequences</strong> for anyone
+who uses a thematic map:</p>
+<ol class="arabic simple">
+<li><p>You do not know <strong>how good the map is</strong> — which classes are reliable and which are not.</p></li>
+<li><p>You do not know <strong>how much area each class really covers</strong> — because the mapped extent of a
+class is not the same as its true extent.</p></li>
+</ol>
+<p>AcATaMa answers both questions from the same set of labeled sample points. The two sections below
+explain why each matters; the rest of the documentation describes how the plugin delivers them.</p>
+<section id="assessing-map-quality">
+<h2>Assessing Map Quality<a class="headerlink" href="#assessing-map-quality" title="Link to this heading">#</a></h2>
+<p>The primary goal of quantitative accuracy assessment is to quantify the error (or correctness) of
+mapped labels or attributes by comparing them with true reference data, providing critical
+insights into the reliability of classification results <span class="bibtex-citation" id="id4">[<a class="reference internal" href="references.html#id11" title="R. G. Congalton and K. Green. Assessing the Accuracy of Remotely Sensed Data: Principles and Practices. CRC Press, 3rd edition, 2019. doi:10.1201/9780429052729.">Congalton and Green, 2019</a>]</span>. It is, in effect,
+the <strong>quality control</strong> step of map production: it establishes whether a map is fit for the use
+it is intended to serve, and makes the limits of that fitness explicit.</p>
+<p>A rigorous assessment of map accuracy is necessary to either derive scientifically valid data or
+ensure the reliability of data for decision-making <span class="bibtex-citation" id="id5">[<a class="reference internal" href="references.html#id46" title="S. V. Stehman and R. L. Czaplewski. Design and analysis for thematic map accuracy assessment: fundamental principles. Remote Sensing of Environment, 64:331–344, 1998. doi:10.1016/S0034-4257(98)00010-8.">Stehman and Czaplewski, 1998</a>, <a class="reference internal" href="references.html#id38" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">Olofsson <em>et al.</em>, 2014</a>, <a class="reference internal" href="references.html#id51" title="A. H. Strahler, L. Boschetti, G. M. Foody, M. A. Friedl, M. C. Hansen, M. Herold, P. Mayaux, J. T. Morisette, S. V. Stehman, and C. E. Woodcock. Global land cover validation: recommendations for evaluation and accuracy assessment of global land cover maps. Technical Report GOFC-GOLD Report No. 25, GOFC-GOLD, 2006.">Strahler <em>et al.</em>, 2006</a>]</span>:</p>
 <ul class="simple">
-<li><p><strong>For researchers</strong>: The construction of scientific knowledge requires a structured and robust analytical framework with appropriate statistical methods to make valid inferences; consequently, maps without associated information on the accuracy of the predictions essentially remain untested hypotheses.</p></li>
-<li><p><strong>For policymakers</strong>: Errors in geospatial data can lead to flawed conclusions and misguided actions with potentially serious consequences; assessing the accuracy of thematic maps is essential to incorporate realistic expectations into the planning processes and environmental monitoring, supporting informed decision-making and effective resource allocation.</p></li>
+<li><p><strong>For researchers</strong>: the construction of scientific knowledge requires a structured and
+robust analytical framework with appropriate statistical methods to make valid inferences;
+consequently, maps without associated information on the accuracy of the predictions
+essentially remain untested hypotheses <span class="bibtex-citation" id="id6">[<a class="reference internal" href="references.html#id51" title="A. H. Strahler, L. Boschetti, G. M. Foody, M. A. Friedl, M. C. Hansen, M. Herold, P. Mayaux, J. T. Morisette, S. V. Stehman, and C. E. Woodcock. Global land cover validation: recommendations for evaluation and accuracy assessment of global land cover maps. Technical Report GOFC-GOLD Report No. 25, GOFC-GOLD, 2006.">Strahler <em>et al.</em>, 2006</a>, <a class="reference internal" href="references.html#id33" title="R. E. McRoberts. Satellite image-based maps: scientific inference or pretty pictures? Remote Sensing of Environment, 115:714–724, 2011.">McRoberts, 2011</a>, <a class="reference internal" href="references.html#id35" title="P. J. Mitchell, A.-L. Downie, and M. Diesing. How good is my map? a tool for semi-automated thematic mapping and spatially explicit confidence assessment. Environmental Modelling &amp; Software, 108:111–122, 2018.">Mitchell <em>et al.</em>, 2018</a>]</span>.</p></li>
+<li><p><strong>For policymakers</strong>: errors in geospatial data can lead to flawed conclusions and misguided
+actions with potentially serious consequences; assessing the accuracy of thematic maps is
+essential to incorporate realistic expectations into the planning processes and environmental
+monitoring, supporting informed decision-making and effective resource allocation
+<span class="bibtex-citation" id="id7">[<a class="reference internal" href="references.html#id14" title="J. E. Estes and D. W. Mooneyhan. Of maps and myths. Photogrammetric Engineering and Remote Sensing, 60:517–524, 1994.">Estes and Mooneyhan, 1994</a>, <a class="reference internal" href="references.html#id31" title="J. McKendry. The influence of map design on resource management decision making. Cartographica, 37:13–27, 2000. doi:10.3138/R516-107N-4X28-0504.">McKendry, 2000</a>, <a class="reference internal" href="references.html#id18" title="G. M. Foody. Gis: the accuracy of spatial data revisited. Progress in Physical Geography, 25:389–398, 2001.">Foody, 2001</a>, <a class="reference internal" href="references.html#id19" title="G. M. Foody. Valuing map validation: the need for rigorous land cover map accuracy assessment in economic valuations of ecosystem services. Ecological Economics, 111:23–28, 2015.">Foody, 2015</a>]</span>.</p></li>
 </ul>
-<section id="why-acatama">
-<h2>Why AcATaMa?<a class="headerlink" href="#why-acatama" title="Link to this heading">#</a></h2>
-<p>The development of AcATaMa was motivated by the need for a standardized, user-friendly tool to support rigorous thematic map accuracy assessment and to produce adjusted, sample-based area estimates. Traditional accuracy assessment methods often require multiple software tools and workflows and involve complex statistical procedures that demand specialized expertise and can pose a barrier to adoption.</p>
-<p>AcATaMa addresses these challenges by offering an integrated and intuitive suite of tools that simplify the processes of sampling design, response design, and analysis, while ensuring statistical rigor and reproducibility. AcATaMa was developed as an open-source QGIS plugin specifically designed for the accuracy assessment of thematic raster maps in alignment with international guidance and good practice, including the Intergovernmental Panel on Climate Change (IPCC) principles of transparency, completeness, consistency, comparability, and accuracy.</p>
-<p>The versatility of AcATaMa allows for a wide range of applications, it has been used and cited in numerous studies across various fields, including:</p>
+<p>Because accuracy is reported per class — not only as a single overall figure — quality control
+also tells you <em>where</em> a map can be trusted. A map may be highly accurate for a dominant, stable
+class and unreliable for the rare change class that a study actually depends on.</p>
+</section>
+<section id="estimating-area">
+<h2>Estimating Area<a class="headerlink" href="#estimating-area" title="Link to this heading">#</a></h2>
+<p>The accuracy measures alone do not answer the second question. Knowing that a class has 85 %
+user’s accuracy tells you how often that label is correct, but not how much of the class actually
+exists on the ground.</p>
+<p>The intuitive answer — count the pixels labeled as a class and multiply by the pixel size — is
+biased whenever the map contains classification error, which in practice is always
+<span class="bibtex-citation" id="id8">[<a class="reference internal" href="references.html#id38" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">Olofsson <em>et al.</em>, 2014</a>, <a class="reference internal" href="references.html#id65" title="F. J. Gallego. Remote sensing and land cover area estimation. International Journal of Remote Sensing, 25(15):3019–3047, 2004. doi:10.1080/01431160310001619607.">Gallego, 2004</a>, <a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, S. V. Stehman, and C. E. Woodcock. Making better use of accuracy data in land change studies: estimating accuracy and area and quantifying uncertainty using stratified estimation. Remote Sensing of Environment, 129:122–131, 2013. doi:10.1016/j.rse.2012.10.031.">Olofsson <em>et al.</em>, 2013</a>]</span>. Omission and commission errors do not cancel out,
+so the mapped area of a class departs systematically from its true area. <span class="bibtex-citation" id="id9">Gallego [<a class="reference internal" href="references.html#id65" title="F. J. Gallego. Remote sensing and land cover area estimation. International Journal of Remote Sensing, 25(15):3019–3047, 2004. doi:10.1080/01431160310001619607.">2004</a>]</span>
+characterizes this as a <strong>measurement bias</strong> rather than an estimator bias: the map is a complete
+census of the territory, but the instrument doing the counting is imperfect. This is why the
+problem cannot be solved by mapping more carefully at the margins or by collecting a larger
+sample — the bias is a property of the map itself.</p>
+<p>The distortion is most severe for <strong>rare classes</strong>, which are usually the ones that matter most
+in change monitoring. A class such as deforestation may occupy a very small fraction of the
+territory, so even a low commission rate among the dominant stable classes introduces
+false-positive pixels that are large relative to the rare class’s true extent
+<span class="bibtex-citation" id="id10">[<a class="reference internal" href="references.html#id38" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">Olofsson <em>et al.</em>, 2014</a>, <a class="reference internal" href="references.html#id36" title="P. Olofsson, P. Arévalo, A. B. Espejo, C. Green, E. Lindquist, R. E. McRoberts, and M. J. Sanz. Mitigating the effects of omission errors on area and area change estimates. Remote Sensing of Environment, 236:111492, 2020. doi:10.1016/j.rse.2019.111492.">Olofsson <em>et al.</em>, 2020</a>, <a class="reference internal" href="references.html#id49" title="S. V. Stehman and P. Olofsson. Omission errors in large strata in stratified area estimation. In I. Jonckheere, R. Hamilton, J. M. Michel, and E. Donegan, editors, Good Practices in Sample-based Area Estimation. FAO, 2024.">Stehman and Olofsson, 2024</a>]</span>. Reporting a raw pixel count in that situation can
+misstate the very change being monitored.</p>
+<p>Good practice is therefore to derive the area from the <strong>reference sample</strong>, using the map only
+to define the strata and their weights <span class="bibtex-citation" id="id11">[<a class="reference internal" href="references.html#id38" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">Olofsson <em>et al.</em>, 2014</a>, <a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, S. V. Stehman, and C. E. Woodcock. Making better use of accuracy data in land change studies: estimating accuracy and area and quantifying uncertainty using stratified estimation. Remote Sensing of Environment, 129:122–131, 2013. doi:10.1016/j.rse.2012.10.031.">Olofsson <em>et al.</em>, 2013</a>, <a class="reference internal" href="references.html#id44" title="S. V. Stehman. Estimating area from an accuracy assessment error matrix. Remote Sensing of Environment, 132:202–211, 2013.">Stehman, 2013</a>]</span>. Expressing
+the error matrix in terms of area proportions instead of sample counts yields a design-based
+estimator of each class’s true proportion, and hence its area. Just as importantly, that
+estimator carries a <strong>variance</strong> — so the output is not merely a corrected number but a number
+with a confidence interval, which a pixel count can never provide.</p>
+<p>That property is what makes an area figure reportable. Good-practice guidance for forest
+monitoring and greenhouse-gas accounting requires activity data to be accompanied by quantified
+uncertainty <span class="bibtex-citation" id="id12">[<a class="reference internal" href="references.html#id21" title="Global Forest Observations Initiative. Integration of remote-sensing and ground-based observations for estimation of emissions and removals of greenhouse gases in forests: methods and guidance document. 2020. URL: https://www.reddcompass.org/mgd/.">Global Forest Observations Initiative, 2020</a>, <a class="reference internal" href="references.html#id6" title="Food and Agriculture Organization of the United Nations (FAO). Map accuracy assessment and area estimation: a practical guide. Technical Report National Forest Monitoring Assessment Working Paper No. 46/E, Food and Agriculture Organization of the United Nations, Rome, Italy, 2016. doi:10.4060/i5601e.">Food and Agriculture Organization of the United Nations (FAO), 2016</a>, <a class="reference internal" href="references.html#id17" title="Y. Finegold and A. Ortmann. Map Accuracy Assessment and Area Estimation: A Practical Guide. FAO, 2016.">Finegold and Ortmann, 2016</a>]</span>. AcATaMa produces the area-adjusted estimate,
+its standard error, the confidence interval, the uncertainty and the coefficient of variation
+<span class="bibtex-citation" id="id13">[<a class="reference internal" href="references.html#id32" title="A. McMurray, T. Pearson, and F. Casarim. Guidance on Applying the Monte Carlo Approach to Uncertainty Analyses in Forestry and Greenhouse Gas Accounting. Winrock International, 2017.">McMurray <em>et al.</em>, 2017</a>]</span> in the same operation that produces the accuracy metrics.</p>
+<p>Two design decisions make the plugin practical for this purpose:</p>
 <ul class="simple">
-<li><p>Deforestation monitoring</p></li>
-<li><p>Land-cover classification and change analysis</p></li>
-<li><p>Environmental and ecological studies</p></li>
-<li><p>Wildfire monitoring</p></li>
-<li><p>Water and watershed analysis</p></li>
-<li><p>Agricultural research</p></li>
+<li><p><strong>The estimator follows the sampling design.</strong> Stratum weights are taken from the thematic map
+under assessment, and the estimator is selected to match the design in use — simple random,
+stratified, systematic, or post-stratified — so the area estimate is always statistically
+consistent with the sample that produced it.</p></li>
+<li><p><strong>The estimate stays tied to the assessment.</strong> The error matrix, the accuracy metrics and the
+area estimates come from one sample, one map and one configuration. This removes the manual
+transfer step between separate accuracy and area tools, which is where inconsistent
+assumptions typically enter.</p></li>
 </ul>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>A worked application of both outputs is described in
+<a class="reference internal" href="install_and_example.html#real-world-case-study"><span class="std std-ref">Real-World Case Study</span></a>.</p>
+</div>
+</section>
+<section id="why-a-dedicated-tool">
+<h2>Why a Dedicated Tool<a class="headerlink" href="#why-a-dedicated-tool" title="Link to this heading">#</a></h2>
+<p>Despite the widespread acceptance of accuracy assessment and the extensive literature on the
+topic, conducting rigorous assessments remains <strong>operationally challenging</strong>. Practitioners must
+translate statistical guidance into sampling designs, define response protocols, interpret
+reference data consistently, calculate design-based accuracy and area estimators, and report
+uncertainty in a reproducible way. Each step demands specialized expertise, which can itself pose
+a barrier to adoption <span class="bibtex-citation" id="id14">[<a class="reference internal" href="references.html#id18" title="G. M. Foody. Gis: the accuracy of spatial data revisited. Progress in Physical Geography, 25:389–398, 2001.">Foody, 2001</a>]</span>.</p>
+<p>These steps are also frequently distributed across separate GIS, spreadsheet, scripting, and
+visual interpretation tools, each covering only part of the workflow. Every hand-off between them
+is an opportunity for inconsistent assumptions or incomplete reporting. Several existing tools
+and platforms support important parts of the workflow — visual reference-data interpretation,
+sampling design, or area estimation — but none brings all three stages together in a single,
+open-source desktop environment. Some rely on persistent internet connectivity or cloud
+platforms, others require programming expertise, and proprietary options impose licensing costs
+that limit accessibility.</p>
+<p>AcATaMa (Accuracy Assessment of Thematic Maps) was developed to close that gap: a QGIS plugin
+providing a <strong>complete, open-source, and offline-capable workflow</strong> that integrates sampling
+design, response design, and analysis in a single, user-friendly environment, within a
+<strong>design-based inference framework</strong>.</p>
 </section>
 <section id="theoretical-foundation">
 <h2>Theoretical Foundation<a class="headerlink" href="#theoretical-foundation" title="Link to this heading">#</a></h2>
-<p>AcATaMa is designed and developed based on validated methodologies from foundational research studies in thematic map accuracy assessment. Its structure and protocols follow the fundamental principles outlined by <span class="bibtex-citation" id="id3">Stehman and Czaplewski [<a class="reference internal" href="references.html#id45" title="S. V. Stehman and R. L. Czaplewski. Design and analysis for thematic map accuracy assessment: fundamental principles. Remote Sensing of Environment, 64:331–344, 1998. doi:10.1016/S0034-4257(98)00010-8.">1998</a>]</span> for the design and analysis of accuracy assessment for raster thematic maps. The plugin implements sampling methods, statistical techniques, and estimation procedures as specified in the literature for each sampling design.</p>
-<p>AcATaMa incorporates key recommendations for good practice in accuracy assessment from <span class="bibtex-citation" id="id4">Stehman and Foody [<a class="reference internal" href="references.html#id46" title="S. V. Stehman and G. M. Foody. Accuracy assessment. In T. A. Warner, D. M. Nellis, and G. M. Foody, editors, The SAGE Handbook of Remote Sensing, pages 297–309. SAGE Publications, 2009. doi:10.4135/9780857021052.n21.">2009</a>]</span>, <span class="bibtex-citation" id="id5">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id36" title="P. Olofsson, G. M. Foody, S. V. Stehman, and C. E. Woodcock. Making better use of accuracy data in land change studies: estimating accuracy and area and quantifying uncertainty using stratified estimation. Remote Sensing of Environment, 129:122–131, 2013. doi:10.1016/j.rse.2012.10.031.">2013</a>]</span>, <span class="bibtex-citation" id="id6">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span>, <span class="bibtex-citation" id="id7">Stehman [<a class="reference internal" href="references.html#id44" title="S. V. Stehman. Estimating area and map accuracy for stratified random sampling when the strata are different from the map classes. International Journal of Remote Sensing, 35(13):4923–4939, 2014. doi:10.1080/01431161.2014.930207.">2014</a>]</span>, <span class="bibtex-citation" id="id8">Finegold and Ortmann [<a class="reference internal" href="references.html#id16" title="Y. Finegold and A. Ortmann. Map Accuracy Assessment and Area Estimation: A Practical Guide. FAO, 2016.">2016</a>]</span>, <span class="bibtex-citation" id="id9">Stehman and Foody [<a class="reference internal" href="references.html#id47" title="S. V. Stehman and G. M. Foody. Key issues in rigorous accuracy assessment of land cover products. Remote Sensing of Environment, 231:111199, 2019. doi:10.1016/j.rse.2019.05.018.">2019</a>]</span>, and <span class="bibtex-citation" id="id10">Global Forest Observations Initiative [<a class="reference internal" href="references.html#id20" title="Global Forest Observations Initiative. Integration of remote sensing and ground-based observations for estimation of emissions and removals of greenhouse gases in forests. 2020. URL: https://www.reddcompass.org/mgd/resources/GFOI-MGD-3.1-en.pdf.">2020</a>]</span>.</p>
-<p>These protocols and best practices for accuracy assessment are internationally recognized, widely accepted, and extensively applied in numerous studies and real-world applications across various disciplines. Only well-validated and widely trusted methods have been integrated into AcATaMa to ensure reliable, reproducible, and statistically rigorous accuracy assessments.</p>
+<p>AcATaMa is designed and developed based on validated methodologies from foundational research
+studies in thematic map accuracy assessment. Its structure and protocols follow the fundamental
+principles outlined by <span class="bibtex-citation" id="id15">Stehman and Czaplewski [<a class="reference internal" href="references.html#id46" title="S. V. Stehman and R. L. Czaplewski. Design and analysis for thematic map accuracy assessment: fundamental principles. Remote Sensing of Environment, 64:331–344, 1998. doi:10.1016/S0034-4257(98)00010-8.">1998</a>]</span> for the design and analysis of accuracy assessment
+for raster thematic maps. The sampling methods, statistical techniques, and estimation
+procedures are implemented as specified in the literature for each sampling design by
+<span class="bibtex-citation" id="id16">Cochran [<a class="reference internal" href="references.html#id10" title="W. G. Cochran. Sampling Techniques. John Wiley &amp; Sons, 3rd edition, 1977.">1977</a>]</span> and <span class="bibtex-citation" id="id17">Särndal and Swensson [<a class="reference internal" href="references.html#id57" title="C. E. Särndal and B. Swensson. Model Assisted Survey Sampling. Springer, New York, 1992.">1992</a>]</span>.</p>
+<p>Additionally, AcATaMa incorporates other key recommendations for good practice in accuracy
+assessment from <span class="bibtex-citation" id="id18">Stehman and Foody [<a class="reference internal" href="references.html#id47" title="S. V. Stehman and G. M. Foody. Accuracy assessment. In T. A. Warner, D. M. Nellis, and G. M. Foody, editors, The SAGE Handbook of Remote Sensing, pages 297–309. SAGE Publications, 2009. doi:10.4135/9780857021052.n21.">2009</a>]</span>, <span class="bibtex-citation" id="id19">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, S. V. Stehman, and C. E. Woodcock. Making better use of accuracy data in land change studies: estimating accuracy and area and quantifying uncertainty using stratified estimation. Remote Sensing of Environment, 129:122–131, 2013. doi:10.1016/j.rse.2012.10.031.">2013</a>]</span>, <span class="bibtex-citation" id="id20">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id38" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span>,
+<span class="bibtex-citation" id="id21">Stehman [<a class="reference internal" href="references.html#id45" title="S. V. Stehman. Estimating area and map accuracy for stratified random sampling when the strata are different from the map classes. International Journal of Remote Sensing, 35(13):4923–4939, 2014. doi:10.1080/01431161.2014.930207.">2014</a>]</span>, <span class="bibtex-citation" id="id22">Finegold and Ortmann [<a class="reference internal" href="references.html#id17" title="Y. Finegold and A. Ortmann. Map Accuracy Assessment and Area Estimation: A Practical Guide. FAO, 2016.">2016</a>]</span>, <span class="bibtex-citation" id="id23">Food and Agriculture Organization of the United Nations (FAO) [<a class="reference internal" href="references.html#id6" title="Food and Agriculture Organization of the United Nations (FAO). Map accuracy assessment and area estimation: a practical guide. Technical Report National Forest Monitoring Assessment Working Paper No. 46/E, Food and Agriculture Organization of the United Nations, Rome, Italy, 2016. doi:10.4060/i5601e.">2016</a>]</span>, <span class="bibtex-citation" id="id24">Stehman and Foody [<a class="reference internal" href="references.html#id48" title="S. V. Stehman and G. M. Foody. Key issues in rigorous accuracy assessment of land cover products. Remote Sensing of Environment, 231:111199, 2019. doi:10.1016/j.rse.2019.05.018.">2019</a>]</span>, and
+<span class="bibtex-citation" id="id25">Global Forest Observations Initiative [<a class="reference internal" href="references.html#id21" title="Global Forest Observations Initiative. Integration of remote-sensing and ground-based observations for estimation of emissions and removals of greenhouse gases in forests: methods and guidance document. 2020. URL: https://www.reddcompass.org/mgd/.">2020</a>]</span>.</p>
+<p>These protocols and best practices for accuracy assessment are internationally recognized,
+widely accepted, and extensively applied in numerous studies and real-world applications across
+various disciplines. Only well-validated and widely trusted methods have been integrated into
+AcATaMa to ensure reliable, reproducible, and statistically rigorous accuracy assessments.</p>
+<section id="equations-measures-and-estimators">
+<h3>Equations, Measures and Estimators<a class="headerlink" href="#equations-measures-and-estimators" title="Link to this heading">#</a></h3>
+<p>The following table presents the equations, measures, and estimators incorporated in AcATaMa’s
+sampling design and analysis protocol, which are used for sampling design, accuracy assessment,
+and area estimation. The estimator applied depends on the <strong>sampling design</strong> selected in the
+plugin, so make sure the design reported in the analysis window matches the design you intend to
+report.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 14.0%" />
+<col style="width: 18.0%" />
+<col style="width: 18.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Sampling design</p></th>
+<th class="head"><p>Measures and estimators</p></th>
+<th class="head"><p>Reference</p></th>
+<th class="head"><p>Key formulas (compact notation)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Simple random sampling (SRS)</p></td>
+<td><p>Accuracy (overall, user’s, producer’s)</p></td>
+<td><p><span class="bibtex-citation" id="id26">Stehman and Foody [<a class="reference internal" href="references.html#id47" title="S. V. Stehman and G. M. Foody. Accuracy assessment. In T. A. Warner, D. M. Nellis, and G. M. Foody, editors, The SAGE Handbook of Remote Sensing, pages 297–309. SAGE Publications, 2009. doi:10.4135/9780857021052.n21.">2009</a>]</span>, Table 21.3</p></td>
+<td><div class="math notranslate nohighlight">
+\[\hat{O} = \frac{\sum_{i=1}^{q} n_{ii}}{n}, \quad \hat{U}_i = \frac{n_{ii}}{n_{i+}}, \quad \hat{P}_j = \frac{n_{jj}}{n_{+j}}\]</div>
+</td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p>Area estimation and confidence interval</p></td>
+<td><p><span class="bibtex-citation" id="id27">Stehman [<a class="reference internal" href="references.html#id44" title="S. V. Stehman. Estimating area from an accuracy assessment error matrix. Remote Sensing of Environment, 132:202–211, 2013.">2013</a>]</span>, Eqs. 13 and 44</p></td>
+<td><div class="math notranslate nohighlight">
+\[\hat{p}_{+j} = \frac{n_{+j}}{n}, \quad \hat{A}_j = A_T\, \hat{p}_{+j}\]</div>
+<div class="math notranslate nohighlight">
+\[\hat{V}\left(\hat{p}_{+j}\right) = \frac{\hat{p}_{+j}\left(1 - \hat{p}_{+j}\right)(N - n)}{n(N - 1)}\]</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>Stratified random sampling (STR)</p></td>
+<td><p>Accuracy (overall, user’s, producer’s)</p></td>
+<td><p><span class="bibtex-citation" id="id28">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, S. V. Stehman, and C. E. Woodcock. Making better use of accuracy data in land change studies: estimating accuracy and area and quantifying uncertainty using stratified estimation. Remote Sensing of Environment, 129:122–131, 2013. doi:10.1016/j.rse.2012.10.031.">2013</a>]</span>, Eqs. 1–3</p></td>
+<td><div class="math notranslate nohighlight">
+\[\hat{q}_{ij} = \frac{n_{ij}}{n_{i+}}, \quad \hat{p}_{ij} = W_i\, \hat{q}_{ij}, \quad \hat{O} = \sum_i \hat{p}_{ii}\]</div>
+<div class="math notranslate nohighlight">
+\[\hat{U}_i = \frac{\hat{p}_{ii}}{\hat{p}_{i+}}, \quad \hat{P}_j = \frac{\hat{p}_{jj}}{\hat{p}_{+j}}\]</div>
+</td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p>Area estimation and confidence interval</p></td>
+<td><p><span class="bibtex-citation" id="id29">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, S. V. Stehman, and C. E. Woodcock. Making better use of accuracy data in land change studies: estimating accuracy and area and quantifying uncertainty using stratified estimation. Remote Sensing of Environment, 129:122–131, 2013. doi:10.1016/j.rse.2012.10.031.">2013</a>]</span>, Eqs. 10–11</p></td>
+<td><div class="math notranslate nohighlight">
+\[\hat{p}_{+j} = \sum_i W_i\, \hat{q}_{ij}, \quad \hat{A}_j = A_T\, \hat{p}_{+j}\]</div>
+<div class="math notranslate nohighlight">
+\[\hat{V}\left(\hat{p}_{+j}\right) = \sum_i \frac{W_i^{2}\, \hat{q}_{ij}\left(1 - \hat{q}_{ij}\right)}{n_{i+} - 1}\]</div>
+</td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p>Sample size and allocation</p></td>
+<td><p><span class="bibtex-citation" id="id30">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id38" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span>, Eq. 13</p></td>
+<td><div class="math notranslate nohighlight">
+\[n = \frac{\left(\sum_i W_i S_i\right)^{2}}{\left[S\left(\hat{O}\right)\right]^{2} + \frac{1}{N}\sum_i W_i S_i^{2}} \approx \left(\frac{\sum_i W_i S_i}{S\left(\hat{O}\right)}\right)^{2}\]</div>
+<div class="math notranslate nohighlight">
+\[S_i = \sqrt{U_i\left(1 - U_i\right)}, \quad n_i \approx W_i\, n\]</div>
+<p>with a minimum allocation per stratum</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>Systematic sampling (SYS)</p></td>
+<td><p>Accuracy (overall, user’s, producer’s)</p></td>
+<td><p><span class="bibtex-citation" id="id31">Stehman and Foody [<a class="reference internal" href="references.html#id47" title="S. V. Stehman and G. M. Foody. Accuracy assessment. In T. A. Warner, D. M. Nellis, and G. M. Foody, editors, The SAGE Handbook of Remote Sensing, pages 297–309. SAGE Publications, 2009. doi:10.4135/9780857021052.n21.">2009</a>]</span>, Table 21.3</p></td>
+<td><div class="math notranslate nohighlight">
+\[\hat{O} = \frac{\sum_{i=1}^{q} n_{ii}}{n}, \quad \hat{U}_i = \frac{n_{ii}}{n_{i+}}, \quad \hat{P}_j = \frac{n_{jj}}{n_{+j}}\]</div>
+<p>SYS uses the simple (SRS) estimators</p>
+</td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p>Area estimation and confidence interval</p></td>
+<td><p><span class="bibtex-citation" id="id32">Stehman [<a class="reference internal" href="references.html#id43" title="S. V. Stehman. Impact of sample size allocation when using stratified random sampling to estimate accuracy and area of land-cover change. Remote Sensing Letters, 3(2):111–120, 2012. doi:10.1080/01431161.2010.541950.">2012</a>]</span>, Eq. 3, for systematic design context</p></td>
+<td><div class="math notranslate nohighlight">
+\[\hat{p}_{+j} = \frac{n_{+j}}{n}, \quad \hat{A}_j = A_T\, \hat{p}_{+j}\]</div>
+<div class="math notranslate nohighlight">
+\[\hat{V}\left(\hat{p}_{+j}\right) = \frac{\hat{p}_{+j}\left(1 - \hat{p}_{+j}\right)(N - n)}{n(N - 1)}\]</div>
+<p>SYS uses the simple (SRS) area estimator</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>Post stratified</p></td>
+<td><p>Area estimation and confidence interval</p></td>
+<td><p><span class="bibtex-citation" id="id33">Stehman [<a class="reference internal" href="references.html#id44" title="S. V. Stehman. Estimating area from an accuracy assessment error matrix. Remote Sensing of Environment, 132:202–211, 2013.">2013</a>]</span>, Eq. 48</p></td>
+<td><div class="math notranslate nohighlight">
+\[\hat{p}_{+j}^{\mathrm{PS}} = \sum_h W_h^{\mathrm{PS}}\left(\frac{n_{hj}}{n_{h+}}\right), \quad \hat{A}_j^{\mathrm{PS}} = A_T\, \hat{p}_{+j}^{\mathrm{PS}}\]</div>
+<div class="math notranslate nohighlight">
+\[\hat{V}\left(\hat{p}_{+j}^{\mathrm{PS}}\right) = \frac{1}{n}\left(1 - \frac{n}{N}\right)\sum_{h=1}^{H} W_h S_{yh}^{2} + \frac{1}{n^{2}}\sum_{h=1}^{H}\left(1 - W_h\right) S_{yh}^{2}\]</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>SRS and SYS</p></td>
+<td><p>Sample size</p></td>
+<td><p><span class="bibtex-citation" id="id34">Cochran [<a class="reference internal" href="references.html#id10" title="W. G. Cochran. Sampling Techniques. John Wiley &amp; Sons, 3rd edition, 1977.">1977</a>]</span>, Eq. 4.2</p></td>
+<td><div class="math notranslate nohighlight">
+\[n = \frac{Z^{2}\, p\,(1 - p)}{d^{2}}\]</div>
+<p>where <span class="math notranslate nohighlight">\(p\)</span> is the anticipated overall accuracy, <span class="math notranslate nohighlight">\(d\)</span> the desired half-width of the confidence
+interval and <span class="math notranslate nohighlight">\(Z\)</span> the standard normal quantile</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>All designs</p></td>
+<td><p>Uncertainty and coefficient of variation</p></td>
+<td><p><span class="bibtex-citation" id="id35">McMurray <em>et al.</em> [<a class="reference internal" href="references.html#id32" title="A. McMurray, T. Pearson, and F. Casarim. Guidance on Applying the Monte Carlo Approach to Uncertainty Analyses in Forestry and Greenhouse Gas Accounting. Winrock International, 2017.">2017</a>]</span>, p. 17</p></td>
+<td><div class="math notranslate nohighlight">
+\[U(\%) = \frac{100\, z\, \mathrm{SE}\left(\hat{A}_j\right)}{\hat{A}_j}, \quad \mathrm{CV}(\%) = \frac{100\, \mathrm{SE}\left(\hat{A}_j\right)}{\hat{A}_j}\]</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Notation:</strong> <span class="math notranslate nohighlight">\(n\)</span> = total sample size; <span class="math notranslate nohighlight">\(N\)</span> = total number of map units/pixels in the analysis
+area; <span class="math notranslate nohighlight">\(n_{ij}\)</span> = sample count in map/stratum row <span class="math notranslate nohighlight">\(i\)</span> and reference-class column <span class="math notranslate nohighlight">\(j\)</span>; <span class="math notranslate nohighlight">\(n_{i+}\)</span> and
+<span class="math notranslate nohighlight">\(n_{+j}\)</span> = row and column totals; <span class="math notranslate nohighlight">\(W_i = A_i/A_T\)</span>; <span class="math notranslate nohighlight">\(A_T\)</span> = total map area; <span class="math notranslate nohighlight">\(\hat{q}_{ij}\)</span> =
+within-stratum sample proportion; <span class="math notranslate nohighlight">\(\hat{p}_{ij}\)</span> = area-adjusted proportion; <span class="math notranslate nohighlight">\(U_i\)</span> = conjectured
+user’s accuracy for stratum <span class="math notranslate nohighlight">\(i\)</span>; <span class="math notranslate nohighlight">\(S(\hat{O})\)</span> = target standard error of overall accuracy;
+<span class="math notranslate nohighlight">\(z\)</span> = normal critical value for the selected confidence level.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The minimum-per-stratum allocation prevents rare but policy-relevant classes (for example
+deforestation) from receiving too few samples to yield comparably precise estimates. See
+<a class="reference internal" href="sampling_design.html"><span class="std std-doc">Sampling Design</span></a> for how to set this in the plugin.</p>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>AcATaMa has been rigorously tested using multiple real-world examples across various use cases
+to ensure the reliability of its results. This involved manually calculating several test cases
+from scratch and systematically comparing them with AcATaMa’s outputs to validate its
+computational accuracy.</p>
+</div>
+</section>
 </section>
 </section>
 
@@ -480,8 +722,13 @@
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-acatama">Why AcATaMa?</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theoretical-foundation">Theoretical Foundation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#assessing-map-quality">Assessing Map Quality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estimating-area">Estimating Area</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-a-dedicated-tool">Why a Dedicated Tool</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theoretical-foundation">Theoretical Foundation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#equations-measures-and-estimators">Equations, Measures and Estimators</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
