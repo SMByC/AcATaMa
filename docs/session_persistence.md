@@ -11,6 +11,7 @@ AcATaMa supports session persistence through save and restore functionality that
 
 - **Resume capability** - resume work exactly where you left off, maintaining consistency across sessions by preserving the sampling design and report, response design configuration, labeling progress, and workspace setup
 - **Team collaboration** - share standardized configurations to ensure uniform assessment methodology
+- **Reproducibility and transparency** - together with a fixed random seed, saving the full configuration allows an assessment to be reproduced and validated by other parties, supporting the IPCC principle of transparency for national reporting
 
 ```{tip}
 Inside the configuration YAML file, AcATaMa saves relative paths for all layers configured with respect to the YAML file’s location, but only when those layers are in the same directory or a subdirectory of the YAML file. This ensures the project remains portable and easy to share.

@@ -8,6 +8,9 @@ extlibs/
 .venv
 *.aux.xml
 
+# docs build output
+docs/_build/
+
 # AI
 codemap.md
 AGENTS.md

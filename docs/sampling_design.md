@@ -10,6 +10,23 @@ According to {cite:t}`Olofsson2014`, **probability sampling is recommended** bec
 :width: 85%
 :align: center
 ```
+<p align="center"><em>Sampling design interface in AcATaMa. The window enables users to select sampling
+designs (simple random, stratified random, or systematic), define post-stratification strategies,
+set minimum distance constraints, configure neighbor aggregation parameters, and establish
+random seed values for reproducibility.</em></p>
+
+## Sampling Designs
+
+AcATaMa allows users to select from a variety of sampling designs to meet specific needs and to
+ensure that the sample is representative of the population being studied.
+
+The sampling units generated in AcATaMa are **points**: each pair of X and Y coordinates is
+selected randomly (SRS and STR) or placed at a fixed interval with a random offset (SYS).
+
+```{seealso}
+The estimators applied for each design — and the sample-size formulas — are documented in
+[Equations, Measures and Estimators](introduction.md#equations-measures-and-estimators).
+```
 
 ### Simple Random Sampling (SRS)
 
@@ -167,7 +184,7 @@ Since the algorithm stops as soon as a valid pixel is found (not all {math}`K` a
 The plugin ensures randomness by automatically generating a random seed for all sampling methods. However, if users require reproducible sampling results, they can set a **fixed seed**. Setting a known seed value ensures replicability given identical inputs and configurations.
 
 ```{important}
-Setting a known seed ensures that the assessment can be reproduced and validated by other parties, which is critical for scientific studies and decision-making.
+Setting a known seed ensures that the assessment can be reproduced and validated by other parties, which is critical for scientific studies and decision-making, and it also supports the **IPCC principle of transparency** for national reports.
 ```
 
 ### Minimum Distance Constraint
@@ -182,11 +199,11 @@ Using neighbor agreement as a criterion can improve spatial coherence in the sel
 
 ### Post-Stratification
 
-AcATaMa supports post-stratification for simple random sampling (SRS) and systematic sampling (SYS), so weights can be adjusted after the sample is drawn to account for class imbalance and improve the reliability of accuracy/area estimates.
+AcATaMa supports post-stratification for simple random sampling (SRS) and systematic sampling (SYS), enabling users to adjust estimation weights after sampling to correct class imbalances, ultimately improving the reliability of accuracy estimates {cite}`McRoberts2012`.
 
 #### What post-stratification means
 
-Post-stratification groups the already selected SRS/SYS reference sample into "post-strata" (e.g., map classes) and then adjusts the estimation weights using known totals for those map classes. In AcATaMa’s analysis, based on the confusion-matrix sample counts it creates the estimated area proportions using the post-stratified estimator (tables 3 and 4) described in {cite:t}`Olofsson2014`.
+Post-stratification groups the already selected SRS/SYS reference sample into "post-strata" (e.g., map classes) and then adjusts the estimation weights using known totals for those map classes. In AcATaMa's analysis, based on the confusion-matrix sample counts it creates the estimated area proportions using the post-stratified estimator of {cite:t}`Stehman2013` (Eq. 48); see [Equations, Measures and Estimators](introduction.md#equations-measures-and-estimators).
 
 #### When to use it
 

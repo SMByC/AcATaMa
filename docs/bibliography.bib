@@ -37,12 +37,21 @@
   year      = {1979},
 }
 
-@misc{FAO2016,
-  author    = {{FAO}},
-  title     = {Collect Earth: Land Use and Land Cover Assessment through Augmented Visual Interpretation},
-  publisher = {Food and Agriculture Organization of the United Nations},
-  address   = {Rome, Italy},
-  year      = {2016},
+@techreport{FAO2016,
+  author      = {{Food and Agriculture Organization of the United Nations (FAO)}},
+  title       = {Map Accuracy Assessment and Area Estimation: A Practical Guide},
+  number      = {National Forest Monitoring Assessment Working Paper No. 46/E},
+  institution = {Food and Agriculture Organization of the United Nations},
+  address     = {Rome, Italy},
+  year        = {2016},
+  doi         = {10.4060/i5601e},
+}
+
+@misc{FAO2024,
+  author    = {{Food and Agriculture Organization of the United Nations (FAO)}},
+  title     = {{SEPAL}: System for Earth Observations, Data Access, Processing and Analysis for Land Monitoring},
+  year      = {2024},
+  url       = {https://sepal.io},
 }
 
 @article{Avtar2021,
@@ -163,10 +172,10 @@
 
 @misc{Global2020,
   author    = {{Global Forest Observations Initiative}},
-  title     = {Integration of remote sensing and ground-based observations for estimation of emissions and removals of greenhouse gases in forests},
-  edition   = {Version 3.1},
+  title     = {Integration of Remote-Sensing and Ground-Based Observations for Estimation of Emissions and Removals of Greenhouse Gases in Forests: Methods and Guidance Document},
+  edition   = {Version 3.0},
   year      = {2020},
-  url       = {https://www.reddcompass.org/mgd/resources/GFOI-MGD-3.1-en.pdf},
+  url       = {https://www.reddcompass.org/mgd/},
 }
 
 @inproceedings{Hakim2023,
@@ -299,8 +308,9 @@
   title     = {Mitigating the effects of omission errors on area and area change estimates},
   journal   = {Remote Sensing of Environment},
   volume    = {236},
-  pages     = {1--9},
+  pages     = {111492},
   year      = {2020},
+  doi       = {10.1016/j.rse.2019.111492},
 }
 
 @article{Olofsson2013,
@@ -361,8 +371,10 @@
   title     = {Impact of sample size allocation when using stratified random sampling to estimate accuracy and area of land-cover change},
   journal   = {Remote Sensing Letters},
   volume    = {3},
+  number    = {2},
   pages     = {111--120},
   year      = {2012},
+  doi       = {10.1080/01431161.2010.541950},
 }
 
 @article{Stehman2013,
@@ -480,4 +492,115 @@
   volume    = {43},
   pages     = {865--872},
   year      = {2021},
+}
+
+% ---------------------------------------------------------------------------
+% AcATaMa paper (Applied Computing and Geosciences, 2026)
+% ---------------------------------------------------------------------------
+
+@article{Llano2026,
+  author    = {Llano, X. C. and Vergara, L. K. and Arias, J. A. and Galindo, G.},
+  title     = {{AcATaMa}: A {QGIS} plugin for accuracy assessment and area estimation},
+  journal   = {Applied Computing and Geosciences},
+  volume    = {31},
+  pages     = {100389},
+  year      = {2026},
+  issn      = {2590-1974},
+  doi       = {10.1016/j.acags.2026.100389},
+}
+
+% ---------------------------------------------------------------------------
+% Statistical foundations
+% ---------------------------------------------------------------------------
+
+@book{Sarndal1992,
+  author    = {S{\"a}rndal, C. E. and Swensson, B.},
+  title     = {Model Assisted Survey Sampling},
+  publisher = {Springer},
+  address   = {New York},
+  year      = {1992},
+}
+
+@article{McRoberts2012,
+  author    = {McRoberts, R. E. and Gobakken, T. and N{\ae}sset, E.},
+  title     = {Post-stratified estimation of forest area and growing stock volume using {LiDAR}-based stratifications},
+  journal   = {Remote Sensing of Environment},
+  volume    = {125},
+  pages     = {157--166},
+  year      = {2012},
+  doi       = {10.1016/j.rse.2012.07.002},
+}
+
+% ---------------------------------------------------------------------------
+% Comparable tools and platforms
+% ---------------------------------------------------------------------------
+
+@article{Jakimow2023,
+  author    = {Jakimow, B. and Janz, A. and Thiel, F. and Okujeni, A. and Hostert, P. and van der Linden, S.},
+  title     = {{EnMAP-Box}: Imaging spectroscopy in {QGIS}},
+  journal   = {SoftwareX},
+  pages     = {101507},
+  year      = {2023},
+  doi       = {10.1016/j.softx.2023.101507},
+}
+
+@article{Saah2019,
+  author    = {Saah, David and Johnson, Gary and Ashmall, Billy and Tondapu, Githika and Tenneson, Karis and Patterson, Matt and Poortinga, Ate and Markert, Kel and Quyen, Nguyen Hanh and San Aung, Khun and Schlichting, Lena and Matin, Mir and Uddin, Kabir and Aryal, Raja Ram and Dilger, John and Lee Ellenburg, Water and Flores-Anderson, Africa Ixmucane and Wiell, Daniel and Lindquist, Erik and Goldstein, Joshua and Clinton, Nick and Chishtie, Farrukh},
+  title     = {Collect {Earth}: An online tool for systematic reference data collection in land cover and use applications},
+  journal   = {Environmental Modelling \& Software},
+  volume    = {118},
+  pages     = {166--171},
+  year      = {2019},
+  doi       = {10.1016/j.envsoft.2019.05.004},
+}
+
+@misc{Bullock2020,
+  author    = {Bullock, E. L.},
+  title     = {{AREA2}: Area Estimation and Accuracy Assessment},
+  year      = {2020},
+  howpublished = {Computer software},
+  url       = {https://github.com/bullocke/AREA2},
+  note      = {Implementing Olofsson et al., 2014},
+}
+
+@article{Congedo2021,
+  author    = {Congedo, L.},
+  title     = {Semi-Automatic Classification Plugin: A {Python} tool for the download and processing of remote sensing images in {QGIS}},
+  journal   = {Journal of Open Source Software},
+  volume    = {6},
+  number    = {64},
+  pages     = {3172},
+  year      = {2021},
+  doi       = {10.21105/joss.03172},
+}
+
+@misc{Costa2024,
+  author    = {Costa, H.},
+  title     = {mapaccuracy: Unbiased Thematic Map Accuracy and Area},
+  year      = {2024},
+  publisher = {CRAN},
+  note      = {R package version 0.1.2},
+  url       = {https://cran.r-project.org/package=mapaccuracy},
+}
+
+% ---------------------------------------------------------------------------
+% Colombian national reporting
+% ---------------------------------------------------------------------------
+
+@misc{IDEAM2024,
+  author    = {{Instituto de Hidrolog{\'i}a, Meteorolog{\'i}a y Estudios Ambientales (IDEAM)} and {Ministerio de Ambiente y Desarrollo Sostenible}},
+  title     = {Anexo t{\'e}cnico de actividades {REDD+} en Colombia para el per{\'i}odo 2018--2022},
+  year      = {2024},
+  url       = {https://unfccc.int/sites/default/files/resource/BTR1_Colombia_Annex2_REDD.pdf},
+}
+
+@article{Gallego2004,
+  author    = {Gallego, F. J.},
+  title     = {Remote sensing and land cover area estimation},
+  journal   = {International Journal of Remote Sensing},
+  volume    = {25},
+  number    = {15},
+  pages     = {3019--3047},
+  year      = {2004},
+  doi       = {10.1080/01431160310001619607},
 }

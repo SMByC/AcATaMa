@@ -1,15 +1,15 @@
 format: jb-book
 root: overview
 parts:
-  - caption: ''
+  - caption: 'Background'
     chapters:
       - file: introduction
   - caption: 'Getting Started'
     chapters:
       - file: install_and_example
-      - file: thematic_map
-  - caption: 'Components'
+  - caption: 'The Workflow'
     chapters:
+      - file: thematic_map
       - file: sampling_design
       - file: response_design
       - file: analysis

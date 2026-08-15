@@ -14,6 +14,10 @@ One of the key innovations of AcATaMa is its integrated and efficient implementa
 :width: 100%
 :align: center
 ```
+<p align="center"><em>Response design interface in AcATaMa. The multi-window layout supports the
+simultaneous visualization of multiple reference data sources, configuration of spatial support
+units, customized labeling buttons and shortcuts, sample navigation controls, and integration
+with the Continuous Change Detection plugin for time-series analysis.</em></p>
 
 ## Response Design Interface
 
@@ -137,8 +141,17 @@ The Response Design window incorporates supplementary information from the **Con
 
 ## Best Practices
 
-A robust response design enhances the credibility of accuracy assessments and provides a strong foundation for estimating thematic map reliability {cite}`Olofsson2014,Stehman1998`.
+A robust response design enhances the credibility of accuracy assessments and provides a strong foundation for estimating thematic map reliability {cite}`Olofsson2014,Stehman1998`. The reference labels assigned here become the ground truth against which the map is judged, so the consistency of the labeling process directly bounds the quality of every accuracy metric and area estimate that follows. Two considerations deserve particular attention when planning a labeling campaign: how to keep interpretation consistent, and which sources of error the assessment does and does not account for.
 
 ```{important}
 AcATaMa simplifies, organizes, and optimizes the process of assigning reference labels to sampled units, ensuring consistent interpretation across interpreters. To mitigate and minimize interpretation bias, consider having multiple independent interpreters review each sample, with disagreements resolved by consensus for the final label.
+```
+
+```{warning}
+AcATaMa is designed to estimate **sampling error**; additional sources of error may occur, such
+as interpreter bias. The response design relies on visual interpretation, which can introduce
+interpreter variability even when consensus protocols are applied. In the Colombia national
+forest change assessment {cite}`Llano2026`, for example, the sample was independently reviewed
+and labeled by three interpreters, and disagreements were resolved by consensus to assign the
+final label.
 ```

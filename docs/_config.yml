@@ -9,6 +9,9 @@ parse:
   myst_enable_extensions:
     - deflist
     - html_image
+    # math support (rendered by the MathJax bundled with Jupyter Book / sphinx-book-theme)
+    - dollarmath   # $...$ inline and $$...$$ display math
+    - amsmath      # AMS environments (align, gather, ...)
 
 # Force re-execution of notebooks on each build.
 execute:
@@ -35,6 +38,10 @@ sphinx:
   - "sphinxcontrib.bibtex"
   recursive_update: true
   config:
+    # generate heading anchors down to h4 so intra- and cross-page links like
+    # `[...](equations.md#post-stratified-estimation)` and
+    # `[...](#confidence-level-for-random-offset)` resolve
+    myst_heading_anchors: 4
     bibtex_default_style: plain
     bibtex_reference_style: author_year
     html_theme_options:
