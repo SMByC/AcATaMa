@@ -35,6 +35,18 @@ def rf(fv, r=5):
     return round(fv, r)
 
 
+def post_stratified_variance_table(error_matrix):
+    return [
+        [
+            cell_count * (1 - cell_count / total_row) / (total_row - 1)
+            if total_row not in [0, 1]
+            else np.nan
+            for cell_count in row
+        ]
+        for total_row, row in zip([sum(r) for r in error_matrix], error_matrix, strict=True)
+    ]
+
+
 @error_handler
 def get_html(accu_asse):
     ###########################################################################
@@ -637,10 +649,7 @@ def get_html(accu_asse):
 
     # the error for post-stratified
     if accu_asse.estimator == "Simple/systematic post-stratified estimator":
-        ui_table = [
-            [(1 - i / total_row) ** 2 * i / (total_row - 1) if total_row not in [0, 1] else np.nan for i in row]
-            for total_row, row in zip([sum(r) for r in accu_asse.error_matrix], accu_asse.error_matrix, strict=True)
-        ]
+        ui_table = post_stratified_variance_table(accu_asse.error_matrix)
         wi = [accu_asse.thematic_pixels_count[value] / total_pixels_classes for value in accu_asse.values]
         variance = [
             ((1 - total_samples / total_pixels_classes) / total_samples)
@@ -1038,10 +1047,7 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
 
     # the error for post-stratified
     if accu_asse.estimator == "Simple/systematic post-stratified estimator":
-        ui_table = [
-            [(1 - i / total_row) ** 2 * i / (total_row - 1) if total_row not in [0, 1] else np.nan for i in row]
-            for total_row, row in zip([sum(r) for r in accu_asse.error_matrix], accu_asse.error_matrix, strict=True)
-        ]
+        ui_table = post_stratified_variance_table(accu_asse.error_matrix)
         wi = [accu_asse.thematic_pixels_count[value] / total_pixels_classes for value in accu_asse.values]
         variance = [
             ((1 - total_samples / total_pixels_classes) / total_samples)
