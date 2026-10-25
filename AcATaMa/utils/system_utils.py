@@ -32,7 +32,7 @@ try:
 except ImportError:
     from yaml import SafeLoader
 
-from qgis.core import Qgis
+from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.QtWidgets import QApplication, QFileDialog, QMessageBox, QPushButton
@@ -73,15 +73,19 @@ def error_handler(func):
                 del msgBox
 
             error = str(err)
-            widget = msg_bar.createMessage("AcATaMa", error)
             more_details = traceback.format_exc()
+            QgsMessageLog.logMessage(more_details, "AcATaMa", level=Qgis.MessageLevel.Critical)
 
-            button = QPushButton(widget)
-            button.setText("Show details...")
-            button.pressed.connect(lambda: details_message_box(error, more_details))
-            widget.layout().addWidget(button)
-
-            msg_bar.pushWidget(widget, level=Qgis.MessageLevel.Warning, duration=20)
+            try:
+                widget = msg_bar.createMessage("AcATaMa", error)
+                button = QPushButton(widget)
+                button.setText("Show details...")
+                button.pressed.connect(lambda: details_message_box(error, more_details))
+                widget.layout().addWidget(button)
+                msg_bar.pushWidget(widget, level=Qgis.MessageLevel.Warning, duration=20)
+            except TypeError:
+                # the message bar cannot hold custom widgets (e.g. a non-gui interface)
+                msg_bar.pushMessage("AcATaMa", error, level=Qgis.MessageLevel.Warning, duration=20)
 
     return wrapper
 

@@ -21,7 +21,7 @@
 from random import shuffle
 from typing import ClassVar
 
-from qgis.core import Qgis, QgsFeature, QgsField, QgsProject, QgsVectorFileWriter, QgsVectorLayer
+from qgis.core import Qgis, QgsFeature, QgsField, QgsProject, QgsUnitTypes, QgsVectorFileWriter, QgsVectorLayer
 from qgis.PyQt.QtCore import NULL, QVariant
 from qgis.PyQt.QtGui import QColor
 from qgis.utils import iface
@@ -52,20 +52,14 @@ class ResponseDesign:
         # sampling unit
         self.sampling_unit_pixel_buffer = 0
         self.sampling_unit_color = QColor("red")
-        # default radius to fit the sample based on the units of the sampling file selected
+        # default radius to fit the sample (120 meters) based on the units of the sampling file selected
         layer_dist_unit = self.sampling_layer.crs().mapUnits()
-        fit_to_sample_list = {
-            Qgis.DistanceUnit.Meters: 120,
-            Qgis.DistanceUnit.Kilometers: 0.120,
-            Qgis.DistanceUnit.Feet: 393,
-            Qgis.DistanceUnit.NauticalMiles: 0.065,
-            Qgis.DistanceUnit.Yards: 132,
-            Qgis.DistanceUnit.Miles: 0.075,
-            Qgis.DistanceUnit.Degrees: 0.0011,
-            Qgis.DistanceUnit.Centimeters: 12000,
-            Qgis.DistanceUnit.Millimeters: 120000,
-        }
-        self.fit_to_sample = fit_to_sample_list[layer_dist_unit]
+        if layer_dist_unit == Qgis.DistanceUnit.Degrees:
+            self.fit_to_sample = 0.0011
+        elif layer_dist_unit == Qgis.DistanceUnit.Unknown:
+            self.fit_to_sample = 120
+        else:
+            self.fit_to_sample = 120 * QgsUnitTypes.fromUnitToUnitFactor(Qgis.DistanceUnit.Meters, layer_dist_unit)
         # save views widget config
         # {N: {"view_name", "layer_name", "render_file_path", "render_activated", "scale_factor"}, ...}
         self.view_widgets_config = {}

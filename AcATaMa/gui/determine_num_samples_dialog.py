@@ -18,6 +18,7 @@
  ***************************************************************************/
 """
 
+import math
 import os
 
 from qgis.PyQt import uic
@@ -56,8 +57,10 @@ class DetermineNumberSamplesDialog(QDialog, FORM_CLASS):
 
         z = self.get_z_value(confidence_interval)
         n = (z**2 * overall_accuracy * (1 - overall_accuracy)) / (half_width_ci**2)
+        # rounded up so the sample size reaches the precision required
+        n = math.ceil(round(n, 6))
 
-        self.NumberOfSamples.setText(str(round(n)))
+        self.NumberOfSamples.setText(str(n))
 
         if n < 300:
             self.NoteMinSamples.setVisible(True)

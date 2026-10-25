@@ -585,9 +585,9 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
     @pyqtSlot()
     def previous_sample_not_labeled(self):
         tmp_sample_idx = self.current_sample_idx - 1
-        while self.response_design.points[tmp_sample_idx].is_labeled and tmp_sample_idx >= 0:
+        while tmp_sample_idx >= 0 and self.response_design.points[tmp_sample_idx].is_labeled:
             tmp_sample_idx -= 1
-        if not self.response_design.points[tmp_sample_idx].is_labeled and tmp_sample_idx >= 0:
+        if tmp_sample_idx >= 0:
             self.current_sample_idx = tmp_sample_idx
             self.set_current_sample()
 

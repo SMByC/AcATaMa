@@ -11,7 +11,8 @@ def test_get_n_calculates_correct_samples_simple(plugin, restore_config_file):
     # set values
     sampling_design.determine_number_samples_dialog_SimpRS.get_n()
 
-    assert sampling_design.determine_number_samples_dialog_SimpRS.NumberOfSamples.text() == "306"
+    # n = 1.96^2 * 0.85 * 0.15 / 0.04^2 = 306.13, rounded up to reach the half-width of the interval
+    assert sampling_design.determine_number_samples_dialog_SimpRS.NumberOfSamples.text() == "307"
 
 
 def test_point_spacing_calculates_correct_samples_systematic(plugin, restore_config_file, monkeypatch):
