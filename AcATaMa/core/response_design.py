@@ -205,18 +205,38 @@ class ResponseDesign:
             # add a feature
             feature = QgsFeature()
             feature.setGeometry(point.QgsGeom)
-            name = self.buttons_config[point.label_id]["name"] if point.is_labeled else NULL
+            button_config = self.buttons_config.get(point.label_id) if point.is_labeled else None
+            name = button_config["name"] if button_config else NULL
             if self.with_thematic_classes:
                 sample_labeled_as = (
-                    int(self.buttons_config[point.label_id]["thematic_class"]) if point.is_labeled else NULL
+                    int(button_config["thematic_class"])
+                    if button_config and button_config["thematic_class"] not in (None, "")
+                    else None
                 )
+                value_in_thematic_map = (
+                    thematic_map.get_pixel_value_from_pnt(point.QgsPnt) if point.is_labeled else None
+                )
+                # 0 is a valid class value, the nodata is not
                 sample_in_thematic_map = (
-                    int(thematic_map.get_pixel_value_from_pnt(point.QgsPnt))
-                    if point.is_labeled and thematic_map.get_pixel_value_from_pnt(point.QgsPnt)
+                    int(value_in_thematic_map)
+                    if value_in_thematic_map is not None and int(value_in_thematic_map) != thematic_map.nodata
+                    else None
+                )
+                # the match is only known if both classes are valid
+                match = (
+                    ("Yes" if sample_in_thematic_map == sample_labeled_as else "No")
+                    if sample_labeled_as is not None and sample_in_thematic_map is not None
                     else NULL
                 )
-                match = ("Yes" if sample_in_thematic_map == sample_labeled_as else "No") if point.is_labeled else NULL
-                feature.setAttributes([point.sample_id, name, sample_labeled_as, sample_in_thematic_map, match])
+                feature.setAttributes(
+                    [
+                        point.sample_id,
+                        name,
+                        NULL if sample_labeled_as is None else sample_labeled_as,
+                        NULL if sample_in_thematic_map is None else sample_in_thematic_map,
+                        match,
+                    ]
+                )
             else:
                 feature.setAttributes([point.sample_id, name, point.label_id])
             pr.addFeatures([feature])

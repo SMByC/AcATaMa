@@ -281,6 +281,11 @@ Post-stratification groups the already selected SRS/SYS reference sample into "p
 
 Post-stratification is useful when SRS/SYS produces an imbalanced realized sample (for example, rare classes end up with too few points), because post-stratification can reweight the sample using known class totals to produce more defensible accuracy/area estimates. However, post-stratification reweights estimates after sampling ("sample first, classify later"), so the number of samples in each post-stratum is determined by how the initial sample falls across classes; as a result, it is not possible to control (or guarantee) the per-class sample size the way stratified sampling does.
 
+For simple random and systematic samples, {cite:t}`Olofsson2014` recommend the stratified (here,
+post-stratified) estimators of accuracy and area with the map classes as strata, which are generally more
+precise than the simple estimators; nearly the same precision as a proportionally allocated stratified
+sample is achieved this way {cite}`Stehman2019`.
+
 ## Sample Size
 
 ### Sample Size for Stratified Sampling

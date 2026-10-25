@@ -18,51 +18,229 @@
  ***************************************************************************/
 """
 
-import copy
 import csv
 import os
 
 import numpy as np
 from qgis.core import Qgis
 
+from AcATaMa.core import estimators
 from AcATaMa.utils.qgis_utils import get_source_from
 from AcATaMa.utils.system_utils import error_handler
 
+METHODS_NOTES = {
+    estimators.SIMPLE: [
+        "Accuracy estimated from the sample counts (Stehman and Foody, 2009, Table 21.3).",
+        "Area proportion of each reference class estimated as n<sub>+j</sub>/n (Stehman, 2013, Eq. 18), "
+        "with the variance estimator p(1 - p)/(n - 1), unbiased for simple random sampling with replacement "
+        "(Cochran, 1977).",
+    ],
+    estimators.POST_STRATIFIED: [
+        "Map classes used as post-strata with weights W<sub>i</sub> from the mapped area. Accuracy and its "
+        "standard errors estimated with Olofsson et al. (2014), Eqs. 1-7.",
+        "Area proportions estimated with Olofsson et al. (2014), Eq. 9, and the approximate (large sample) "
+        "post-stratified variance of Cochran (1977), Eq. 5A.42 (Stehman, 2013, Eq. 48), for sampling with "
+        "replacement.",
+    ],
+    estimators.STRATIFIED: [
+        "Map classes used as strata with weights W<sub>i</sub> from the mapped area. Accuracy, area and their "
+        "standard errors estimated with Olofsson et al. (2014), Eqs. 1-7 and 9-11.",
+    ],
+}
+METHODS_COMMON_NOTES = [
+    "The variances are the ones of sampling with replacement (without finite population correction), as the "
+    "random sampling of AcATaMa, whose samples can fall in the same pixel; for samples without replacement, "
+    "omitting the correction makes them larger, negligibly when the sampling fractions are small, also within "
+    "each stratum. The variances of the producer's accuracy and of the post-stratified area are large sample "
+    "approximations.",
+    "Confidence limits: area &plusmn; z &middot; SE. Coefficient of variation: 100 &middot; SE/area. "
+    "Uncertainty: 100 &middot; z &middot; SE/area (half-width of the confidence interval relative to the area).",
+    "For systematic samples the standard errors are approximations that usually overestimate the variance "
+    "(Olofsson et al., 2014).",
+]
+
 
 def rf(fv, r=5):
-    if np.isnan(fv):
+    """Round a value for the report, NaN as "-" """
+    if fv is None or np.isnan(fv):
         return "-"
-    return round(fv, r)
+    return round(float(fv), r)
+
+
+def rf_nonzero(fv, r=5):
+    """Round a cell of a matrix of proportions, empty cells as "-" """
+    return rf(fv, r) if fv > 0 else "-"
+
+
+def rsig(fv, digits=4):
+    """Format a small positive value with significant digits, empty cells as "-" """
+    if fv is None or np.isnan(fv) or fv <= 0:
+        return "-"
+    return float(f"{fv:.{digits}g}")
+
+
+def percentage(fv):
+    """Percentage value for the html report, NaN as "-" """
+    value = rf(fv, 2)
+    return value if value == "-" else f"{value} %"
+
+
+def has_samples(accu_asse):
+    """If the error matrix has samples"""
+    return bool(accu_asse.values) and sum(sum(row) for row in accu_asse.error_matrix) > 0
+
+
+def get_estimates(accu_asse):
+    """Estimates for the error matrix and pixel counts of the analysis"""
+    pixel_counts = [accu_asse.thematic_pixels_count[value] for value in accu_asse.values]
+    return estimators.estimate(accu_asse.error_matrix, pixel_counts, accu_asse.estimator, accu_asse.values)
+
+
+def get_report_warnings(accu_asse, estimates):
+    """List of warnings (as plain text lines) about the data and the estimation"""
+    warnings = []
+
+    def class_label(value):
+        return "{} ({})".format(value, accu_asse.labels.get(str(value), "-"))
+
+    if accu_asse.base_area_unit == Qgis.AreaUnit.SquareDegrees:
+        warnings.append(
+            "The thematic map has a geographic coordinate system, therefore all area values are not accurate. "
+            "Use a projected (e.g. equal-area or UTM) coordinate system."
+        )
+    if accu_asse.samples_outside_the_thematic:
+        lines = [
+            f"There are {len(accu_asse.samples_outside_the_thematic)} samples labeled that are outside the thematic "
+            "map area or inside the no data values, they are ignored for the accuracy assessment results:"
+        ]
+        lines += [
+            f"    {idx + 1}) Sample ID: {sample.sample_id}, "
+            f"Coordinate: {int(sample.QgsPnt.x())},{int(sample.QgsPnt.y())}"
+            for idx, sample in enumerate(accu_asse.samples_outside_the_thematic)
+        ]
+        warnings.append("\n".join(lines))
+    if estimates is None:
+        return warnings
+    # all the map classes with pixels but no samples, also the ones not in the error matrix
+    without_samples = getattr(accu_asse, "map_classes_without_samples", None) or dict.fromkeys(
+        estimates.unsampled_strata, 0
+    )
+    if without_samples:
+        classes = ", ".join(class_label(value) for value in without_samples)
+        area = sum(without_samples.values()) * accu_asse.pixel_area_value
+        mapped_area = f" ({rf(area)} {accu_asse.pixel_area_unit})" if area > 0 else ""
+        if accu_asse.estimator == estimators.SIMPLE:
+            warnings.append(
+                f"The map classes {classes} have mapped area{mapped_area} but no samples. They are part of the "
+                "population of the simple estimator (included in the total area), but the sample has no "
+                "information about their accuracy."
+            )
+        else:
+            warnings.append(
+                f"The map classes {classes} have mapped area{mapped_area} but no samples, so the estimator "
+                "cannot be computed for them. They are excluded from the estimation: the total area and all "
+                "estimates refer to the remaining map classes (strata)."
+                + (
+                    " If these classes were part of the sampled population, merge them with similar classes or use "
+                    "the simple estimator to include their area."
+                    if accu_asse.estimator == estimators.POST_STRATIFIED
+                    else ""
+                )
+            )
+    if estimates.single_sample_strata:
+        classes = ", ".join(class_label(value) for value in estimates.single_sample_strata)
+        if accu_asse.estimator == estimators.POST_STRATIFIED:
+            # merging post-strata keeps the estimator valid, unlike merging the strata of a stratified sample,
+            # whose sampling fractions can be different
+            remedy = "Merge these map classes (post-strata) with similar ones or increase the sample size."
+        else:
+            remedy = "Add samples to these strata, at least 2 per stratum (30-50 or more are recommended)."
+        warnings.append(
+            f"The strata {classes} have a single sample, so the variance within them cannot be estimated and the "
+            "standard errors that depend on it (overall and producer's accuracy and all the area estimates) are "
+            f"not reported. {remedy}"
+        )
+    unobserved = [
+        value for value, n_col in zip(estimates.values, estimates.error_matrix.sum(axis=0), strict=True) if not n_col
+    ]
+    if unobserved:
+        classes = ", ".join(class_label(value) for value in unobserved)
+        warnings.append(
+            f"No sample was labeled as the classes {classes}, so their estimated area is zero, but this does not "
+            "show that they are absent: a class with a small area can be missed by the sample, which the standard "
+            "error does not account for."
+        )
+    return warnings
+
+
+def html_matrix(column_labels, row_values, cells, extra_columns=(), bottom_rows=()):
+    """Error matrix as a HTML table with the map classes as rows and the validation classes as columns
+
+    Args:
+        extra_columns: list of (header, cells by row) after the matrix columns
+        bottom_rows: list of (label, cells by matrix column, cells for the extra columns)
+    """
+    html = """
+        <table>
+        <tbody>
+        <tr>
+        <td class="empty"></td>
+        <td class="empty"></td>
+        """
+    html += f"""<th colspan="{len(column_labels)}">Validation</th>"""
+    html += """<td class="empty"></td>""" * len(extra_columns)
+    html += """
+        </tr>
+        <tr>
+        <td class="empty"></td>
+        <td class="empty"></td>
+        """
+    html += "".join(f"<th>{label}</th>" for label in column_labels)
+    html += "".join(f"<th>{header}</th>" for header, _ in extra_columns)
+    html += "</tr>"
+    for idx_row, value in enumerate(row_values):
+        html += "<tr>"
+        if idx_row == 0:
+            html += f"""<th class="th-rows" rowspan="{len(row_values)}">Thematic<br />map</th>"""
+        html += f"<th>{value}</th>"
+        html += "".join(f"""<td class="highlight">{cell}</td>""" for cell in cells[idx_row])
+        html += "".join(f"<td>{column[idx_row]}</td>" for _, column in extra_columns)
+        html += "</tr>"
+    for label, row_cells, extra_cells in bottom_rows:
+        html += f"""<tr><td class="empty"></td><th>{label}</th>"""
+        html += "".join(f"<td>{cell}</td>" if cell != "" else """<td class="empty"></td>""" for cell in row_cells)
+        html += "".join(f"<td>{cell}</td>" if cell != "" else """<td class="empty"></td>""" for cell in extra_cells)
+        html += "</tr>"
+    html += """
+        </tbody>
+        </table>
+        """
+    return html
+
+
+def html_accuracy_table(headers, row_labels, columns):
+    html = """
+            <table>
+            <tbody>
+            <tr>
+            <td class="empty"></td>
+            """
+    html += "".join(f"<th>{header}</th>" for header in headers)
+    html += "</tr>"
+    for idx_row, label in enumerate(row_labels):
+        html += f"<tr><th>{label}</th>"
+        html += f"""<td class="highlight">{columns[0][idx_row]}</td>"""
+        html += "".join(f"<td>{column[idx_row]}</td>" for column in columns[1:])
+        html += "</tr>"
+    html += """
+            </tbody>
+            </table>
+            """
+    return html
 
 
 @error_handler
 def get_html(accu_asse):
-    ###########################################################################
-    # #### preprocess common variables
-
-    total_samples = sum(sum(r) for r in accu_asse.error_matrix)
-    total_pixels_classes = sum(accu_asse.thematic_pixels_count[v] for v in accu_asse.values)
-    sum_total_class_area = total_pixels_classes * accu_asse.pixel_area_value
-
-    if accu_asse.estimator in ["Simple/systematic post-stratified estimator", "Stratified estimator"]:
-        error_matrix_area_prop = copy.deepcopy(accu_asse.error_matrix)
-        for idx_row, row in enumerate(accu_asse.error_matrix):
-            wi = accu_asse.thematic_pixels_count[accu_asse.values[idx_row]] / total_pixels_classes
-            for idx_col, value in enumerate(row):
-                error_matrix_area_prop[idx_row][idx_col] = (value / sum(row)) * wi if sum(row) > 0 else 0
-
-        quadratic_error_matrix = copy.deepcopy(accu_asse.error_matrix)
-        for idx_row, row in enumerate(accu_asse.error_matrix):
-            wi = accu_asse.thematic_pixels_count[accu_asse.values[idx_row]] / total_pixels_classes
-            for idx_col, value in enumerate(row):
-                quadratic_error_matrix[idx_row][idx_col] = (
-                    (wi**2 * ((value / sum(row)) * (1 - (value / sum(row))) / (sum(row) - 1))) if sum(row) > 1 else 0
-                )
-
-    accuracy_table = error_matrix_area_prop if accu_asse.estimator == "Stratified estimator" else accu_asse.error_matrix
-
-    ###########################################################################
-    # #### html init
     html = """
         <head>
 
@@ -107,515 +285,138 @@ def get_html(accu_asse):
         f"/{accu_asse.response_design.num_points} samples labeled</p>"
     )
 
-    # warning block if the thematic has a geographic units
-    if accu_asse.base_area_unit == Qgis.AreaUnit.SquareDegrees:
-        html += (
-            "<p style='color:black;background-color:#ffc53a;white-space:pre;padding:4px'><strong>Warning!</strong><br/>"
-            "The thematic map has a geographic coordinate system, therefore all area values are not accurate.<br/>"
-            "For fix that use the UTM coordinate system.</p>"
-        )
+    estimates = get_estimates(accu_asse) if has_samples(accu_asse) else None
 
-    # warning block for samples outside the thematic map area or inside the no data values
-    if accu_asse.samples_outside_the_thematic:
-        outside_count = len(accu_asse.samples_outside_the_thematic)
-        outside_msg = (
-            f"There are {outside_count} samples labeled that are outside the thematic map area"
-            f" or inside the no data values:<br/>"
-        )
+    for warning in get_report_warnings(accu_asse, estimates):
         html += (
-            "<p style='color:black;background-color:#ffc53a;white-space:pre;padding:4px'>"
-            "<strong>Warning!</strong><br/>" + outside_msg
+            "<p style='color:black;background-color:#ffc53a;white-space:pre-wrap;padding:4px'>"
+            "<strong>Warning!</strong><br/>" + warning.replace("\n", "<br/>") + "</p>"
         )
-        for idx, sample in enumerate(accu_asse.samples_outside_the_thematic):
-            html += (
-                f"    {idx + 1}) Sample ID: {sample.sample_id},"
-                f" Coordinate: {int(sample.QgsPnt.x())},{int(sample.QgsPnt.y())}<br/>"
-            )
-        html += "These samples will be ignored for accuracy assessment results.</p>"
+    if estimates is None:
+        html += "<p>There are no labeled samples inside the thematic map to compute the accuracy assessment.</p>"
+        html += "</body>"
+        return html
+
+    values = accu_asse.values
+    labels = ["{} ({})".format(value, accu_asse.labels.get(str(value), "-")) for value in values]
+    weighted = accu_asse.estimator != estimators.SIMPLE
+    total_area = estimates.total_pixels * accu_asse.pixel_area_value
+    error_matrix = estimates.error_matrix.astype(int)
 
     ###########################################################################
     # #### 1) Error matrix
 
-    # compute accuracy
-    if accu_asse.estimator in ["Simple/systematic estimator"]:
-        # overall
-        overall_accuracy = sum(row[idx_row] for idx_row, row in enumerate(accu_asse.error_matrix)) / total_samples
-        standard_deviation = (overall_accuracy * (1 - overall_accuracy) / (total_samples - 1)) ** 0.5
-    if accu_asse.estimator in ["Stratified estimator", "Simple/systematic post-stratified estimator"]:
-        # overall
-        overall_accuracy = sum(row[idx_row] for idx_row, row in enumerate(error_matrix_area_prop))
-        try:
-            overall_variance = sum(
-                ((accu_asse.thematic_pixels_count[value] / total_pixels_classes) ** 2)
-                * (accu_asse.error_matrix[idx_row][idx_row] / sum(accu_asse.error_matrix[idx_row]))
-                * (1 - (accu_asse.error_matrix[idx_row][idx_row] / sum(accu_asse.error_matrix[idx_row])))
-                / (sum(accu_asse.error_matrix[idx_row]) - 1)
-                for idx_row, value in enumerate(accu_asse.values)
-            )
-        except ZeroDivisionError:
-            overall_variance = np.nan
-        standard_deviation = overall_variance**0.5
-
+    class_areas = [
+        rf(estimates.pixel_counts[i] * accu_asse.pixel_area_value) if estimates.in_population[i] else "-"
+        for i in range(len(values))
+    ]
+    weights = [rf(estimates.weights[i]) if estimates.in_population[i] else "-" for i in range(len(values))]
     html += "<p style='font-size:2px'><br/></p>"
     html += "<h3>1) Error matrix:</h3>"
-    html += f"""
-        <table>
-        <tbody>
-        <tr>
-        <td class="empty"></td>
-        <td class="empty"></td>
-         <th colspan="{len(accu_asse.values)}">Validation</th>
-            <td class="empty"></td>
-            <td class="empty"></td>
-            <td class="empty"></td>
-            <td class="empty"></td>
-        </tr>
-        <tr>
-        <td class="empty"></td>
-        <td class="empty"></td>
-        """
-    labels = ["{} ({})".format(i, accu_asse.labels.get(str(i), "-")) for i in accu_asse.values]
-    html += "".join(["<th >" + str(i) + "</th>" for i in labels])
-    html += f"""
-        <th>Total</th>
-        <th>User's accuracy</th>
-        <th>Total class area ({accu_asse.pixel_area_unit})</th>
-        <th>Wi</th>
-        </tr>
-        """
-    for idx_row, value in enumerate(accu_asse.values):
-        html += "<tr>"
-        if idx_row == 0:
-            html += f"""
-                <th  class="th-rows" rowspan="{len(accu_asse.values)}">Thematic<br />map</th>
-                """
-
-        html += f"<th>{value}</th>"
-        html += "".join(
-            [
-                f"""
-            <td class="highlight">{t}</td>
-            """
-                for t in accu_asse.error_matrix[idx_row]
-            ]
-        )
-        html += """
-            <td>{total_row}</td>
-            <td>{u_accuracy}</td>
-            <td>{total_class_area}</td>
-            <td>{wi}</td>
-            </tr>
-            """.format(
-            total_row=sum(accu_asse.error_matrix[idx_row]),
-            u_accuracy=rf(accuracy_table[idx_row][idx_row] / sum(accuracy_table[idx_row]))
-            if sum(accuracy_table[idx_row]) > 0
-            else "-",
-            total_class_area=rf(accu_asse.thematic_pixels_count[value] * accu_asse.pixel_area_value),
-            wi=rf(accu_asse.thematic_pixels_count[value] / total_pixels_classes),
-        )
-    html += """
-        <tr>
-        <td class="empty"></td>
-          <th>Total</th>
-        """
-    html += "".join(
-        [
-            f"""
-                <td>{sum(t)}</td>
-                """
-            for t in zip(*accu_asse.error_matrix, strict=True)
-        ]
+    html += html_matrix(
+        labels,
+        values,
+        error_matrix.tolist(),
+        extra_columns=[
+            ("Total", error_matrix.sum(axis=1).tolist()),
+            ("User's accuracy", [rf(ua) for ua in estimates.users_accuracy]),
+            (f"Total class area ({accu_asse.pixel_area_unit})", class_areas),
+            ("Wi", weights),
+        ],
+        bottom_rows=[
+            ("Total", error_matrix.sum(axis=0).tolist(), [int(error_matrix.sum()), "", rf(total_area), ""]),
+            (
+                "Producer's accuracy",
+                [rf(pa) for pa in estimates.producers_accuracy],
+                ["", rf(estimates.overall_accuracy), "", ""],
+            ),
+        ],
     )
-    html += f"""
-        <td>{total_samples}</td>
-        """
-    html += """
-        <td class="empty"></td>
-        """
-    html += f"""
-        <td>{rf(sum_total_class_area)}</td>
-        """
-    html += """
-        <td class="empty"></td>
-        </tr>
-        <tr>
-        <td class="empty"></td>
-          <th>Producer's accuracy</th>
-        """
-    for idx_col, col in enumerate(zip(*accuracy_table, strict=True)):
-        html += """
-            <td>{p_accuracy}</td>
-            """.format(p_accuracy=rf(col[idx_col] / sum(col)) if sum(col) > 0 else "-")
-    html += f"""
-        <td class="empty"></td>
-        <td class="highlight">{rf(overall_accuracy)}</td>
-        <td class="empty"></td>
-        <td class="empty"></td>
-        </tr>
-        """
-    html += """
-        </tbody>
-        </table>
-        """
 
     ###########################################################################
     # #### 2) Accuracy
 
     html += "<p style='font-size:2px'><br/></p>"
     html += "<h3>2) Accuracy:</h3>"
-
     html += "<h4>Overall:</h4>"
-    # Overall Accuracy
     html += f"""
             <table>
             <tbody>
             <tr>
             <td><strong>Overall Accuracy</strong></td>
-            <td><strong>Standard deviation</strong></td>
+            <td><strong>Standard error</strong></td>
             </tr>
             <tr>
-            <td class="highlight">{rf(overall_accuracy)}</td>
-            <td>{rf(standard_deviation)}</td>
-            </tr>"""
-    html += """
+            <td class="highlight">{rf(estimates.overall_accuracy)}</td>
+            <td>{rf(estimates.overall_accuracy_se)}</td>
+            </tr>
             </tbody>
             </table>
             """
-    # user's accuracy
     html += "<h4>User:</h4>"
-    html += """
-            <table>
-            <tbody>
-            <tr>
-            <td class="empty"></td>
-            """
-    headers = ["User's accuracy", "Standard deviation"]
-    html += "".join(["<th>" + str(h) + "</th>" for h in headers])
-    html += "</tr>"
-    for idx_row, value in enumerate(accu_asse.values):
-        html += "<tr>"
-        html += "<th >{} ({})</th>".format(value, accu_asse.labels.get(str(value), "-"))
-        # accuracy
-        try:
-            if accu_asse.estimator in ["Simple/systematic estimator"]:
-                accuracy = accuracy_table[idx_row][idx_row] / sum(accuracy_table[idx_row])
-            if accu_asse.estimator in ["Stratified estimator", "Simple/systematic post-stratified estimator"]:
-                accuracy = error_matrix_area_prop[idx_row][idx_row] / sum(error_matrix_area_prop[idx_row])
-        except ZeroDivisionError:
-            accuracy = np.nan
-        html += f"""<td class="highlight">{rf(accuracy)}</th>"""
-        # standard error
-        try:
-            html += (
-                f"""<td>{rf((accuracy * (1 - accuracy) / (sum(accu_asse.error_matrix[idx_row]) - 1)) ** 0.5)}</th>"""
-            )
-        except ZeroDivisionError:
-            html += """<td>{}</th>""".format("-")
-        html += "</tr>"
-    html += """
-            </tbody>
-            </table>
-            """
-    # producer's accuracy
+    html += html_accuracy_table(
+        ["User's accuracy", "Standard error"],
+        labels,
+        [[rf(v) for v in estimates.users_accuracy], [rf(v) for v in estimates.users_accuracy_se]],
+    )
     html += "<h4>Producer:</h4>"
-    html += """
-            <table>
-            <tbody>
-            <tr>
-            <td class="empty"></td>
-            """
-    headers = ["Producer's accuracy", "Standard deviation"]
-    html += "".join(["<th>" + str(h) + "</th>" for h in headers])
-    html += "</tr>"
-    for idx_row, value in enumerate(accu_asse.values):
-        html += "<tr>"
-        html += "<th >{} ({})</th>".format(value, accu_asse.labels.get(str(value), "-"))
-        # accuracy
-        try:
-            if accu_asse.estimator in ["Simple/systematic estimator"]:
-                accuracy = accuracy_table[idx_row][idx_row] / sum(list(zip(*accuracy_table, strict=True))[idx_row])
-            if accu_asse.estimator in ["Stratified estimator", "Simple/systematic post-stratified estimator"]:
-                col_sums = list(zip(*error_matrix_area_prop, strict=True))
-                accuracy = error_matrix_area_prop[idx_row][idx_row] / sum(col_sums[idx_row])
-        except ZeroDivisionError:
-            accuracy = np.nan
-        html += f"""<td class="highlight">{rf(accuracy)}</th>"""
-        # standard error
-        try:
-            if accu_asse.estimator in ["Simple/systematic estimator"]:
-                producer_standard_error = (
-                    accuracy * (1 - accuracy) / (sum(list(zip(*accu_asse.error_matrix, strict=True))[idx_row]) - 1)
-                ) ** 0.5
-            if accu_asse.estimator in ["Stratified estimator", "Simple/systematic post-stratified estimator"]:
-                u_accuracy = accuracy_table[idx_row][idx_row] / sum(accuracy_table[idx_row])
-                producer_standard_error = (
-                    1
-                    / (
-                        sum(
-                            n * row[idx_row] / total_row
-                            for total_row, row, n in zip(
-                                [sum(r) for r in accu_asse.error_matrix],
-                                accu_asse.error_matrix,
-                                [accu_asse.thematic_pixels_count[v] for v in accu_asse.values],
-                                strict=True,
-                            )
-                        )
-                        ** 2
-                    )
-                    * sum(
-                        n**2 * (1 - accuracy) ** 2 * u_accuracy * (1 - u_accuracy) / (total_row - 1)
-                        if idx == idx_row
-                        else accuracy**2
-                        * n**2
-                        * row[idx_row]
-                        / total_row
-                        * (1 - row[idx_row] / sum(list(zip(*accu_asse.error_matrix, strict=True))[idx_row]))
-                        / (total_row - 1)
-                        for idx, total_row, row, n in zip(
-                            range(len(accu_asse.error_matrix)),
-                            [sum(r) for r in accu_asse.error_matrix],
-                            accu_asse.error_matrix,
-                            [accu_asse.thematic_pixels_count[v] for v in accu_asse.values],
-                            strict=True,
-                        )
-                    )
-                ) ** 0.5
-        except ZeroDivisionError:
-            producer_standard_error = np.nan
-        html += f"""<td>{rf(producer_standard_error)}</th>"""
-        html += "</tr>"
-    html += """
-            </tbody>
-            </table>
-            """
+    html += html_accuracy_table(
+        ["Producer's accuracy", "Standard error"],
+        labels,
+        [[rf(v) for v in estimates.producers_accuracy], [rf(v) for v in estimates.producers_accuracy_se]],
+    )
 
     # #### 2b) Accuracy matrix of estimated area proportion
 
-    if accu_asse.estimator == "Stratified estimator":
+    if accu_asse.estimator == estimators.STRATIFIED:
+        proportions = estimates.proportions
+        row_sums = proportions.sum(axis=1)
+        col_sums = proportions.sum(axis=0)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            user_matrix = np.where(row_sums[:, None] > 0, proportions / row_sums[:, None], 0)
+            producer_matrix = np.where(col_sums[None, :] > 0, proportions / col_sums[None, :], 0)
         html += "<p style='font-size:2px'><br/></p>"
         html += "<h3>2b) Accuracy matrix of estimated area proportion:</h3>"
-        ###################################
         html += "<h4>User:</h4>"
-        html += f"""
-            <table>
-            <tbody>
-            <tr>
-            <td class="empty"></td>
-            <td class="empty"></td>
-             <th colspan="{len(accu_asse.values)}">Validation</th>
-            </tr>
-            <tr>
-            <td class="empty"></td>
-            <td class="empty"></td>
-            """
-        labels = ["{} ({})".format(i, accu_asse.labels.get(str(i), "-")) for i in accu_asse.values]
-        html += "".join(["<th >" + str(i) + "</th>" for i in labels])
-        html += "</tr>"
-
-        user_accuracy_matrix = copy.deepcopy(error_matrix_area_prop)
-        for idx_row, row in enumerate(error_matrix_area_prop):
-            for idx_col, value in enumerate(row):
-                user_accuracy_matrix[idx_row][idx_col] = value / sum(row) if sum(row) > 0 else 0
-
-        for idx_row, value in enumerate(accu_asse.values):
-            html += "<tr>"
-            if idx_row == 0:
-                html += f"""
-                    <th  class="th-rows" rowspan="{len(accu_asse.values)}">Thematic<br />map</th>
-                    """
-
-            html += f"<th>{value}</th>"
-            html += "".join(
-                [
-                    """
-                <td class="highlight">{table_field}</td>
-                """.format(table_field=(rf(t)) if t > 0 else "-")
-                    for t in user_accuracy_matrix[idx_row]
-                ]
-            )
-            html += "</tr>"
-        html += """
-            </tbody>
-            </table>
-            """
-        ###################################
+        html += html_matrix(labels, values, [[rf_nonzero(t) for t in row] for row in user_matrix])
         html += "<h4>Producer:</h4>"
-        html += f"""
-            <table>
-            <tbody>
-            <tr>
-            <td class="empty"></td>
-            <td class="empty"></td>
-             <th colspan="{len(accu_asse.values)}">Validation</th>
-            </tr>
-            <tr>
-            <td class="empty"></td>
-            <td class="empty"></td>
-            """
-        labels = ["{} ({})".format(i, accu_asse.labels.get(str(i), "-")) for i in accu_asse.values]
-        html += "".join(["<th >" + str(i) + "</th>" for i in labels])
-        html += "</tr>"
+        html += html_matrix(labels, values, [[rf_nonzero(t) for t in row] for row in producer_matrix])
 
-        producer_accuracy_matrix = copy.deepcopy(error_matrix_area_prop)
-        for idx_col, col in enumerate(zip(*error_matrix_area_prop, strict=True)):
-            for idx_row, value in enumerate(col):
-                producer_accuracy_matrix[idx_row][idx_col] = value / sum(col) if sum(col) > 0 else 0
+    if weighted:
+        #######################################################################
+        # #### 3) Error matrix of estimated area proportion
 
-        for idx_row, value in enumerate(accu_asse.values):
-            html += "<tr>"
-            if idx_row == 0:
-                html += f"""
-                    <th  class="th-rows" rowspan="{len(accu_asse.values)}">Thematic<br />map</th>
-                    """
-
-            html += f"<th>{value}</th>"
-            html += "".join(
-                [
-                    """
-                <td class="highlight">{table_field}</td>
-                """.format(table_field=(rf(t)) if t > 0 else "-")
-                    for t in producer_accuracy_matrix[idx_row]
-                ]
-            )
-            html += "</tr>"
-
-        html += """
-            </tbody>
-            </table>
-            """
-
-    ###########################################################################
-    # #### 3) Error matrix of estimated area proportion
-
-    if accu_asse.estimator in ["Simple/systematic post-stratified estimator", "Stratified estimator"]:
         html += "<p style='font-size:2px'><br/></p>"
         html += "<h3>3) Error matrix of estimated area proportion:</h3>"
-        html += f"""
-            <table>
-            <tbody>
-            <tr>
-            <td class="empty"></td>
-            <td class="empty"></td>
-             <th colspan="{len(accu_asse.values)}">Validation</th>
-                <td class="empty"></td>
-            </tr>
-            <tr>
-            <td class="empty"></td>
-            <td class="empty"></td>
-            """
-        labels = ["{} ({})".format(i, accu_asse.labels.get(str(i), "-")) for i in accu_asse.values]
-        html += "".join(["<th >" + str(i) + "</th>" for i in labels])
-        html += """
-            <th>Wi</th>
-            </tr>
-            """
-        for idx_row, value in enumerate(accu_asse.values):
-            html += "<tr>"
-            if idx_row == 0:
-                html += f"""
-                    <th  class="th-rows" rowspan="{len(accu_asse.values)}">Thematic<br />map</th>
-                    """
-
-            html += f"<th>{value}</th>"
-            html += "".join(
-                [
-                    """
-                <td class="highlight">{table_field}</td>
-                """.format(table_field=(rf(t)) if t > 0 else "-")
-                    for t in error_matrix_area_prop[idx_row]
-                ]
-            )
-            html += """
-                <td>{wi}</td>
-                </tr>
-                """.format(
-                wi=rf(sum(error_matrix_area_prop[idx_row])) if sum(error_matrix_area_prop[idx_row]) > 0 else "-"
-            )
-        html += """
-            <tr>
-            <td class="empty"></td>
-              <th>total</th>
-            """
-        html += "".join(
-            [
-                f"""
-                    <td>{rf(sum(t))}</td>
-                    """
-                for t in zip(*error_matrix_area_prop, strict=True)
-            ]
+        html += html_matrix(
+            labels,
+            values,
+            [[rf_nonzero(t) for t in row] for row in estimates.proportions],
+            extra_columns=[("Wi", [rf_nonzero(t) for t in estimates.proportions.sum(axis=1)])],
+            bottom_rows=[("total", [rf(t) for t in estimates.area_proportions], [""])],
         )
-        html += """
-            <td></td>
-            </tr>
-            </tbody>
-            </table>
-            """
 
-    ###########################################################################
-    # #### 4) Quadratic error matrix of estimated area proportion
+        #######################################################################
+        # #### 4) Quadratic error matrix of estimated area proportion
 
-    if accu_asse.estimator in ["Simple/systematic post-stratified estimator", "Stratified estimator"]:
         html += "<p style='font-size:2px'><br/></p>"
         html += "<h3>4) Quadratic error matrix of estimated area proportion:</h3>"
-        html += f"""
-            <table>
-            <tbody>
-            <tr>
-            <td class="empty"></td>
-            <td class="empty"></td>
-             <th colspan="{len(accu_asse.values)}">Validation</th>
-            </tr>
-            <tr>
-            <td class="empty"></td>
-            <td class="empty"></td>
-            """
-        labels = ["{} ({})".format(i, accu_asse.labels.get(str(i), "-")) for i in accu_asse.values]
-        html += "".join(["<th >" + str(i) + "</th>" for i in labels])
-        html += "</tr>"
-
-        for idx_row, value in enumerate(accu_asse.values):
-            html += "<tr>"
-            if idx_row == 0:
-                html += f"""
-                    <th  class="th-rows" rowspan="{len(accu_asse.values)}">Thematic<br />map</th>
-                    """
-
-            html += f"<th>{value}</th>"
-            html += "".join(
-                [
-                    """
-                <td class="highlight">{table_field}</td>
-                """.format(table_field=(rf(t)) if t > 0 else "-")
-                    for t in quadratic_error_matrix[idx_row]
-                ]
-            )
-            html += "</tr>"
-        html += """
-            <tr>
-            <td class="empty"></td>
-              <th>total</th>
-            """
-        html += "".join(
-            [
-                f"""
-                        <td>{rf(sum(t) ** 0.5)}</td>
-                        """
-                for t in zip(*quadratic_error_matrix, strict=True)
-            ]
+        html += (
+            "<p>Contribution of each stratum (map class) to the variance of the estimated area proportion; "
+            "the total row is the standard error (square root of the column sum).</p>"
         )
-        html += """
-            </tr>
-            </tbody>
-            </table>
-            """
+        html += html_matrix(
+            labels,
+            values,
+            [[rsig(t) for t in row] for row in estimates.variance_contributions],
+            bottom_rows=[("total (standard error)", [rf(t) for t in estimates.area_proportions_se], [])],
+        )
 
     ###########################################################################
     # #### 3/5) Class area adjusted
 
     html += "<p style='font-size:2px'><br/></p>"
-    html += "<h3>{}) Class area adjusted:</h3>".format(
-        "3" if accu_asse.estimator == "Simple/systematic estimator" else "5"
-    )
+    html += "<h3>{}) Class area adjusted:</h3>".format("5" if weighted else "3")
     html += """
         <table>
         <tbody>
@@ -624,85 +425,41 @@ def get_html(accu_asse):
         """
     headers = [
         f"Area adjusted ({accu_asse.pixel_area_unit})",
-        "Error",
-        "Lower limit",
-        "Upper limit",
+        "Standard error",
+        f"Lower limit (z={accu_asse.z_score})",
+        f"Upper limit (z={accu_asse.z_score})",
         "Coefficient of variation",
         "Uncertainty",
     ]
-    html += "".join(["<th >" + str(h) + "</th>" for h in headers])
+    html += "".join(f"<th>{header}</th>" for header in headers)
     html += "</tr>"
-
-    total_area = 0
-
-    # the error for post-stratified
-    if accu_asse.estimator == "Simple/systematic post-stratified estimator":
-        ui_table = [
-            [(1 - i / total_row) ** 2 * i / (total_row - 1) if total_row not in [0, 1] else np.nan for i in row]
-            for total_row, row in zip([sum(r) for r in accu_asse.error_matrix], accu_asse.error_matrix, strict=True)
-        ]
-        wi = [accu_asse.thematic_pixels_count[value] / total_pixels_classes for value in accu_asse.values]
-        variance = [
-            ((1 - total_samples / total_pixels_classes) / total_samples)
-            * sum(w * s for w, s in zip(wi, ui_col, strict=True))
-            + (1 / (total_samples**2)) * sum((1 - w) * s for w, s in zip(wi, ui_col, strict=True))
-            for ui_col in zip(*ui_table, strict=True)
-        ]
-        _error = [sum_total_class_area * v**0.5 for v in variance]
-
-    for idx_row, value in enumerate(accu_asse.values):
-        if accu_asse.estimator == "Simple/systematic estimator":
-            p_k = sum(list(zip(*accu_asse.error_matrix, strict=True))[idx_row]) / total_samples
-            area = p_k * sum_total_class_area
-            v_p_k = (
-                ((p_k) * (1 - p_k) / total_samples)
-                * (total_pixels_classes - total_samples)
-                / (total_pixels_classes - 1)
-            )
-            error = (v_p_k**0.5) * sum_total_class_area
-        if accu_asse.estimator == "Simple/systematic post-stratified estimator":
-            area = sum(list(zip(*error_matrix_area_prop, strict=True))[idx_row]) * sum_total_class_area
-            error = _error[idx_row]
-        if accu_asse.estimator == "Stratified estimator":
-            area = sum(list(zip(*error_matrix_area_prop, strict=True))[idx_row]) * sum_total_class_area
-            error = (sum(list(zip(*quadratic_error_matrix, strict=True))[idx_row]) ** 0.5) * sum_total_class_area
-
-        html += "<tr>"
-        html += "<th >{} ({})</th>".format(value, accu_asse.labels.get(str(value), "-"))
-        # area
-        html += f"""<td>{rf(area)}</th>"""
-        total_area += area
-        # error
-        html += f"""<td>{rf(error)}</th>"""
-        # lower limit
-        lower_limit = area - accu_asse.z_score * error
-        lower_limit = 0 if lower_limit < 0 else lower_limit
-        html += f"""<td>{rf(lower_limit)}</th>"""
-        # upper limit
-        html += f"""<td>{rf(area + accu_asse.z_score * error)}</th>"""
-        # coefficient of variation
-        cv = (error / area) * 100 if area > 0 else np.nan
-        html += f"""<td>{rf(cv, 2)} %</th>"""
-        # uncertainty
-        u = (accu_asse.z_score * error / area) if area > 0 else np.nan
-        html += f"""<td>{rf(u)}</th>"""
+    for row in get_class_area_adjusted(accu_asse, estimates):
+        label, area, error, lower_limit, upper_limit, cv, uncertainty = row
+        html += f"<tr><th>{label}</th>"
+        html += f"<td>{rf(area)}</td><td>{rf(error)}</td><td>{rf(lower_limit)}</td><td>{rf(upper_limit)}</td>"
+        html += f"<td>{percentage(cv)}</td><td>{percentage(uncertainty)}</td>"
         html += "</tr>"
-
-    html += """
+    html += f"""
         <tr>
           <th>total</th>
-        """
-    html += f"""<td>{rf(total_area)}</th>"""
-    html += """
-        <td class="empty"></td>
-        <td class="empty"></td>
-        <td class="empty"></td>
-        </tr>"""
-
-    html += """
+          <td>{rf(total_area)}</td>
+          <td class="empty"></td>
+          <td class="empty"></td>
+          <td class="empty"></td>
+          <td class="empty"></td>
+          <td class="empty"></td>
+        </tr>
         </tbody>
         </table>
         """
+
+    ###########################################################################
+    # #### Methods
+
+    html += "<p style='font-size:2px'><br/></p>"
+    html += "<h4>Notes:</h4><ul>"
+    html += "".join(f"<li>{note}</li>" for note in METHODS_NOTES[accu_asse.estimator] + METHODS_COMMON_NOTES)
+    html += "</ul>"
 
     html += """
         </body>
@@ -711,8 +468,27 @@ def get_html(accu_asse):
     return html
 
 
+def get_class_area_adjusted(accu_asse, estimates):
+    """Rows of (label, area, standard error, lower limit, upper limit, CV %, uncertainty %)"""
+    total_area = estimates.total_pixels * accu_asse.pixel_area_value
+    rows = []
+    for idx, value in enumerate(estimates.values):
+        area = estimates.area_proportions[idx] * total_area
+        error = estimates.area_proportions_se[idx] * total_area
+        # the limits are unknown (NaN) when the standard error can't be estimated
+        lower_limit = max(area - accu_asse.z_score * error, 0) if not np.isnan(error) else np.nan
+        upper_limit = area + accu_asse.z_score * error
+        cv = error / area * 100 if area > 0 else np.nan
+        uncertainty = accu_asse.z_score * error / area * 100 if area > 0 else np.nan
+        label = "{} ({})".format(value, accu_asse.labels.get(str(value), "-"))
+        rows.append((label, area, error, lower_limit, upper_limit, cv, uncertainty))
+    return rows
+
+
 @error_handler
 def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
+    if accu_asse.values is None:
+        raise ValueError("There are no results to export, the accuracy assessment was not computed")
     csv_rows = []
     csv_rows.append(["Analysis - Accuracy assessment results"])
     csv_rows.append([])
@@ -730,370 +506,16 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
         [f"{accu_asse.response_design.total_labeled}/{accu_asse.response_design.num_points} samples labeled"]
     )
 
-    ###########################################################################
-    # #### preprocess common variables
-
-    total_samples = sum(sum(r) for r in accu_asse.error_matrix)
-    total_pixels_classes = sum(accu_asse.thematic_pixels_count[v] for v in accu_asse.values)
-    sum_total_class_area = total_pixels_classes * accu_asse.pixel_area_value
-
-    if accu_asse.estimator in ["Simple/systematic post-stratified estimator", "Stratified estimator"]:
-        error_matrix_area_prop = copy.deepcopy(accu_asse.error_matrix)
-        for idx_row, row in enumerate(accu_asse.error_matrix):
-            wi = accu_asse.thematic_pixels_count[accu_asse.values[idx_row]] / total_pixels_classes
-            for idx_col, value in enumerate(row):
-                error_matrix_area_prop[idx_row][idx_col] = (value / sum(row)) * wi if sum(row) > 0 else 0
-
-        quadratic_error_matrix = copy.deepcopy(accu_asse.error_matrix)
-        for idx_row, row in enumerate(accu_asse.error_matrix):
-            wi = accu_asse.thematic_pixels_count[accu_asse.values[idx_row]] / total_pixels_classes
-            for idx_col, value in enumerate(row):
-                quadratic_error_matrix[idx_row][idx_col] = (
-                    (wi**2 * ((value / sum(row)) * (1 - (value / sum(row))) / (sum(row) - 1))) if sum(row) > 1 else 0
-                )
-
-    accuracy_table = error_matrix_area_prop if accu_asse.estimator == "Stratified estimator" else accu_asse.error_matrix
-
-    # compute accuracy
-    if accu_asse.estimator in ["Simple/systematic estimator"]:
-        # overall
-        overall_accuracy = sum(row[idx_row] for idx_row, row in enumerate(accu_asse.error_matrix)) / total_samples
-        standard_deviation = (overall_accuracy * (1 - overall_accuracy) / (total_samples - 1)) ** 0.5
-    if accu_asse.estimator in ["Stratified estimator", "Simple/systematic post-stratified estimator"]:
-        # overall
-        overall_accuracy = sum(row[idx_row] for idx_row, row in enumerate(error_matrix_area_prop))
-        try:
-            overall_variance = sum(
-                ((accu_asse.thematic_pixels_count[value] / total_pixels_classes) ** 2)
-                * (accu_asse.error_matrix[idx_row][idx_row] / sum(accu_asse.error_matrix[idx_row]))
-                * (1 - (accu_asse.error_matrix[idx_row][idx_row] / sum(accu_asse.error_matrix[idx_row])))
-                / (sum(accu_asse.error_matrix[idx_row]) - 1)
-                for idx_row, value in enumerate(accu_asse.values)
-            )
-        except ZeroDivisionError:
-            overall_variance = np.nan
-        standard_deviation = overall_variance**0.5
-
-    ###########################################################################
-    # #### 1) Error matrix
-
-    csv_rows.append([])
-    csv_rows.append(["1) Error matrix:"])
-    csv_rows.append(["", "", "Validation"])
-    labels = ["{} ({})".format(i, accu_asse.labels.get(str(i), "-")) for i in accu_asse.values]
-    csv_rows.append(
-        [
-            "",
-            "",
-            *labels,
-            "Total",
-            "User's accuracy",
-            f"Total class area ({accu_asse.pixel_area_unit})",
-            "Wi",
-        ]
-    )
-
-    for idx_row, value in enumerate(accu_asse.values):
-        r = []
-        if idx_row == 0:
-            r.append("Thematic map")
-        else:
-            r.append("")
-        r.append(value)
-        r += accu_asse.error_matrix[idx_row]
-        r.append(sum(accu_asse.error_matrix[idx_row]))
-        r.append(
-            rf(accu_asse.error_matrix[idx_row][idx_row] / sum(accu_asse.error_matrix[idx_row]))
-            if sum(accu_asse.error_matrix[idx_row]) > 0
-            else "-"
-        )
-        r.append(rf(accu_asse.thematic_pixels_count[value] * accu_asse.pixel_area_value))
-        r.append(rf(accu_asse.thematic_pixels_count[value] / total_pixels_classes))
-        csv_rows.append(r)
-
-    csv_rows.append(
-        ["", "total"]
-        + [sum(t) for t in zip(*accu_asse.error_matrix, strict=True)]
-        + [total_samples]
-        + [""]
-        + [rf(sum_total_class_area)]
-    )
-    csv_rows.append(
-        ["", "Producer's accuracy"]
-        + [
-            rf(col[idx_col] / sum(col)) if sum(col) > 0 else "-"
-            for idx_col, col in enumerate(zip(*accuracy_table, strict=True))
-        ]
-        + ["", rf(overall_accuracy)]
-    )
-
-    ###########################################################################
-    # #### 2) Accuracy
-
-    csv_rows.append([])
-    csv_rows.append(["2) Accuracy:"])
-
-    csv_rows.append([])
-    csv_rows.append(["Overall:"])
-    csv_rows.append(["", "Overall Accuracy", "Standard deviation"])
-    csv_rows.append(["", rf(overall_accuracy), rf(standard_deviation)])
-
-    csv_rows.append([])
-    csv_rows.append(["User:"])
-    csv_rows.append(["", "User's Accuracy", "Standard deviation"])
-    for idx_row, value in enumerate(accu_asse.values):
-        r = []
-        r.append("{} ({})".format(value, accu_asse.labels.get(str(value), "-")))
-        # accuracy
-        try:
-            if accu_asse.estimator in ["Simple/systematic estimator"]:
-                accuracy = accuracy_table[idx_row][idx_row] / sum(accuracy_table[idx_row])
-            if accu_asse.estimator in ["Stratified estimator", "Simple/systematic post-stratified estimator"]:
-                accuracy = error_matrix_area_prop[idx_row][idx_row] / sum(error_matrix_area_prop[idx_row])
-        except ZeroDivisionError:
-            accuracy = np.nan
-        r.append(rf(accuracy))
-        # standard error
-        try:
-            r.append(rf((accuracy * (1 - accuracy) / (sum(accu_asse.error_matrix[idx_row]) - 1)) ** 0.5))
-        except ZeroDivisionError:
-            r.append("-")
-        csv_rows.append(r)
-
-    csv_rows.append([])
-    csv_rows.append(["Producer:"])
-    csv_rows.append(["", "Producer's Accuracy", "Standard deviation"])
-    for idx_row, value in enumerate(accu_asse.values):
-        r = []
-        r.append("{} ({})".format(value, accu_asse.labels.get(str(value), "-")))
-        # accuracy
-        try:
-            if accu_asse.estimator in ["Simple/systematic estimator"]:
-                accuracy = accuracy_table[idx_row][idx_row] / sum(list(zip(*accuracy_table, strict=True))[idx_row])
-            if accu_asse.estimator in ["Stratified estimator", "Simple/systematic post-stratified estimator"]:
-                col_sums = list(zip(*error_matrix_area_prop, strict=True))
-                accuracy = error_matrix_area_prop[idx_row][idx_row] / sum(col_sums[idx_row])
-        except ZeroDivisionError:
-            accuracy = np.nan
-        r.append(rf(accuracy))
-        # standard error
-        try:
-            if accu_asse.estimator in ["Simple/systematic estimator"]:
-                producer_standard_error = (
-                    accuracy * (1 - accuracy) / (sum(list(zip(*accu_asse.error_matrix, strict=True))[idx_row]) - 1)
-                ) ** 0.5
-            if accu_asse.estimator in ["Stratified estimator", "Simple/systematic post-stratified estimator"]:
-                u_accuracy = accuracy_table[idx_row][idx_row] / sum(accuracy_table[idx_row])
-                producer_standard_error = (
-                    1
-                    / (
-                        sum(
-                            n * row[idx_row] / total_row
-                            for total_row, row, n in zip(
-                                [sum(r) for r in accu_asse.error_matrix],
-                                accu_asse.error_matrix,
-                                [accu_asse.thematic_pixels_count[v] for v in accu_asse.values],
-                                strict=True,
-                            )
-                        )
-                        ** 2
-                    )
-                    * sum(
-                        n**2 * (1 - accuracy) ** 2 * u_accuracy * (1 - u_accuracy) / (total_row - 1)
-                        if idx == idx_row
-                        else accuracy**2
-                        * n**2
-                        * row[idx_row]
-                        / total_row
-                        * (1 - row[idx_row] / sum(list(zip(*accu_asse.error_matrix, strict=True))[idx_row]))
-                        / (total_row - 1)
-                        for idx, total_row, row, n in zip(
-                            range(len(accu_asse.error_matrix)),
-                            [sum(r) for r in accu_asse.error_matrix],
-                            accu_asse.error_matrix,
-                            [accu_asse.thematic_pixels_count[v] for v in accu_asse.values],
-                            strict=True,
-                        )
-                    )
-                ) ** 0.5
-        except ZeroDivisionError:
-            producer_standard_error = np.nan
-        r.append(rf(producer_standard_error))
-        csv_rows.append(r)
-
-    # #### 2b) Accuracy matrix of estimated area proportion
-
-    if accu_asse.estimator == "Stratified estimator":
+    estimates = get_estimates(accu_asse) if has_samples(accu_asse) else None
+    for warning in get_report_warnings(accu_asse, estimates):
         csv_rows.append([])
-        csv_rows.append(["2b) Accuracy matrix of estimated area proportion:"])
-        ###################################
-        csv_rows.append([])
-        csv_rows.append(["User:"])
-        csv_rows.append(["", "", "Validation"])
-        labels = ["{} ({})".format(i, accu_asse.labels.get(str(i), "-")) for i in accu_asse.values]
-        csv_rows.append(["", "", *labels])
+        csv_rows.append(["Warning:"])
+        csv_rows += [[line.strip()] for line in warning.split("\n")]
 
-        user_accuracy_matrix = copy.deepcopy(error_matrix_area_prop)
-        for idx_row, row in enumerate(error_matrix_area_prop):
-            for idx_col, value in enumerate(row):
-                user_accuracy_matrix[idx_row][idx_col] = value / sum(row) if sum(row) > 0 else 0
+    if estimates is not None:
+        csv_rows += get_csv_results_rows(accu_asse, estimates)
 
-        for idx_row, value in enumerate(accu_asse.values):
-            r = []
-            if idx_row == 0:
-                r.append("Thematic map")
-            else:
-                r.append("")
-            r.append(value)
-            r += [rf(t) if t > 0 else "-" for t in user_accuracy_matrix[idx_row]]
-            csv_rows.append(r)
-
-        ###################################
-        csv_rows.append([])
-        csv_rows.append(["Producer:"])
-        csv_rows.append(["", "", "Validation"])
-        labels = ["{} ({})".format(i, accu_asse.labels.get(str(i), "-")) for i in accu_asse.values]
-        csv_rows.append(["", "", *labels])
-
-        producer_accuracy_matrix = copy.deepcopy(error_matrix_area_prop)
-        for idx_col, col in enumerate(zip(*error_matrix_area_prop, strict=True)):
-            for idx_row, value in enumerate(col):
-                producer_accuracy_matrix[idx_row][idx_col] = value / sum(col) if sum(col) > 0 else 0
-
-        for idx_row, value in enumerate(accu_asse.values):
-            r = []
-            if idx_row == 0:
-                r.append("Thematic map")
-            else:
-                r.append("")
-            r.append(value)
-            r += [rf(t) if t > 0 else "-" for t in producer_accuracy_matrix[idx_row]]
-            csv_rows.append(r)
-
-    ###########################################################################
-    # #### 3) Error matrix of estimated area proportion
-
-    if accu_asse.estimator in ["Simple/systematic post-stratified estimator", "Stratified estimator"]:
-        csv_rows.append([])
-        csv_rows.append(["3) Error matrix of estimated area proportion:"])
-        csv_rows.append(["", "", "Validation"])
-        labels = ["{} ({})".format(i, accu_asse.labels.get(str(i), "-")) for i in accu_asse.values]
-        csv_rows.append(["", "", *labels, "Wi"])
-
-        for idx_row, value in enumerate(accu_asse.values):
-            r = []
-            if idx_row == 0:
-                r.append("Thematic map")
-            else:
-                r.append("")
-            r.append(value)
-            r += [rf(t) if t > 0 else "-" for t in error_matrix_area_prop[idx_row]]
-            r.append(rf(sum(error_matrix_area_prop[idx_row])) if sum(error_matrix_area_prop[idx_row]) > 0 else "-")
-            csv_rows.append(r)
-
-        csv_rows.append(["", "total"] + [rf(sum(t)) for t in zip(*error_matrix_area_prop, strict=True)])
-
-    ###########################################################################
-    # #### 4) Quadratic error matrix of estimated area proportion
-
-    if accu_asse.estimator in ["Simple/systematic post-stratified estimator", "Stratified estimator"]:
-        csv_rows.append([])
-        csv_rows.append(["4) Quadratic error matrix of estimated area proportion:"])
-        csv_rows.append(["", "", "Validation"])
-        labels = ["{} ({})".format(i, accu_asse.labels.get(str(i), "-")) for i in accu_asse.values]
-        csv_rows.append(["", "", *labels])
-
-        for idx_row, value in enumerate(accu_asse.values):
-            r = []
-            if idx_row == 0:
-                r.append("Thematic map")
-            else:
-                r.append("")
-            r.append(value)
-            r += [rf(t) if t > 0 else "-" for t in quadratic_error_matrix[idx_row]]
-            csv_rows.append(r)
-
-        csv_rows.append(["", "total"] + [rf(sum(t) ** 0.5) for t in zip(*quadratic_error_matrix, strict=True)])
-
-    ###########################################################################
-    # #### 3/5) Class area adjusted
-
-    csv_rows.append([])
-    csv_rows.append(
-        ["{}) Class area adjusted:".format("3" if accu_asse.estimator == "Simple/systematic estimator" else "5")]
-    )
-    csv_rows.append(
-        [
-            "",
-            f"Area adjusted ({accu_asse.pixel_area_unit})",
-            "Error",
-            "Lower limit",
-            "Upper limit",
-            "Coefficient of variation",
-            "Uncertainty",
-        ]
-    )
-
-    total_area = 0
-
-    # the error for post-stratified
-    if accu_asse.estimator == "Simple/systematic post-stratified estimator":
-        ui_table = [
-            [(1 - i / total_row) ** 2 * i / (total_row - 1) if total_row not in [0, 1] else np.nan for i in row]
-            for total_row, row in zip([sum(r) for r in accu_asse.error_matrix], accu_asse.error_matrix, strict=True)
-        ]
-        wi = [accu_asse.thematic_pixels_count[value] / total_pixels_classes for value in accu_asse.values]
-        variance = [
-            ((1 - total_samples / total_pixels_classes) / total_samples)
-            * sum(w * s for w, s in zip(wi, ui_col, strict=True))
-            + (1 / (total_samples**2)) * sum((1 - w) * s for w, s in zip(wi, ui_col, strict=True))
-            for ui_col in zip(*ui_table, strict=True)
-        ]
-        _error = [sum_total_class_area * v**0.5 for v in variance]
-
-    for idx_row, value in enumerate(accu_asse.values):
-        if accu_asse.estimator == "Simple/systematic estimator":
-            p_k = sum(list(zip(*accu_asse.error_matrix, strict=True))[idx_row]) / total_samples
-            area = p_k * sum_total_class_area
-            v_p_k = (
-                ((p_k) * (1 - p_k) / total_samples)
-                * (total_pixels_classes - total_samples)
-                / (total_pixels_classes - 1)
-            )
-            error = (v_p_k**0.5) * sum_total_class_area
-        if accu_asse.estimator == "Simple/systematic post-stratified estimator":
-            area = sum(list(zip(*error_matrix_area_prop, strict=True))[idx_row]) * sum_total_class_area
-            error = _error[idx_row]
-        if accu_asse.estimator == "Stratified estimator":
-            area = sum(list(zip(*error_matrix_area_prop, strict=True))[idx_row]) * sum_total_class_area
-            error = (sum(list(zip(*quadratic_error_matrix, strict=True))[idx_row]) ** 0.5) * sum_total_class_area
-
-        r = []
-        r.append("{} ({})".format(value, accu_asse.labels.get(str(value), "-")))
-
-        # area
-        r.append(rf(area))
-        total_area += area
-        # error
-        r.append(rf(error))
-        # lower limit
-        lower_limit = area - accu_asse.z_score * error
-        lower_limit = 0 if lower_limit < 0 else lower_limit
-        r.append(rf(lower_limit))
-        # upper limit
-        r.append(rf(area + accu_asse.z_score * error))
-        # coefficient of variation
-        cv = (error / area) * 100 if area > 0 else np.nan
-        r.append(f"{rf(cv, 2)} %")
-        # uncertainty
-        u = (accu_asse.z_score * error / area) if area > 0 else np.nan
-        r.append(f"{rf(u)}")
-        csv_rows.append(r)
-
-    csv_rows.append(["total", rf(total_area)])
-
-    # write CSV file
-    with open(file_out, "w") as csvfile:
+    with open(file_out, "w", newline="", encoding="utf-8") as csvfile:
         csv_w = csv.writer(csvfile, delimiter=str(csv_separator))
         # replace with the user define decimal separator
         if csv_decimal_separator != ".":
@@ -1101,5 +523,135 @@ def export_to_csv(accu_asse, file_out, csv_separator, csv_decimal_separator):
                 csv_rows[idx] = [
                     str(item).replace(".", csv_decimal_separator) if isinstance(item, float) else item for item in row
                 ]
-
         csv_w.writerows(csv_rows)
+    return True
+
+
+def get_csv_results_rows(accu_asse, estimates):
+    values = accu_asse.values
+    labels = ["{} ({})".format(value, accu_asse.labels.get(str(value), "-")) for value in values]
+    weighted = accu_asse.estimator != estimators.SIMPLE
+    total_area = estimates.total_pixels * accu_asse.pixel_area_value
+    error_matrix = estimates.error_matrix.astype(int)
+
+    def matrix_rows(matrix_cells):
+        rows = []
+        for idx_row, value in enumerate(values):
+            rows.append(["Thematic map" if idx_row == 0 else "", value, *matrix_cells[idx_row]])
+        return rows
+
+    csv_rows = []
+
+    # #### 1) Error matrix
+    csv_rows.append([])
+    csv_rows.append(["1) Error matrix:"])
+    csv_rows.append(["", "", "Validation"])
+    csv_rows.append(
+        ["", "", *labels, "Total", "User's accuracy", f"Total class area ({accu_asse.pixel_area_unit})", "Wi"]
+    )
+    for idx_row, row in enumerate(matrix_rows(error_matrix.tolist())):
+        in_population = estimates.in_population[idx_row]
+        csv_rows.append(
+            [
+                *row,
+                int(error_matrix[idx_row].sum()),
+                rf(estimates.users_accuracy[idx_row]),
+                rf(estimates.pixel_counts[idx_row] * accu_asse.pixel_area_value) if in_population else "-",
+                rf(estimates.weights[idx_row]) if in_population else "-",
+            ]
+        )
+    csv_rows.append(["", "total", *error_matrix.sum(axis=0).tolist(), int(error_matrix.sum()), "", rf(total_area)])
+    producers_accuracy = [rf(pa) for pa in estimates.producers_accuracy]
+    csv_rows.append(["", "Producer's accuracy", *producers_accuracy, "", rf(estimates.overall_accuracy)])
+
+    # #### 2) Accuracy
+    csv_rows.append([])
+    csv_rows.append(["2) Accuracy:"])
+    csv_rows.append([])
+    csv_rows.append(["Overall:"])
+    csv_rows.append(["", "Overall Accuracy", "Standard error"])
+    csv_rows.append(["", rf(estimates.overall_accuracy), rf(estimates.overall_accuracy_se)])
+    csv_rows.append([])
+    csv_rows.append(["User:"])
+    csv_rows.append(["", "User's Accuracy", "Standard error"])
+    for idx, label in enumerate(labels):
+        csv_rows.append([label, rf(estimates.users_accuracy[idx]), rf(estimates.users_accuracy_se[idx])])
+    csv_rows.append([])
+    csv_rows.append(["Producer:"])
+    csv_rows.append(["", "Producer's Accuracy", "Standard error"])
+    for idx, label in enumerate(labels):
+        csv_rows.append([label, rf(estimates.producers_accuracy[idx]), rf(estimates.producers_accuracy_se[idx])])
+
+    # #### 2b) Accuracy matrix of estimated area proportion
+    if accu_asse.estimator == estimators.STRATIFIED:
+        proportions = estimates.proportions
+        row_sums = proportions.sum(axis=1)
+        col_sums = proportions.sum(axis=0)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            user_matrix = np.where(row_sums[:, None] > 0, proportions / row_sums[:, None], 0)
+            producer_matrix = np.where(col_sums[None, :] > 0, proportions / col_sums[None, :], 0)
+        csv_rows.append([])
+        csv_rows.append(["2b) Accuracy matrix of estimated area proportion:"])
+        csv_rows.append([])
+        csv_rows.append(["User:"])
+        csv_rows.append(["", "", "Validation"])
+        csv_rows.append(["", "", *labels])
+        csv_rows += matrix_rows([[rf_nonzero(t) for t in row] for row in user_matrix])
+        csv_rows.append([])
+        csv_rows.append(["Producer:"])
+        csv_rows.append(["", "", "Validation"])
+        csv_rows.append(["", "", *labels])
+        csv_rows += matrix_rows([[rf_nonzero(t) for t in row] for row in producer_matrix])
+
+    if weighted:
+        # #### 3) Error matrix of estimated area proportion
+        csv_rows.append([])
+        csv_rows.append(["3) Error matrix of estimated area proportion:"])
+        csv_rows.append(["", "", "Validation"])
+        csv_rows.append(["", "", *labels, "Wi"])
+        row_weights = estimates.proportions.sum(axis=1)
+        for idx_row, row in enumerate(matrix_rows([[rf_nonzero(t) for t in r] for r in estimates.proportions])):
+            csv_rows.append([*row, rf_nonzero(row_weights[idx_row])])
+        csv_rows.append(["", "total", *[rf(t) for t in estimates.area_proportions]])
+
+        # #### 4) Quadratic error matrix of estimated area proportion
+        csv_rows.append([])
+        csv_rows.append(["4) Quadratic error matrix of estimated area proportion:"])
+        csv_rows.append(["", "", "Validation"])
+        csv_rows.append(["", "", *labels])
+        csv_rows += matrix_rows([[rsig(t) for t in row] for row in estimates.variance_contributions])
+        csv_rows.append(["", "total (standard error)", *[rf(t) for t in estimates.area_proportions_se]])
+
+    # #### 3/5) Class area adjusted
+    csv_rows.append([])
+    csv_rows.append(["{}) Class area adjusted:".format("5" if weighted else "3")])
+    csv_rows.append(["", "z score of the confidence limits:", float(accu_asse.z_score)])
+    csv_rows.append(
+        [
+            "",
+            f"Area adjusted ({accu_asse.pixel_area_unit})",
+            "Standard error",
+            "Lower limit",
+            "Upper limit",
+            "Coefficient of variation (%)",
+            "Uncertainty (%)",
+        ]
+    )
+    for label, area, error, lower_limit, upper_limit, cv, uncertainty in get_class_area_adjusted(accu_asse, estimates):
+        csv_rows.append([label, rf(area), rf(error), rf(lower_limit), rf(upper_limit), rf(cv, 2), rf(uncertainty, 2)])
+    csv_rows.append(["total", rf(total_area)])
+
+    # #### Notes
+    csv_rows.append([])
+    csv_rows.append(["Notes:"])
+    for note in METHODS_NOTES[accu_asse.estimator] + METHODS_COMMON_NOTES:
+        csv_rows.append([html_to_text(note)])
+
+    return csv_rows
+
+
+def html_to_text(text):
+    """Plain text of the notes for the csv"""
+    for html_code, char in (("&plusmn;", "+/-"), ("&middot;", "*"), ("<sub>", ""), ("</sub>", "")):
+        text = text.replace(html_code, char)
+    return text

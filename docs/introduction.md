@@ -160,19 +160,22 @@ report.
   - Accuracy (overall, user's, producer's)
   - {cite:t}`Stehman2009`, Table 21.3
   - $$\hat{O} = \frac{\sum_{i=1}^{q} n_{ii}}{n}, \quad \hat{U}_i = \frac{n_{ii}}{n_{i+}}, \quad \hat{P}_j = \frac{n_{jj}}{n_{+j}}$$
+    $$\hat{V}(\hat{O}) = \frac{\hat{O}(1-\hat{O})}{n-1}, \quad \hat{V}(\hat{U}_i) = \frac{\hat{U}_i(1-\hat{U}_i)}{n_{i+}-1}, \quad \hat{V}(\hat{P}_j) = \frac{\hat{P}_j(1-\hat{P}_j)}{n_{+j}-1}$$
 * -
   - Area estimation and confidence interval
-  - {cite:t}`Stehman2013`, Eqs. 13 and 44
+  - {cite:t}`Stehman2013`, Eq. 18; variance estimator unbiased for SRS with replacement {cite}`Cochran1977`
   - $$\hat{p}_{+j} = \frac{n_{+j}}{n}, \quad \hat{A}_j = A_T\, \hat{p}_{+j}$$
-    $$\hat{V}\left(\hat{p}_{+j}\right) = \frac{\hat{p}_{+j}\left(1 - \hat{p}_{+j}\right)(N - n)}{n(N - 1)}$$
+    $$\hat{V}\left(\hat{p}_{+j}\right) = \frac{\hat{p}_{+j}\left(1 - \hat{p}_{+j}\right)}{n - 1}$$
 * - Stratified random sampling (STR)
   - Accuracy (overall, user's, producer's)
-  - {cite:t}`Olofsson2013`, Eqs. 1–3
+  - {cite:t}`Olofsson2013`, Eqs. 1 and 6–8; variances {cite:t}`Olofsson2014`, Eqs. 5–7
   - $$\hat{q}_{ij} = \frac{n_{ij}}{n_{i+}}, \quad \hat{p}_{ij} = W_i\, \hat{q}_{ij}, \quad \hat{O} = \sum_i \hat{p}_{ii}$$
     $$\hat{U}_i = \frac{\hat{p}_{ii}}{\hat{p}_{i+}}, \quad \hat{P}_j = \frac{\hat{p}_{jj}}{\hat{p}_{+j}}$$
+    $$\hat{V}(\hat{O}) = \sum_i \frac{W_i^{2}\,\hat{U}_i(1-\hat{U}_i)}{n_{i+}-1}, \quad \hat{V}(\hat{U}_i) = \frac{\hat{U}_i(1-\hat{U}_i)}{n_{i+}-1}$$
+    $$\hat{V}(\hat{P}_j) = \frac{1}{\hat{p}_{+j}^{2}}\left[\frac{W_j^{2}(1-\hat{P}_j)^{2}\,\hat{U}_j(1-\hat{U}_j)}{n_{j+}-1} + \hat{P}_j^{2}\sum_{i \ne j}\frac{W_i^{2}\,\hat{q}_{ij}(1-\hat{q}_{ij})}{n_{i+}-1}\right]$$
 * -
   - Area estimation and confidence interval
-  - {cite:t}`Olofsson2013`, Eqs. 10–11
+  - {cite:t}`Olofsson2014`, Eqs. 9–11
   - $$\hat{p}_{+j} = \sum_i W_i\, \hat{q}_{ij}, \quad \hat{A}_j = A_T\, \hat{p}_{+j}$$
     $$\hat{V}\left(\hat{p}_{+j}\right) = \sum_i \frac{W_i^{2}\, \hat{q}_{ij}\left(1 - \hat{q}_{ij}\right)}{n_{i+} - 1}$$
 * -
@@ -185,18 +188,27 @@ report.
   - Accuracy (overall, user's, producer's)
   - {cite:t}`Stehman2009`, Table 21.3
   - $$\hat{O} = \frac{\sum_{i=1}^{q} n_{ii}}{n}, \quad \hat{U}_i = \frac{n_{ii}}{n_{i+}}, \quad \hat{P}_j = \frac{n_{jj}}{n_{+j}}$$
-    SYS uses the simple (SRS) estimators
+    SYS uses the simple (SRS) estimators; their variances are approximations that usually
+    overestimate the variance of systematic samples {cite}`Olofsson2014`
 * -
   - Area estimation and confidence interval
-  - {cite:t}`Stehman2012`, Eq. 3, for systematic design context
+  - {cite:t}`Stehman2013`, Eq. 18; variance {cite}`Cochran1977`
   - $$\hat{p}_{+j} = \frac{n_{+j}}{n}, \quad \hat{A}_j = A_T\, \hat{p}_{+j}$$
-    $$\hat{V}\left(\hat{p}_{+j}\right) = \frac{\hat{p}_{+j}\left(1 - \hat{p}_{+j}\right)(N - n)}{n(N - 1)}$$
+    $$\hat{V}\left(\hat{p}_{+j}\right) = \frac{\hat{p}_{+j}\left(1 - \hat{p}_{+j}\right)}{n - 1}$$
     SYS uses the simple (SRS) area estimator
-* - Post stratified
+* - Post stratified (SRS and SYS)
+  - Accuracy (overall, user's, producer's)
+  - {cite:t}`Olofsson2014`, Eqs. 1–7
+  - The stratified estimators and variances above, with the map classes as post-strata
+    {cite}`Olofsson2014`
+* -
   - Area estimation and confidence interval
-  - {cite:t}`Stehman2013`, Eq. 48
+  - {cite:t}`Olofsson2014`, Eq. 9; approximate (large sample) variance {cite:t}`Cochran1977`, Eq. 5A.42 and {cite:t}`Stehman2013`, Eq. 48, for sampling with replacement
   - $$\hat{p}_{+j}^{\mathrm{PS}} = \sum_h W_h^{\mathrm{PS}}\left(\frac{n_{hj}}{n_{h+}}\right), \quad \hat{A}_j^{\mathrm{PS}} = A_T\, \hat{p}_{+j}^{\mathrm{PS}}$$
-    $$\hat{V}\left(\hat{p}_{+j}^{\mathrm{PS}}\right) = \frac{1}{n}\left(1 - \frac{n}{N}\right)\sum_{h=1}^{H} W_h S_{yh}^{2} + \frac{1}{n^{2}}\sum_{h=1}^{H}\left(1 - W_h\right) S_{yh}^{2}$$
+    $$\hat{V}\left(\hat{p}_{+j}^{\mathrm{PS}}\right) = \frac{1}{n}\sum_{h=1}^{H} W_h s_{yh}^{2} + \frac{1}{n^{2}}\sum_{h=1}^{H}\left(1 - W_h\right) s_{yh}^{2}$$
+    $$s_{yh}^{2} = \frac{n_{h+}\, \hat{q}_{hj}\left(1 - \hat{q}_{hj}\right)}{n_{h+} - 1}$$
+    the sample variance in post-stratum $h$ of $y_u = 1$ if the reference class of unit $u$ is $j$
+    (0 otherwise)
 * - SRS and SYS
   - Sample size
   - {cite:t}`Cochran1977`, Eq. 4.2
@@ -215,7 +227,28 @@ area; $n_{ij}$ = sample count in map/stratum row $i$ and reference-class column 
 $n_{+j}$ = row and column totals; $W_i = A_i/A_T$; $A_T$ = total map area; $\hat{q}_{ij}$ =
 within-stratum sample proportion; $\hat{p}_{ij}$ = area-adjusted proportion; $U_i$ = conjectured
 user's accuracy for stratum $i$; $S(\hat{O})$ = target standard error of overall accuracy;
-$z$ = normal critical value for the selected confidence level.
+$z$ = normal critical value for the selected confidence level. The standard error is the square root
+of the estimated variance, $\mathrm{SE} = \sqrt{\hat{V}}$. All the variances are the ones of sampling
+with replacement, without the finite population correction $(1 - n/N)$ of sampling without replacement,
+as the random sampling of AcATaMa: its sampling points are drawn over the map, so several of them can fall
+in the same pixel. For samples without replacement, omitting the correction makes the variance estimates
+larger, negligibly when the sampling fractions are small, also within each stratum ($n_{i+} \ll N_i$)
+{cite}`Cochran1977,Stehman2012`. The accuracy variances of the post-stratified
+estimator are the stratified ones {cite}`Olofsson2014`, while its area variance also accounts for the random
+sample sizes of the post-strata {cite}`Cochran1977`. The variance of the post-stratified area is a large
+sample approximation {cite}`Stehman2013`, as the variance of the producer's accuracy, a ratio estimator
+(linearization). The variances of systematic samples are approximations that usually overestimate the
+variance {cite}`Olofsson2014`, but they can underestimate it if the map has periodic patterns aligned with
+the grid {cite}`Cochran1977`.
+
+```{note}
+The population of the simple estimator is the whole thematic map (its pixels with data), including the map
+classes without samples. The stratified and post-stratified estimators need samples in every stratum (map
+class): a map class with mapped area but no samples is excluded from the estimation (the total area and all
+the estimates then refer to the remaining map classes), and a stratum with a single sample has no estimable
+variance, so the standard errors that depend on it (overall and producer's accuracy and all the area
+estimates) are not reported. AcATaMa reports these situations as warnings in the analysis results.
+```
 
 ```{tip}
 The minimum-per-stratum allocation prevents rare but policy-relevant classes (for example
