@@ -511,17 +511,18 @@ def restore(yml_file_path):
         sampling_design.srs_tables[srs_map_key] = {}
         sampling_design.srs_tables[srs_map_key][srs_method] = srs_table
         fill_stratified_sampling_table()
-        # restore the pixel count by pixel value
+        # restore the pixel count by pixel value, only of the pixel values of the symbology, so they
+        # are counted again when all the pixel values are required (population of the analysis)
         if srs_table and "pixel_count" in srs_table:
-            from AcATaMa.utils.others_utils import storage_pixel_count_by_pixel_values
+            from AcATaMa.utils.others_utils import set_pixel_counts
 
-            storage_pixel_count_by_pixel_values[
-                (
-                    sampling_design.QCBox_SamplingMap_StraRS.currentLayer(),
-                    int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText()),
-                    get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text()),
-                )
-            ] = dict(zip(srs_table["values_and_colors_table"]["Pixel Value"], srs_table["pixel_count"], strict=True))
+            set_pixel_counts(
+                sampling_design.QCBox_SamplingMap_StraRS.currentLayer(),
+                int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText()),
+                get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text()),
+                dict(zip(srs_table["values_and_colors_table"]["Pixel Value"], srs_table["pixel_count"], strict=True)),
+                complete=False,
+            )
 
         # TODO:
         # restore the values color table of the QCBox_SamplingMap_StraRS saved

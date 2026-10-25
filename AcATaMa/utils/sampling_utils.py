@@ -227,13 +227,12 @@ def reload_StraRS_table():
         del sampling_design.srs_tables[sampling_design.QCBox_SamplingMap_StraRS.currentText()][srs_method]
     # delete pixel count
     if srs_method == "area based proportion":
-        from AcATaMa.utils.others_utils import storage_pixel_count_by_pixel_values
+        from AcATaMa.utils.others_utils import clear_pixel_counts
 
         layer = sampling_design.QCBox_SamplingMap_StraRS.currentLayer()
         band = int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText())
         nodata = get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text())
-        if (layer, band, nodata) in storage_pixel_count_by_pixel_values:
-            del storage_pixel_count_by_pixel_values[(layer, band, nodata)]
+        clear_pixel_counts(layer, band, nodata)
 
     fill_stratified_sampling_table()
 
@@ -292,14 +291,17 @@ def fill_stratified_sampling_table():
             return
         srs_table["row_count"] = len(next(iter(srs_table["values_and_colors_table"].values())))
 
-        srs_table["pixel_count"] = list(
-            get_pixel_count_by_pixel_values(
-                sampling_design.QCBox_SamplingMap_StraRS.currentLayer(),
-                int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText()),
-                srs_table["values_and_colors_table"]["Pixel Value"],
-                get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text()),
-            ).values()
+        # the pixel counts can be cached with other or more pixel values, so match them by value
+        pixel_count_by_value = get_pixel_count_by_pixel_values(
+            sampling_design.QCBox_SamplingMap_StraRS.currentLayer(),
+            int(sampling_design.QCBox_band_SamplingMap_StraRS.currentText()),
+            list(srs_table["values_and_colors_table"]["Pixel Value"]),
+            get_nodata_format(sampling_design.nodata_SamplingMap_StraRS.text()),
         )
+        srs_table["pixel_count"] = [
+            pixel_count_by_value.get(pixel_value, 0)
+            for pixel_value in srs_table["values_and_colors_table"]["Pixel Value"]
+        ]
 
         if srs_method == "fixed values":
             srs_table["header"] = ["Pix Val", "Color", "Num Samples", "On"]
