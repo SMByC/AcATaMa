@@ -4,7 +4,7 @@
                                  A QGIS plugin
  AcATaMa is a Qgis plugin for Accuracy Assessment of Thematic Maps
                               -------------------
-        copyright            : (C) 2017-2025 by Xavier C. Llano, SMByC
+        copyright            : (C) 2017-2026 by Xavier C. Llano, SMByC
         email                : xavier.corredor.llano@gmail.com
  ***************************************************************************/
 
@@ -28,7 +28,7 @@
 # assessment of the original yaml of the big sample file.
 #
 # Example:
-# $ python acatama_yamls_merger.py original_yml.yml clip_01.yml clip_02.yml ...
+# $ python acatama_yamls_merger.py original.yaml clip_01.yaml clip_02.yaml ...
 #                                         |              |           |
 #                                 (not labeled) (individual files labeled)
 
@@ -38,50 +38,88 @@ import os
 import yaml
 
 try:
-    from yaml import CDumper as Dumper
-    from yaml import CLoader as Loader
+    from yaml import CSafeDumper as SafeDumper
+    from yaml import CSafeLoader as SafeLoader
 except ImportError:
-    from yaml import Dumper, Loader
+    from yaml import SafeDumper, SafeLoader
+
+
+class LegacyLoader(SafeLoader):
+    """Safe loader that also reads the python tuples and ordered dicts of old AcATaMa files"""
+
+
+LegacyLoader.add_constructor(
+    "tag:yaml.org,2002:python/tuple", lambda loader, node: loader.construct_sequence(node, deep=True)
+)
+LegacyLoader.add_constructor(
+    "tag:yaml.org,2002:python/object/apply:collections.OrderedDict",
+    lambda loader, node: dict(loader.construct_sequence(node, deep=True)[0]),
+)
+
+
+def load_yaml(file_path):
+    with open(file_path, encoding="utf-8") as yaml_file:
+        return yaml.load(yaml_file, Loader=LegacyLoader)  # nosec B506 - LegacyLoader is a SafeLoader
+
+
+def merge(yaml_configs):
+    """Merge the labeled samples and the samples order of the clips, a sample in several clips
+    keeps the first label found
+
+    Returns:
+        (samples, samples_order, conflicts) where conflicts are the sample ids with different labels
+    """
+    samples = {}
+    samples_order = []
+    conflicts = set()
+    for yaml_config in yaml_configs:
+        for sample in (yaml_config.get("samples", yaml_config.get("points")) or {}).values():
+            sample_id = sample.get("sample_id", sample.get("shape_id"))
+            label_id = sample.get("label_id", sample.get("classif_id"))
+            if label_id is None:
+                continue
+            if sample_id in samples:
+                if samples[sample_id] != label_id:
+                    conflicts.add(sample_id)
+                continue
+            samples[sample_id] = label_id
+        for sample_id in yaml_config.get("samples_order", yaml_config.get("points_order")) or []:
+            if sample_id not in samples_order:
+                samples_order.append(sample_id)
+    return samples, samples_order, conflicts
 
 
 def script():
     """Run as a script with arguments"""
-    parser = argparse.ArgumentParser(prog="acatama_yamls_merger", description="Merge AcATaMa yml files")
-
-    parser.add_argument("inputs", type=str, nargs="*")
+    parser = argparse.ArgumentParser(prog="acatama_yamls_merger", description="Merge AcATaMa yaml files")
+    parser.add_argument("template", type=str, help="AcATaMa yaml file (not labeled) used as template")
+    parser.add_argument("inputs", type=str, nargs="+", help="AcATaMa yaml files of the clips labeled")
     args = parser.parse_args()
 
-    yaml_files = []
-    for _input in args.inputs:
-        if os.path.isfile(_input) and _input.endswith(".yml"):
-            yaml_files.append(os.path.abspath(_input))
+    yaml_files = [os.path.abspath(f) for f in args.inputs if os.path.isfile(f) and f.endswith((".yml", ".yaml"))]
+    if not yaml_files:
+        parser.error("no labeled yaml files found")
 
-    print(f"\nTEMPLATE FILE: {os.path.basename(yaml_files[0])}")
-    print(f"\nMERGING YAMLS FILES: {len(yaml_files) - 1}")
+    print(f"\nTEMPLATE FILE: {os.path.basename(args.template)}")
+    print(f"\nMERGING YAML FILES: {len(yaml_files)}")
 
-    points = []
-    points_order = []
-    yml_template = None
-    for yaml_file_path in yaml_files:
-        with open(yaml_file_path) as yaml_file:
-            yaml_config = yaml.load(yaml_file, Loader=Loader)
+    yml_template = load_yaml(args.template)
+    samples, samples_order, conflicts = merge([load_yaml(yaml_file) for yaml_file in yaml_files])
+    for sample_id in sorted(conflicts):
+        print(f"  warning: the sample {sample_id} has different labels in the clips, the first one is kept")
 
-            if yml_template is None:
-                yml_template = yaml_config
-                continue
+    yml_template.pop("points", None)
+    yml_template.pop("points_order", None)
+    yml_template["samples"] = {
+        idx: {"label_id": label_id, "sample_id": sample_id} for idx, (sample_id, label_id) in enumerate(samples.items())
+    }
+    yml_template["samples_order"] = samples_order
 
-            points += yaml_config["points"].values()
-            points_order += yaml_config["points_order"]
+    output_file = os.path.splitext(args.template)[0] + "_merged.yaml"
+    with open(output_file, "w", encoding="utf-8") as yaml_file:
+        yaml.dump(yml_template, yaml_file, Dumper=SafeDumper, default_flow_style=False, sort_keys=False)
 
-    points_merged = dict(zip(range(len(points)), points, strict=False))
-
-    yml_template["points"] = points_merged
-    yml_template["points_order"] = points_order
-
-    with open(os.path.splitext(yaml_files[0])[0] + "_merged.yml", "w") as yaml_file:
-        yaml.dump(yml_template, yaml_file, Dumper=Dumper)
-
-    print("saving: ", os.path.splitext(yaml_files[0])[0] + "_merged.yml")
+    print("saving: ", output_file)
     print("\nDONE")
 
 
