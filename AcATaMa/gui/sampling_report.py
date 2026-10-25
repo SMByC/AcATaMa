@@ -28,7 +28,14 @@ from qgis.core import Qgis, QgsUnitTypes
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox
 
-from AcATaMa.core.map import get_values_and_colors_table
+from AcATaMa.core import estimators
+from AcATaMa.core.map import (
+    get_map_fingerprint,
+    get_source_nodata,
+    get_user_nodata_ranges,
+    get_values_and_colors_table,
+    in_nodata_ranges,
+)
 from AcATaMa.utils.qgis_utils import get_source_from
 from AcATaMa.utils.system_utils import get_save_file_name, output_file_is_OK
 
@@ -72,8 +79,13 @@ def get_samples_distribution_table(map_layer, points, area_unit):
     pixel_area_value = pixel_area_base * QgsUnitTypes.fromUnitToUnitFactor(
         QgsUnitTypes.distanceToAreaUnit(map_layer.qgs_layer.crs().mapUnits()), area_unit
     )
+    # the no data of the layer (also the ranges set by the user) is not a class, its pixels can't be sampled
+    source_nodata = get_source_nodata(map_layer.qgs_layer, map_layer.band)
+    user_nodata_ranges = get_user_nodata_ranges(map_layer.qgs_layer, map_layer.band)
 
     for i, pix_val in enumerate(values_and_colors_table["Pixel Value"]):
+        if pix_val == source_nodata or in_nodata_ranges(pix_val, user_nodata_ranges):
+            continue
         table["pix_val"].append(pix_val)
         table["color"].append(
             [
@@ -186,14 +198,20 @@ class SamplingReport(QDialog, FORM_CLASS):
                 return f"{map_layer.qgs_layer.name()} (band {map_layer.band})"
             return map_layer.qgs_layer.name()
 
+        # the fingerprints identify the maps of the sampling in the analysis
+        def fingerprint(map_layer):
+            return get_map_fingerprint(map_layer.qgs_layer, map_layer.band)
+
         if self.sampling.post_stratification_map and not is_thematic_map(self.sampling.post_stratification_map):
             post_stratification_table = get_samples_distribution_table(
                 self.sampling.post_stratification_map,
                 self.sampling.points.values(),
                 Qgis.AreaUnit(self.area_unit.currentIndex()),
             )
+            post_stratification_map_fingerprint = fingerprint(self.sampling.post_stratification_map)
         else:
             post_stratification_table = None
+            post_stratification_map_fingerprint = None
 
         if self.sampling.sampling_map is not None and not is_thematic_map(self.sampling.sampling_map):
             sampling_map = map_name(self.sampling.sampling_map)
@@ -202,15 +220,36 @@ class SamplingReport(QDialog, FORM_CLASS):
                 self.sampling.points.values(),
                 Qgis.AreaUnit(self.area_unit.currentIndex()),
             )
+            sampling_map_fingerprint = fingerprint(self.sampling.sampling_map)
         else:
             sampling_map = None
             sampling_map_table = None
+            sampling_map_fingerprint = None
 
         self.report = {
             "general": {
                 "sampling_layer": self.sampling_layer.name(),
                 "thematic_map": self.sampling.thematic_map.qgs_layer.name(),
+                "thematic_map_band": self.sampling.thematic_map.band,
+                "thematic_map_fingerprint": fingerprint(self.sampling.thematic_map),
+                # the no data values and ranges of the thematic map, whose pixels could not be sampled
+                "thematic_map_nodata": [
+                    float(value)
+                    for value in (
+                        self.sampling.thematic_map.nodata,
+                        get_source_nodata(self.sampling.thematic_map.qgs_layer, self.sampling.thematic_map.band),
+                    )
+                    if value is not None and not math.isnan(value)
+                ],
+                "thematic_map_nodata_ranges": [
+                    list(no_data_range)
+                    for no_data_range in get_user_nodata_ranges(
+                        self.sampling.thematic_map.qgs_layer, self.sampling.thematic_map.band
+                    )
+                ],
                 "sampling_map": sampling_map,
+                "sampling_map_fingerprint": sampling_map_fingerprint,
+                "post_stratification_map_fingerprint": post_stratification_map_fingerprint,
                 "sampling_type": self.sampling_conf["sampling_type"],
                 "stratified_method": self.sampling.sampling_method
                 if self.sampling_conf["sampling_type"] == "stratified"
@@ -263,22 +302,18 @@ class SamplingReport(QDialog, FORM_CLASS):
         super().show()
 
     def reload(self):
-        if self.sampling:
-            # fresh sampling: recompute everything from the map layers
-            self.generate_sampling_report()
-        else:
-            # report restored from yaml: the map layers are not available,
-            # so convert the already-computed total_area values using the
-            # unit factor, then update the report's stored area_unit
-            old_area_unit = Qgis.AreaUnit(self.report["general"]["area_unit"])
-            new_area_unit_index = self.area_unit.currentIndex()
-            new_area_unit = Qgis.AreaUnit(new_area_unit_index)
-            factor = QgsUnitTypes.fromUnitToUnitFactor(old_area_unit, new_area_unit)
-            for table_key in ("thematic_map", "sampling_map", "post_stratification"):
-                table = self.report["samples"].get(table_key)
-                if table:
-                    table["total_area"] = [v * factor for v in table["total_area"]]
-            self.report["general"]["area_unit"] = new_area_unit_index
+        # the report is not generated again from the map layers, which could have changed since the sampling
+        # (it records the maps of the sampling), so convert the already-computed total_area values using the
+        # unit factor, then update the report's stored area_unit
+        old_area_unit = Qgis.AreaUnit(self.report["general"]["area_unit"])
+        new_area_unit_index = self.area_unit.currentIndex()
+        new_area_unit = Qgis.AreaUnit(new_area_unit_index)
+        factor = QgsUnitTypes.fromUnitToUnitFactor(old_area_unit, new_area_unit)
+        for table_key in ("thematic_map", "sampling_map", "post_stratification"):
+            table = self.report["samples"].get(table_key)
+            if table:
+                table["total_area"] = [v * factor for v in table["total_area"]]
+        self.report["general"]["area_unit"] = new_area_unit_index
         self.sampling_report.setHtml(self.get_html())
         self.sampling_report.setOpenExternalLinks(True)
 
@@ -723,17 +758,45 @@ class SamplingReport(QDialog, FORM_CLASS):
         desired = [desired_by_value.get(pix_val, 0) for pix_val in strata_table["pix_val"]]
         return strata_table, desired, list(strata_table["num_samples"])
 
-    def get_design_warnings(self):
-        """Sampling design options that restrict the population or change the inclusion probabilities"""
+    def get_classes_not_selected(self):
+        """Classes with pixels of the post-stratification map that were not selected for sampling, so
+        they are not part of the population of the sample"""
+        general = self.report["general"]
+        if general["sampling_type"] not in ["simple", "systematic"] or not general.get("post_stratification_map"):
+            return []
+        # the post-stratification table only exists when it is not the thematic map
+        table = self.report["samples"].get("post_stratification") or self.report["samples"]["thematic_map"]
+        selected = {int(value) for value in general.get("post_stratification_classes") or []}
+        return [
+            pix_val
+            for pix_val, total_pixels in zip(table["pix_val"], table["total_pixels"], strict=True)
+            if total_pixels and int(pix_val) not in selected
+        ]
+
+    def get_design_warnings(self, estimator=None):
+        """Sampling design options that restrict the population or change the inclusion probabilities, with
+        their consequences for the estimator of the analysis when it is given"""
         general = self.report["general"]
         warnings = []
         if general["neighbor_aggregation"]:
-            consequence = (
-                "the accuracy estimated from the sample counts refers only to that part of the map, while the "
-                "area estimates and the estimates weighted with the mapped area of the classes in the whole map "
-                "(stratified and post-stratified estimators) are not valid, neither for the whole map nor for "
-                "that part"
-            )
+            if estimator == estimators.SIMPLE:
+                consequence = (
+                    "the accuracy estimates refer only to that part of the map, and the area estimates, which use the "
+                    "total area of the whole map, are not valid"
+                )
+            elif estimator in [estimators.POST_STRATIFIED, estimators.STRATIFIED]:
+                consequence = (
+                    "the user's accuracies refer only to that part of the map, while the overall and producer's "
+                    "accuracies and the area estimates, which are weighted with the mapped area of the classes in "
+                    "the whole map, are not valid, neither for the whole map nor for that part"
+                )
+            else:
+                consequence = (
+                    "the accuracy estimated from the sample counts refers only to that part of the map, while the "
+                    "area estimates and the estimates weighted with the mapped area of the classes in the whole map "
+                    "(stratified and post-stratified estimators) are not valid, neither for the whole map nor for "
+                    "that part"
+                )
             warnings.append(
                 (
                     "Neighbor aggregation restricts the population!",

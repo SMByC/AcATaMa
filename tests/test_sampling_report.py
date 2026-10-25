@@ -1,6 +1,7 @@
 import pytest
 from qgis.core import QgsProject, QgsVectorLayer
 
+from AcATaMa.core import estimators
 from AcATaMa.core.map import Map
 from AcATaMa.core.sampling_design import Sampling
 from AcATaMa.gui.sampling_report import SamplingReport
@@ -21,6 +22,14 @@ def test_restored_sampling_report(plugin, restore_config_file):
 
     csv_rows = sampling_report._build_csv_rows()
     assert ["Warning: Neighbor aggregation restricts the population!"] in csv_rows
+
+    # the consequences of the neighbor aggregation for the estimator of the analysis
+    neighbor_aggregation = "Neighbor aggregation restricts the population!"
+    simple = dict(sampling_report.get_design_warnings(estimators.SIMPLE))[neighbor_aggregation]
+    assert "the area estimates, which use the total area of the whole map, are not valid" in simple
+    stratified = dict(sampling_report.get_design_warnings(estimators.STRATIFIED))[neighbor_aggregation]
+    assert "the user's accuracies refer only to that part of the map" in stratified
+    assert "neither for the whole map nor for that part" in stratified
 
     # with a fixed initial inset the offset areas (spacing of 5 pixels) must tile the map
     general = sampling_report.report["general"]
@@ -87,7 +96,9 @@ def test_stratified_sampling_report(plugin, restore_config_file, tmp_path):
     html = sampling_report.get_html()
     assert "Desired/actual sample count mismatch" in html
     assert "<td>4321 (automatic)</td>" in html
+    # the band of the thematic map of the sampling, to show it in the warnings of the analysis
     general = sampling_report.report["general"]
+    assert general["thematic_map_band"] == thematic_map.band
 
     # the minimum distance makes the inclusion probabilities unknown (Stehman and Foody, 2019, Sec. 2.4)
     assert "Minimum distance between samples" not in dict(sampling_report.get_design_warnings())

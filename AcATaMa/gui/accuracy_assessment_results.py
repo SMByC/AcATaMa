@@ -25,6 +25,8 @@ import numpy as np
 from qgis.core import Qgis
 
 from AcATaMa.core import estimators
+from AcATaMa.core.map import get_map_fingerprint, in_nodata_ranges
+from AcATaMa.utils.others_utils import set_nodata_format
 from AcATaMa.utils.qgis_utils import get_source_from
 from AcATaMa.utils.system_utils import error_handler
 
@@ -108,6 +110,7 @@ def get_report_warnings(accu_asse, estimates):
             "The thematic map has a geographic coordinate system, therefore all area values are not accurate. "
             "Use a projected (e.g. equal-area or UTM) coordinate system."
         )
+    warnings += get_design_warnings(accu_asse)
     if accu_asse.samples_outside_the_thematic:
         lines = [
             f"There are {len(accu_asse.samples_outside_the_thematic)} samples labeled that are outside the thematic "
@@ -170,6 +173,166 @@ def get_report_warnings(accu_asse, estimates):
             "show that they are absent: a class with a small area can be missed by the sample, which the standard "
             "error does not account for."
         )
+    return warnings
+
+
+def get_design_warnings(accu_asse):
+    """Warnings when the estimator does not match the sampling design of the sampling report"""
+    from AcATaMa.gui.sampling_report import SamplingReport
+
+    sampling_report = SamplingReport.instances.get(accu_asse.response_design.sampling_layer)
+    if sampling_report is None:
+        return []
+    general = sampling_report.report["general"]
+    samples = sampling_report.report["samples"]
+    sampling_type = general["sampling_type"]
+    warnings = []
+
+    # the maps of the sampling are identified by their fingerprint (pixel values and georeferencing), not by their
+    # files that can be moved; without it (reports of previous versions) the map can only be compared by the pixel
+    # counts of the classes with samples, a necessary condition that can't prove that it is the same map
+    thematic_map_fingerprint = get_map_fingerprint(accu_asse.thematic_map.qgs_layer, accu_asse.thematic_map.band)
+    thematic_map_pixel_counts = accu_asse.thematic_map.get_pixel_counts()
+    sampled_classes = [
+        value
+        for value, row in zip(
+            getattr(accu_asse, "values", None) or [], getattr(accu_asse, "error_matrix", None) or [], strict=True
+        )
+        if any(row)
+    ]
+    # the maps that could only be compared by the pixel counts, with the reason
+    unverified_maps = {}
+
+    def compare_with_the_thematic_map(fingerprint_key, table, name):
+        """If the map of the sampling is the thematic map of the analysis, verified with their fingerprints, else
+        compared by the pixel counts of the classes with samples (registered as unverified)"""
+        fingerprint = general.get(fingerprint_key)
+        if fingerprint_key not in general:
+            reason = "The sampling report was created by a previous version of AcATaMa, which did not identify its maps"
+        elif fingerprint is None:
+            reason = "The maps of the sampling report could not be identified when it was created"
+        elif thematic_map_fingerprint is None:
+            reason = "The thematic map of the analysis could not be read to identify it"
+        elif fingerprint.split()[0] != thematic_map_fingerprint.split()[0]:
+            reason = "The sampling report identified its maps with another version of AcATaMa"
+        else:
+            return fingerprint == thematic_map_fingerprint
+        if not sampled_classes:
+            # nothing to compare, and nothing to estimate
+            return True
+        table_pixel_counts = dict(zip(table["pix_val"], table["total_pixels"], strict=True))
+        same_pixel_counts = all(
+            table_pixel_counts.get(value) == thematic_map_pixel_counts.get(value) for value in sampled_classes
+        )
+        if same_pixel_counts:
+            unverified_maps[name] = reason
+        return same_pixel_counts
+
+    def map_name(name, band=None):
+        return f'"{name}" (band {band})' if band else f'"{name}"'
+
+    # all the designs could only sample the pixels with data of the thematic map of the sampling (the sampling frame)
+    sampling_thematic_map = map_name(general["thematic_map"], general.get("thematic_map_band"))
+    if compare_with_the_thematic_map("thematic_map_fingerprint", samples["thematic_map"], sampling_thematic_map):
+        # the population of the estimator: all the pixels with data of the thematic map for the simple estimator,
+        # the pixels of the map classes with samples for the (post-)stratified estimators
+        population = thematic_map_pixel_counts if accu_asse.estimator == estimators.SIMPLE else sampled_classes
+        nodata_ranges = general.get("thematic_map_nodata_ranges") or []
+        not_sampled = [
+            value
+            for value in population
+            if value in (general.get("thematic_map_nodata") or []) or in_nodata_ranges(value, nodata_ranges)
+        ]
+        if not_sampled:
+            values = ", ".join(str(set_nodata_format(value)) for value in sorted(not_sampled))
+            warnings.append(
+                f"The pixels of the thematic map with the value {values} were no data in the sampling, so they could "
+                "not be sampled, but they are part of the population of the estimator, whose estimates are then not "
+                "valid. Set the same no data of the sampling for the thematic map."
+            )
+    else:
+        warnings.append(
+            f"The thematic map (and band) of the analysis is not the thematic map {sampling_thematic_map} of the "
+            "sampling, whose pixels with data were the sampling frame, so all the pixels of the population of the "
+            "estimator must have data in that map to have been sampled, which AcATaMa can't verify: the estimates "
+            "are not valid for the pixels that could not be sampled."
+        )
+
+    if sampling_type == "stratified":
+        # the strata are the classes of the sampling map, or of the thematic map of the sampling
+        if general.get("sampling_map"):
+            strata_map = map_name(general["sampling_map"])
+            same_map = compare_with_the_thematic_map("sampling_map_fingerprint", samples["sampling_map"], strata_map)
+        else:
+            strata_map = sampling_thematic_map
+            same_map = compare_with_the_thematic_map("thematic_map_fingerprint", samples["thematic_map"], strata_map)
+        if not same_map:
+            warnings.append(
+                f"The sample was stratified with the classes of the map {strata_map}, which is not the thematic map "
+                "(and band) of the analysis, but the estimators use the classes of the thematic map as strata, or no "
+                "strata (simple estimator). When the strata are different from the map classes other estimators "
+                "are required (Stehman, 2014)."
+            )
+        if same_map and accu_asse.estimator == estimators.SIMPLE:
+            warnings.append(
+                "The sampling report shows a stratified random sample, but the results are computed with the "
+                "simple estimator. Ignoring the stratification biases the estimates when the sample is not "
+                "allocated proportionally to the strata, use the stratified estimator."
+            )
+        elif same_map and accu_asse.estimator == estimators.POST_STRATIFIED:
+            warnings.append(
+                "The sampling report shows a stratified random sample, but the results are computed with the "
+                "post-stratified estimator. The estimates are the same as with the stratified estimator, but the "
+                "standard errors of the area assume random sample sizes in the strata, use the stratified estimator."
+            )
+
+    post_stratification_map = general.get("post_stratification_map")
+    if sampling_type in ["simple", "systematic"] and post_stratification_map:
+        # the post-stratification table only exists when the map was not the thematic map of the sampling
+        if samples.get("post_stratification"):
+            same_map = compare_with_the_thematic_map(
+                "post_stratification_map_fingerprint",
+                samples["post_stratification"],
+                map_name(post_stratification_map),
+            )
+        else:
+            same_map = compare_with_the_thematic_map(
+                "thematic_map_fingerprint", samples["thematic_map"], sampling_thematic_map
+            )
+        # the classes not selected that are part of the population of the analysis (not no data)
+        classes_not_selected = [
+            value for value in sampling_report.get_classes_not_selected() if value in thematic_map_pixel_counts
+        ]
+        if not same_map:
+            classes = ", ".join(str(value) for value in general.get("post_stratification_classes") or [])
+            population = (
+                "all the area with data of the thematic map (the population of the simple estimator)"
+                if accu_asse.estimator == estimators.SIMPLE
+                else "all the pixels of the thematic map classes with samples (the population of the estimator)"
+            )
+            warnings.append(
+                f"The sample was restricted to the classes {classes} of the post-stratification map "
+                f'"{post_stratification_map}", which is not the thematic map (and band) of the analysis, so the '
+                f"estimates are only valid if those classes cover {population}."
+            )
+        elif classes_not_selected and accu_asse.estimator == estimators.SIMPLE:
+            classes = ", ".join(str(value) for value in classes_not_selected)
+            warnings.append(
+                f"The sample excluded the classes {classes} of the post-stratification map "
+                f'"{post_stratification_map}", but the simple estimator takes the whole thematic map as the '
+                "population, so its total area and area estimates are not valid for this sample. When the "
+                "sample was restricted with the classes of the thematic map, use the post-stratified estimator, "
+                "which excludes the strata without samples."
+            )
+
+    warnings += [
+        f"{reason}, so the map {name} could only be compared with the thematic map of the analysis by the pixel "
+        "counts of the classes with samples, which match but do not prove that it is the same map."
+        for name, reason in unverified_maps.items()
+    ]
+
+    # the sampling design options that restrict the population or change the inclusion probabilities
+    warnings += [f"{title} {text}" for title, text in sampling_report.get_design_warnings(accu_asse.estimator)]
     return warnings
 
 

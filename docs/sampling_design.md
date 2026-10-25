@@ -286,6 +286,22 @@ post-stratified) estimators of accuracy and area with the map classes as strata,
 precise than the simple estimators; nearly the same precision as a proportionally allocated stratified
 sample is achieved this way {cite}`Stehman2019`.
 
+```{note}
+In the sampling design window, the post-stratification option restricts the sampling to the **selected
+classes** of the post-stratification map. The population is then the area of those classes. When the
+post-stratification map is the thematic map, the post-stratified estimator excludes the classes not
+selected (they have no samples), so its estimates refer to the selected classes, while the simple estimator
+is not valid because its population is the whole thematic map. When it is another map, the estimators use
+the mapped area of the classes in the whole thematic map, so they are only valid if the selected classes
+cover the population of the estimator: all the area with data of the thematic map for the simple
+estimator, or all the pixels of the thematic map classes with samples for the post-stratified estimator.
+The analysis identifies the maps of the sampling by their pixel values and georeferencing, recorded in the
+sampling report (the reports of previous versions only allow comparing the pixel counts of the classes with
+samples, which can't prove that they are the same map). The post-stratified
+estimator itself is chosen in the analysis, where the classes of the thematic map are the post-strata; a
+post-stratum needs at least two samples to estimate its variance.
+```
+
 ## Sample Size
 
 ### Sample Size for Stratified Sampling
