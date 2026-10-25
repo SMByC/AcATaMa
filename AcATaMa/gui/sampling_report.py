@@ -429,9 +429,7 @@ class SamplingReport(QDialog, FORM_CLASS):
                     <th>Total Pixels</th>
                     <th>Total Area ({area_unit})</th>
                 </tr>
-        """.format(
-            area_unit=QgsUnitTypes.toAbbreviatedString(Qgis.AreaUnit(self.report["general"]["area_unit"]))
-        )
+        """.format(area_unit=QgsUnitTypes.toAbbreviatedString(Qgis.AreaUnit(self.report["general"]["area_unit"])))
         for i, pix_val in enumerate(self.report["samples"]["thematic_map"]["pix_val"]):
             html += """
                 <tr>
@@ -476,9 +474,7 @@ class SamplingReport(QDialog, FORM_CLASS):
                         <th>Total Pixels</th>
                         <th>Total Area ({area_unit})</th>
                     </tr>
-            """.format(
-                area_unit=QgsUnitTypes.toAbbreviatedString(Qgis.AreaUnit(self.report["general"]["area_unit"]))
-            )
+            """.format(area_unit=QgsUnitTypes.toAbbreviatedString(Qgis.AreaUnit(self.report["general"]["area_unit"])))
             for i, pix_val in enumerate(self.report["samples"]["sampling_map"]["pix_val"]):
                 html += """
                     <tr>
@@ -523,9 +519,7 @@ class SamplingReport(QDialog, FORM_CLASS):
                         <th>Total Pixels</th>
                         <th>Total Area ({area_unit})</th>
                     </tr>
-            """.format(
-                area_unit=QgsUnitTypes.toAbbreviatedString(Qgis.AreaUnit(self.report["general"]["area_unit"]))
-            )
+            """.format(area_unit=QgsUnitTypes.toAbbreviatedString(Qgis.AreaUnit(self.report["general"]["area_unit"])))
             for i, pix_val in enumerate(self.report["samples"]["post_stratification"]["pix_val"]):
                 html += """
                     <tr>

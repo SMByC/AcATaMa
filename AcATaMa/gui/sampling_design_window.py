@@ -233,18 +233,14 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         # SimpRS
         self.minDistance_SimpRS.setSuffix(f" {str_unit}")
         self.minDistance_SimpRS.setToolTip("Minimum distance\n(units based on thematic map selected)")
-        self.minDistance_SimpRS.setRange(
-            0, 360 if layer_dist_unit == Qgis.DistanceUnit.Degrees else 10e6
-        )
+        self.minDistance_SimpRS.setRange(0, 360 if layer_dist_unit == Qgis.DistanceUnit.Degrees else 10e6)
         self.minDistance_SimpRS.setDecimals(decimal_places)
         self.minDistance_SimpRS.setSingleStep(10**-decimal_places)
         self.minDistance_SimpRS.setValue(0)
         # StraRS
         self.minDistance_StraRS.setSuffix(f" {str_unit}")
         self.minDistance_StraRS.setToolTip("Minimum distance\n(units based on thematic map selected)")
-        self.minDistance_StraRS.setRange(
-            0, 360 if layer_dist_unit == Qgis.DistanceUnit.Degrees else 10e6
-        )
+        self.minDistance_StraRS.setRange(0, 360 if layer_dist_unit == Qgis.DistanceUnit.Degrees else 10e6)
         self.minDistance_StraRS.setDecimals(decimal_places)
         self.minDistance_StraRS.setSingleStep(10**-decimal_places)
         self.minDistance_StraRS.setValue(0)
@@ -287,19 +283,13 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
             # set decimals, single step and range
             self.PointSpacing_SystS.setDecimals(decimal_places)
             self.PointSpacing_SystS.setSingleStep(10**-decimal_places)
-            self.PointSpacing_SystS.setRange(
-                0, 360 if layer_dist_unit == Qgis.DistanceUnit.Degrees else 10e6
-            )
+            self.PointSpacing_SystS.setRange(0, 360 if layer_dist_unit == Qgis.DistanceUnit.Degrees else 10e6)
             self.InitialInsetFixed_SystS.setDecimals(decimal_places)
             self.InitialInsetFixed_SystS.setSingleStep(10**-decimal_places)
-            self.InitialInsetFixed_SystS.setRange(
-                0, 360 if layer_dist_unit == Qgis.DistanceUnit.Degrees else 10e6
-            )
+            self.InitialInsetFixed_SystS.setRange(0, 360 if layer_dist_unit == Qgis.DistanceUnit.Degrees else 10e6)
             self.MaxXYoffset_SystS.setDecimals(decimal_places)
             self.MaxXYoffset_SystS.setSingleStep(10**-decimal_places)
-            self.MaxXYoffset_SystS.setRange(
-                0, 360 if layer_dist_unit == Qgis.DistanceUnit.Degrees else 10e6
-            )
+            self.MaxXYoffset_SystS.setRange(0, 360 if layer_dist_unit == Qgis.DistanceUnit.Degrees else 10e6)
 
             # define the distance units based on the thematic map
             self.PointSpacing_SystS.setSuffix(f" {str_unit}")

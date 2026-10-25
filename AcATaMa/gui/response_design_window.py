@@ -127,9 +127,7 @@ class ResponseDesignWindow(QDialog, FORM_CLASS):
         self.radiusFitToSample.setToolTip(
             f"Set the default zoom radius for samples\n(units in {str_unit} based on sampling file selected)"
         )
-        self.radiusFitToSample.setRange(
-            0, 360 if layer_dist_unit == Qgis.DistanceUnit.Degrees else 10e6
-        )
+        self.radiusFitToSample.setRange(0, 360 if layer_dist_unit == Qgis.DistanceUnit.Degrees else 10e6)
         decimal_places = get_decimal_places(for_crs=self.sampling_layer.crs())
         self.radiusFitToSample.setDecimals(decimal_places)
         self.radiusFitToSample.setSingleStep(10**-decimal_places)
