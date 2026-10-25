@@ -15,6 +15,19 @@ from AcATaMa.utils.others_utils import (
 from AcATaMa.utils.qgis_utils import load_layer
 
 
+@pytest.fixture
+def qgis_processing():
+    """Register the QGIS native processing algorithms, as in the QGIS desktop application"""
+    pytest.importorskip("processing")
+    from processing.core.Processing import Processing
+    from qgis.analysis import QgsNativeAlgorithms
+    from qgis.core import QgsApplication
+
+    Processing.initialize()
+    if QgsApplication.processingRegistry().providerById("native") is None:
+        QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())
+
+
 def test_pixel_count_without_dask_uses_qgis_native(monkeypatch):
     # Given: Dask is unavailable and QGIS native counting can produce a result
     layer = object()
@@ -128,8 +141,7 @@ def test_pixel_count_without_nodata_parallel(plugin, restore_config_file):
     }
 
 
-def test_pixel_count_without_nodata_qgis_native(plugin, restore_config_file):
-    pytest.importorskip("processing")
+def test_pixel_count_without_nodata_qgis_native(plugin, restore_config_file, qgis_processing):
     # restore
     input_yml_path = pytest.tests_data_dir / "test_pixel_count_acatama.yaml"
     restore_config_file(input_yml_path)
@@ -189,8 +201,7 @@ def test_pixel_count_with_nodata_parallel(plugin, restore_config_file):
     assert pixel_count == {1: 10423, 2: 418, 5: 8822}
 
 
-def test_pixel_count_with_nodata_qgis_native(plugin, restore_config_file):
-    pytest.importorskip("processing")
+def test_pixel_count_with_nodata_qgis_native(plugin, restore_config_file, qgis_processing):
     # restore
     input_yml_path = pytest.tests_data_dir / "test_pixel_count_acatama_nodata.yaml"
     restore_config_file(input_yml_path)
