@@ -82,11 +82,49 @@ It is typically represented by confidence intervals, which indicate the range wi
 
 ### Coefficient of Variation and Uncertainty
 
-The coefficient of variation is a standardized measure of the dispersion of the estimated area proportions, calculated as the ratio of the standard error to the mean estimate. It provides a relative measure of variability, allowing for comparisons across different classes or studies.
+The coefficient of variation is a standardized measure of the dispersion of the estimated area proportions, calculated as the ratio of the standard error to the mean estimate, {math}`\mathrm{CV} = 100\,\mathrm{SE}(\hat{A}_j)/\hat{A}_j` (%). It provides a relative measure of variability, allowing for comparisons across different classes or studies.
 
 - **Lower CV** indicates higher precision of the estimates
 
-Uncertainty encompasses the potential errors and variability inherent in the sampling design, classification accuracy, and reference data used for accuracy assessment. Quantifying this uncertainty is crucial as it measures the reliability and precision of the area estimates.
+Uncertainty encompasses the potential errors and variability inherent in the sampling design, classification accuracy, and reference data used for accuracy assessment. Quantifying this uncertainty is crucial as it measures the reliability and precision of the area estimates. AcATaMa reports it as the half-width of the confidence interval relative to the estimate, {math}`U = 100\,z\,\mathrm{SE}(\hat{A}_j)/\hat{A}_j` (%) {cite}`McMurray2017`; it only accounts for the sampling error.
+
+## Choosing the Estimator
+
+The estimator must match the sampling design that produced the sample:
+
+- **Stratified estimator** for stratified random samples with the map classes as strata.
+- **Simple/systematic post-stratified estimator** (recommended) or **simple/systematic estimator** for
+  simple random and systematic samples. {cite:t}`Olofsson2014` recommend the stratified estimators with
+  the map classes as (post-)strata for these designs, as they are generally more precise.
+
+All results report standard errors (the square root of the estimated variances). The results include
+warnings when the data do not support the estimator, such as map classes with mapped area but no samples
+(excluded from the estimation population of the stratified and post-stratified estimators), strata with a
+single sample (variance not estimable, so the standard errors that depend on it are not reported), reference
+classes without samples (whose zero area does not show that they are absent), or samples outside the
+thematic map. The analysis is not computed when the labeled samples have a labeling button that no longer
+exists or has no thematic class, or when a map class has samples but no pixels in the thematic map, until
+they are fixed. When the sampling report of the sampling file is available, the results also warn when the
+estimator does not match the sampling design (for example the simple estimator for a stratified sample, or
+strata different from the classes of the thematic map and band of the analysis {cite}`Stehman2014`, the
+maps being identified by their pixel values and georeferencing), when pixels that were no data in the
+sampling are part of the population of the estimator, when the thematic map of the analysis is not the one
+of the sampling (the sampling frame was its area with data, and every pixel of the population of the
+analysis must have been in it, which AcATaMa can't verify for another map), or when the design restricted
+the population (selected post-stratification classes, neighbor aggregation), gave unequal or unknown
+inclusion probabilities (repeated draws per offset area, minimum distance) or was not a probability sample
+(systematic grid without a random start).
+
+The population of the analysis is counted in the thematic map with all its pixel values (not only the ones
+of its symbology), without its no data (the no data value of AcATaMa and of the layer, and the no data
+ranges set by the user in the layer). During a QGIS session, AcATaMa reuses these counts and the
+identification of a map while its files don't change (their size and modification and status change
+times), only for the formats whose pixel values are all in their files (GeoTIFF, Erdas Imagine, ENVI, etc.,
+and VRT mosaics or subsets of them); for other sources (GeoPackage, Zarr, databases, web services, virtual
+file systems, warped or processed VRT) they are computed again each time. If a map changes during the
+session, remove its layer and load it again: a new layer is always counted again, while QGIS and GDAL can
+keep the data of a layer in their own caches, and on Windows a file replaced by another with the same size
+and modification time is not detected.
 
 ## Exporting Results
 

@@ -388,6 +388,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#coefficient-of-variation-and-uncertainty">Coefficient of Variation and Uncertainty</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choosing-the-estimator">Choosing the Estimator</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exporting-results">Exporting Results</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#equations-and-estimators">Equations and Estimators</a></li>
 </ul>
@@ -478,12 +479,49 @@ confidence intervals. See <a class="reference internal" href="introduction.html"
 </section>
 <section id="coefficient-of-variation-and-uncertainty">
 <h3>Coefficient of Variation and Uncertainty<a class="headerlink" href="#coefficient-of-variation-and-uncertainty" title="Link to this heading">#</a></h3>
-<p>The coefficient of variation is a standardized measure of the dispersion of the estimated area proportions, calculated as the ratio of the standard error to the mean estimate. It provides a relative measure of variability, allowing for comparisons across different classes or studies.</p>
+<p>The coefficient of variation is a standardized measure of the dispersion of the estimated area proportions, calculated as the ratio of the standard error to the mean estimate, <span class="math notranslate nohighlight">\(\mathrm{CV} = 100\,\mathrm{SE}(\hat{A}_j)/\hat{A}_j\)</span> (%). It provides a relative measure of variability, allowing for comparisons across different classes or studies.</p>
 <ul class="simple">
 <li><p><strong>Lower CV</strong> indicates higher precision of the estimates</p></li>
 </ul>
-<p>Uncertainty encompasses the potential errors and variability inherent in the sampling design, classification accuracy, and reference data used for accuracy assessment. Quantifying this uncertainty is crucial as it measures the reliability and precision of the area estimates.</p>
+<p>Uncertainty encompasses the potential errors and variability inherent in the sampling design, classification accuracy, and reference data used for accuracy assessment. Quantifying this uncertainty is crucial as it measures the reliability and precision of the area estimates. AcATaMa reports it as the half-width of the confidence interval relative to the estimate, <span class="math notranslate nohighlight">\(U = 100\,z\,\mathrm{SE}(\hat{A}_j)/\hat{A}_j\)</span> (%) <span class="bibtex-citation" id="id8">[<a class="reference internal" href="references.html#id32" title="A. McMurray, T. Pearson, and F. Casarim. Guidance on Applying the Monte Carlo Approach to Uncertainty Analyses in Forestry and Greenhouse Gas Accounting. Winrock International, 2017.">McMurray <em>et al.</em>, 2017</a>]</span>; it only accounts for the sampling error.</p>
 </section>
+</section>
+<section id="choosing-the-estimator">
+<h2>Choosing the Estimator<a class="headerlink" href="#choosing-the-estimator" title="Link to this heading">#</a></h2>
+<p>The estimator must match the sampling design that produced the sample:</p>
+<ul class="simple">
+<li><p><strong>Stratified estimator</strong> for stratified random samples with the map classes as strata.</p></li>
+<li><p><strong>Simple/systematic post-stratified estimator</strong> (recommended) or <strong>simple/systematic estimator</strong> for
+simple random and systematic samples. <span class="bibtex-citation" id="id9">Olofsson <em>et al.</em> [<a class="reference internal" href="references.html#id38" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">2014</a>]</span> recommend the stratified estimators with
+the map classes as (post-)strata for these designs, as they are generally more precise.</p></li>
+</ul>
+<p>All results report standard errors (the square root of the estimated variances). The results include
+warnings when the data do not support the estimator, such as map classes with mapped area but no samples
+(excluded from the estimation population of the stratified and post-stratified estimators), strata with a
+single sample (variance not estimable, so the standard errors that depend on it are not reported), reference
+classes without samples (whose zero area does not show that they are absent), or samples outside the
+thematic map. The analysis is not computed when the labeled samples have a labeling button that no longer
+exists or has no thematic class, or when a map class has samples but no pixels in the thematic map, until
+they are fixed. When the sampling report of the sampling file is available, the results also warn when the
+estimator does not match the sampling design (for example the simple estimator for a stratified sample, or
+strata different from the classes of the thematic map and band of the analysis <span class="bibtex-citation" id="id10">[<a class="reference internal" href="references.html#id45" title="S. V. Stehman. Estimating area and map accuracy for stratified random sampling when the strata are different from the map classes. International Journal of Remote Sensing, 35(13):4923–4939, 2014. doi:10.1080/01431161.2014.930207.">Stehman, 2014</a>]</span>, the
+maps being identified by their pixel values and georeferencing), when pixels that were no data in the
+sampling are part of the population of the estimator, when the thematic map of the analysis is not the one
+of the sampling (the sampling frame was its area with data, and every pixel of the population of the
+analysis must have been in it, which AcATaMa can’t verify for another map), or when the design restricted
+the population (selected post-stratification classes, neighbor aggregation), gave unequal or unknown
+inclusion probabilities (repeated draws per offset area, minimum distance) or was not a probability sample
+(systematic grid without a random start).</p>
+<p>The population of the analysis is counted in the thematic map with all its pixel values (not only the ones
+of its symbology), without its no data (the no data value of AcATaMa and of the layer, and the no data
+ranges set by the user in the layer). During a QGIS session, AcATaMa reuses these counts and the
+identification of a map while its files don’t change (their size and modification and status change
+times), only for the formats whose pixel values are all in their files (GeoTIFF, Erdas Imagine, ENVI, etc.,
+and VRT mosaics or subsets of them); for other sources (GeoPackage, Zarr, databases, web services, virtual
+file systems, warped or processed VRT) they are computed again each time. If a map changes during the
+session, remove its layer and load it again: a new layer is always counted again, while QGIS and GDAL can
+keep the data of a layer in their own caches, and on Windows a file replaced by another with the same size
+and modification time is not detected.</p>
 </section>
 <section id="exporting-results">
 <h2>Exporting Results<a class="headerlink" href="#exporting-results" title="Link to this heading">#</a></h2>
@@ -494,7 +532,7 @@ results.</p>
 <section id="equations-and-estimators">
 <h2>Equations and Estimators<a class="headerlink" href="#equations-and-estimators" title="Link to this heading">#</a></h2>
 <p>Based on the importance of accuracy and area estimation adjustments and recommendations
-<span class="bibtex-citation" id="id8">[<a class="reference internal" href="references.html#id38" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">Olofsson <em>et al.</em>, 2014</a>, <a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, S. V. Stehman, and C. E. Woodcock. Making better use of accuracy data in land change studies: estimating accuracy and area and quantifying uncertainty using stratified estimation. Remote Sensing of Environment, 129:122–131, 2013. doi:10.1016/j.rse.2012.10.031.">Olofsson <em>et al.</em>, 2013</a>, <a class="reference internal" href="references.html#id21" title="Global Forest Observations Initiative. Integration of remote-sensing and ground-based observations for estimation of emissions and removals of greenhouse gases in forests: methods and guidance document. 2020. URL: https://www.reddcompass.org/mgd/.">Global Forest Observations Initiative, 2020</a>, <a class="reference internal" href="references.html#id17" title="Y. Finegold and A. Ortmann. Map Accuracy Assessment and Area Estimation: A Practical Guide. FAO, 2016.">Finegold and Ortmann, 2016</a>, <a class="reference internal" href="references.html#id48" title="S. V. Stehman and G. M. Foody. Key issues in rigorous accuracy assessment of land cover products. Remote Sensing of Environment, 231:111199, 2019. doi:10.1016/j.rse.2019.05.018.">Stehman and Foody, 2019</a>]</span>, AcATaMa provides a
+<span class="bibtex-citation" id="id11">[<a class="reference internal" href="references.html#id38" title="P. Olofsson, G. M. Foody, M. Herold, S. V. Stehman, C. E. Woodcock, and M. A. Wulder. Good practices for estimating area and assessing accuracy of land change. Remote Sensing of Environment, 148:42–57, 2014. doi:10.1016/j.rse.2014.02.015.">Olofsson <em>et al.</em>, 2014</a>, <a class="reference internal" href="references.html#id37" title="P. Olofsson, G. M. Foody, S. V. Stehman, and C. E. Woodcock. Making better use of accuracy data in land change studies: estimating accuracy and area and quantifying uncertainty using stratified estimation. Remote Sensing of Environment, 129:122–131, 2013. doi:10.1016/j.rse.2012.10.031.">Olofsson <em>et al.</em>, 2013</a>, <a class="reference internal" href="references.html#id21" title="Global Forest Observations Initiative. Integration of remote-sensing and ground-based observations for estimation of emissions and removals of greenhouse gases in forests: methods and guidance document. 2020. URL: https://www.reddcompass.org/mgd/.">Global Forest Observations Initiative, 2020</a>, <a class="reference internal" href="references.html#id17" title="Y. Finegold and A. Ortmann. Map Accuracy Assessment and Area Estimation: A Practical Guide. FAO, 2016.">Finegold and Ortmann, 2016</a>, <a class="reference internal" href="references.html#id48" title="S. V. Stehman and G. M. Foody. Key issues in rigorous accuracy assessment of land cover products. Remote Sensing of Environment, 231:111199, 2019. doi:10.1016/j.rse.2019.05.018.">Stehman and Foody, 2019</a>]</span>, AcATaMa provides a
 comprehensive set of analysis results — the error matrix, the quadratic error matrix of the
 estimated area proportions, the accuracy measures, the adjusted class area values, confidence
 intervals, and the coefficient of variation — all calculated according to the selected sampling
@@ -592,6 +630,7 @@ documented in
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#coefficient-of-variation-and-uncertainty">Coefficient of Variation and Uncertainty</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choosing-the-estimator">Choosing the Estimator</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exporting-results">Exporting Results</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#equations-and-estimators">Equations and Estimators</a></li>
 </ul>

@@ -101,14 +101,40 @@ We implemented two systematic sampling methodologies: one based on **physical di
 **Parameters:**
 
 - **Point spacing**: The spacing between points in the systematic grid (in distance units or pixels)
-- **Initial inset**: The distance from the top-left corner of the study area to the first point unit
+- **Initial inset**: The distance from the top-left corner of the study area to the first point unit. In
+  *Random* mode it is drawn independently for the X and Y axes, between 0 and the point spacing, which
+  gives every location of the map the same probability of being selected (random start). With a single
+  draw per offset area the grid is extended beyond the map edges, so the initial inset only sets the
+  position of the grid
 - **Max offset**: Maximum distance along the X and Y axes from the point of the aligned systematic grid
 - **Random offset area**: The area surrounding each point where a random offset is applied
-- **Confidence level (max coverage)**: The upper bound on the probability that each pixel in the offset area will be tested during the random selection process (see [Confidence Level for Random Offset](#confidence-level-for-random-offset) below)
+- **Draws per offset area**: How the random location is drawn inside each offset area (see
+  [Draws per Offset Area](#draws-per-offset-area) below)
 
 ```{tip}
-To ensure the offset area covers the entire thematic map (giving every pixel an equal probability of being selected), set the maximum offset value to half of the point spacing.
+Set the maximum offset value to half of the point spacing so the offset areas tile the whole thematic
+map without overlapping; with a single draw per offset area every location then has the same probability
+of being selected.
 ```
+
+```{warning}
+A *Fixed* initial inset with no random offset places the grid deterministically, so the sample is not a
+probability sample and design-based inference does not strictly apply {cite}`Stehman2019`. Use a
+*Random* initial inset (or a random offset) to obtain a probability sample. With a *Fixed* initial inset
+and a random offset, the offset areas must tile the map (max offset of half the point spacing): a smaller
+max offset leaves gaps whose locations can never be selected, and a larger one overlaps the offset areas,
+so the inclusion probabilities are not equal in general. The sampling report warns about both cases.
+```
+
+The expected sample size of a systematic grid with a random start is the sampled area divided by the
+square of the point spacing, whatever the shape of the area, because the grid has one point (or one offset
+area with a single draw) at a random position per cell of the grid, so the expected number of points in any
+area is its size divided by the square of the spacing. The point spacing proposed by the sample size
+calculator is therefore {math}`d = \sqrt{A/n}`, where {math}`A` is the area with valid data of the thematic
+map; the actual number of samples varies around {math}`n`. In the systematic sampling by pixels a pixel is
+sampled only once, so overlapping offset areas (max offset larger than half the point spacing) give fewer
+samples than {math}`A/d^2`; the expected number of samples shown in the sampling design window accounts
+for it.
 
 #### Aligned Systematic Sampling
 
@@ -119,17 +145,18 @@ To ensure the offset area covers the entire thematic map (giving every pixel an 
 
 *(When the max XY offset value is zero)*
 
-Distributes the sampling units equally for the entire study area. As long as the first sampling unit is randomly selected, systematic sampling is considered random.
+Distributes the sampling units equally for the entire study area. As long as the grid position is randomly selected (random initial inset), systematic sampling is a probability sample.
 
 **Advantages:**
 - Distributes sampling units equitably throughout the study area
 - Simplicity is highly attractive to end users
-- The variance depends on how the error is spatially distributed
+- With positively autocorrelated errors it gives more precise estimates (smaller sampling variance) than
+  simple random sampling {cite}`Stehman2019`
 
 **Disadvantages:**
-- If errors are located in certain areas, systematic sampling will have a lower variance
-- Non-existence of an impartial estimator for calculating the variance
-- Not desirable in the presence of uniformly distributed errors
+- There is no unbiased estimator of its variance; the simple random sampling variance estimators are
+  approximations that usually overestimate the variance {cite}`Olofsson2014`
+- Not desirable in the presence of periodic patterns aligned with the grid spacing
 
 #### Unaligned Systematic Sampling
 
@@ -140,48 +167,73 @@ Distributes the sampling units equally for the entire study area. As long as the
 
 *(When the max XY offset value is NOT zero)*
 
-It is also known as _"Random Sampling Within Blocks"_. The area is divided into smaller, regularly spaced regions, with a randomly chosen sample unit within each region. This minimizes the effects of the periodicity of errors.
+It is also known as _"Random Sampling Within Blocks"_. The area is divided into smaller, regularly spaced regions, with a randomly chosen sample unit within each region. This minimizes the effects of the periodicity of errors and keeps the sample spatially balanced, as a spatial stratification with one sample unit per spatial stratum {cite}`Stehman2019`.
 
 **Advantages:**
-- Less susceptible to error if linearity of error is present
-- The calculation of the variance is acceptable and unbiased
+- Less susceptible to periodic patterns aligned with the grid than the aligned grid
+- Keeps a good spatial distribution of the sample
 
 **Disadvantages:**
-- Reduces the advantage of spatial distribution of error
-- The lack of an unbiased estimator
+- As for the aligned grid, there is no unbiased estimator of its variance; the simple random sampling
+  variance estimators are approximations
 
-#### Confidence Level for Random Offset
+#### Draws per Offset Area
 
-When using unaligned systematic sampling (max XY offset > 0), the algorithm randomly selects pixels within each offset area. The **confidence level ({math}`CL`)** parameter controls the maximum number of random attempts ({math}`K`) to find a valid pixel, setting an upper bound on the probability that each pixel in the offset area will be tested.
+When using unaligned systematic sampling (max XY offset > 0), a random location is drawn inside each
+offset area. The **draws per offset area** option controls what happens when that location is not valid
+(no data, outside the map, a class not selected for the post-stratification, or failing the neighbor
+aggregation):
 
-The probability that a fixed pixel is tested at least once in {math}`K` independent attempts is:
+- **1 draw (equal probability, default):** a single random location is drawn in each offset area and it is
+  kept only if it is valid, otherwise that offset area has no sample. The grid starts outside the map so the
+  offset areas also cover its edges, and with a random initial inset, or with a fixed one and offset areas
+  that tile the map (max offset of half the point spacing), every location of the map has the same
+  inclusion probability (in the sampling by distance, the same expected number of samples), which is the
+  assumption of the simple and post-stratified estimators used for systematic samples. In the sampling by
+  distance, two samples of neighbor offset areas can (rarely) fall in the same pixel, as in simple random
+  sampling, because discarding one of them would make the pixels cut by the borders of the offset areas
+  less likely to be sampled.
+- **Up to X% coverage:** the draw is repeated until a valid pixel is found, up to {math}`K` draws, the
+  number of draws that would test a pixel of the offset area at least once with probability {math}`CL` if
+  all of them were made:
 
 ```{math}
-P(\text{test pixel at least once}) = 1 - \left(1-\frac{1}{N}\right)^K
+1 - \left(1-\frac{1}{N}\right)^K \ge CL \quad\Rightarrow\quad K = \left\lceil \frac{\ln(1-CL)}{\ln\left(1-\frac{1}{N}\right)} \right\rceil
 ```
 
-To ensure this probability is at least the confidence level {math}`CL`, the minimum number of attempts is:
+The coverage {math}`CL` is nominal: it assumes that each draw selects any of the {math}`N` pixels of the
+offset area with probability {math}`1/N`, which only holds approximately in the sampling by distance (a
+pixel cut by the border of the offset area is drawn with the probability of its part inside it), while in
+the sampling by pixels the repeated draws are made among the pixels with data. Besides, the draws stop at
+the first valid pixel, which can reduce the probability that the other pixels are tested compared to
+making all the {math}`K` draws.
 
-```{math}
-K = \left\lceil \frac{\ln(1-CL)}{\ln\left(1-\frac{1}{N}\right)} \right\rceil
-```
-
-Where:
-- **{math}`N`** = number of pixels in the offset area (computed from max offset and pixel size)
-- **{math}`CL`** = confidence level (0.80, 0.85, 0.90, 0.95, or 0.99)
-- **{math}`K`** = maximum number of random attempts per offset area
-
-**Example:** For an offset area with {math}`N=16` pixels and {math}`CL=0.95`, the algorithm will make up to {math}`K=47` attempts, generating random points until it finds a valid pixel or reaches the maximum attempts, ensuring each pixel has up to a 95% probability of being tested.
-
-```{note}
-Since the algorithm stops as soon as a valid pixel is found (not all {math}`K` attempts are always made), the actual testing coverage for other pixels may be lower than the {math}`CL` target. This is intentional: in edge cases where only a few pixels in the offset area pass the acceptance rules (e.g., post-stratification, neighbor aggregation), the {math}`CL` acts as an upper bound on the selection probability, preventing the algorithm from being forced to select those few valid pixels with artificially high probability. In this sense, {math}`CL` controls both the per-pixel testing coverage and the maximum probability of any pixel being selected.
+```{warning}
+Repeating the draw generates more samples but changes the inclusion probabilities. In an offset area with
+only {math}`m` valid pixels, each of them is selected with probability
+{math}`\left[1-\left(1-m/N\right)^K\right]/m`, which is larger than {math}`1/N` whenever {math}`m < N`.
+For example, with {math}`N=16` and {math}`CL=0.95` ({math}`K=47`), an isolated valid pixel is selected with
+probability 0.95 instead of 0.0625, so the valid pixels of partially valid offset areas (near no data, the
+map edges or the classes not selected) are over-represented by up to {math}`N` times. In the systematic
+sampling by pixels the repeated draws are made only among the pixels with data, so a pixel isolated by no
+data is always selected. The simple and
+post-stratified estimators do not account for these unequal inclusion probabilities {cite}`Stehman2019`,
+so use the single draw unless the estimates are weighted accordingly. Configurations saved before this
+option was saved are restored with "Up to 95% coverage", the default since version 26.1 (the coverage
+selected was not saved). With a fixed initial inset and the same seed, this reproduces exactly the samples
+generated with that default, but not the ones generated with another coverage or with the versions before
+26.1, which repeated the draw without limit, nor the samples with a random initial inset, which is now
+drawn independently for the X and Y axes.
 ```
 
 ## Additional Features
 
 ### Reproducibility
 
-The plugin ensures randomness by automatically generating a random seed for all sampling methods. However, if users require reproducible sampling results, they can set a **fixed seed**. Setting a known seed value ensures replicability given identical inputs and configurations.
+The plugin ensures randomness by automatically generating a random seed for all sampling methods; the
+automatic seed is reported in the sampling report, so any sample can be reproduced later by setting it as
+the seed by user. If users require reproducible sampling results from the start, they can set a
+**fixed seed**. Setting a known seed value ensures replicability given identical inputs and configurations.
 
 ```{important}
 Setting a known seed ensures that the assessment can be reproduced and validated by other parties, which is critical for scientific studies and decision-making, and it also supports the **IPCC principle of transparency** for national reports.
@@ -189,13 +241,33 @@ Setting a known seed ensures that the assessment can be reproduced and validated
 
 ### Minimum Distance Constraint
 
-A minimum distance constraint between sampling units helps prevent spatial clustering, reduces spatial autocorrelation effects, and ensures a more evenly distributed sample.
+A minimum distance constraint between sampling units prevents spatial clustering and gives a more evenly
+distributed sample. However, it is not needed to legitimize design-based inference, whose estimators and
+variance estimators remain unbiased regardless of spatial correlation {cite}`Stehman2019`. Discarding the
+candidate samples within the minimum distance of a previous sample makes the inclusion probabilities very
+complicated, and unless they are derived the design does not satisfy the criteria of a probability sample
+{cite}`Stehman2019`; AcATaMa does not derive them, and its estimators assume the inclusion probabilities of
+simple (or stratified) random sampling. The smaller the minimum distance compared to the mean distance
+between samples, the fewer candidates are discarded and the closer the design is to random sampling. To
+obtain a spatially balanced sample, use systematic sampling, the most familiar spatially balanced
+probability design {cite}`Stehman2019`.
 
 ### Neighbor Aggregation
 
-Neighbor aggregation calculates, for each candidate sample location, the number (or proportion) of adjacent pixels in a user-defined neighborhood that share the same class. This lets sampling incorporate local spatial context by favoring more homogeneous areas (high neighbor agreement) or, if desired, emphasizing transition zones (low agreement) for boundary-focused checks.
+Neighbor aggregation calculates, for each candidate sample location, the number of adjacent pixels in a user-defined neighborhood that share the same class, and only accepts the locations with at least the required number.
 
-Using neighbor agreement as a criterion can improve spatial coherence in the selected samples and help mitigate over-representation of noisy edge pixels in map accuracy assessment workflows.
+```{warning}
+Neighbor aggregation restricts the population that is sampled to the pixels with a homogeneous
+neighborhood, a part of the map whose area is not known. The accuracy estimated from the sample counts
+(simple estimator, and the user's accuracies of all the estimators) refers only to that part of the map and
+must be reported as such, while the area estimates and the accuracy estimates weighted with the mapped area
+of the classes in the whole map (overall and producer's accuracy of the stratified and post-stratified
+estimators) are not valid, neither for the whole map nor for that part. Accuracy is generally higher there
+than for the whole map, because edge and heterogeneous pixels, which are more difficult to classify
+correctly and more affected by geolocation errors, are excluded {cite}`Stehman2019`. To assess the impact
+of locational error, prefer reporting the accuracy of the homogeneous subset of a sample of the whole map
+alongside the full results {cite}`Stehman2019`.
+```
 
 ### Post-Stratification
 
@@ -208,6 +280,27 @@ Post-stratification groups the already selected SRS/SYS reference sample into "p
 #### When to use it
 
 Post-stratification is useful when SRS/SYS produces an imbalanced realized sample (for example, rare classes end up with too few points), because post-stratification can reweight the sample using known class totals to produce more defensible accuracy/area estimates. However, post-stratification reweights estimates after sampling ("sample first, classify later"), so the number of samples in each post-stratum is determined by how the initial sample falls across classes; as a result, it is not possible to control (or guarantee) the per-class sample size the way stratified sampling does.
+
+For simple random and systematic samples, {cite:t}`Olofsson2014` recommend the stratified (here,
+post-stratified) estimators of accuracy and area with the map classes as strata, which are generally more
+precise than the simple estimators; nearly the same precision as a proportionally allocated stratified
+sample is achieved this way {cite}`Stehman2019`.
+
+```{note}
+In the sampling design window, the post-stratification option restricts the sampling to the **selected
+classes** of the post-stratification map. The population is then the area of those classes. When the
+post-stratification map is the thematic map, the post-stratified estimator excludes the classes not
+selected (they have no samples), so its estimates refer to the selected classes, while the simple estimator
+is not valid because its population is the whole thematic map. When it is another map, the estimators use
+the mapped area of the classes in the whole thematic map, so they are only valid if the selected classes
+cover the population of the estimator: all the area with data of the thematic map for the simple
+estimator, or all the pixels of the thematic map classes with samples for the post-stratified estimator.
+The analysis identifies the maps of the sampling by their pixel values and georeferencing, recorded in the
+sampling report (the reports of previous versions only allow comparing the pixel counts of the classes with
+samples, which can't prove that they are the same map). The post-stratified
+estimator itself is chosen in the analysis, where the classes of the thematic map are the post-strata; a
+post-stratum needs at least two samples to estimate its variance.
+```
 
 ## Sample Size
 
