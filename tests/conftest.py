@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -19,9 +20,15 @@ pytest.tests_data_dir = Path(__file__).parent.resolve() / "data"
 _is_docker = os.environ.get("IS_DOCKER_CONTAINER", "")[:1].lower() in ("t", "y", "1")
 
 
+@pytest.hookimpl(wrapper=True, tryfirst=True)
 def pytest_sessionfinish(session, exitstatus):
     """Force-exit after tests complete in Docker to avoid the Qt/OpenGL cleanup segfault."""
+    yield
     if _is_docker:
+        # As an outer wrapper, this runs after the terminal reporter has printed the
+        # failures summary. Flushing keeps it when os._exit skips the interpreter cleanup.
+        sys.stdout.flush()
+        sys.stderr.flush()
         os._exit(exitstatus)
 
 
