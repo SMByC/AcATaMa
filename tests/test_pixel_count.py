@@ -279,6 +279,24 @@ def test_valid_pixel_counts_fail_when_the_pixels_cannot_be_counted(plugin, make_
         get_valid_pixel_counts(layer, 1)
 
 
+def test_valid_pixels_exclude_the_nodata_of_the_layer(plugin, make_raster):
+    """The valid area for the spacing of the systematic sampling is the population of the analysis, also
+    without the no data of the layer when the no data of AcATaMa is not set"""
+    sampling_design = plugin.dockwidget.sampling_design_window
+    layer = make_raster([[0, 0], [0, 1]], nodata=0)
+    plugin.dockwidget.QCBox_ThematicMap.setLayer(layer)
+    plugin.dockwidget.nodata_ThematicMap.setText("")
+    assert sampling_design.get_total_valid_pixels() == 1
+    assert get_valid_pixel_counts(layer, 1) == {1: 1}
+
+    layer = make_raster([[0, 0], [0, 1]], name="map without nodata")
+    plugin.dockwidget.QCBox_ThematicMap.setLayer(layer)
+    plugin.dockwidget.nodata_ThematicMap.setText("")
+    assert sampling_design.get_total_valid_pixels() == 4
+    plugin.dockwidget.nodata_ThematicMap.setText("0")
+    assert sampling_design.get_total_valid_pixels() == 1
+
+
 def test_stored_pixel_counts_and_fingerprints_follow_the_data_of_the_layer(plugin, make_raster):
     """The stored pixel counts and fingerprints are computed again when the data source of the layer changes"""
     layer = make_raster([[1, 1], [1, 1]], name="before")

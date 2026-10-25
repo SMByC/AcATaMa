@@ -21,6 +21,8 @@
 import math
 import os
 import random
+import re
+import secrets
 
 import numpy as np
 from qgis.core import (
@@ -36,7 +38,7 @@ from qgis.core import (
     QgsUnitTypes,
     QgsVectorFileWriter,
 )
-from qgis.PyQt.QtCore import QVariant
+from qgis.PyQt.QtCore import Qt, QVariant
 
 from AcATaMa.core.map import Map
 from AcATaMa.core.point import RandomPoint
@@ -45,6 +47,91 @@ from AcATaMa.gui.sampling_report import SamplingReport
 from AcATaMa.utils.others_utils import get_epsilon, get_nodata_format
 from AcATaMa.utils.qgis_utils import get_source_from, load_and_select_layer_in, valid_file_selected_in
 from AcATaMa.utils.system_utils import error_handler, get_save_file_name, output_file_is_OK
+
+
+def get_random_seed(by_user, seed_text):
+    """Return the seed and if it was set by the user, the automatic seed is generated here (and
+    reported) so that any sample can be reproduced
+    """
+    if by_user:
+        try:
+            return int(seed_text), True
+        except ValueError:
+            # a non-numeric seed text is a valid seed for random.seed
+            return seed_text, True
+    return secrets.randbits(32), False
+
+
+def get_initial_insets(inset_mode, fixed_inset, points_spacing, random_seed):
+    """Initial inset (X, Y) of the systematic grid. A random start is drawn independently in X and Y,
+    otherwise the grid can only fall on a diagonal and most locations have zero inclusion probability,
+    and from its own random stream, because the sampling re-seeds the global one with the same seed
+    and its first random offset would repeat the inset values
+    """
+    if inset_mode == "Random":
+        inset_random = random.Random(f"{random_seed}/initial inset")  # nosec B311 - statistical sampling
+        return inset_random.uniform(0, points_spacing), inset_random.uniform(0, points_spacing)
+    return fixed_inset, fixed_inset
+
+
+def get_grid_margins(initial_inset, max_xy_offset, points_spacing):
+    """Margins before and after the map of the systematic grid with a single draw per offset area, so that the
+    grid includes all the grid points whose offset areas overlap the map, also at its edges, and the locations
+    there keep the same expected number of samples. The grid starts at the last grid point before the initial
+    inset (which sets the position of the grid) whose offset area overlaps the map.
+
+    Returns:
+        the distance from the first grid point to the initial inset, and the distance after the end of the map
+        until where the grid points are placed
+    """
+    margin = (math.ceil((initial_inset + max_xy_offset) / points_spacing) - 1) * points_spacing
+    end_margin = max(points_spacing, math.ceil(max_xy_offset / points_spacing) * points_spacing)
+    return margin, end_margin
+
+
+def get_expected_number_of_samples(valid_pixels, points_spacing, max_xy_offset=0, pixel_size=(1, 1), by_pixels=False):
+    """Expected number of samples of the systematic grid with a random start, aligned or with a single draw per
+    offset area. The grid has one point (or offset area) per cell of spacing^2, so the expected number of drawn
+    locations is the valid area divided by the square of the spacing, but a pixel is sampled once:
+    - by distance with the aligned grid, each pixel has a grid point if the spacing is smaller than the pixel
+      size, so the probability on each axis is min(1, pixel size / spacing)
+    - by pixels with overlapping offset areas (max offset larger than half the spacing), the probability of a
+      pixel of being drawn by any of the offset areas that cover it, which on each axis are 2d // s offset areas,
+      or one more with probability (2d % s) / s
+
+    Args:
+        valid_pixels: number of pixels with data
+        points_spacing, max_xy_offset: in distance units, or in pixels for the sampling by pixels
+        pixel_size: the pixel size (X, Y) in distance units, for the sampling by distance
+    """
+    if by_pixels:
+        # as in the sampling by pixels
+        spacing, side = int(points_spacing), 2 * int(max_xy_offset)
+        if spacing < 1:
+            return float(valid_pixels)
+        if side <= spacing:
+            return valid_pixels / spacing**2
+        offset_areas = {
+            side // spacing: 1 - (side % spacing) / spacing,
+            side // spacing + 1: (side % spacing) / spacing,
+        }
+        inclusion_probability = sum(
+            probability_x * probability_y * (1 - (1 - 1 / side**2) ** (areas_x * areas_y))
+            for areas_x, probability_x in offset_areas.items()
+            for areas_y, probability_y in offset_areas.items()
+        )
+        return valid_pixels * inclusion_probability
+    if max_xy_offset == 0:
+        return valid_pixels * min(1, pixel_size[0] / points_spacing) * min(1, pixel_size[1] / points_spacing)
+    return valid_pixels * pixel_size[0] * pixel_size[1] / points_spacing**2
+
+
+def get_offset_draws_confidence_level(offset_draws):
+    """Confidence level of the per-pixel coverage from the "draws per offset area" option,
+    None for a single draw per offset area (equal inclusion probability)
+    """
+    coverage = re.search(r"(\d+(?:\.\d+)?)\s*%", offset_draws or "")
+    return float(coverage.group(1)) / 100 if coverage else None
 
 
 def do_simple_random_sampling():
@@ -125,17 +212,11 @@ def do_simple_random_sampling():
         return
 
     # define the random seed
-    if (
+    random_seed, random_seed_by_user = get_random_seed(
         sampling_design.QGBox_random_sampling_options_SimpRS.isChecked()
-        and sampling_design.with_random_seed_by_user_SimpRS.isChecked()
-    ):
-        random_seed = sampling_design.random_seed_by_user_SimpRS.text()
-        try:
-            random_seed = int(random_seed)
-        except Exception:  # nosec B110 - non-numeric seed text is kept as string seed, valid for random.seed
-            pass
-    else:
-        random_seed = None
+        and sampling_design.with_random_seed_by_user_SimpRS.isChecked(),
+        sampling_design.random_seed_by_user_SimpRS.text(),
+    )
 
     # before process
     sampling_design.QPBtn_GenerateSamples_SimpRS.setText("FINISH")
@@ -155,6 +236,7 @@ def do_simple_random_sampling():
         "classes_selected": classes_selected,
         "neighbor_aggregation": neighbor_aggregation,
         "random_seed": random_seed,
+        "random_seed_by_user": random_seed_by_user,
     }
     globals()["sampling_task"] = QgsTask.fromFunction(
         "Simple random sampling",
@@ -278,9 +360,14 @@ def do_stratified_random_sampling():
     # get values from category table  #########
     classes_for_sampling = []
     total_of_samples_by_stratum = []
+    on_column = sampling_design.QTableW_StraRS.columnCount() - 1
     for row in range(sampling_design.QTableW_StraRS.rowCount()):
         classes_for_sampling.append(int(sampling_design.QTableW_StraRS.item(row, 0).text()))
-        total_of_samples_by_stratum.append(sampling_design.QTableW_StraRS.item(row, 2).text())
+        # the disabled strata are not sampled
+        if sampling_design.QTableW_StraRS.item(row, on_column).checkState() == Qt.CheckState.Checked:
+            total_of_samples_by_stratum.append(sampling_design.QTableW_StraRS.item(row, 2).text())
+        else:
+            total_of_samples_by_stratum.append("0")
     # convert and check if number of samples only positive integers
     try:
         total_of_samples_by_stratum = [int(ns) for ns in total_of_samples_by_stratum]
@@ -338,17 +425,11 @@ def do_stratified_random_sampling():
         return
 
     # define the random seed
-    if (
+    random_seed, random_seed_by_user = get_random_seed(
         sampling_design.QGBox_random_sampling_options_StraRS.isChecked()
-        and sampling_design.with_random_seed_by_user_StraRS.isChecked()
-    ):
-        random_seed = sampling_design.random_seed_by_user_StraRS.text()
-        try:
-            random_seed = int(random_seed)
-        except Exception:  # nosec B110 - non-numeric seed text is kept as string seed, valid for random.seed
-            pass
-    else:
-        random_seed = None
+        and sampling_design.with_random_seed_by_user_StraRS.isChecked(),
+        sampling_design.random_seed_by_user_StraRS.text(),
+    )
 
     # before process
     sampling_design.QPBtn_GenerateSamples_StraRS.setText("FINISH")
@@ -374,6 +455,7 @@ def do_stratified_random_sampling():
         "classes_selected": classes_for_sampling,
         "neighbor_aggregation": neighbor_aggregation,
         "random_seed": random_seed,
+        "random_seed_by_user": random_seed_by_user,
     }
     globals()["sampling_task"] = QgsTask.fromFunction(
         "Stratified random sampling",
@@ -498,6 +580,11 @@ def do_systematic_sampling():
     max_xy_offset = float(sampling_design.MaxXYoffset_SystS.value())
     total_of_samples = sampling_design.QPBar_GenerateSamples_SystS.maximum()
     systematic_sampling_unit = sampling_design.QCBox_Systematic_Sampling_Unit.currentText()
+    if points_spacing <= 0:
+        sampling_design.MsgBar.pushMessage(
+            "Error, the points spacing must be greater than zero", level=Qgis.MessageLevel.Warning, duration=10
+        )
+        return
 
     # post-stratification of the systematic sampling
     if sampling_design.QGBox_SystSwithPS.isChecked():
@@ -546,27 +633,23 @@ def do_systematic_sampling():
         return
 
     # define the random seed
-    if (
+    random_seed, random_seed_by_user = get_random_seed(
         sampling_design.QGBox_random_sampling_options_SystS.isChecked()
-        and sampling_design.with_random_seed_by_user_SystS.isChecked()
-    ):
-        random_seed = sampling_design.random_seed_by_user_SystS.text()
-        try:
-            random_seed = int(random_seed)
-        except Exception:  # nosec B110 - non-numeric seed text is kept as string seed, valid for random.seed
-            pass
-    else:
-        random_seed = None
+        and sampling_design.with_random_seed_by_user_SystS.isChecked(),
+        sampling_design.random_seed_by_user_SystS.text(),
+    )
 
     # define the initial inset
-    if sampling_design.QCBox_InitialInsetMode_SystS.currentText() == "Random":
-        random.seed(random_seed)
-        initial_inset = random.uniform(0, points_spacing)  # nosec B311 - statistical sampling
-    else:
-        initial_inset = float(sampling_design.InitialInsetFixed_SystS.value())
+    initial_inset, initial_inset_y = get_initial_insets(
+        sampling_design.QCBox_InitialInsetMode_SystS.currentText(),
+        float(sampling_design.InitialInsetFixed_SystS.value()),
+        points_spacing,
+        random_seed,
+    )
 
-    # get the confidence level for per-pixel coverage (used to compute max tries in offset area)
-    confidence_level = float(sampling_design.CL_PerPixelCoverage.currentText().replace("%", "")) / 100
+    # random draws per offset area: None for a single draw, else the per-pixel coverage
+    # confidence level used to compute the maximum number of draws in the offset area
+    confidence_level = get_offset_draws_confidence_level(sampling_design.CL_PerPixelCoverage.currentText())
 
     # before process
     sampling_design.QPBtn_GenerateSamples_SystS.setText("FINISH")
@@ -590,12 +673,16 @@ def do_systematic_sampling():
         "sampling_type": "systematic",
         "total_of_samples": total_of_samples,
         "points_spacing": points_spacing,
+        "initial_inset_mode": sampling_design.QCBox_InitialInsetMode_SystS.currentText(),
         "initial_inset": initial_inset,
+        "initial_inset_y": initial_inset_y,
         "max_xy_offset": max_xy_offset,
         "classes_selected": classes_selected,
         "neighbor_aggregation": neighbor_aggregation,
         "random_seed": random_seed,
+        "random_seed_by_user": random_seed_by_user,
         "confidence_level": confidence_level,
+        "offset_draws": sampling_design.CL_PerPixelCoverage.currentText(),
     }
 
     if systematic_sampling_unit == "Distance":
@@ -668,22 +755,14 @@ def systematic_sampling_finished(exception, result=None):
     sampling_report.show()
     AcATaMa.dockwidget.QPBtn_openSamplingReport.setEnabled(True)
 
-    # success
-    if sampling.samples_generated == sampling_conf["total_of_samples"]:
-        sampling_report.MsgBar.pushMessage(
-            f"Systematic random sampling successful: {sampling.samples_generated} samples generated",
-            level=Qgis.MessageLevel.Success,
-            duration=20,
-        )
-    # success but not completed
-    if sampling_conf["total_of_samples"] > sampling.samples_generated > 0:
-        sampling_report.MsgBar.pushMessage(
-            "Systematic random sampling successful: {} samples generated from {}".format(
-                sampling.samples_generated, sampling_conf["total_of_samples"]
-            ),
-            level=Qgis.MessageLevel.Success,
-            duration=20,
-        )
+    # success, the number of samples of a systematic sample is random, it is only known in expectation
+    sampling_report.MsgBar.pushMessage(
+        "Systematic random sampling successful: {} samples generated (about {} expected)".format(
+            sampling.samples_generated, sampling_conf["total_of_samples"]
+        ),
+        level=Qgis.MessageLevel.Success,
+        duration=20,
+    )
 
 
 class Sampling:
@@ -803,18 +882,20 @@ class Sampling:
         """
         self.points_spacing = sampling_conf["points_spacing"]
         self.initial_inset = sampling_conf["initial_inset"]
+        self.initial_inset_y = sampling_conf.get("initial_inset_y", self.initial_inset)
         self.max_xy_offset = sampling_conf["max_xy_offset"]
         self.classes_for_sampling = sampling_conf["classes_selected"]
         self.neighbor_aggregation = sampling_conf["neighbor_aggregation"]
         self.samples_generated = None  # total generated
         self.random_seed = sampling_conf["random_seed"]
-        self.confidence_level = sampling_conf["confidence_level"]
+        self.confidence_level = sampling_conf.get("confidence_level")
 
         self.ThematicR_boundaries = QgsGeometry().fromRect(self.thematic_map.extent())
 
         # add an epsilon to accept sampling points on the edge of the offset area or map
         epsilon = get_epsilon(for_crs=self.thematic_map.qgs_layer.crs())
         initial_inset = self.initial_inset + epsilon
+        initial_inset_y = self.initial_inset_y + epsilon
 
         fields = QgsFields()
         fields.append(QgsField("id", QVariant.Int, "", 10, 0))
@@ -844,7 +925,7 @@ class Sampling:
         # compute the maximum number of tries (K) based on the confidence level
         # N is the number of pixels in the offset area (constant based on offset area and pixel size)
         # formula: K = ceil(ln(1-CL) / ln(1-1/N))
-        if self.max_xy_offset > 0:
+        if self.max_xy_offset > 0 and self.confidence_level is not None:
             N = math.ceil(2 * self.max_xy_offset / pixel_size_x) * math.ceil(2 * self.max_xy_offset / pixel_size_y)
             max_tries = math.ceil(math.log(1 - self.confidence_level) / math.log(1 - 1 / N)) if N > 1 else 1
 
@@ -852,12 +933,21 @@ class Sampling:
         random.seed(self.random_seed)
 
         points_generated = []
-        pixels_sampled = []  # to check and avoid duplicate sampled pixels
+        pixels_sampled = set()  # to check and avoid duplicate sampled pixels
 
-        y = self.thematic_map.extent().yMaximum() - initial_inset
-        while not task.isCanceled() and y >= self.thematic_map.extent().yMinimum() - self.points_spacing:
-            x = self.thematic_map.extent().xMinimum() + initial_inset
-            while not task.isCanceled() and x <= self.thematic_map.extent().xMaximum() + self.points_spacing:
+        # with a single draw the grid starts before the map, so the offset areas of the grid points outside
+        # the map also cover its left and top edges and their locations keep the same inclusion probability
+        if self.max_xy_offset > 0 and self.confidence_level is None:
+            margin_x, end_margin = get_grid_margins(initial_inset, self.max_xy_offset, self.points_spacing)
+            margin_y, _ = get_grid_margins(initial_inset_y, self.max_xy_offset, self.points_spacing)
+        else:
+            margin_x = margin_y = 0
+            end_margin = self.points_spacing
+
+        y = self.thematic_map.extent().yMaximum() - initial_inset_y + margin_y
+        while not task.isCanceled() and y >= self.thematic_map.extent().yMinimum() - end_margin:
+            x = self.thematic_map.extent().xMinimum() + initial_inset - margin_x
+            while not task.isCanceled() and x <= self.thematic_map.extent().xMaximum() + end_margin:
                 ### aligned sampling without offset
                 if self.max_xy_offset == 0:
                     random_sampling_point = RandomPoint(x, y)
@@ -874,14 +964,33 @@ class Sampling:
                         continue
 
                     points_generated.append(random_sampling_point)
-                    pixels_sampled.append((_x_centroid, _y_centroid))
+                    pixels_sampled.add((_x_centroid, _y_centroid))
 
                     x += self.points_spacing
                     # update task progress
-                    task.setProgress(len(points_generated) / sampling_conf["total_of_samples"] * 100)
+                    task.setProgress(min(len(points_generated) / sampling_conf["total_of_samples"] * 100, 100))
                     continue
 
-                ### with random offset
+                ### with random offset and a single draw: one random location in the offset area, kept
+                # only if it is valid, so all locations have the same expected number of samples (with a random
+                # initial inset or offset areas that tile the map). The pixels are not deduplicated (as in the
+                # simple random sampling): discarding a second location in the same pixel, drawn by a neighbor
+                # offset area, would lower the inclusion probability of the pixels split by their borders
+                if self.confidence_level is None:
+                    _x = random.uniform(x - self.max_xy_offset, x + self.max_xy_offset)  # nosec B311
+                    _y = random.uniform(y - self.max_xy_offset, y + self.max_xy_offset)  # nosec B311
+                    x += self.points_spacing
+                    if self.thematic_map.get_pixel_centroid(_x, _y)[0] is None:
+                        continue
+                    random_sampling_point = RandomPoint(_x, _y)
+                    if not self.check_sampling_point(random_sampling_point):
+                        continue
+                    points_generated.append(random_sampling_point)
+                    # update task progress
+                    task.setProgress(min(len(points_generated) / sampling_conf["total_of_samples"] * 100, 100))
+                    continue
+
+                ### with random offset and up to K draws
                 # define the offset grid area by each aligning grid point
                 x_offset_grid = np.arange(x - self.max_xy_offset, x + self.max_xy_offset, pixel_size_x)
                 y_offset_grid = np.arange(y - self.max_xy_offset + 2 * epsilon, y + self.max_xy_offset, pixel_size_y)
@@ -942,11 +1051,11 @@ class Sampling:
                         continue
 
                     points_generated.append(random_sampling_point)
-                    pixels_sampled.append((_x_centroid, _y_centroid))
+                    pixels_sampled.add((_x_centroid, _y_centroid))
 
                     x += self.points_spacing
                     # update task progress
-                    task.setProgress(len(points_generated) / sampling_conf["total_of_samples"] * 100)
+                    task.setProgress(min(len(points_generated) / sampling_conf["total_of_samples"] * 100, 100))
                     break
 
             y = y - self.points_spacing
@@ -977,16 +1086,18 @@ class Sampling:
         """
         self.points_spacing = int(sampling_conf["points_spacing"])
         self.initial_inset = int(sampling_conf["initial_inset"])
+        self.initial_inset_y = int(sampling_conf.get("initial_inset_y", sampling_conf["initial_inset"]))
         self.max_xy_offset = int(sampling_conf["max_xy_offset"])
         self.classes_for_sampling = sampling_conf["classes_selected"]
         self.neighbor_aggregation = sampling_conf["neighbor_aggregation"]
         self.samples_generated = None  # total generated
         self.random_seed = sampling_conf["random_seed"]
-        self.confidence_level = sampling_conf["confidence_level"]
+        self.confidence_level = sampling_conf.get("confidence_level")
 
         self.ThematicR_boundaries = QgsGeometry().fromRect(self.thematic_map.extent())
 
         initial_inset = self.initial_inset
+        initial_inset_y = self.initial_inset_y
 
         fields = QgsFields()
         fields.append(QgsField("id", QVariant.Int, "", 10, 0))
@@ -1016,7 +1127,7 @@ class Sampling:
         # compute the maximum number of tries (K) based on the confidence level
         # N is the number of pixels in the offset area (constant, max_xy_offset is in pixel units)
         # formula: K = ceil(ln(1-CL) / ln(1-1/N))
-        if self.max_xy_offset > 0:
+        if self.max_xy_offset > 0 and self.confidence_level is not None:
             N = (2 * self.max_xy_offset) * (2 * self.max_xy_offset)  # offset area in pixels squared
             max_tries = math.ceil(math.log(1 - self.confidence_level) / math.log(1 - 1 / N)) if N > 1 else 1
 
@@ -1024,15 +1135,21 @@ class Sampling:
         random.seed(self.random_seed)
 
         points_generated = []
-        pixels_sampled = []  # to check and avoid duplicate sampled pixels
+        pixels_sampled = set()  # to check and avoid duplicate sampled pixels
 
-        y = self.thematic_map.extent().yMaximum() - pixel_size_y * initial_inset
-        while not task.isCanceled() and y >= self.thematic_map.extent().yMinimum() - pixel_size_y * self.points_spacing:
-            x = self.thematic_map.extent().xMinimum() + pixel_size_x * initial_inset
-            while (
-                not task.isCanceled()
-                and x <= self.thematic_map.extent().xMaximum() + pixel_size_x * self.points_spacing
-            ):
+        # with a single draw the grid starts before the map, so the offset areas of the grid points outside
+        # the map also cover its left and top edges and their pixels keep the same inclusion probability
+        if self.max_xy_offset > 0 and self.confidence_level is None:
+            margin_x, end_margin = get_grid_margins(initial_inset, self.max_xy_offset, self.points_spacing)
+            margin_y, _ = get_grid_margins(initial_inset_y, self.max_xy_offset, self.points_spacing)
+        else:
+            margin_x = margin_y = 0
+            end_margin = self.points_spacing
+
+        y = self.thematic_map.extent().yMaximum() - pixel_size_y * (initial_inset_y - margin_y)
+        while not task.isCanceled() and y >= self.thematic_map.extent().yMinimum() - pixel_size_y * end_margin:
+            x = self.thematic_map.extent().xMinimum() + pixel_size_x * (initial_inset - margin_x)
+            while not task.isCanceled() and x <= self.thematic_map.extent().xMaximum() + pixel_size_x * end_margin:
                 ### aligned sampling without offset
                 if self.max_xy_offset == 0:
                     # select the pixel where the aligned grid is in the top-left corner
@@ -1056,11 +1173,11 @@ class Sampling:
                         continue
 
                     points_generated.append(random_sampling_point)
-                    pixels_sampled.append((_x, _y))
+                    pixels_sampled.add((_x, _y))
 
                     x += pixel_size_x * self.points_spacing
                     # update task progress
-                    task.setProgress(len(points_generated) / sampling_conf["total_of_samples"] * 100)
+                    task.setProgress(min(len(points_generated) / sampling_conf["total_of_samples"] * 100, 100))
                     continue
 
                 ### with random offset
@@ -1075,6 +1192,29 @@ class Sampling:
                     y + pixel_size_y * self.max_xy_offset + pixel_size_y / 2,
                     pixel_size_y,
                 )
+
+                # single draw: one random pixel among all the pixels of the offset area (valid or not),
+                # kept only if it is valid, so all pixels have the same inclusion probability (with a random
+                # initial inset or offset areas that tile the map). A pixel drawn
+                # again by an overlapping offset area (max offset larger than half the points spacing) is kept
+                # once, then the expected number of samples is smaller than the valid area / spacing^2
+                if self.confidence_level is None:
+                    x_offset = random.choice(x_offset_grid)  # nosec B311 - statistical sampling
+                    y_offset = random.choice(y_offset_grid)  # nosec B311 - statistical sampling
+                    x += pixel_size_x * self.points_spacing
+                    _x, _y = self.thematic_map.get_pixel_centroid(
+                        x_offset + pixel_size_x / 2, y_offset - pixel_size_y / 2
+                    )
+                    if _x is None or _y is None or (_x, _y) in pixels_sampled:
+                        continue
+                    random_sampling_point = RandomPoint(_x, _y)
+                    if not self.check_sampling_point(random_sampling_point):
+                        continue
+                    points_generated.append(random_sampling_point)
+                    pixels_sampled.add((_x, _y))
+                    # update task progress
+                    task.setProgress(min(len(points_generated) / sampling_conf["total_of_samples"] * 100, 100))
+                    continue
 
                 # gather all the valid thematic pixels centroids in the offset area
                 pixels_in_offset_grid = []
@@ -1126,11 +1266,11 @@ class Sampling:
                         continue
 
                     points_generated.append(random_sampling_point)
-                    pixels_sampled.append((_x, _y))
+                    pixels_sampled.add((_x, _y))
 
                     x += pixel_size_x * self.points_spacing
                     # update task progress
-                    task.setProgress(len(points_generated) / sampling_conf["total_of_samples"] * 100)
+                    task.setProgress(min(len(points_generated) / sampling_conf["total_of_samples"] * 100, 100))
                     break
 
             y -= pixel_size_y * self.points_spacing

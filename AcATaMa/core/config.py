@@ -174,6 +174,7 @@ def save(file_out):
         "initial_inset_mode": sampling_design.QCBox_InitialInsetMode_SystS.currentText(),
         "initial_inset": sampling_design.InitialInsetFixed_SystS.value(),
         "max_xy_offset": sampling_design.MaxXYoffset_SystS.value(),
+        "offset_draws": sampling_design.CL_PerPixelCoverage.currentText(),
         "post_stratification": sampling_design.QGBox_SystSwithPS.isChecked(),
         "post_stratification_map_path": setup_path(get_source_from(sampling_design.QCBox_PostStratMap_SystS)),
         "post_stratification_map_band": int(sampling_design.QCBox_band_PostStratMap_SystS.currentText())
@@ -563,6 +564,19 @@ def restore(yml_file_path):
                 select_item_in(sampling_design.QCBox_InitialInsetMode_SystS, "Fixed")
             sampling_design.InitialInsetFixed_SystS.setValue(srs_syst["initial_inset"])
             sampling_design.MaxXYoffset_SystS.setValue(srs_syst["max_xy_offset"])
+            # the configurations saved before this option was saved used the coverage selected then (95% by
+            # default, not saved) since v26.1, and unlimited draws before
+            select_item_in(sampling_design.CL_PerPixelCoverage, srs_syst.get("offset_draws", "Up to 95% coverage"))
+            if "offset_draws" not in srs_syst and srs_syst["max_xy_offset"] > 0:
+                iface.messageBar().pushMessage(
+                    "AcATaMa",
+                    "The draws per offset area of the systematic sampling were not saved in this configuration, it is "
+                    "restored with 'Up to 95% coverage', the default of the previous versions, which only reproduces "
+                    "the samples generated with that default since v26.1 (the draws were not limited before); use "
+                    "'1 draw (equal probability)' for new samples",
+                    level=Qgis.MessageLevel.Info,
+                    duration=20,
+                )
 
             sampling_design.QGBox_SystSwithPS.setChecked(srs_syst["post_stratification"])
             sampling_design.widget_SystSwithPS.setVisible(srs_syst["post_stratification"])

@@ -19,6 +19,7 @@
 """
 
 import csv
+import math
 import os
 from typing import ClassVar
 
@@ -40,6 +41,14 @@ def rf(fv, r=5):
     if np.isnan(fv):
         return "-"
     return round(fv, r)
+
+
+def get_report_number(value_with_unit):
+    """Number of a "<value> <unit>" field of the report, zero if it is not set"""
+    try:
+        return float(str(value_with_unit).split()[0])
+    except (ValueError, IndexError):
+        return 0
 
 
 def get_samples_distribution_table(map_layer, points, area_unit):
@@ -140,32 +149,44 @@ class SamplingReport(QDialog, FORM_CLASS):
         )
 
         systematic_unit = AcATaMa.dockwidget.sampling_design_window.PointSpacing_SystS.suffix().strip()
+        offset_draws = None
         if self.sampling_conf["sampling_type"] == "systematic":
-            points_spacing = "{} {}".format(
-                int(self.sampling_conf["points_spacing"])
-                if systematic_unit == "pixels"
-                else self.sampling_conf["points_spacing"],
-                systematic_unit,
-            )
-            initial_inset = "{} {}".format(
-                int(self.sampling_conf["initial_inset"])
-                if systematic_unit == "pixels"
-                else self.sampling_conf["initial_inset"],
-                systematic_unit,
-            )
-            max_xy_offset = "{} {}".format(
-                int(self.sampling_conf["max_xy_offset"])
-                if systematic_unit == "pixels"
-                else self.sampling_conf["max_xy_offset"],
-                systematic_unit,
-            )
+
+            def systematic_value(value):
+                return int(value) if systematic_unit == "pixels" else value
+
+            points_spacing = "{} {}".format(systematic_value(self.sampling_conf["points_spacing"]), systematic_unit)
+            initial_inset_x = systematic_value(self.sampling_conf["initial_inset"])
+            initial_inset_y = systematic_value(self.sampling_conf.get("initial_inset_y", initial_inset_x))
+            if initial_inset_x == initial_inset_y:
+                initial_inset = f"{initial_inset_x} {systematic_unit}"
+            else:
+                initial_inset = f"X: {initial_inset_x}, Y: {initial_inset_y} {systematic_unit}"
+            max_xy_offset = "{} {}".format(systematic_value(self.sampling_conf["max_xy_offset"]), systematic_unit)
+            if self.sampling_conf["max_xy_offset"] > 0:
+                offset_draws = self.sampling_conf.get("offset_draws")
         else:
             points_spacing = initial_inset = max_xy_offset = None
 
-        if (
-            self.sampling.post_stratification_map
-            and self.sampling.thematic_map.qgs_layer != self.sampling.post_stratification_map.qgs_layer
-        ):
+        if self.sampling_conf["random_seed"] is None:
+            random_seed = "Auto"
+        elif self.sampling_conf.get("random_seed_by_user", True):
+            random_seed = self.sampling_conf["random_seed"]
+        else:
+            random_seed = "{} (automatic)".format(self.sampling_conf["random_seed"])
+
+        def is_thematic_map(map_layer):
+            return (map_layer.qgs_layer, map_layer.band) == (
+                self.sampling.thematic_map.qgs_layer,
+                self.sampling.thematic_map.band,
+            )
+
+        def map_name(map_layer):
+            if map_layer.qgs_layer == self.sampling.thematic_map.qgs_layer and not is_thematic_map(map_layer):
+                return f"{map_layer.qgs_layer.name()} (band {map_layer.band})"
+            return map_layer.qgs_layer.name()
+
+        if self.sampling.post_stratification_map and not is_thematic_map(self.sampling.post_stratification_map):
             post_stratification_table = get_samples_distribution_table(
                 self.sampling.post_stratification_map,
                 self.sampling.points.values(),
@@ -174,11 +195,8 @@ class SamplingReport(QDialog, FORM_CLASS):
         else:
             post_stratification_table = None
 
-        if (
-            self.sampling.sampling_map is not None
-            and self.sampling.sampling_map.qgs_layer != self.sampling.thematic_map.qgs_layer
-        ):
-            sampling_map = self.sampling.sampling_map.qgs_layer.name()
+        if self.sampling.sampling_map is not None and not is_thematic_map(self.sampling.sampling_map):
+            sampling_map = map_name(self.sampling.sampling_map)
             sampling_map_table = get_samples_distribution_table(
                 self.sampling.sampling_map,
                 self.sampling.points.values(),
@@ -200,8 +218,10 @@ class SamplingReport(QDialog, FORM_CLASS):
                 "total_of_samples": self.sampling.samples_generated,
                 "points_spacing": points_spacing,
                 "initial_inset": initial_inset,
+                "initial_inset_mode": self.sampling_conf.get("initial_inset_mode"),
                 "max_xy_offset": max_xy_offset,
-                "post_stratification_map": self.sampling.post_stratification_map.qgs_layer.name()
+                "offset_draws": offset_draws,
+                "post_stratification_map": map_name(self.sampling.post_stratification_map)
                 if self.sampling.post_stratification_map
                 else None,
                 "post_stratification_classes": self.sampling_conf["classes_selected"]
@@ -214,9 +234,7 @@ class SamplingReport(QDialog, FORM_CLASS):
                 if self.sampling_conf["sampling_type"] in ["simple", "stratified"]
                 else None,
                 "neighbor_aggregation": self.sampling_conf["neighbor_aggregation"],
-                "random_seed": self.sampling_conf["random_seed"]
-                if self.sampling_conf["random_seed"] is not None
-                else "Auto",
+                "random_seed": random_seed,
                 "area_unit": self.area_unit.currentIndex(),
             },
             "samples": {
@@ -372,6 +390,13 @@ class SamplingReport(QDialog, FORM_CLASS):
                 initial_inset=self.report["general"]["initial_inset"],
                 max_xy_offset=self.report["general"]["max_xy_offset"],
             )
+            if self.report["general"].get("offset_draws"):
+                html += """
+                    <tr>
+                        <th>Draws per Offset Area</th>
+                        <td>{offset_draws}</td>
+                    </tr>
+                """.format(offset_draws=self.report["general"]["offset_draws"])
 
         if self.report["general"]["sampling_type"] in ["simple", "systematic"]:
             html += """
@@ -588,11 +613,10 @@ class SamplingReport(QDialog, FORM_CLASS):
 
         # stratified num samples mismatch
         if self.sampling_conf is not None and self.report["general"]["sampling_type"] == "stratified":
-            desired_num_samples_per_stratum = self.sampling_conf["total_of_samples"]
-            actual_num_samples_per_stratum = self.report["samples"]["thematic_map"]["num_samples"]
+            strata_table, desired_num_samples_per_stratum, actual_num_samples_per_stratum = self.get_strata_samples()
 
             # check if the original number of samples set by the user was reached
-            if sum(desired_num_samples_per_stratum) != sum(actual_num_samples_per_stratum):
+            if desired_num_samples_per_stratum != actual_num_samples_per_stratum:
                 # create a html table with the headers:
                 # Pix Val, Color, Desired Num Samples, Actual Num Samples, Difference
                 html += """
@@ -616,7 +640,7 @@ class SamplingReport(QDialog, FORM_CLASS):
                             </tr>
                 """
 
-                for i, pix_val in enumerate(self.report["samples"]["thematic_map"]["pix_val"]):
+                for i, pix_val in enumerate(strata_table["pix_val"]):
                     html += """
                         <tr>
                             <td>{pix_val}</td>
@@ -627,9 +651,9 @@ class SamplingReport(QDialog, FORM_CLASS):
                         </tr>
                     """.format(
                         pix_val=pix_val,
-                        r=self.report["samples"]["thematic_map"]["color"][i][0],
-                        g=self.report["samples"]["thematic_map"]["color"][i][1],
-                        b=self.report["samples"]["thematic_map"]["color"][i][2],
+                        r=strata_table["color"][i][0],
+                        g=strata_table["color"][i][1],
+                        b=strata_table["color"][i][2],
                         desired_num_samples=desired_num_samples_per_stratum[i],
                         actual_num_samples=actual_num_samples_per_stratum[i],
                         difference=desired_num_samples_per_stratum[i] - actual_num_samples_per_stratum[i],
@@ -656,7 +680,7 @@ class SamplingReport(QDialog, FORM_CLASS):
                 else:
                     table = self.report["samples"]["thematic_map"]
 
-            if min(num_samples for num_samples in table["num_samples"] if num_samples > 0) < 30:
+            if min((num_samples for num_samples in table["num_samples"] if num_samples > 0), default=0) < 30:
                 html += """
                     <br/>
                     <div style="background-color: #fffff3;">
@@ -664,19 +688,108 @@ class SamplingReport(QDialog, FORM_CLASS):
                         <span style="font-weight: bold;">Warning: Check minimum samples in strata!</span><br>
                         Using stratified or post-stratified sampling for map data analysis, land use/land cover
                         classification and similar topics, a minimum sample size of 30 (Van Genderen et al., 1978) or
-                        50 (Stehman & Foody, 2019; Hay, 1979) per evaluated stratum is generally recommended to ensure
-                        statistical significance. However, determining the optimal minimum sample size requires
+                        50 (Stehman & Foody, 2019; Hay, 1979) per evaluated stratum is generally recommended as a rule
+                        of thumb, it does not guarantee a given precision. Determining the minimum sample size requires
                         consideration of several factors such as data type, the specific research objectives, and the
                         desired level of precision.
                         </p>
                     </div>
                 """
 
+        for title, text in self.get_design_warnings():
+            html += f"""
+                <br/>
+                <div style="background-color: #fffff3;">
+                    <p style="font-size: 80%; color: #3b3b3b">
+                    <span style="font-weight: bold;">Warning: {title}</span><br>
+                    {text}
+                    </p>
+                </div>
+            """
+
         html += """
             </body>
         """
 
         return html
+
+    def get_strata_samples(self):
+        """Table of the strata with the desired and the actual number of samples by stratum"""
+        # the sampling map table only exists when it is not the thematic map
+        strata_table = self.report["samples"]["sampling_map"] or self.report["samples"]["thematic_map"]
+        desired_by_value = dict(
+            zip(self.sampling_conf["classes_selected"], self.sampling_conf["total_of_samples"], strict=True)
+        )
+        desired = [desired_by_value.get(pix_val, 0) for pix_val in strata_table["pix_val"]]
+        return strata_table, desired, list(strata_table["num_samples"])
+
+    def get_design_warnings(self):
+        """Sampling design options that restrict the population or change the inclusion probabilities"""
+        general = self.report["general"]
+        warnings = []
+        if general["neighbor_aggregation"]:
+            consequence = (
+                "the accuracy estimated from the sample counts refers only to that part of the map, while the "
+                "area estimates and the estimates weighted with the mapped area of the classes in the whole map "
+                "(stratified and post-stratified estimators) are not valid, neither for the whole map nor for "
+                "that part"
+            )
+            warnings.append(
+                (
+                    "Neighbor aggregation restricts the population!",
+                    "Only pixels with a homogeneous neighborhood can be sampled, a part of the map whose area is not "
+                    f"known, so {consequence}. Accuracy is generally higher there than for the whole map because edge "
+                    "and heterogeneous pixels are excluded (Stehman and Foody, 2019).",
+                )
+            )
+        if get_report_number(general["min_distance"]) > 0:
+            warnings.append(
+                (
+                    "Minimum distance between samples",
+                    "Discarding the candidate samples closer than the minimum distance to a previous sample makes the "
+                    "inclusion probabilities very complicated and they are not derived, so strictly the sample is not "
+                    "a probability sample (Stehman and Foody, 2019), while the estimators assume the inclusion "
+                    "probabilities of simple (or stratified) random sampling. A minimum distance is not needed for "
+                    "design-based inference, whose estimators are unbiased regardless of spatial correlation; the "
+                    "smaller it is compared to the mean distance between samples, the fewer candidates are discarded "
+                    "and the closer the design is to random sampling. To spread the sample, use systematic sampling.",
+                )
+            )
+        if general["sampling_type"] == "systematic":
+            max_xy_offset = get_report_number(general["max_xy_offset"])
+            points_spacing = get_report_number(general["points_spacing"])
+            if general.get("initial_inset_mode") == "Fixed" and max_xy_offset == 0:
+                warnings.append(
+                    (
+                        "Non-random systematic grid!",
+                        "The grid has a fixed initial inset and no random offset, so it is not a probability sample "
+                        "and the design-based estimators do not strictly apply. Use a random initial inset.",
+                    )
+                )
+            elif general.get("initial_inset_mode") == "Fixed" and not math.isclose(2 * max_xy_offset, points_spacing):
+                warnings.append(
+                    (
+                        "Offset areas do not tile the map!",
+                        "With a fixed initial inset the offset areas must tile the map (max offset of half the points "
+                        "spacing): a smaller max offset leaves gaps whose locations can never be selected, and a "
+                        "larger one overlaps the offset areas, so the inclusion probabilities are not equal in "
+                        "general. Use a random initial inset or a max offset of half the points spacing.",
+                    )
+                )
+            offset_draws = general.get("offset_draws")
+            if get_report_number(general["max_xy_offset"]) > 0 and (offset_draws is None or "%" in offset_draws):
+                warnings.append(
+                    (
+                        "Unequal inclusion probabilities!",
+                        ("This sample was generated by a previous version of AcATaMa. " if offset_draws is None else "")
+                        + "Repeating the random draw in each offset area until a valid pixel is found favors the "
+                        "valid pixels of partially valid offset areas (near no data, the map edges or the classes not "
+                        "selected), whose inclusion probability is larger than for the rest of the map. The simple "
+                        "and post-stratified estimators assume equal inclusion probabilities, use a single draw per "
+                        "offset area to fulfill it.",
+                    )
+                )
+        return warnings
 
     def _build_csv_rows(self):
         """
@@ -712,6 +825,8 @@ class SamplingReport(QDialog, FORM_CLASS):
             rows.append(["Points Spacing (XY)", general["points_spacing"]])
             rows.append(["Initial Inset", general["initial_inset"]])
             rows.append(["Max XY Offset", general["max_xy_offset"]])
+            if general.get("offset_draws"):
+                rows.append(["Draws per Offset Area", general["offset_draws"]])
         if general["sampling_type"] in ["simple", "systematic"]:
             rows.append(["Post-Stratification Map", general["post_stratification_map"]])
             post_classes = general["post_stratification_classes"]
@@ -789,12 +904,11 @@ class SamplingReport(QDialog, FORM_CLASS):
                 rows.append([])
 
         if self.sampling_conf is not None and general["sampling_type"] == "stratified":
-            desired_per_stratum = self.sampling_conf["total_of_samples"]
-            actual_per_stratum = samples["thematic_map"]["num_samples"]
-            if sum(desired_per_stratum) != sum(actual_per_stratum):
+            strata_table, desired_per_stratum, actual_per_stratum = self.get_strata_samples()
+            if desired_per_stratum != actual_per_stratum:
                 rows.append(["Warning: Desired/actual sample count mismatch (per stratum)"])
                 rows.append(["Pix Val", "Desired Samples", "Actual Samples", "Difference"])
-                for i, pix_val in enumerate(samples["thematic_map"]["pix_val"]):
+                for i, pix_val in enumerate(strata_table["pix_val"]):
                     rows.append(
                         [
                             pix_val,
@@ -804,6 +918,11 @@ class SamplingReport(QDialog, FORM_CLASS):
                         ]
                     )
                 rows.append([])
+
+        for title, text in self.get_design_warnings():
+            rows.append([f"Warning: {title}"])
+            rows.append([text])
+            rows.append([])
 
         return rows
 
@@ -845,7 +964,7 @@ class SamplingReport(QDialog, FORM_CLASS):
                     else:
                         normalized_row.append(item)
                 normalized_rows.append(normalized_row)
-            with open(output_file, "w", newline="") as csvfile:
+            with open(output_file, "w", newline="", encoding="utf-8") as csvfile:
                 csv_w = csv.writer(csvfile, delimiter=str(self.csv_separator))
                 csv_w.writerows(normalized_rows)
             self.MsgBar.pushMessage(

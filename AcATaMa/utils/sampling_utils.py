@@ -316,10 +316,11 @@ def fill_stratified_sampling_table():
             total_std_error = sampling_design.TotalExpectedSE.value()
             srs_table["On"] = [True] * srs_table["row_count"]
             srs_table["num_samples"] = get_num_samples_by_area_based_proportion(srs_table, total_std_error)
-            # adjust the number of samples based on minimum samples per stratum
+            # adjust the number of samples based on minimum samples per stratum, for all the strata
+            # with pixels (also when the proportional allocation rounds to zero samples)
             minimum_samples_per_stratum = sampling_design.MinimumSamplesPerStratum.value()
             for idx, ns in enumerate(srs_table["num_samples"]):
-                if 0 < int(ns) < minimum_samples_per_stratum:
+                if srs_table["pixel_count"][idx] > 0 and int(ns) < minimum_samples_per_stratum:
                     srs_table["num_samples"][idx] = str(minimum_samples_per_stratum)
 
         # save srs table
@@ -359,16 +360,10 @@ def update_stratified_sampling_table(changes_from):
                 num_samples_in_row = srs_table["num_samples"][row]
             num_samples.append(num_samples_in_row)
             if srs_method == "fixed values":
-                if sampling_design.QTableW_StraRS.item(row, 3).checkState() == 2:
-                    on.append(True)
-                if sampling_design.QTableW_StraRS.item(row, 3).checkState() == 0:
-                    on.append(False)
+                on.append(sampling_design.QTableW_StraRS.item(row, 3).checkState() == Qt.CheckState.Checked)
             if srs_method == "area based proportion":
                 ui.append(sampling_design.QTableW_StraRS.item(row, 3).text())
-                if sampling_design.QTableW_StraRS.item(row, 4).checkState() == 2:
-                    on.append(True)
-                if sampling_design.QTableW_StraRS.item(row, 4).checkState() == 0:
-                    on.append(False)
+                on.append(sampling_design.QTableW_StraRS.item(row, 4).checkState() == Qt.CheckState.Checked)
 
         if srs_method == "fixed values":
             srs_table["num_samples"] = num_samples

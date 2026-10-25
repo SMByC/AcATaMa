@@ -202,7 +202,8 @@ report.
   - {cite:t}`Cochran1977`, Eq. 4.2
   - $$n = \frac{Z^{2}\, p\,(1 - p)}{d^{2}}$$
     rounded up, where $p$ is the anticipated overall accuracy, $d$ the desired half-width of the
-    confidence interval and $Z$ the standard normal quantile
+    confidence interval and $Z$ the standard normal quantile. For SYS the point spacing is
+    $\sqrt{A/n}$, $A$ being the area with valid data
 * - All designs
   - Uncertainty and coefficient of variation
   - {cite:t}`McMurray2017`, p. 17

@@ -19,7 +19,6 @@
 """
 
 import os
-import sys
 
 from qgis.core import Qgis, QgsMapLayerProxyModel, QgsUnitTypes
 from qgis.PyQt import uic
@@ -27,18 +26,19 @@ from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox
 from qgis.utils import iface
 
-from AcATaMa.core.map import get_nodata_value
+from AcATaMa.core.map import get_nodata_value, get_source_nodata, get_valid_pixel_counts
 from AcATaMa.core.sampling_design import (
     do_simple_random_sampling,
     do_stratified_random_sampling,
     do_systematic_sampling,
+    get_expected_number_of_samples,
+    get_offset_draws_confidence_level,
 )
 from AcATaMa.gui.determine_num_samples_dialog import DetermineNumberSamplesDialog
 from AcATaMa.gui.post_stratification_classes_dialog import PostStratificationClassesDialog
 from AcATaMa.utils.others_utils import (
     get_decimal_places,
     get_nodata_format,
-    get_pixel_count_by_pixel_values,
     set_nodata_format,
 )
 from AcATaMa.utils.qgis_utils import browse_dialog_to_load_file, is_integer_data_type, valid_file_selected_in
@@ -184,6 +184,13 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
         # show/hide confidence level widget based on max offset value (only relevant when offset > 0)
         self.MaxXYoffset_SystS.valueChanged.connect(lambda value: self.widget_CL_PerPixelCoverage.setVisible(value > 0))
         self.widget_CL_PerPixelCoverage.setHidden(True)
+        # the expected number of samples also depends on the overlap of the offset areas (by pixels)
+        self.MaxXYoffset_SystS.valueChanged.connect(
+            lambda: self.update_systematic_sampling_progressbar(self.PointSpacing_SystS.value())
+        )
+        self.CL_PerPixelCoverage.currentIndexChanged.connect(
+            lambda: self.update_systematic_sampling_progressbar(self.PointSpacing_SystS.value())
+        )
         # select and check the post-stratification map
         self.widget_SystSwithPS.setHidden(True)
         # set properties to QgsMapLayerComboBox
@@ -264,6 +271,14 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
 
     @pyqtSlot(str)
     def set_systematic_sampling_unit(self, systematic_sampling_unit):
+        # without signals while the values are converted one by one, then the dependent widgets are
+        # updated once with all the converted values
+        with block_signals_to(self.PointSpacing_SystS), block_signals_to(self.MaxXYoffset_SystS):
+            self.convert_systematic_sampling_values(systematic_sampling_unit)
+        self.widget_CL_PerPixelCoverage.setVisible(self.MaxXYoffset_SystS.value() > 0)
+        self.update_systematic_sampling_progressbar(self.PointSpacing_SystS.value())
+
+    def convert_systematic_sampling_values(self, systematic_sampling_unit):
         if systematic_sampling_unit == "Distance":
             # define the distance units based on the thematic map
             layer_dist_unit = self.thematic_map_layer.crs().mapUnits()
@@ -354,32 +369,45 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
     @pyqtSlot()
     def determine_number_samples_SystS(self):
         if self.determine_number_samples_dialog_SystS.exec():
-            from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-
-            systematic_sampling_unit = self.QCBox_Systematic_Sampling_Unit.currentText()
-
-            # total number of pixels
-            map_width = self.thematic_map_layer.width()
-            map_height = self.thematic_map_layer.height()
-            total_pixels = map_width * map_height
-            # total valid pixels
-            map_nodata = get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text())
-            if map_nodata is not None:
-                band = int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
-                total_nodata_pixels = get_pixel_count_by_pixel_values(self.thematic_map_layer, band, None, None)[
-                    map_nodata
-                ]
-                total_valid_pixels = total_pixels - total_nodata_pixels
-            else:
-                total_valid_pixels = total_pixels
-            # compute the point spacing of the grid based on the number of samples and the total valid pixels
+            # with a random start each grid cell (spacing^2) contains one point, so the expected
+            # number of samples is the valid area / spacing^2
             number_of_samples = int(self.determine_number_samples_dialog_SystS.NumberOfSamples.text())
-            point_spacing_by_pixel = (total_valid_pixels**0.5) / (number_of_samples**0.5 - 1)
-            point_spacing = point_spacing_by_pixel * (
-                self.thematic_map_layer.rasterUnitsPerPixelX() if systematic_sampling_unit == "Distance" else 1
-            )
+            valid_area = self.get_valid_area()
+            if valid_area is None:
+                self.MsgBar.pushMessage(
+                    "Error, the points spacing can't be computed because the pixels of the thematic map "
+                    "could not be counted",
+                    level=Qgis.MessageLevel.Warning,
+                    duration=10,
+                )
+                return
+            self.PointSpacing_SystS.setValue((valid_area / number_of_samples) ** 0.5)
 
-            self.PointSpacing_SystS.setValue(point_spacing)
+    def get_valid_area(self):
+        """Area with valid data of the thematic map in the units of the systematic sampling, None if its
+        pixels could not be counted"""
+        valid_pixels = self.get_total_valid_pixels()
+        if valid_pixels is None:
+            return None
+        if self.QCBox_Systematic_Sampling_Unit.currentText() == "Distance":
+            pixel_area = self.thematic_map_layer.rasterUnitsPerPixelX() * self.thematic_map_layer.rasterUnitsPerPixelY()
+            return valid_pixels * pixel_area
+        return valid_pixels
+
+    def get_total_valid_pixels(self):
+        """Number of pixels with data in the thematic map (the area that can be sampled), without the no data
+        of AcATaMa and of the layer, as the population of the analysis. None if they could not be counted"""
+        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
+
+        map_nodata = get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text())
+        band = int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
+        if map_nodata is None and get_source_nodata(self.thematic_map_layer, band) is None:
+            return self.thematic_map_layer.width() * self.thematic_map_layer.height()
+        try:
+            return sum(get_valid_pixel_counts(self.thematic_map_layer, band, map_nodata).values())
+        except RuntimeError:
+            # the error of the pixel count is already reported
+            return None
 
     def fill_same_class_of_neighbors(self, QCBox_NumberOfNeighbors, QCBox_SameClassOfNeighbors):
         QCBox_SameClassOfNeighbors.clear()
@@ -569,38 +597,25 @@ class SamplingDesignWindow(QDialog, FORM_CLASS):
 
     @pyqtSlot(float)
     def update_systematic_sampling_progressbar(self, point_spacing):
-        # TODO: Tests fail with this, do not update progress bar if pytest is running
-        if "pytest" in sys.modules:
-            return
-
         if not self.thematic_map_layer or not self.thematic_map_layer.isValid():
             return
 
-        from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget as AcATaMa
-
-        systematic_sampling_unit = self.QCBox_Systematic_Sampling_Unit.currentText()
-        point_spacing_by_pixel = point_spacing / (
-            self.thematic_map_layer.rasterUnitsPerPixelX() if systematic_sampling_unit == "Distance" else 1
-        )
-        # total number of pixels
-        map_width = self.thematic_map_layer.width()
-        map_height = self.thematic_map_layer.height()
-        total_pixels = map_width * map_height
-        # total valid pixels
-        map_nodata = get_nodata_format(AcATaMa.dockwidget.nodata_ThematicMap.text())
-        if map_nodata is not None:
-            band = int(AcATaMa.dockwidget.QCBox_band_ThematicMap.currentText())
-            total_nodata_pixels = get_pixel_count_by_pixel_values(self.thematic_map_layer, band, None, None)[map_nodata]
-            total_valid_pixels = total_pixels - total_nodata_pixels
-        else:
-            total_valid_pixels = total_pixels
-
-        try:
-            max_samples = ((total_valid_pixels**0.5) / point_spacing_by_pixel + 1) ** 2
-        except ZeroDivisionError:
+        if point_spacing <= 0:
             return
-        if max_samples < 2147483647:
-            self.QPBar_GenerateSamples_SystS.setMaximum(round(max_samples))
+        valid_pixels = self.get_total_valid_pixels()
+        if valid_pixels is None:
+            return
+        # expected number of samples with a random start (the repeated draws per offset area give more)
+        single_draw = get_offset_draws_confidence_level(self.CL_PerPixelCoverage.currentText()) is None
+        expected_samples = get_expected_number_of_samples(
+            valid_pixels,
+            point_spacing,
+            self.MaxXYoffset_SystS.value() if single_draw else 0,
+            pixel_size=(self.thematic_map_layer.rasterUnitsPerPixelX(), self.thematic_map_layer.rasterUnitsPerPixelY()),
+            by_pixels=self.QCBox_Systematic_Sampling_Unit.currentText() == "Pixels",
+        )
+        if expected_samples < 2147483647:
+            self.QPBar_GenerateSamples_SystS.setMaximum(max(round(expected_samples), 1))
 
     @pyqtSlot()
     def clear(self):

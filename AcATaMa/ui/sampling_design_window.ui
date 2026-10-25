@@ -1524,7 +1524,7 @@ It set automatically from image if the layer has the nodata value set.</string>
                    <item row="1" column="1" colspan="2">
                     <widget class="QComboBox" name="QCBox_InitialInsetMode_SystS">
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the initial inset from top-left corner using a random value (from 0 to point spacing) or using a fixed value by user&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the initial inset from top-left corner using random values (independent in X and Y, from 0 to the point spacing) or using a fixed value by user. A random start is required for a probability sample when no random offset is applied.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                      </property>
                      <item>
                       <property name="text">
@@ -1600,41 +1600,46 @@ It set automatically from image if the layer has the nodata value set.</string>
                       <item>
                        <widget class="QLabel" name="label_23">
                         <property name="text">
-                         <string>Confidence level (max coverage):</string>
+                         <string>Draws per offset area:</string>
                         </property>
                        </widget>
                       </item>
                       <item>
                        <widget class="QComboBox" name="CL_PerPixelCoverage">
                         <property name="toolTip">
-                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets the upper bound on the probability that each pixel in the offset area will be tested. This determines the maximum number of random attempts (K) per offset area.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of random draws in each offset area.&lt;/p&gt;&lt;p&gt;&lt;b&gt;1 draw&lt;/b&gt;: one random location per offset area, kept only if it is valid. With a random initial inset, or offset areas that tile the map (max offset of half the points spacing), all locations have the same inclusion probability, as assumed by the simple and post-stratified estimators (recommended).&lt;/p&gt;&lt;p&gt;&lt;b&gt;Up to X% coverage&lt;/b&gt;: the draw is repeated until a valid pixel is found, up to K draws, the number of draws that would test a pixel of the offset area with probability X% if all of them were made and every pixel had the same probability in each draw (a nominal value: by distance the pixels cut by the border of the offset area are less likely, and by pixels the draws are made among the pixels with data). It generates more samples but favors the valid pixels of partially valid offset areas (near no data, the map edges or the classes not selected), giving them a larger inclusion probability.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                         </property>
                         <property name="currentIndex">
-                         <number>3</number>
+                         <number>0</number>
                         </property>
                         <item>
                          <property name="text">
-                          <string>80%</string>
+                          <string>1 draw (equal probability)</string>
                          </property>
                         </item>
                         <item>
                          <property name="text">
-                          <string>85%</string>
+                          <string>Up to 80% coverage</string>
                          </property>
                         </item>
                         <item>
                          <property name="text">
-                          <string>90%</string>
+                          <string>Up to 85% coverage</string>
                          </property>
                         </item>
                         <item>
                          <property name="text">
-                          <string>95%</string>
+                          <string>Up to 90% coverage</string>
                          </property>
                         </item>
                         <item>
                          <property name="text">
-                          <string>99%</string>
+                          <string>Up to 95% coverage</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Up to 99% coverage</string>
                          </property>
                         </item>
                        </widget>
