@@ -26,6 +26,12 @@ from AcATaMa.utils.others_utils import (
 )
 from AcATaMa.utils.qgis_utils import load_layer
 
+# Inline VRTDataset sources were added in GDAL 3.11; older GDAL versions can't open them at all.
+requires_inline_vrt = pytest.mark.skipif(
+    int(gdal.VersionInfo("VERSION_NUM")) < 3110000,
+    reason="Inline VRTDataset sources require GDAL >= 3.11",
+)
+
 
 @pytest.fixture
 def qgis_processing():
@@ -475,6 +481,7 @@ def test_datasets_whose_pixel_values_are_not_only_in_their_files(plugin, make_ra
     assert others_utils.get_dataset_files(source_layer.source()) == {source_layer.source()}
 
 
+@requires_inline_vrt
 def test_stored_pixel_counts_follow_the_files_of_an_inline_vrt(plugin, make_raster, tmp_path):
     """A VRT can define a source as an inline VRT, whose files are not listed by GDAL"""
     source_layer = make_raster([[1, 1], [1, 1]], name="source")

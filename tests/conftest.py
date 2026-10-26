@@ -1,9 +1,9 @@
 import os
+import sys
 from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
-from qgis.testing import start_app
 
 from AcATaMa import classFactory
 from AcATaMa.core import config
@@ -12,19 +12,23 @@ from AcATaMa.gui.acatama_dockwidget import AcATaMaDockWidget
 pytest_plugins = ("pytest_qgis",)
 pytest.tests_data_dir = Path(__file__).parent.resolve() / "data"
 
+# pytest-qgis owns the QgsApplication lifecycle. Since pytest-qgis 5.0.1 it creates the
+# application before importing the initial conftest files, so creating it here as well
+# (with qgis.testing.start_app) would conflict with the widgets that pytest-qgis has
+# already created. In Docker the process is force-exited at the end of the session to
+# avoid the Qt/OpenGL cleanup segfault.
 _is_docker = os.environ.get("IS_DOCKER_CONTAINER", "")[:1].lower() in ("t", "y", "1")
 
-if _is_docker:
-    # when running in a docker container, we use the start_app provided by qgis rather
-    # than that of pytest-qgis. pytest-qgis does not clean up the application properly
-    # and results in a seg-fault
-    print("RUNNING IN DOCKER CONTAINER")
-    start_app()
 
-
+@pytest.hookimpl(wrapper=True, tryfirst=True)
 def pytest_sessionfinish(session, exitstatus):
     """Force-exit after tests complete in Docker to avoid the Qt/OpenGL cleanup segfault."""
+    yield
     if _is_docker:
+        # As an outer wrapper, this runs after the terminal reporter has printed the
+        # failures summary. Flushing keeps it when os._exit skips the interpreter cleanup.
+        sys.stdout.flush()
+        sys.stderr.flush()
         os._exit(exitstatus)
 
 
